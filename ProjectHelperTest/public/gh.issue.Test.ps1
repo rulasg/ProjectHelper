@@ -18,8 +18,8 @@ function ProjectHelperTest_GHI_NewGHIssue_Simple{
 
 function ProjectHelperTest_GHI_GetGHIssue_Simple{
 
-    $global:TestData_Issue_List = $TestData_Issue_List
-    $global:GhCommands.Issue_List = 'echo $global:TestData_Issue_List'
+    # Set-MockCommandWithFileData -CommandName 'Issue_List' -FileName 'issue_list.json'
+    Set-MockCommandWithFileData -CommandName 'Issue_List' 
 
     $repo = "rulasg/testPublicRepo"
 

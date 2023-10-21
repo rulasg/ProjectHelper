@@ -106,60 +106,16 @@ function Get-Issues{
         [Parameter()][string]$Repo
     )
 
-#   USAGE
-#   gh issue list [flags]
-#
-#     FLAGS
-#       --app string         Filter by GitHub App author
-#   -a, --assignee string    Filter by assignee
-#   -A, --author string      Filter by author
-#   -q, --jq expression      Filter JSON output using a jq expression
-#       --json fields        Output JSON with the specified fields
-#   -l, --label strings      Filter by label
-#   -L, --limit int          Maximum number of issues to fetch (default 30)
-#       --mention string     Filter by mention
-#   -m, --milestone string   Filter by milestone number or title
-#   -S, --search query       Search issues with query
-#   -s, --state string       Filter by state: {open|closed|all} (default "open")
-#   -t, --template string    Format JSON output using a Go template; see "gh help formatting"
-#   -w, --web                List issues in the web browser
-
     process {
         # Environment
         $Repo = Resolve-EnvironmentRepo -Repo $Repo ; if(!$Repo){return $null}
 
-        # Build expression
-        # $expressionPattern = 'gh issue list --repo {0} --json number,title,state,url'
-        # $command = $expressionPattern -f $Repo
-
-        $command = Build-Command Issue_List $Repo
+        $command = Build-Command2 -CommandKey Issue_List -Repo $Repo
 
         # Invoke Expresion
         $result = Invoke-GhExpressionToJson -Command $command
-
-        # # Check output success
-        # $success = Test-IssueList -Result $result
-
-        # # Error checking
-        # if(!$success){
-        #     "Error [{0}] calling gh expression [{1}]" -f $result, $command | Write-Error
-        #     return $null
-        # }
-
-        # Transform
-        # So far no transformation needed
-        # $ret = $result | ConvertFrom-Json
 
         # Return issues
         return $result
     }
 } Export-ModuleMember -Function Get-Issues -Alias gghi
-
-function Test-IssueList{
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory)][string]$Result
-    )
-
-    return $true
-}

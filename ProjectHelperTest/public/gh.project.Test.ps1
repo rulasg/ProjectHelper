@@ -102,9 +102,7 @@ function ProjectHelperTest_GHP_GHPItem_Add_Manual_Success{
     $expectedItemCreate = 'gh project item-create {0} --owner "{1}" --title "{2}" --body "{3}"' -f $projectNumber, $owner, $itemTitle, $itemBody
 
     $expresionProjectList = 'gh project list --owner "{0}" --limit 1000 --format json' -f $owner
-    
-    Set-DevUser2
-    
+
     $null = Clear-ProjectEnvironment
 
     $result = New-ProjectItem -ProjectTitle $projectTitle -Owner $owner -Title $itemTitle -Body $itemBody -WhatIf @InfoParameters
@@ -117,15 +115,11 @@ function ProjectHelperTest_GHP_GHPItem_Add_Manual_Success{
 function ProjectHelperTest_GHP_GHPItems_Get_Success{
     # Need to inject gh call for testing
 
-    Set-DevUser2
-
     $result = Get-ProjectItems -ProjectTitle "Clients Planner" -Owner "owner2" -WhatIf @InfoParameters
     Assert-IsNull -Object $result
 }
 
 function ProjectHelperTest_GHP_Projects_Success{
-
-    Set-DevUser2
 
     $expressionPattern_Project_List = 'gh project list --limit 1000 --format json'
     $expressionPattern_Project_List += ' --owner "{0}"'

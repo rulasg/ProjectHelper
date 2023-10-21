@@ -6,8 +6,6 @@ function ProjectHelperTest_GHPEnvironment_Resolve{
 
     $expressionPattern_Project_List = 'gh project list --owner "{0}" --limit 1000 --format json'
 
-     Set-DevUser1
-
     Clear-ProjectEnvironment
 
     $result = Resolve-ProjectEnviroment -ProjectTitle $ProjectTitle -Owner $owner  @InfoParameters -WhatIf
