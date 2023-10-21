@@ -93,7 +93,7 @@ function ProjectHelperTest_GHP_GHPItem_Add_Manual_With_Environment{
 
 function ProjectHelperTest_GHP_GHPItem_Add_Manual_Success{
 
-    $owner = "solidify-internal"
+    $owner = "owner2"
     $projectTitle = "Clients Planner"
     $projectNumber = 666
     $itemTitle = "title text"
@@ -103,7 +103,7 @@ function ProjectHelperTest_GHP_GHPItem_Add_Manual_Success{
 
     $expresionProjectList = 'gh project list --owner "{0}" --limit 1000 --format json' -f $owner
     
-    Set-DevUserRaulSolidifyUser
+    Set-DevUser2
     
     $null = Clear-GhPEnvironment
 
@@ -117,23 +117,20 @@ function ProjectHelperTest_GHP_GHPItem_Add_Manual_Success{
 function ProjectHelperTest_GHP_GHPItems_Get_Success{
     # Need to inject gh call for testing
 
-    Set-DevUserRaulSolidifyUser
+    Set-DevUser2
 
     $result = Get-GhPItems -ProjectTitle "Clients Planner" -Owner "solidify-internal" -WhatIf @InfoParameters
     Assert-IsNull -Object $result
-    
 }
 
 function ProjectHelperTest_GHP_Projects_Success{
-    Set-DevUserRaulSolidifyUser
+    Set-DevUser2
 
     $expressionPattern_Project_List = 'gh project list --limit 1000 --format json'
     $expressionPattern_Project_List += ' --owner "{0}"'
     $command = $expressionPattern_Project_List -f "ownername"
 
-
     $result = Get-GhProjects -Title "publi*" -Owner "ownername" -WhatIf  *>&1
 
     Assert-Contains -Presented $result.MessageData -Expected $command
-
 }
