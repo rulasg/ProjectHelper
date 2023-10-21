@@ -1,22 +1,22 @@
 
 function ProjectHelperTest_GHP_AddGHPDraft_Parameters_Success{
 
-    # Testing parameters input. All calls to New-GhPItem will fail on checking for ProjectNumber in Environment
+    # Testing parameters input. All calls to New-ProjectItem will fail on checking for ProjectNumber in Environment
     $owner ="owner-Name"
     $projectName = "projectName"
 
-    Clear-GhPEnvironment
+    Clear-ProjectEnvironment
 
-    $result = New-GhPItem -Title "title text" -Body "body text" -ProjectTitle $projectName -Owner $owner @InfoParameters -WhatIf
+    $result = New-ProjectItem -Title "title text" -Body "body text" -ProjectTitle $projectName -Owner $owner @InfoParameters -WhatIf
     Assert-IsNull -Object $result
     Assert-Contains -Expected "ProjectNumber NOT found in environment or Forced" -Presented $infoVar.MessageData
 
     
-    $result = New-GhPItem -ProjectTitle $projectName -Owner $owner "title text" "body text" @ErrorParameters -WhatIf
+    $result = New-ProjectItem -ProjectTitle $projectName -Owner $owner "title text" "body text" @ErrorParameters -WhatIf
     Assert-IsNull -Object $result
     Assert-Contains -Expected "ProjectNumber NOT found in environment or Forced" -Presented $infoVar.MessageData
 
-    $result = New-GhPItem "title text" "body text" -ProjectTitle $projectName -Owner $owner @ErrorParameters -WhatIf
+    $result = New-ProjectItem "title text" "body text" -ProjectTitle $projectName -Owner $owner @ErrorParameters -WhatIf
     Assert-IsNull -Object $result
     Assert-Contains -Expected "ProjectNumber NOT found in environment or Forced" -Presented $infoVar.MessageData
 
@@ -24,22 +24,22 @@ function ProjectHelperTest_GHP_AddGHPDraft_Parameters_Success{
 
 $expressionPattern_Project_List = 'gh project list --owner "{0}" --limit 1000 --format json'
 
-function ProjectHelperTest_GHP_SetGhPEnvironment_Success{
+function ProjectHelperTest_GHP_SetProjectEnvironment_Success{
 
-    Clear-GhPEnvironment
+    Clear-ProjectEnvironment
     
-    $result = Set-GhPEnvironment -Owner "owner2" -ProjectTitle "title2" -ProjectNumber 66699 -Passthru
+    $result = Set-ProjectEnvironment -Owner "owner2" -ProjectTitle "title2" -ProjectNumber 66699 -Passthru
     
-    $result = Get-GhPEnvironment
+    $result = Get-ProjectEnvironment
     
     Assert-AreEqual -Presented $result.Owner -Expected "owner2"
     Assert-AreEqual -Presented $result.ProjectTitle -Expected "title2"
     Assert-AreEqual -Presented $result.ProjectNumber -Expected 66699
 }
 
-function ProjectHelperTest_GHP_SetGhPEnvironment_Pipe{
+function ProjectHelperTest_GHP_SetProjectEnvironment_Pipe{
     
-    Clear-GhPEnvironment
+    Clear-ProjectEnvironment
     
     $values = [PSCustomObject]@{
         Owner = "owner1" 
@@ -47,7 +47,7 @@ function ProjectHelperTest_GHP_SetGhPEnvironment_Pipe{
         ProjectNumber = 666
     }
     
-    $result = $values | Set-GhPEnvironment -Passthru
+    $result = $values | Set-ProjectEnvironment -Passthru
     
     Assert-AreEqual -Presented $result.Owner -Expected "owner1"
     Assert-AreEqual -Presented $result.ProjectTitle -Expected "title1"
@@ -58,7 +58,7 @@ $expressionPattern_Item_Create = "gh project item-create {0} --owner `"{1}`" --t
 
 function ProjectHelperTest_GHP_GHPItem_Add_Manual_With_Environment{
 
-    # Testing parameters input. All calls to New-GhPItem will fail on checking for ProjectNumber in Environment
+    # Testing parameters input. All calls to New-ProjectItem will fail on checking for ProjectNumber in Environment
     # "gh project item-create 60 --owner `"solidify-internal`" --title `"title text`" --body `"body text`""
     # $expressionPattern_Item_Create = "gh project item-create {0} --owner `"{1}`" --title `"{2}`" --body `"{3}`""
 
@@ -70,21 +70,21 @@ function ProjectHelperTest_GHP_GHPItem_Add_Manual_With_Environment{
 
     # $expressionPattern_Project_List = "gh project list --owner {0} --limit 1000 --format json"
 
-    Set-GhPEnvironment -Owner $owner -ProjectTitle $projectTitle -ProjectNumber $projectNumber
+    Set-ProjectEnvironment -Owner $owner -ProjectTitle $projectTitle -ProjectNumber $projectNumber
 
     # Use cached environment for parameters
-    $result = New-GhPItem -Title $title -Body $body -whatif @InfoParameters
+    $result = New-ProjectItem -Title $title -Body $body -whatif @InfoParameters
     Assert-Contains -Presented $infoVar.MessageData -Expected ($expressionPattern_Item_Create -f $projectNumber, $owner, $title, $body)
     Assert-IsNull -Object $result
     
     # Use parameters. Will refresh environment
-    $result = New-GhPItem -ProjectTitle "projectName" -Owner "ownerName" $title $body -Whatif @InfoParameters
+    $result = New-ProjectItem -ProjectTitle "projectName" -Owner "ownerName" $title $body -Whatif @InfoParameters
     Assert-Contains -Presented $infoVar.MessageData -Expected ($expressionPattern_Project_List -f "ownerName")
     Assert-Contains -Presented $infoVar.MessageData -Expected ($expressionPattern_Item_Create -f 666, "ownerName", $title, $body)
     Assert-IsNull -Object $result
 
     # Env Cached
-    $result = New-GhPItem $title $body -ProjectTitle "projectName" -Owner "ownerName" -Whatif @InfoParameters
+    $result = New-ProjectItem $title $body -ProjectTitle "projectName" -Owner "ownerName" -Whatif @InfoParameters
     Assert-Contains -Presented $infoVar.MessageData -Expected "ProjectNumber found in Environment"
     Assert-Contains -Presented $infoVar.MessageData -Expected ($expressionPattern_Item_Create -f 666, "ownerName", $title, $body)
     Assert-IsNull -Object $result
@@ -105,9 +105,9 @@ function ProjectHelperTest_GHP_GHPItem_Add_Manual_Success{
     
     Set-DevUser2
     
-    $null = Clear-GhPEnvironment
+    $null = Clear-ProjectEnvironment
 
-    $result = New-GhPItem -ProjectTitle $projectTitle -Owner $owner -Title $itemTitle -Body $itemBody -WhatIf @InfoParameters
+    $result = New-ProjectItem -ProjectTitle $projectTitle -Owner $owner -Title $itemTitle -Body $itemBody -WhatIf @InfoParameters
     Assert-IsNull -Object $result
     Assert-Contains -Presented $infoVar.MessageData -Expected 'ProjectNumber NOT found in environment or Forced'
     Assert-Contains -Presented $infoVar.MessageData -Expected $expresionProjectList
@@ -119,7 +119,7 @@ function ProjectHelperTest_GHP_GHPItems_Get_Success{
 
     Set-DevUser2
 
-    $result = Get-GhPItems -ProjectTitle "Clients Planner" -Owner "solidify-internal" -WhatIf @InfoParameters
+    $result = Get-ProjectItems -ProjectTitle "Clients Planner" -Owner "solidify-internal" -WhatIf @InfoParameters
     Assert-IsNull -Object $result
 }
 
@@ -130,7 +130,7 @@ function ProjectHelperTest_GHP_Projects_Success{
     $expressionPattern_Project_List += ' --owner "{0}"'
     $command = $expressionPattern_Project_List -f "ownername"
 
-    $result = Get-GhProjects -Title "publi*" -Owner "ownername" -WhatIf  *>&1
+    $result = Get-Projectrojects -Title "publi*" -Owner "ownername" -WhatIf  *>&1
 
     Assert-Contains -Presented $result.MessageData -Expected $command
 }

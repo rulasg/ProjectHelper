@@ -3,7 +3,7 @@
 .Synopsis 
 GitHub Project functions that shows Enviroment variables used on GH Projects commands
 #>
-function Get-GhPEnvironment{
+function Get-ProjectEnvironment{
     [CmdletBinding()]
     [Alias("gghpe")]
     param(
@@ -18,13 +18,13 @@ function Get-GhPEnvironment{
 
     return $ret
 
-} Export-ModuleMember -Function Get-GhPEnvironment -Alias gghpe
+} Export-ModuleMember -Function Get-ProjectEnvironment -Alias gghpe
 
 <#
 .Synopsis
 Sets environment variables for GH Projects commands
 #>
-function Set-GhPEnvironment{
+function Set-ProjectEnvironment{
     [CmdletBinding()]
     [Alias("sghpe")]
     param(
@@ -41,15 +41,15 @@ function Set-GhPEnvironment{
     #  $env:GHP_PROJECT_ID = $Id
 
     if($PassThru){
-        return Get-GhPEnvironment
+        return Get-ProjectEnvironment
     }
-} Export-ModuleMember -Function Set-GhPEnvironment -Alias sghpe
+} Export-ModuleMember -Function Set-ProjectEnvironment -Alias sghpe
 
 <#
 .Synopsis
 Clears environment variables for GH Projects commands
 #>
-function Clear-GhPEnvironment{
+function Clear-ProjectEnvironment{
     [CmdletBinding()]
     param(
     )
@@ -58,10 +58,10 @@ function Clear-GhPEnvironment{
     $env:GHP_PROJECT_TITLE = "null"
     $env:GHP_PROJECT_NUMBER = -1
 
-    return Get-GhPEnvironment
-} Export-ModuleMember -Function Clear-GhPEnvironment
+    return Get-ProjectEnvironment
+} Export-ModuleMember -Function Clear-ProjectEnvironment
 
-function Test-GhPEnvironment{
+function Test-ProjectEnvironment{
     [CmdletBinding()]
     [Alias("tghpe")]
     param(
@@ -71,7 +71,7 @@ function Test-GhPEnvironment{
     )
     
     return  ($env:GHP_OWNER -eq $Owner)-and ($env:GHP_PROJECT_TITLE -eq $ProjectTitle)-and ($env:GHP_PROJECT_NUMBER -eq $ProjectNumber)
-} Export-ModuleMember -Function Test-GhPEnvironment -Alias tghpe
+} Export-ModuleMember -Function Test-ProjectEnvironment -Alias tghpe
 
 # Private functions
 
@@ -116,10 +116,10 @@ function Resolve-GhEnvironmentProjectNumber {
   
         "ProjectNumber NOT found in environment or Forced" | Write-Information
         
-        $null = Clear-GhPEnvironment
+        $null = Clear-ProjectEnvironment
 
         # Call remote
-        $ProjectNumber = Get-GhProjectNumber -ProjectTitle $ProjectTitle -Owner $Owner
+        $ProjectNumber = Get-ProjectrojectNumber -ProjectTitle $ProjectTitle -Owner $Owner
     }
 
     return $ProjectNumber
@@ -145,7 +145,7 @@ function Resolve-GhEnvironmentProjectTitle {
     return $null
 }
 
-function Resolve-GhPEnviroment{
+function Resolve-ProjectEnviroment{
     [CmdletBinding(SupportsShouldProcess)]
     [Alias("rghpe")]
     param(
@@ -155,7 +155,7 @@ function Resolve-GhPEnviroment{
     )
 
     # Get actual values from Environment
-    $env = Get-GhPEnvironment
+    $env = Get-ProjectEnvironment
 
     # Look for ProjectTitle
     $ProjectTitle = Resolve-GhEnvironmentProjectTitle -ProjectTitle $ProjectTitle -Environment $env
@@ -177,8 +177,8 @@ function Resolve-GhPEnviroment{
     }
 
     # Update cache environment
-    $ret | Set-GhPEnvironment
+    $ret | Set-ProjectEnvironment
 
     return $ret
 
-} Export-ModuleMember -Function Resolve-GhPEnviroment -Alias rghpe
+} Export-ModuleMember -Function Resolve-ProjectEnviroment -Alias rghpe

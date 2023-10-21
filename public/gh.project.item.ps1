@@ -1,5 +1,5 @@
 
-function Get-GhPItems{
+function Get-ProjectItems{
     [CmdletBinding(SupportsShouldProcess)]
     [Alias("gghpi")]
     param(
@@ -10,11 +10,11 @@ function Get-GhPItems{
 
     process {
         # # Get default values from Environment
-        # $Owner = Find-GhPOwnerFromEnvironment -Owner $Owner ; if(!$Owner){return $null}
-        # $ProjectTitle = Find-GhProjectTitleFromEnvironment($ProjectTitle) ; if(!$ProjectTitle){return $null}
-        # [int]$ProjectNumber = Get-GhProjectNumber -ProjectTitle $ProjectTitle -Owner $Owner ; if($ProjectNumber -eq -1){return $null}
+        # $Owner = Find-ProjectOwnerFromEnvironment -Owner $Owner ; if(!$Owner){return $null}
+        # $ProjectTitle = Find-ProjectrojectTitleFromEnvironment($ProjectTitle) ; if(!$ProjectTitle){return $null}
+        # [int]$ProjectNumber = Get-ProjectrojectNumber -ProjectTitle $ProjectTitle -Owner $Owner ; if($ProjectNumber -eq -1){return $null}
 
-        $env = Resolve-GhPEnviroment -Owner $Owner -ProjectTitle $ProjectTitle; if(!$env){return $null}
+        $env = Resolve-ProjectEnviroment -Owner $Owner -ProjectTitle $ProjectTitle; if(!$env){return $null}
         
         # Build expression
         $commandPattern_Item_List = 'gh project item-list {0} --owner "{1}"'
@@ -34,9 +34,9 @@ function Get-GhPItems{
         # return
         return $result
     }
-} Export-ModuleMember -Function Get-GhPItems -Alias gghpi
+} Export-ModuleMember -Function Get-ProjectItems -Alias gghpi
 
-function Add-GhPItem {
+function Add-ProjectItem {
     [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter()][string]$ProjectTitle,
@@ -51,10 +51,10 @@ function Add-GhPItem {
 
     process {
         # Environment
-        # $Owner = Find-GhPOwnerFromEnvironment -Owner $Owner ; if(!$Owner){return $null}
-        # $ProjectTitle = Find-GhProjectTitleFromEnvironment -ProjectTitle $ProjectTitle ; if(!$ProjectTitle){return $null}
-        # [int]$ProjectNumber = Get-GhProjectNumber -ProjectTitle $ProjectTitle -Owner $Owner ; if($ProjectNumber -eq -1){return $null}
-        $env = Resolve-GhPEnviroment -Owner $Owner -ProjectTitle $ProjectTitle; if(!$env){return $null}
+        # $Owner = Find-ProjectOwnerFromEnvironment -Owner $Owner ; if(!$Owner){return $null}
+        # $ProjectTitle = Find-ProjectrojectTitleFromEnvironment -ProjectTitle $ProjectTitle ; if(!$ProjectTitle){return $null}
+        # [int]$ProjectNumber = Get-ProjectrojectNumber -ProjectTitle $ProjectTitle -Owner $Owner ; if($ProjectNumber -eq -1){return $null}
+        $env = Resolve-ProjectEnviroment -Owner $Owner -ProjectTitle $ProjectTitle; if(!$env){return $null}
 
         # Build Expression
         $command = $commandPattern -f $env.ProjectNumber, $env.Owner, $IssueUrl
@@ -72,9 +72,9 @@ function Add-GhPItem {
         return $result
     }
         
-} Export-ModuleMember -Function Add-GhPItem -Alias aghpi
+} Export-ModuleMember -Function Add-ProjectItem -Alias aghpi
 
-function Remove-GhProjectItem { # scratch
+function Remove-ProjectrojectItem { # scratch
     [CmdletBinding()]
     param (
         [Parameter()][string]$ProjectNumber,
@@ -101,9 +101,9 @@ function Remove-GhProjectItem { # scratch
         # Return
     }
 
-} Export-ModuleMember -Function Remove-GhProjectItem -Alias rghpi
+} Export-ModuleMember -Function Remove-ProjectrojectItem -Alias rghpi
 
-function Edit-GhProjectItem { # scratch
+function Edit-ProjectrojectItem { # scratch
     [CmdletBinding()]
     param (
         [Parameter()][string]$ProjectId,
@@ -134,4 +134,4 @@ function Edit-GhProjectItem { # scratch
         # Return
     }
 
-} Export-ModuleMember -Function Edit-GhProjectItem -Alias eghpi
+} Export-ModuleMember -Function Edit-ProjectrojectItem -Alias eghpi

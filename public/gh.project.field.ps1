@@ -1,4 +1,4 @@
-function Get-GhPField{
+function Get-ProjectField{
     [CmdletBinding()]   
     param(
         [Parameter()][string]$ProjectNumber,

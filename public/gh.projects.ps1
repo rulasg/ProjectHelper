@@ -1,6 +1,6 @@
 
 
-function New-GhPItem{
+function New-ProjectItem{
     [CmdletBinding(SupportsShouldProcess)]
     [Alias("nghpd")]
     param(
@@ -13,11 +13,11 @@ function New-GhPItem{
     begin{}
 
     process{
-        $env = Resolve-GhPEnviroment -Owner $Owner -ProjectTitle $ProjectTitle ; if(!$env){return $null}
+        $env = Resolve-ProjectEnviroment -Owner $Owner -ProjectTitle $ProjectTitle ; if(!$env){return $null}
         # Get default values from Environment
-        # $Owner = Find-GhPOwnerFromEnvironment -Owner $Owner ; if(!$Owner){return $null}
-        # $ProjectTitle = Find-GhProjectTitleFromEnvironment($ProjectTitle) ; if(!$ProjectTitle){return $null}
-        # $ProjectNumber = Get-GhProjectNumber -ProjectTitle $ProjectTitle -Owner $Owner ; if($ProjectNumber -eq -1){return $null}
+        # $Owner = Find-ProjectOwnerFromEnvironment -Owner $Owner ; if(!$Owner){return $null}
+        # $ProjectTitle = Find-ProjectrojectTitleFromEnvironment($ProjectTitle) ; if(!$ProjectTitle){return $null}
+        # $ProjectNumber = Get-ProjectrojectNumber -ProjectTitle $ProjectTitle -Owner $Owner ; if($ProjectNumber -eq -1){return $null}
 
         # Build expression
         $expressionPattern_Item_Create = "gh project item-create {0} --owner `"{1}`" --title `"{2}`" --body `"{3}`""
@@ -37,9 +37,9 @@ function New-GhPItem{
             return
         }
     }
-} Export-ModuleMember -Function New-GhPItem -Alias nghpd
+} Export-ModuleMember -Function New-ProjectItem -Alias nghpd
 
-function Get-GhProjectNumber{
+function Get-ProjectrojectNumber{
     [CmdletBinding(SupportsShouldProcess)]
     [OutputType([int])]
     [Alias("gghpn")]
@@ -82,7 +82,7 @@ function Get-GhProjectNumber{
     return $projectNumber
 }
 
-function Get-GhProjects{
+function Get-Projectrojects{
     [CmdletBinding(SupportsShouldProcess)]
     [Alias("gghp")]
     param(
@@ -156,6 +156,6 @@ function Get-GhProjects{
 
     return $ret
 
-} Export-ModuleMember -Function Get-GhProjects -Alias gghp
+} Export-ModuleMember -Function Get-Projectrojects -Alias gghp
 
 

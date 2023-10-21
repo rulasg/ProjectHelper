@@ -8,22 +8,22 @@ function ProjectHelperTest_GHPEnvironment_Resolve{
 
      Set-DevUser1
 
-    Clear-GhPEnvironment
+    Clear-ProjectEnvironment
 
-    $result = Resolve-GhPEnviroment -ProjectTitle $ProjectTitle -Owner $owner  @InfoParameters -WhatIf
+    $result = Resolve-ProjectEnviroment -ProjectTitle $ProjectTitle -Owner $owner  @InfoParameters -WhatIf
 
     Assert-Contains -Presented $infoVar.MessageData -Expected 'ProjectNumber NOT found in environment or Forced'
     Assert-Contains -Presented $infoVar.MessageData -Expected ($expressionPattern_Project_List -f $owner)
     Assert-AreEqual -Expected $result.ProjectNumber -Presented 666
 
     # Second call with ProjectNumber cached on environment
-    $result = Resolve-GhPEnviroment -ProjectTitle $ProjectTitle -Owner $owner  @InfoParameters -WhatIf
+    $result = Resolve-ProjectEnviroment -ProjectTitle $ProjectTitle -Owner $owner  @InfoParameters -WhatIf
 
     Assert-Contains -Presented $infoVar.MessageData -Expected 'ProjectNumber found in Environment'
     Assert-AreEqual -Expected $result.ProjectNumber -Presented 666
 
     # With Force
-    $result = Resolve-GhPEnviroment -ProjectTitle $ProjectTitle -Owner $owner -Force  @InfoParameters -WhatIf
+    $result = Resolve-ProjectEnviroment -ProjectTitle $ProjectTitle -Owner $owner -Force  @InfoParameters -WhatIf
     Assert-Contains -Presented $infoVar.MessageData -Expected 'ProjectNumber found in Environment'
     Assert-Contains -Presented $infoVar.MessageData -Expected 'ProjectNumber NOT found in environment or Forced'
     Assert-Contains -Presented $infoVar.MessageData -Expected ($expressionPattern_Project_List -f $owner)

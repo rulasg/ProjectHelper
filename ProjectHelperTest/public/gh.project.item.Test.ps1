@@ -5,6 +5,6 @@ function ProjectHelperTest_GHP_GHPItem_Success{
     
      Set-DevUser1  
 
-    $result = Edit-GhProjectItem -ProjectTitle "public" -Owner 'rulasg' 
+    $result = Edit-ProjectrojectItem -ProjectTitle "public" -Owner 'rulasg' 
 
 }
