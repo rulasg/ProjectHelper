@@ -56,7 +56,7 @@ function Get-ProjectrojectNumber{
     if ($PSCmdlet.ShouldProcess("GitHub Cli", $command)) {
 
         # list projects on account
-        $result =  Invoke-GhExpression -Command $command | ConvertFrom-Json
+        $result =  Invoke-GhExpressionToJson -Command $command
 
         "[{0}] projects found" -f $result.projects.Count | Write-Verbose
 
@@ -102,7 +102,7 @@ function Get-Projects{
     }
 
     # Invoke Command
-    $result = Invoke-GhExpression -Command $command | ConvertFrom-Json
+    $result = Invoke-GhExpressionToJson -Command $command
 
     # Filter result
     if($Title){
