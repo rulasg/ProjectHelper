@@ -10,7 +10,7 @@ function ProjectHelperTest_MockData_Update{
     Assert-Count -expected $($localommandList.count) -Presented $($infoVar.MessageData | Where-Object {$_.StartsWith('gh')})
 
     Assert-Contains -Presented $infoVar -Expected 'gh --version'
-    Assert-Contains -Presented $infoVar -Expected 'gh issue create --repo "testPublicRepo" --title "Issue Title" --body "Issue Body"'
+    Assert-Contains -Presented $infoVar -Expected 'gh issue create --repo rulasg/testPublicRepo --title "Issue Title" --body "Issue Body"'
     Assert-Contains -Presented $infoVar -Expected 'gh project field-list 11 --owner rulasg'
     Assert-Contains -Presented $infoVar -Expected 'gh project item-list 11 --owner rulasg'
     Assert-Contains -Presented $infoVar -Expected 'gh project item-add 11 --owner rulasg --url https://github.com/rulasg/publicrepo/issues/1'
@@ -19,7 +19,7 @@ function ProjectHelperTest_MockData_Update{
     Assert-Contains -Presented $infoVar -Expected 'gh project item-edit --project-id 11 --id {1} --field-id {2} --text {3}'
     Assert-Contains -Presented $infoVar -Expected 'gh project item-create 11 --owner rulasg --title "Item Title" --body "Item Body"'
 
-    Assert-Contains -Presented $infoVar -Expected 'gh issue list --repo testPublicRepo --json number,title,state,url'
+    Assert-Contains -Presented $infoVar -Expected 'gh issue list --repo rulasg/testPublicRepo --json number,title,state,url'
 
     # Assert-Contains -Presented $infoVar -Expected 'gh repo list rulasg --limit 1000  --no-archived --source --json nameWithOwner'
     # Assert-Contains -Presented $infoVar -Expected 'gh repo edit testPublicRepo --add-t opic topic1,topic2'
@@ -38,18 +38,18 @@ function ProjectHelperTest_MockData_Update{
 
 function ProjectHelperTest_MockData_Update_CommandKey{
 
-    $whatif = $false
+    $whatif = $true
     $mockFilePath = Get-MockFilePath
     $localommandList = Get-CommandList2
     $key = "Issue_List"
 
     $commandItem = $localommandList.$key
 
-    Update-MockData -Command $key @InfoParameters -WhatIf:$whatif
+    Update-MockData -CommandKey $key @InfoParameters -WhatIf:$whatif
 
     Assert-Count -expected 1 -Presented $($infoVar.MessageData | Where-Object {$_.StartsWith('gh')})
 
-    Assert-Contains -Presented $infoVar -Expected 'gh issue list --repo testPublicRepo --json number,title,state,url'
+    Assert-Contains -Presented $infoVar -Expected 'gh issue list --repo rulasg/testPublicRepo --json number,title,state,url'
 
     if(-Not $whatif){
         $mockDataExtension = if($commandItem.IsJson){ 'json' } else { 'txt' }
@@ -73,12 +73,12 @@ function Update-MockData{
     # check if CommandKey is nul or white space
 
     if(-Not [string]::IsNullOrWhiteSpace($CommandKey)){
-        $localCommandList = @{ $Key = $localCommandList[$CommandKey]}
+        $localCommandList = @{ $commandKey = $localCommandList[$CommandKey]}
     }
 
     $ev = @{
         owner = "rulasg"
-        repo = "testPublicRepo"
+        repo = "rulasg/testPublicRepo"
         projectNumber = 11
         projectName = "Public Project"
         issueUrl = "https://github.com/rulasg/publicrepo/issues/1"
@@ -106,7 +106,11 @@ function Update-MockData{
         # Convet to Json if needed
         if($localCommandList[$key].IsJson){
             $mockDataExtension = ".json"
-            $result = $result | ConvertTo-Json
+            if($result){
+                $result = $result | ConvertFrom-Json | ConvertTo-Json
+            } else {
+                $result = "[]"
+            }
         } else {
             $mockDataExtension = ".txt"
         }

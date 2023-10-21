@@ -78,7 +78,7 @@ function Get-CommandList{
 function Get-CommandList2{
     $list = @{
         Version                = @{IsJson = $false ; Command = 'gh --version'}
-        Issue_Create           = @{IsJson = $false ; Command = 'gh issue create --repo "{repo}" --title "{issueTitle}" --body "{issueBody}"'}
+        Issue_Create           = @{IsJson = $false ; Command = 'gh issue create --repo {repo} --title "{issueTitle}" --body "{issueBody}"'}
         
         Project_Field_List     = @{IsJson = $false ; Command = 'gh project field-list {projectNumber} --owner {owner}'}
         Project_Item_List      = @{IsJson = $false ; Command = 'gh project item-list {projectNumber} --owner {owner}'}
