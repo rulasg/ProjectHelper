@@ -1,4 +1,4 @@
-function Build-GhCommand{
+function Build-Command{
     [CmdletBinding()]
     param(
         # Parameter help description
@@ -13,5 +13,5 @@ function Build-GhCommand{
     $ret = $expression -f $Parameter0,$Parameter1,$Parameter3
 
     return $ret
-} Export-ModuleMember -Function Build-GhExpresion
+} Export-ModuleMember -Function Build-Command
 

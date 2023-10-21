@@ -1,5 +1,5 @@
 
-function Set-GhCommands{
+function Set-Commands{
 
     $global:GhCommands = @{
         Issue_Create           = 'gh issue create --repo "{0}" --title "{1}" --body "{2}"'
@@ -16,4 +16,4 @@ function Set-GhCommands{
     }
 }
 
-Set-GhCommands
+Set-Commands

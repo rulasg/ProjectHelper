@@ -132,7 +132,7 @@ function Get-Issues{
         # $expressionPattern = 'gh issue list --repo {0} --json number,title,state,url'
         # $command = $expressionPattern -f $Repo
 
-        $command = Build-GhCommand Issue_List $Repo
+        $command = Build-Command Issue_List $Repo
 
         # Invoke Expresion
         $result = Invoke-GhExpressionToJson -Command $command
