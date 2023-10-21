@@ -8,7 +8,7 @@ function ProjectHelperTest_GHI_NewGHIssue_Simple{
     $expressionPattern = 'gh issue create --repo "{0}" --title "{1}" --body "{2}"'
     $command = $expressionPattern -f $Repo,$Title,$Body
 
-    $result = New-GhIssue -Repo $repo -Title $title -Body $body -WhatIf @InfoParameters 
+    $result = New-Issue -Repo $repo -Title $title -Body $body -WhatIf @InfoParameters 
 
     Assert-Contains -Presented $infoVar.MessageData -Expected $command
 
@@ -23,10 +23,9 @@ function ProjectHelperTest_GHI_GetGHIssue_Simple{
 
     $repo = "rulasg/testPublicRepo"
 
-    $result = Get-GhIssues -Repo $repo @InfoParameters
+    $result = Get-Issues -Repo $repo @InfoParameters
 
     Assert-IsNotNull -Object $result
     Assert-Count -Expected 3 -Presented $result
     Assert-AreEqual -Expected 'https://github.com/rulasg/testPublicRepo/issues' -Presented ($result[0].url | Split-Path -Parent)
-
 }

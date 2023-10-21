@@ -1,4 +1,4 @@
-function New-GhIssue{
+function New-Issue{
     [CmdletBinding(SupportsShouldProcess)]
     [Alias("nghi")]
     param(
@@ -12,7 +12,7 @@ function New-GhIssue{
     process{
 
         # Get default values from Environment
-        $Repo = Resolve-GhIEnvironmentRepo -Repo $Repo ; if(!$Repo){return $null}
+        $Repo = Resolve-EnvironmentRepo -Repo $Repo ; if(!$Repo){return $null}
 
         # Build expression
         $expressionPattern = 'gh issue create --repo "{0}" --title "{1}" --body "{2}"'
@@ -28,7 +28,7 @@ function New-GhIssue{
         }
 
         # Check if its a url
-        $success = Test-GhINewIssueResult -Result $result -Repo $Repo 
+        $success = Test-NewIssueResult -Result $result -Repo $Repo 
 
         # Error checking
         if(!$success){
@@ -39,9 +39,9 @@ function New-GhIssue{
         # Return issue URL
         return $result
     }
-} Export-ModuleMember -Function New-GhIssue -Alias nghi
+} Export-ModuleMember -Function New-Issue -Alias nghi
 
-function Test-GhINewIssueResult{
+function Test-NewIssueResult{
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)][string]$Result,
@@ -99,7 +99,7 @@ function Assert{
     }
 }
 
-function Get-GhIssues{
+function Get-Issues{
     [CmdletBinding()]
     [Alias("gghi")]
     param(
@@ -126,7 +126,7 @@ function Get-GhIssues{
 
     process {
         # Environment
-        $Repo = Resolve-GhIEnvironmentRepo -Repo $Repo ; if(!$Repo){return $null}
+        $Repo = Resolve-EnvironmentRepo -Repo $Repo ; if(!$Repo){return $null}
 
         # Build expression
         # $expressionPattern = 'gh issue list --repo {0} --json number,title,state,url'
@@ -138,7 +138,7 @@ function Get-GhIssues{
         $result = Invoke-GhExpressionToJson -Command $command
 
         # # Check output success
-        # $success = Test-GhIssueList -Result $result
+        # $success = Test-IssueList -Result $result
 
         # # Error checking
         # if(!$success){
@@ -153,9 +153,9 @@ function Get-GhIssues{
         # Return issues
         return $result
     }
-} Export-ModuleMember -Function Get-GhIssues -Alias gghi
+} Export-ModuleMember -Function Get-Issues -Alias gghi
 
-function Test-GhIssueList{
+function Test-IssueList{
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)][string]$Result
