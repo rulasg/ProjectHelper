@@ -32,7 +32,8 @@ function Build-Command{
         [Parameter()][string]$Repo,
         [Parameter()][string]$Title,
         [Parameter()][string]$Body,
-        [Parameter()][string]$Owner
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber
     )
     $cl = Get-CommandList
 
@@ -42,6 +43,7 @@ function Build-Command{
     if($Title){ $command = $command -replace "{title}",$Title }
     if($Body){ $command = $command -replace "{body}",$Body }
     if($Owner){ $command = $command -replace "{owner}",$Owner }
+    if($ProjectNumber){ $command = $command -replace "{projectNumber}",$ProjectNumber }
 
     if($Attributes){ $command = $command -replace "{0}",$Attributes }
 
@@ -95,7 +97,7 @@ function Get-CommandListDefaults{
         Project_List           = @{IsJson = $true ; Command = 'gh project list --limit 1000 --format json'}
         Project_List_Owner     = @{IsJson = $true ; Command = 'gh project list --owner {owner} --limit 1000 --format json'}
 
-        Project_Item_Create    = @{IsJson = $false ; Command = 'gh project item-create {projectNumber} --owner {owner} --title "{title}" --body "{body}"'}
+        Project_Item_Create    = @{IsJson = $true ; Command = 'gh project item-create {projectNumber} --owner {owner} --title "{title}" --body "{body}" --format json'}
         Project_Item_Edit_Text = @{IsJson = $false ; Command = 'gh project item-edit --project-id {projectNumber} --id {1} --field-id {2} --text {3}'}
         
         Issue_List             = @{IsJson = $true ; Command = 'gh issue list --repo {repo} --json number,title,state,url'}

@@ -20,22 +20,22 @@ function New-ProjectItem{
         # $ProjectNumber = Get-ProjectrojectNumber -ProjectTitle $ProjectTitle -Owner $Owner ; if($ProjectNumber -eq -1){return $null}
 
         # Build expression
-        $expressionPattern_Item_Create = "gh project item-create {0} --owner `"{1}`" --title `"{2}`" --body `"{3}`""
-        $command = $expressionPattern_Item_Create -f $env.ProjectNumber, $env.Owner, $Title, $Body
+        # $expressionPattern_Item_Create = "gh project item-create {0} --owner `"{1}`" --title `"{2}`" --body `"{3}`""
+        # $command = $expressionPattern_Item_Create -f $env.ProjectNumber, $env.Owner, $Title, $Body
+
+        $command = Build-Command -CommandKey Project_Item_Create -Owner $env.Owner -ProjectNumber $env.ProjectNumber -Title $Title -Body $Body
 
         # Invoke Expresion
         if ($PSCmdlet.ShouldProcess("GitHub cli", $command)) {
-            $result = Invoke-GhExpression -Command $command
+            $result = Invoke-GhExpressionToJson -Command $command
         } else {
             $command | Write-Information
             $result = $null
         }
 
         # Error checking
-        if($null -ne $result){
-            "Error [{0}] calling gh expression [{1}]" -f $result, $command | Write-Error
-            return
-        }
+
+        return $result
     }
 } Export-ModuleMember -Function New-ProjectItem -Alias nghpd
 
@@ -50,8 +50,10 @@ function Get-ProjectrojectNumber{
     )
     
     # Build expression
-    $expressionPattern_Project_List = 'gh project list --owner "{0}" --limit 1000 --format json'
-    $command = $expressionPattern_Project_List -f $Owner
+    # $expressionPattern_Project_List = 'gh project list --owner "{0}" --limit 1000 --format json'
+    # $command = $expressionPattern_Project_List -f $Owner
+
+    $command = Build-Command -CommandKey Project_List_Owner -Owner $Owner
 
     if ($PSCmdlet.ShouldProcess("GitHub Cli", $command)) {
 
@@ -72,7 +74,7 @@ function Get-ProjectrojectNumber{
             "No project found with TITLE [$ProjectTitle] for OWNER [$Owner]" | Write-Error
             return -1
         }
-        
+
     } else {
         # for testing
         $command | Write-Information

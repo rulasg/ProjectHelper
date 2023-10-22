@@ -5,7 +5,7 @@ function ProjectHelperTest_MockCommandWithFileData_Set_Command{
     $mockPath = $mockspath | Join-Path -ChildPath 'version.txt' | Convert-Path
     $cl = Get-CommandList
     
-    $result = Set-MockCommandWithFileData -CommandName 'Version'
+    $result = Set-MockCommand -CommandName 'Version'
 
     Assert-IsNull -Object $result
     Assert-AreEqual -Expected "Get-Content -Path $mockPath" -Presented $cl.Version.Command
@@ -20,7 +20,7 @@ function ProjectHelperTest_MockCommandWithFileData_Set_FileName{
     $mockPath = $mockspath | Join-Path -ChildPath 'kk' | Convert-Path
     $cl = Get-CommandList
 
-    $result = Set-MockCommandWithFileData -CommandName 'Version' -FileName kk
+    $result = Set-MockCommand -CommandName 'Version' -FileName kk
 
     Assert-IsNull -Object $result
     Assert-AreEqual -Expected "Get-Content -Path $mockPath" -Presented $cl.Version.Command

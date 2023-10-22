@@ -10,7 +10,7 @@ $global:OutputData = @{}
     returing $outputData as the output of the call.
     We will replace $global.CommandList.$CommandName entry to a mocked command.
 #>
-function Set-MockCommand{
+function Set-MockCommandWithData{
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)][string]$CommandName,
@@ -24,7 +24,7 @@ function Set-MockCommand{
     $global:CommandList.$CommandName = "echo $injectedData"
 }
 
-function Set-MockCommandWithFileData{
+function Set-MockCommand{
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)][string]$CommandName,

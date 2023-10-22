@@ -83,10 +83,12 @@ function Resolve-GhEnvironmentOwner {
     )
 
     if($Owner){
+        "Using parameter Owner" | Write-Information
         return $Owner
     }
 
     if($Environment.Owner -ne "null"){
+        "Owner found in Environment" | Write-Information
         return $Environment.Owner
     }
 
@@ -133,10 +135,12 @@ function Resolve-GhEnvironmentProjectTitle {
     )
 
     if($ProjectTitle){
+        "Using parameter ProjectTitle" | Write-Information
         return $ProjectTitle
     }
 
     if($Environment.ProjectTitle -ne "null"){
+        "ProjectTitle found in Environment" | Write-Information
         return $Environment.ProjectTitle
     }
 
