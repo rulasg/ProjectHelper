@@ -5,15 +5,14 @@ function ProjectHelperTest_GHI_NewGHIssue_Simple{
     $body = "This is the body"
     $repoOwner = "someOwner"; $repoName = "someRepo" ; $repo = "$repoOwner/$repoName"
 
-    $expressionPattern = 'gh issue create --repo "{0}" --title "{1}" --body "{2}"'
-    $command = $expressionPattern -f $Repo,$Title,$Body
+    # $expressionPattern = 'gh issue create --repo "{0}" --title "{1}" --body "{2}"'
+    # $command = $expressionPattern -f $Repo,$Title,$Body
 
-    $result = New-Issue -Repo $repo -Title $title -Body $body -WhatIf @InfoParameters 
+    Set-MockCommandWithFileData -CommandName 'Issue_Create'
 
-    Assert-Contains -Presented $infoVar.MessageData -Expected $command
+    $result = New-Issue -Repo $repo -Title $title -Body $body  @InfoParameters 
 
-    Assert-AreEqual -Presented $result -Expected ('https://githubInstance.com/someOwner/someRepo/issues/6')
-
+    Assert-AreEqual -Presented $result -Expected "https://github.com/rulasg/testPublicRepo/issues/4"
 }
 
 function ProjectHelperTest_GHI_GetGHIssue_Simple{

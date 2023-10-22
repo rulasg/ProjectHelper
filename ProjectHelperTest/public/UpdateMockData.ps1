@@ -10,14 +10,14 @@ function ProjectHelperTest_MockData_Update{
     Assert-Count -expected $($localommandList.count) -Presented $($infoVar.MessageData | Where-Object {$_.StartsWith('gh')})
 
     Assert-Contains -Presented $infoVar -Expected 'gh --version'
-    Assert-Contains -Presented $infoVar -Expected 'gh issue create --repo rulasg/testPublicRepo --title "Issue Title" --body "Issue Body"'
+    Assert-Contains -Presented $infoVar -Expected 'gh issue create --repo rulasg/testPublicRepo --title "Title text" --body "Body text to be used"'
     Assert-Contains -Presented $infoVar -Expected 'gh project field-list 11 --owner rulasg'
     Assert-Contains -Presented $infoVar -Expected 'gh project item-list 11 --owner rulasg --format json'
     Assert-Contains -Presented $infoVar -Expected 'gh project item-add 11 --owner rulasg --url https://github.com/rulasg/publicrepo/issues/1'
     Assert-Contains -Presented $infoVar -Expected 'gh project item-delete 11 --owner rulasg --id PVTI_lAHOAGkMOM4AUB10zgIiF0E'
     Assert-Contains -Presented $infoVar -Expected 'gh project list --owner rulasg --limit 1000 --format json'    
     Assert-Contains -Presented $infoVar -Expected 'gh project item-edit --project-id 11 --id {1} --field-id {2} --text {3}'
-    Assert-Contains -Presented $infoVar -Expected 'gh project item-create 11 --owner rulasg --title "Item Title" --body "Item Body"'
+    Assert-Contains -Presented $infoVar -Expected 'gh project item-create 11 --owner rulasg --title "Title text" --body "Body text to be used"'
 
     Assert-Contains -Presented $infoVar -Expected 'gh issue list --repo rulasg/testPublicRepo --json number,title,state,url'
 
@@ -84,10 +84,8 @@ function Update-MockData{
         issueUrl = "https://github.com/rulasg/publicrepo/issues/1"
         itemId = "PVTI_lAHOAGkMOM4AUB10zgIiF0E"
         topics = "topic1,topic2"
-        itemTitle = "Item Title"
-        itemBody = "Item Body"
-        issueTitle = "Issue Title"
-        issueBody = "Issue Body"
+        title = "Title text"
+        body = "Body text to be used"
         attributes = "attrib1,attrib2,attrib3"
     }
 
