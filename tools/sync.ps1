@@ -13,7 +13,7 @@
 [cmdletbinding(SupportsShouldProcess)]
 param()
 
-$MODULE_PATH    = $PSScriptRoot
+$MODULE_PATH    = $PSScriptRoot | Split-Path -Parent
 $TOOLS_PATH     = $MODULE_PATH | Join-Path -ChildPath "tools"
 $WORKFLOW_PATH  = $MODULE_PATH | Join-Path -ChildPath ".github" -AdditionalChildPath "workflows"
 
