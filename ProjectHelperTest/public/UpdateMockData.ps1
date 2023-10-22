@@ -17,7 +17,7 @@ function ProjectHelperTest_MockData_Update{
     Assert-Contains -Presented $infoVar -Expected 'gh project item-delete 11 --owner rulasg --id PVTI_lAHOAGkMOM4AUB10zgIiF0E'
     Assert-Contains -Presented $infoVar -Expected 'gh project list --owner rulasg --limit 1000 --format json'    
     Assert-Contains -Presented $infoVar -Expected 'gh project item-edit --project-id 11 --id {1} --field-id {2} --text {3}'
-    Assert-Contains -Presented $infoVar -Expected 'gh project item-create 11 --owner rulasg --title "Title text" --body "Body text to be used"'
+    Assert-Contains -Presented $infoVar -Expected 'gh project item-create 11 --owner rulasg --title "Title text" --body "Body text to be used" --format json'
 
     Assert-Contains -Presented $infoVar -Expected 'gh issue list --repo rulasg/testPublicRepo --json number,title,state,url'
 

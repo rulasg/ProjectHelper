@@ -56,67 +56,82 @@ function ProjectHelperTest_GHP_SetProjectEnvironment_Pipe{
 
 $expressionPattern_Item_Create = "gh project item-create {0} --owner `"{1}`" --title `"{2}`" --body `"{3}`""
 
-function ProjectHelperTest_GHP_GHPItem_Add_Manual_With_Environment{
+function ProjectHelperTest_ProjectItem_New__With_Environment{
 
     # Testing parameters input. All calls to New-ProjectItem will fail on checking for ProjectNumber in Environment
     # "gh project item-create 60 --owner `"owner2`" --title `"title text`" --body `"body text`""
     # $expressionPattern_Item_Create = "gh project item-create {0} --owner `"{1}`" --title `"{2}`" --body `"{3}`""
 
-    $projectNumber = 666 #1
-    $owner = "owner2" #2
-    $title = "title text" #3
-    $body = "body text" #4
-    $projectTitle = "Clients Planner"
+    $projectNumber = 11
+    $owner = "rulasg"
+    $projectTitle = "Public Project"
 
-    # $expressionPattern_Project_List = "gh project list --owner {0} --limit 1000 --format json"
+    Set-MockCommand -CommandName Project_List_Owner 
+    Set-MockCommand -CommandName Project_Item_Create
 
     Set-ProjectEnvironment -Owner $owner -ProjectTitle $projectTitle -ProjectNumber $projectNumber
 
     # Use cached environment for parameters
-    $result = New-ProjectItem -Title $title -Body $body -whatif @InfoParameters
-    Assert-Contains -Presented $infoVar.MessageData -Expected ($expressionPattern_Item_Create -f $projectNumber, $owner, $title, $body)
-    Assert-IsNull -Object $result
-    
-    # Use parameters. Will refresh environment
-    $result = New-ProjectItem -ProjectTitle "projectName" -Owner "ownerName" $title $body -Whatif @InfoParameters
-    Assert-Contains -Presented $infoVar.MessageData -Expected ($expressionPattern_Project_List -f "ownerName")
-    Assert-Contains -Presented $infoVar.MessageData -Expected ($expressionPattern_Item_Create -f 666, "ownerName", $title, $body)
-    Assert-IsNull -Object $result
+    $result = New-ProjectItem -Title "title of item" -Body "Body of item" @InfoParameters
 
-    # Env Cached
-    $result = New-ProjectItem $title $body -ProjectTitle "projectName" -Owner "ownerName" -Whatif @InfoParameters
     Assert-Contains -Presented $infoVar.MessageData -Expected "ProjectNumber found in Environment"
-    Assert-Contains -Presented $infoVar.MessageData -Expected ($expressionPattern_Item_Create -f 666, "ownerName", $title, $body)
-    Assert-IsNull -Object $result
+    Assert-Contains -Presented $infoVar.MessageData -Expected "ProjectTitle found in Environment"
+    Assert-Contains -Presented $infoVar.MessageData -Expected "Owner found in Environment"
+    # From Mock
+    Assert-AreEqual -Expected "Title text" -Presented $result.title
+    Assert-AreEqual -Expected "Body text to be used" -Presented $result.body
+    Assert-AreEqual -Expected 'DraftIssue' -presented $result.type
 
+    $result = New-ProjectItem -ProjectTitle $projectTitle -Owner $owner -Title "Title text" -Body "Body text to be used" @InfoParameters
+
+    Assert-Contains -Presented $infoVar.MessageData -Expected "ProjectNumber found in Environment"
+    Assert-Contains -Presented $infoVar.MessageData -Expected "Using parameter ProjectTitle"
+    Assert-Contains -Presented $infoVar.MessageData -Expected "Using parameter Owner"
+    # From Mock
+    Assert-AreEqual -Expected "Title text" -Presented $result.title
+    Assert-AreEqual -Expected "Body text to be used" -Presented $result.body
+    Assert-AreEqual -Expected 'DraftIssue' -presented $result.type
 }
 
-function ProjectHelperTest_GHP_GHPItem_Add_Manual_Success{
+function ProjectHelperTest_ProjectItem_New_Success{
 
     $owner = "owner2"
     $projectTitle = "Clients Planner"
-    $projectNumber = 666
-    $itemTitle = "title text"
-    $itemBody = "body text"
+    # $projectNumber = 666
+    # $itemTitle = "title text"
+    # $itemBody = "body text"
 
-    $expectedItemCreate = 'gh project item-create {0} --owner "{1}" --title "{2}" --body "{3}"' -f $projectNumber, $owner, $itemTitle, $itemBody
-
-    $expresionProjectList = 'gh project list --owner "{0}" --limit 1000 --format json' -f $owner
+    # $expectedItemCreate = 'gh project item-create {0} --owner "{1}" --title "{2}" --body "{3}"' -f $projectNumber, $owner, $itemTitle, $itemBody
+    # $expresionProjectList = 'gh project list --owner "{0}" --limit 1000 --format json' -f $owner
+    Set-MockCommand -CommandName Project_List_Owner 
+    Set-MockCommand -CommandName Project_Item_Create
 
     $null = Clear-ProjectEnvironment
 
-    $result = New-ProjectItem -ProjectTitle $projectTitle -Owner $owner -Title $itemTitle -Body $itemBody -WhatIf @InfoParameters
-    Assert-IsNull -Object $result
+    $result = New-ProjectItem -ProjectTitle $projectTitle -Owner $owner -Title "Title text" -Body "Body text to be used" @InfoParameters
+    
+    Assert-IsNotNull -Object $result
     Assert-Contains -Presented $infoVar.MessageData -Expected 'ProjectNumber NOT found in environment or Forced'
-    Assert-Contains -Presented $infoVar.MessageData -Expected $expresionProjectList
-    Assert-Contains -Presented $infoVar.MessageData -Expected $expectedItemCreate
+
+    # From Mock
+    Assert-AreEqual -Expected "Title text" -Presented $result.title
+    Assert-AreEqual -Expected "Body text to be used" -Presented $result.body
+    Assert-AreEqual -Expected 'DraftIssue' -presented $result.type
 }
 
 function ProjectHelperTest_GHP_GHPItems_Get_Success{
     # Need to inject gh call for testing
 
-    $result = Get-ProjectItems -ProjectTitle "Clients Planner" -Owner "owner2" -WhatIf @InfoParameters
-    Assert-IsNull -Object $result
+    Set-MockCommand -CommandName 'Project_Item_List'
+    Set-MockCommand -CommandName 'Project_List_Owner'
+
+    $result = Get-ProjectItems -ProjectTitle "Public Project" -Owner "owner2"
+
+    Assert-Count -Expected 3 -Presented $result.items
+    Assert-AreEqual -Expected 3 -Presented $result.totalCount
+    Assert-Contains -Presented $result.items.title -Expected "Item 1 - title"
+    Assert-Contains -Presented $result.items.title -Expected "item2 title2"
+    Assert-Contains -Presented $result.items.title -Expected "Item Title"
 }
 
 function ProjectHelperTest_GHP_Projects_Success{
@@ -125,7 +140,7 @@ function ProjectHelperTest_GHP_Projects_Success{
     # $expressionPattern_Project_List += ' --owner {0}'
     # $command = $expressionPattern_Project_List -f "ownername"
 
-    Set-MockCommandWithFileData -CommandName 'Project_List_Owner' -FileName 'project_list.json'
+    Set-MockCommand -CommandName 'Project_List_Owner' -FileName 'project_list.json'
 
     $result = Get-ProjectList -Title "*Project" -Owner dumyowner
 

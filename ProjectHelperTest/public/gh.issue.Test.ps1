@@ -8,7 +8,7 @@ function ProjectHelperTest_GHI_NewGHIssue_Simple{
     # $expressionPattern = 'gh issue create --repo "{0}" --title "{1}" --body "{2}"'
     # $command = $expressionPattern -f $Repo,$Title,$Body
 
-    Set-MockCommandWithFileData -CommandName 'Issue_Create'
+    Set-MockCommand -CommandName 'Issue_Create'
 
     $result = New-Issue -Repo $repo -Title $title -Body $body  @InfoParameters 
 
@@ -17,8 +17,8 @@ function ProjectHelperTest_GHI_NewGHIssue_Simple{
 
 function ProjectHelperTest_GHI_GetGHIssue_Simple{
 
-    # Set-MockCommandWithFileData -CommandName 'Issue_List' -FileName 'issue_list.json'
-    Set-MockCommandWithFileData -CommandName 'Issue_List' 
+    # Set-MockCommand -CommandName 'Issue_List' -FileName 'issue_list.json'
+    Set-MockCommand -CommandName 'Issue_List' 
 
     $repo = "rulasg/testPublicRepo"
 

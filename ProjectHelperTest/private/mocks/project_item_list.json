@@ -1,0 +1,33 @@
+{
+    "items": [
+        {
+            "comment": "New value for comment",
+            "content": {
+                "type": "DraftIssue",
+                "body": "",
+                "title": "Item 1 - title"
+            },
+            "id": "PVTI_lAHOAGkMOM4AUB10zgIiBZs",
+            "title": "Item 1 - title"
+        },
+        {
+            "content": {
+                "type": "DraftIssue",
+                "body": "",
+                "title": "item2 title2"
+            },
+            "id": "PVTI_lAHOAGkMOM4AUB10zgIiFas",
+            "title": "item2 title2"
+        },
+        {
+            "content": {
+                "type": "DraftIssue",
+                "body": "Item Body",
+                "title": "Item Title"
+            },
+            "id": "PVTI_lAHOAGkMOM4AUB10zgKFFKI",
+            "title": "Item Title"
+        }
+    ],
+    "totalCount": 3
+}

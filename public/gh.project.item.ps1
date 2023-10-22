@@ -17,12 +17,14 @@ function Get-ProjectItems{
         $env = Resolve-ProjectEnviroment -Owner $Owner -ProjectTitle $ProjectTitle; if(!$env){return $null}
         
         # Build expression
-        $commandPattern_Item_List = 'gh project item-list {0} --owner "{1}"'
-        $command = $commandPattern_Item_List -f $env.ProjectNumber, $env.Owner
+        # $commandPattern_Item_List = 'gh project item-list {0} --owner "{1}"'
+        # $command = $commandPattern_Item_List -f $env.ProjectNumber, $env.Owner
+
+        $command = Build-Command -CommandKey 'Project_Item_List' -Owner $env.Owner -ProjectNumber $env.ProjectNumber
         
         # Invoke Expresion
         if ($PSCmdlet.ShouldProcess("GitHub cli", $command)) {
-            $result = Invoke-GhExpression -Command $command
+            $result = Invoke-GhExpressionToJson -Command $command
         } else {
             $command | Write-Information
         }
