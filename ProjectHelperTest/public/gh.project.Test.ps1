@@ -127,7 +127,7 @@ function ProjectHelperTest_GHP_Projects_Success{
 
     Set-MockCommandWithFileData -CommandName 'Project_List_Owner' -FileName 'project_list.json'
 
-    $result = Get-Projects -Title "*Project" -Owner dumyowner
+    $result = Get-ProjectList -Title "*Project" -Owner dumyowner
 
     Assert-Count -Expected 1 -Presented $result
     Assert-Contains -Presented $result.title -Expected "Public Project"

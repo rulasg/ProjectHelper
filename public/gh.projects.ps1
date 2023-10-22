@@ -82,7 +82,7 @@ function Get-ProjectrojectNumber{
     return $projectNumber
 }
 
-function Get-Projects{
+function Get-ProjectList{
     [CmdletBinding(SupportsShouldProcess)]
     [Alias("gghp")]
     param(
@@ -162,6 +162,6 @@ function Get-Projects{
 
     return $ret
 
-} Export-ModuleMember -Function Get-Projects -Alias gghp
+} Export-ModuleMember -Function Get-ProjectList -Alias gghp
 
 
