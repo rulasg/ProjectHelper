@@ -15,8 +15,10 @@ function New-Issue{
         $Repo = Resolve-EnvironmentRepo -Repo $Repo ; if(!$Repo){return $null}
 
         # Build expression
-        $expressionPattern = 'gh issue create --repo "{0}" --title "{1}" --body "{2}"'
-        $command = $expressionPattern -f $Repo,$Title,$Body
+        # $expressionPattern = 'gh issue create --repo "{0}" --title "{1}" --body "{2}"'
+        # $command = $expressionPattern -f $Repo,$Title,$Body
+
+        $command = Build-Command -CommandKey Issue_Create -Repo $Repo -Title $Title -Body $Body
 
         # Invoke Expresion
         if ($PSCmdlet.ShouldProcess("GitHub cli", $command)) {
@@ -28,7 +30,11 @@ function New-Issue{
         }
 
         # Check if its a url
-        $success = Test-NewIssueResult -Result $result -Repo $Repo 
+        # $success = Test-NewIssueResult -Result $result -Repo $Repo
+
+        # Check that result is a url
+        [Uri]$uri = $null
+        $success = ([System.Uri]::TryCreate($result, [System.UriKind]::Absolute, [ref]$uri)) 
 
         # Error checking
         if(!$success){
@@ -41,48 +47,48 @@ function New-Issue{
     }
 } Export-ModuleMember -Function New-Issue -Alias nghi
 
-function Test-NewIssueResult{
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory)][string]$Result,
-        [Parameter(Mandatory)][string]$Repo
-    )
+# function Test-NewIssueResult{
+#     [CmdletBinding()]
+#     param(
+#         [Parameter(Mandatory)][string]$Result,
+#         [Parameter(Mandatory)][string]$Repo
+#     )
 
-    begin{}
+#     begin{}
     
-    process{
-        try{
-            $processing = $result
+#     process{
+#         try{
+#             $processing = $result
 
-            # Split repo
-            $repoSplit = $repo -split "/"
-            $repoOwner = $repoSplit[0]
-            $repoName = $repoSplit[1]
+#             # Split repo
+#             $repoSplit = $repo -split "/"
+#             $repoOwner = $repoSplit[0]
+#             $repoName = $repoSplit[1]
 
-            # Remove the numbrer
-            $processing = $processing | Split-Path -parent 
+#             # Remove the numbrer
+#             $processing = $processing | Split-Path -parent 
 
-            #Isse
-            ($processing | Split-Path -leaf) -eq "issues" | Assert -Message "Expected 'issues' in path: $processing"
+#             #Isse
+#             ($processing | Split-Path -leaf) -eq "issues" | Assert -Message "Expected 'issues' in path: $processing"
 
-            $processing = $processing | Split-Path -parent 
+#             $processing = $processing | Split-Path -parent 
             
-            # Repo Name
-            ($processing | Split-Path -leaf) -eq $repoName | Assert -Message "Expected '$repoName' in path: $processing"
+#             # Repo Name
+#             ($processing | Split-Path -leaf) -eq $repoName | Assert -Message "Expected '$repoName' in path: $processing"
             
-            $processing = $processing | Split-Path -parent 
+#             $processing = $processing | Split-Path -parent 
 
-            #Repo Owner
-            ($processing | Split-Path -leaf) -eq $repoOwner | Assert -Message "Expected '$repoOwner' in path: $processing"
+#             #Repo Owner
+#             ($processing | Split-Path -leaf) -eq $repoOwner | Assert -Message "Expected '$repoOwner' in path: $processing"
 
-        } catch {
-            "Error: {0}" -f $_.Exception.Message | Write-Error
-            return $false
-        }
+#         } catch {
+#             "Error: {0}" -f $_.Exception.Message | Write-Error
+#             return $false
+#         }
 
-        return $true
-    }
-}
+#         return $true
+#     }
+# }
 
 function Assert{
     [CmdletBinding()]

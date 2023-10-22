@@ -85,7 +85,7 @@ function Get-CommandList{
 function Get-CommandListDefaults{
     $list = @{
         Version                = @{IsJson = $false ; Command = 'gh --version'}
-        Issue_Create           = @{IsJson = $false ; Command = 'gh issue create --repo {repo} --title "{issueTitle}" --body "{issueBody}"'}
+        Issue_Create           = @{IsJson = $false ; Command = 'gh issue create --repo {repo} --title "{title}" --body "{body}"'}
         
         Project_Field_List     = @{IsJson = $false ; Command = 'gh project field-list {projectNumber} --owner {owner}'}
         Project_Item_List      = @{IsJson = $true ; Command = 'gh project item-list {projectNumber} --owner {owner} --format json'}
@@ -95,7 +95,7 @@ function Get-CommandListDefaults{
         Project_List           = @{IsJson = $true ; Command = 'gh project list --limit 1000 --format json'}
         Project_List_Owner     = @{IsJson = $true ; Command = 'gh project list --owner {owner} --limit 1000 --format json'}
 
-        Project_Item_Create    = @{IsJson = $false ; Command = 'gh project item-create {projectNumber} --owner {owner} --title "{itemTitle}" --body "{itemBody}"'}
+        Project_Item_Create    = @{IsJson = $false ; Command = 'gh project item-create {projectNumber} --owner {owner} --title "{title}" --body "{body}"'}
         Project_Item_Edit_Text = @{IsJson = $false ; Command = 'gh project item-edit --project-id {projectNumber} --id {1} --field-id {2} --text {3}'}
         
         Issue_List             = @{IsJson = $true ; Command = 'gh issue list --repo {repo} --json number,title,state,url'}
