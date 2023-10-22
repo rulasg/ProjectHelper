@@ -110,7 +110,7 @@ function Get-Issues{
         # Environment
         $Repo = Resolve-EnvironmentRepo -Repo $Repo ; if(!$Repo){return $null}
 
-        $command = Build-Command2 -CommandKey Issue_List -Repo $Repo
+        $command = Build-Command -CommandKey Issue_List -Repo $Repo
 
         # Invoke Expresion
         $result = Invoke-GhExpressionToJson -Command $command

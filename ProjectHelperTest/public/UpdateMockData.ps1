@@ -2,7 +2,7 @@
 function ProjectHelperTest_MockData_Update{
 
     $whatif = $true
-    $localommandList = Get-CommandList2
+    $localommandList = Get-CommandList
     $mockFilePath = Get-MockFilePath
     
     Update-MockData @InfoParameters -Verbose -WhatIf:$whatif
@@ -12,7 +12,7 @@ function ProjectHelperTest_MockData_Update{
     Assert-Contains -Presented $infoVar -Expected 'gh --version'
     Assert-Contains -Presented $infoVar -Expected 'gh issue create --repo rulasg/testPublicRepo --title "Issue Title" --body "Issue Body"'
     Assert-Contains -Presented $infoVar -Expected 'gh project field-list 11 --owner rulasg'
-    Assert-Contains -Presented $infoVar -Expected 'gh project item-list 11 --owner rulasg'
+    Assert-Contains -Presented $infoVar -Expected 'gh project item-list 11 --owner rulasg --format json'
     Assert-Contains -Presented $infoVar -Expected 'gh project item-add 11 --owner rulasg --url https://github.com/rulasg/publicrepo/issues/1'
     Assert-Contains -Presented $infoVar -Expected 'gh project item-delete 11 --owner rulasg --id PVTI_lAHOAGkMOM4AUB10zgIiF0E'
     Assert-Contains -Presented $infoVar -Expected 'gh project list --owner rulasg --limit 1000 --format json'    
@@ -40,7 +40,7 @@ function ProjectHelperTest_MockData_Update_CommandKey{
 
     $whatif = $true
     $mockFilePath = Get-MockFilePath
-    $localommandList = Get-CommandList2
+    $localommandList = Get-CommandListDefaults
     $key = "Issue_List"
 
     $commandItem = $localommandList.$key
@@ -69,7 +69,7 @@ function Update-MockData{
 
     $mockFilePath = Get-MockFilePath
 
-    $localCommandList = Get-CommandList2
+    $localCommandList = Get-CommandListDefaults
     # check if CommandKey is nul or white space
 
     if(-Not [string]::IsNullOrWhiteSpace($CommandKey)){
@@ -103,20 +103,19 @@ function Update-MockData{
         # Invoke command
         $result = Invoke-TestExpression -Command $command -whatif:$WhatIfPreference
 
-        # Convet to Json if needed
-        if($localCommandList[$key].IsJson){
-            $mockDataExtension = ".json"
-            if($result){
-                $result = $result | ConvertFrom-Json | ConvertTo-Json
-            } else {
+        # Set proper Result value
+        if($null -eq $result){
+            if($localCommandList[$key].IsJson){
                 $result = "[]"
+            } else {
+                $result = ""
             }
-        } else {
-            $mockDataExtension = ".txt"
         }
 
         # Build file path
-        $filePath = $mockFilePath | Join-Path -ChildPath $("{0}{1}" -f $key,$mockDataExtension)
+        $fileExtension = ($localCommandList[$key].IsJson) ? 'json' : 'txt' 
+        $fileName = $("{0}.{1}" -f $key.ToLower(),$fileExtension)
+        $filePath = $mockFilePath | Join-Path -ChildPath $fileName
 
         # Save file
         if ($PSCmdlet.ShouldProcess($filePath, "Out-File")) {
@@ -125,7 +124,7 @@ function Update-MockData{
 
         "Saving File $filePath" | Write-Information
     }
-} 
+}
 
 function Invoke-TestExpression{
     [CmdletBinding(SupportsShouldProcess)]

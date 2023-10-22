@@ -121,11 +121,15 @@ function ProjectHelperTest_GHP_GHPItems_Get_Success{
 
 function ProjectHelperTest_GHP_Projects_Success{
 
-    $expressionPattern_Project_List = 'gh project list --limit 1000 --format json'
-    $expressionPattern_Project_List += ' --owner "{0}"'
-    $command = $expressionPattern_Project_List -f "ownername"
+    # $expressionPattern_Project_List = 'gh project list --limit 1000 --format json'
+    # $expressionPattern_Project_List += ' --owner {0}'
+    # $command = $expressionPattern_Project_List -f "ownername"
 
-    $result = Get-Projects -Title "publi*" -Owner "ownername" -WhatIf  *>&1
+    Set-MockCommandWithFileData -CommandName 'Project_List_Owner' -FileName 'project_list.json'
 
-    Assert-Contains -Presented $result.MessageData -Expected $command
+    $result = Get-Projects -Title "*Project" -Owner dumyowner
+
+    Assert-Count -Expected 1 -Presented $result
+    Assert-Contains -Presented $result.title -Expected "Public Project"
+    Assert-Contains -Presented $result.number -Expected 11
 }

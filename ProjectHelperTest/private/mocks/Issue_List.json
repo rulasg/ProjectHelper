@@ -1,20 +1,20 @@
 [
-    {
-        "number": 3,
-        "state": "OPEN",
-        "title": "issue number 3 of a test repo",
-        "url": "https://github.com/rulasg/testPublicRepo/issues/3"
-    },
-    {
-        "number": 2,
-        "state": "OPEN",
-        "title": "issue number 1 of a test repo",
-        "url": "https://github.com/rulasg/testPublicRepo/issues/2"
-    },
-    {
-        "number": 1,
-        "state": "OPEN",
-        "title": "issue number 2 of a test repo",
-        "url": "https://github.com/rulasg/testPublicRepo/issues/1"
-    }
+  {
+    "number": 3,
+    "state": "OPEN",
+    "title": "issue number 3 of a test repo",
+    "url": "https://github.com/rulasg/testPublicRepo/issues/3"
+  },
+  {
+    "number": 2,
+    "state": "OPEN",
+    "title": "issue number 1 of a test repo",
+    "url": "https://github.com/rulasg/testPublicRepo/issues/2"
+  },
+  {
+    "number": 1,
+    "state": "OPEN",
+    "title": "issue number 2 of a test repo",
+    "url": "https://github.com/rulasg/testPublicRepo/issues/1"
+  }
 ]

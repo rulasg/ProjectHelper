@@ -1,0 +1,65 @@
+{
+    "projects": [
+        {
+            "number": 11,
+            "url": "https://github.com/users/rulasg/projects/11",
+            "shortDescription": "Testing projects",
+            "public": true,
+            "closed": false,
+            "title": "Public Project",
+            "id": "PVT_kwHOAGkMOM4AUB10",
+            "readme": "This is the readme of the project",
+            "items": {
+                "totalCount": 3
+            },
+            "fields": {
+                "totalCount": 9
+            },
+            "owner": {
+                "type": "User",
+                "login": "rulasg"
+            }
+        },
+        {
+            "number": 8,
+            "url": "https://github.com/users/rulasg/projects/8",
+            "shortDescription": "",
+            "public": false,
+            "closed": false,
+            "title": "rulasg-personal",
+            "id": "PVT_kwHOAGkMOM4AOHLz",
+            "readme": "",
+            "items": {
+                "totalCount": 7
+            },
+            "fields": {
+                "totalCount": 14
+            },
+            "owner": {
+                "type": "User",
+                "login": "rulasg"
+            }
+        },
+        {
+            "number": 3,
+            "url": "https://github.com/users/rulasg/projects/3",
+            "shortDescription": "",
+            "public": false,
+            "closed": false,
+            "title": "rulasg-dev",
+            "id": "PVT_kwHOAGkMOM4ANE4C",
+            "readme": "",
+            "items": {
+                "totalCount": 141
+            },
+            "fields": {
+                "totalCount": 12
+            },
+            "owner": {
+                "type": "User",
+                "login": "rulasg"
+            }
+        }
+    ],
+    "totalCount": 4
+}

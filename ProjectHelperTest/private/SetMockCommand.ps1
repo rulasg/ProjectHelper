@@ -14,7 +14,7 @@ function Set-MockCommand{
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)][string]$CommandName,
-        [Parameter()][string]$OutputData
+        [Parameter(Mandatory)][string]$OutputData
     )
 
     $global:OutputData.$CommandName = $OutputData
@@ -30,6 +30,8 @@ function Set-MockCommandWithFileData{
         [Parameter(Mandatory)][string]$CommandName,
         [Parameter()][string]$FileName
     )
+
+    $commandListDefault = Get-CommandListDefaults
 
     $mocksRoot = Get-MockFilePath
     
@@ -47,7 +49,10 @@ function Set-MockCommandWithFileData{
         throw "More than one file found for [$FileName]"
     }
 
-    $global:CommandList.$CommandName = "Get-Content -Path $file"
+    $value = $commandListDefault.$CommandName
+    $value.command = "Get-Content -Path $file"
+
+    $global:CommandList.$CommandName = $value
 }
 
 function Get-MockFilePath{
