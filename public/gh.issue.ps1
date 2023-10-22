@@ -1,4 +1,4 @@
-function New-GhIssue{
+function New-Issue{
     [CmdletBinding(SupportsShouldProcess)]
     [Alias("nghi")]
     param(
@@ -12,7 +12,7 @@ function New-GhIssue{
     process{
 
         # Get default values from Environment
-        $Repo = Resolve-GhIEnvironmentRepo -Repo $Repo ; if(!$Repo){return $null}
+        $Repo = Resolve-EnvironmentRepo -Repo $Repo ; if(!$Repo){return $null}
 
         # Build expression
         $expressionPattern = 'gh issue create --repo "{0}" --title "{1}" --body "{2}"'
@@ -28,7 +28,7 @@ function New-GhIssue{
         }
 
         # Check if its a url
-        $success = Test-GhINewIssueResult -Result $result -Repo $Repo 
+        $success = Test-NewIssueResult -Result $result -Repo $Repo 
 
         # Error checking
         if(!$success){
@@ -39,9 +39,9 @@ function New-GhIssue{
         # Return issue URL
         return $result
     }
-} Export-ModuleMember -Function New-GhIssue -Alias nghi
+} Export-ModuleMember -Function New-Issue -Alias nghi
 
-function Test-GhINewIssueResult{
+function Test-NewIssueResult{
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)][string]$Result,
@@ -99,67 +99,23 @@ function Assert{
     }
 }
 
-function Get-GhIssues{
+function Get-Issues{
     [CmdletBinding()]
     [Alias("gghi")]
     param(
         [Parameter()][string]$Repo
     )
 
-#   USAGE
-#   gh issue list [flags]
-#
-#     FLAGS
-#       --app string         Filter by GitHub App author
-#   -a, --assignee string    Filter by assignee
-#   -A, --author string      Filter by author
-#   -q, --jq expression      Filter JSON output using a jq expression
-#       --json fields        Output JSON with the specified fields
-#   -l, --label strings      Filter by label
-#   -L, --limit int          Maximum number of issues to fetch (default 30)
-#       --mention string     Filter by mention
-#   -m, --milestone string   Filter by milestone number or title
-#   -S, --search query       Search issues with query
-#   -s, --state string       Filter by state: {open|closed|all} (default "open")
-#   -t, --template string    Format JSON output using a Go template; see "gh help formatting"
-#   -w, --web                List issues in the web browser
-
     process {
         # Environment
-        $Repo = Resolve-GhIEnvironmentRepo -Repo $Repo ; if(!$Repo){return $null}
+        $Repo = Resolve-EnvironmentRepo -Repo $Repo ; if(!$Repo){return $null}
 
-        # Build expression
-        # $expressionPattern = 'gh issue list --repo {0} --json number,title,state,url'
-        # $command = $expressionPattern -f $Repo
-
-        $command = Build-GhCommand Issue_List $Repo
+        $command = Build-Command -CommandKey Issue_List -Repo $Repo
 
         # Invoke Expresion
         $result = Invoke-GhExpressionToJson -Command $command
 
-        # # Check output success
-        # $success = Test-GhIssueList -Result $result
-
-        # # Error checking
-        # if(!$success){
-        #     "Error [{0}] calling gh expression [{1}]" -f $result, $command | Write-Error
-        #     return $null
-        # }
-
-        # Transform
-        # So far no transformation needed
-        # $ret = $result | ConvertFrom-Json
-
         # Return issues
         return $result
     }
-} Export-ModuleMember -Function Get-GhIssues -Alias gghi
-
-function Test-GhIssueList{
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory)][string]$Result
-    )
-
-    return $true
-}
+} Export-ModuleMember -Function Get-Issues -Alias gghi

@@ -59,11 +59,11 @@ $expressionPattern_Item_Create = "gh project item-create {0} --owner `"{1}`" --t
 function ProjectHelperTest_GHP_GHPItem_Add_Manual_With_Environment{
 
     # Testing parameters input. All calls to New-ProjectItem will fail on checking for ProjectNumber in Environment
-    # "gh project item-create 60 --owner `"solidify-internal`" --title `"title text`" --body `"body text`""
+    # "gh project item-create 60 --owner `"owner2`" --title `"title text`" --body `"body text`""
     # $expressionPattern_Item_Create = "gh project item-create {0} --owner `"{1}`" --title `"{2}`" --body `"{3}`""
 
     $projectNumber = 666 #1
-    $owner = "solidify-internal" #2
+    $owner = "owner2" #2
     $title = "title text" #3
     $body = "body text" #4
     $projectTitle = "Clients Planner"
@@ -102,9 +102,7 @@ function ProjectHelperTest_GHP_GHPItem_Add_Manual_Success{
     $expectedItemCreate = 'gh project item-create {0} --owner "{1}" --title "{2}" --body "{3}"' -f $projectNumber, $owner, $itemTitle, $itemBody
 
     $expresionProjectList = 'gh project list --owner "{0}" --limit 1000 --format json' -f $owner
-    
-    Set-DevUser2
-    
+
     $null = Clear-ProjectEnvironment
 
     $result = New-ProjectItem -ProjectTitle $projectTitle -Owner $owner -Title $itemTitle -Body $itemBody -WhatIf @InfoParameters
@@ -117,20 +115,21 @@ function ProjectHelperTest_GHP_GHPItem_Add_Manual_Success{
 function ProjectHelperTest_GHP_GHPItems_Get_Success{
     # Need to inject gh call for testing
 
-    Set-DevUser2
-
-    $result = Get-ProjectItems -ProjectTitle "Clients Planner" -Owner "solidify-internal" -WhatIf @InfoParameters
+    $result = Get-ProjectItems -ProjectTitle "Clients Planner" -Owner "owner2" -WhatIf @InfoParameters
     Assert-IsNull -Object $result
 }
 
 function ProjectHelperTest_GHP_Projects_Success{
-    Set-DevUser2
 
-    $expressionPattern_Project_List = 'gh project list --limit 1000 --format json'
-    $expressionPattern_Project_List += ' --owner "{0}"'
-    $command = $expressionPattern_Project_List -f "ownername"
+    # $expressionPattern_Project_List = 'gh project list --limit 1000 --format json'
+    # $expressionPattern_Project_List += ' --owner {0}'
+    # $command = $expressionPattern_Project_List -f "ownername"
 
-    $result = Get-Projectrojects -Title "publi*" -Owner "ownername" -WhatIf  *>&1
+    Set-MockCommandWithFileData -CommandName 'Project_List_Owner' -FileName 'project_list.json'
 
-    Assert-Contains -Presented $result.MessageData -Expected $command
+    $result = Get-Projects -Title "*Project" -Owner dumyowner
+
+    Assert-Count -Expected 1 -Presented $result
+    Assert-Contains -Presented $result.title -Expected "Public Project"
+    Assert-Contains -Presented $result.number -Expected 11
 }

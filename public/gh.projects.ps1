@@ -82,7 +82,7 @@ function Get-ProjectrojectNumber{
     return $projectNumber
 }
 
-function Get-Projectrojects{
+function Get-Projects{
     [CmdletBinding(SupportsShouldProcess)]
     [Alias("gghp")]
     param(
@@ -92,13 +92,19 @@ function Get-Projectrojects{
     )
 
     # Build Command
-    $expressionPattern_Project_List = 'gh project list --limit 1000 --format json'
+    # $expressionPattern_Project_List = 'gh project list --limit 1000 --format json'
 
-    if($Owner){
-        $expressionPattern_Project_List += ' --owner "{0}"'
-        $command = $expressionPattern_Project_List -f $Owner
+    # if($Owner){
+    #     $expressionPattern_Project_List += ' --owner "{0}"'
+    #     $command = $expressionPattern_Project_List -f $Owner
+    # } else {
+    #     $command = $expressionPattern_Project_List
+    # }
+
+    if([string]::IsNullOrWhiteSpace($owner)){
+        $command = Build-Command -CommandKey Project_List
     } else {
-        $command = $expressionPattern_Project_List
+        $command = Build-Command -CommandKey Project_List_Owner -Owner $Owner
     }
 
     # Invoke Command
@@ -156,6 +162,6 @@ function Get-Projectrojects{
 
     return $ret
 
-} Export-ModuleMember -Function Get-Projectrojects -Alias gghp
+} Export-ModuleMember -Function Get-Projects -Alias gghp
 
 

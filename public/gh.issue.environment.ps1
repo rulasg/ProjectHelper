@@ -1,12 +1,10 @@
 
 
-function Resolve-GhIEnvironmentRepo {
+function Resolve-EnvironmentRepo {
     [CmdletBinding()]
     param(
         [Parameter()][string]$Repo
     )
-
-    # $env = Get-GhIEnvironment
 
     if($Repo){
         return $Repo
