@@ -9,8 +9,6 @@ function Invoke-GhExpression{
         [Parameter(Mandatory)][string]$Command
     )
 
-    # $commandScript = [scriptblock]::Create($Command)
-    # Invoke-command -ScriptBlock $commandScript
     $ret = $null
 
     $Command | Write-Information
@@ -34,7 +32,14 @@ function Invoke-GhExpressionToJson{
 
     $result = Invoke-GhExpression -Command $Command
 
-    $ret = $null -eq $result ? $null : $result | ConvertFrom-Json
+    # Check if result is null or whitespace
+    if([string]::IsNullOrWhiteSpace($result)){
+        $ret = '[]'
+    } else {
+        $ret = $result
+    }
+
+    $ret = $result | ConvertFrom-Json
 
     return $ret
 }

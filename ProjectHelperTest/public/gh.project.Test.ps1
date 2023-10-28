@@ -22,15 +22,13 @@ function ProjectHelperTest_GHP_AddGHPDraft_Parameters_Success{
 
 }
 
-$expressionPattern_Project_List = 'gh project list --owner "{0}" --limit 1000 --format json'
-
 function ProjectHelperTest_GHP_SetProjectEnvironment_Success{
 
     Clear-ProjectEnvironment
     
     $result = Set-ProjectEnvironment -Owner "owner2" -ProjectTitle "title2" -ProjectNumber 66699 -Passthru
     
-    $result = Get-ProjectEnvironment
+    $result = Get-EnvironmentProject
     
     Assert-AreEqual -Presented $result.Owner -Expected "owner2"
     Assert-AreEqual -Presented $result.ProjectTitle -Expected "title2"
@@ -54,13 +52,7 @@ function ProjectHelperTest_GHP_SetProjectEnvironment_Pipe{
     Assert-AreEqual -Presented $result.ProjectNumber -Expected 666
 }
 
-$expressionPattern_Item_Create = "gh project item-create {0} --owner `"{1}`" --title `"{2}`" --body `"{3}`""
-
-function ProjectHelperTest_ProjectItem_New__With_Environment{
-
-    # Testing parameters input. All calls to New-ProjectItem will fail on checking for ProjectNumber in Environment
-    # "gh project item-create 60 --owner `"owner2`" --title `"title text`" --body `"body text`""
-    # $expressionPattern_Item_Create = "gh project item-create {0} --owner `"{1}`" --title `"{2}`" --body `"{3}`""
+function ProjectHelperTest_ProjectItems_New__With_Environment{
 
     $projectNumber = 11
     $owner = "rulasg"
@@ -93,7 +85,7 @@ function ProjectHelperTest_ProjectItem_New__With_Environment{
     Assert-AreEqual -Expected 'DraftIssue' -presented $result.type
 }
 
-function ProjectHelperTest_ProjectItem_New_Success{
+function ProjectHelperTest_ProjectItems_New_Success{
 
     $owner = "owner2"
     $projectTitle = "Clients Planner"
@@ -119,7 +111,7 @@ function ProjectHelperTest_ProjectItem_New_Success{
     Assert-AreEqual -Expected 'DraftIssue' -presented $result.type
 }
 
-function ProjectHelperTest_GHP_GHPItems_Get_Success{
+function ProjectHelperTest_ProjectItems_Get_Success{
     # Need to inject gh call for testing
 
     Set-MockCommand -CommandName 'Project_Item_List'
@@ -134,11 +126,24 @@ function ProjectHelperTest_GHP_GHPItems_Get_Success{
     Assert-Contains -Presented $result.items.title -Expected "Item Title"
 }
 
-function ProjectHelperTest_GHP_Projects_Success{
+function ProjectHelperTest_ProjectItems_Get_Success_Manual{
+    # Test for development as this will call GitHub.
+    # Set to Skip to avoid calling GitHub
 
-    # $expressionPattern_Project_List = 'gh project list --limit 1000 --format json'
-    # $expressionPattern_Project_List += ' --owner {0}'
-    # $command = $expressionPattern_Project_List -f "ownername"
+    Assert-SkipTest
+
+    Reset-CommandList
+
+    $result = Get-ProjectItems -ProjectNumber 11 -Owner "rulasg"
+
+    $kk1 = $result.items | Where-Object {$_.title -eq "kk1"}
+    Assert-AreEqual -Presented $kk1.assignees   -Expected rulasg 
+    Assert-AreEqual -Presented $kk1.shortStatus -Expected "value for kk" 
+    Assert-AreEqual -Presented $kk1.status      -Expected Todo 
+    Assert-AreEqual -Presented $kk1.title       -Expected "kk1" 
+}
+
+function ProjectHelperTest_GHP_Projects_Success{
 
     Set-MockCommand -CommandName 'Project_List_Owner' -FileName 'project_list.json'
 
@@ -147,4 +152,13 @@ function ProjectHelperTest_GHP_Projects_Success{
     Assert-Count -Expected 1 -Presented $result
     Assert-Contains -Presented $result.title -Expected "Public Project"
     Assert-Contains -Presented $result.number -Expected 11
+}
+
+function ProjectHelperTest_ProjectNumber_Get{
+
+    Set-MockCommand -CommandName 'Project_List_Owner'
+
+    $result = Get-ProjectNumber -ProjectTitle "Public Project" -Owner "dumyowner" @InfoParameters 
+
+    Assert-AreEqual -Presented $result -Expected 11
 }

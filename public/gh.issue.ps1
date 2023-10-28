@@ -15,9 +15,6 @@ function New-Issue{
         $Repo = Resolve-EnvironmentRepo -Repo $Repo ; if(!$Repo){return $null}
 
         # Build expression
-        # $expressionPattern = 'gh issue create --repo "{0}" --title "{1}" --body "{2}"'
-        # $command = $expressionPattern -f $Repo,$Title,$Body
-
         $command = Build-Command -CommandKey Issue_Create -Repo $Repo -Title $Title -Body $Body
 
         # Invoke Expresion
