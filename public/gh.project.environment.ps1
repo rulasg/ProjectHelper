@@ -3,7 +3,7 @@
 .Synopsis 
 GitHub Project functions that shows Enviroment variables used on GH Projects commands
 #>
-function Get-ProjectEnvironment{
+function Get-EnvironmentProject{
     [CmdletBinding()]
     [Alias("gghpe")]
     param(
@@ -18,7 +18,7 @@ function Get-ProjectEnvironment{
 
     return $ret
 
-} Export-ModuleMember -Function Get-ProjectEnvironment -Alias gghpe
+} Export-ModuleMember -Function Get-EnvironmentProject -Alias gghpe
 
 <#
 .Synopsis
@@ -35,13 +35,17 @@ function Set-ProjectEnvironment{
         [Parameter()][switch]$PassThru
     )
 
+    '$env:GHP_OWNER = ' + $Owner | Write-Verbose
      $env:GHP_OWNER = $Owner
+
+     '$env:GHP_PROJECT_TITLE = ' + $ProjectTitle | Write-Verbose
      $env:GHP_PROJECT_TITLE = $ProjectTitle
+
+     '$env:GHP_PROJECT_NUMBER = ' + $ProjectNumber | Write-Verbose
      $env:GHP_PROJECT_NUMBER = $ProjectNumber
-    #  $env:GHP_PROJECT_ID = $Id
 
     if($PassThru){
-        return Get-ProjectEnvironment
+        return Get-EnvironmentProject
     }
 } Export-ModuleMember -Function Set-ProjectEnvironment -Alias sghpe
 
@@ -54,11 +58,12 @@ function Clear-ProjectEnvironment{
     param(
     )
 
-    $env:GHP_OWNER = "null"
-    $env:GHP_PROJECT_TITLE = "null"
-    $env:GHP_PROJECT_NUMBER = -1
+    # $env:GHP_OWNER = "null"
+    # $env:GHP_PROJECT_TITLE = "null"
+    # $env:GHP_PROJECT_NUMBER = -1
+    Set-ProjectEnvironment -ProjectTitle "null" -ProjectNumber -1 -Owner "null"
 
-    return Get-ProjectEnvironment
+    return Get-EnvironmentProject
 } Export-ModuleMember -Function Clear-ProjectEnvironment
 
 function Test-ProjectEnvironment{
@@ -69,13 +74,17 @@ function Test-ProjectEnvironment{
         [Parameter(Mandatory,ValueFromPipelineByPropertyName)][int]$ProjectNumber,
         [Parameter(Mandatory,ValueFromPipelineByPropertyName)][string]$Owner
     )
-    
-    return  ($env:GHP_OWNER -eq $Owner)-and ($env:GHP_PROJECT_TITLE -eq $ProjectTitle)-and ($env:GHP_PROJECT_NUMBER -eq $ProjectNumber)
+    $ret = ($env:GHP_OWNER -eq $Owner)-and ($env:GHP_PROJECT_TITLE -eq $ProjectTitle)-and ($env:GHP_PROJECT_NUMBER -eq $ProjectNumber)
+
+    # traceparametrs and return
+    'Test-ProjectEnvironment -ProjectTitle {0} -ProjectNumber {1} -Owner {2} = {3}' -f $ProjectTitle, $ProjectNumber, $Owner, $ret | Write-Verbose
+
+    return  $ret
 } Export-ModuleMember -Function Test-ProjectEnvironment -Alias tghpe
 
 # Private functions
 
-function Resolve-GhEnvironmentOwner {
+function Resolve-EnvironmentProjectOwner {
     [CmdletBinding()]
     param(
         [Parameter()][string]$Owner,
@@ -97,7 +106,7 @@ function Resolve-GhEnvironmentOwner {
     return $null
 }
 
-function Resolve-GhEnvironmentProjectNumber {
+function Resolve-EnvironmentProjectNumber {
     [CmdletBinding()]
     [OutputType([int])]
     param(
@@ -121,13 +130,13 @@ function Resolve-GhEnvironmentProjectNumber {
         $null = Clear-ProjectEnvironment
 
         # Call remote
-        $ProjectNumber = Get-ProjectrojectNumber -ProjectTitle $ProjectTitle -Owner $Owner
+        $ProjectNumber = Get-ProjectNumber -ProjectTitle $ProjectTitle -Owner $Owner
     }
 
     return $ProjectNumber
 }
 
-function Resolve-GhEnvironmentProjectTitle {
+function Resolve-EnvironmentProjectTitle {
     [CmdletBinding()]
     param(
         [Parameter()][string]$ProjectTitle,
@@ -136,20 +145,24 @@ function Resolve-GhEnvironmentProjectTitle {
 
     if($ProjectTitle){
         "Using parameter ProjectTitle" | Write-Information
+        "ProjectTitle return : $ProjectTitle" | Write-Information
         return $ProjectTitle
     }
 
     if($Environment.ProjectTitle -ne "null"){
         "ProjectTitle found in Environment" | Write-Information
+        "ProjectTitle return : $($Environment.ProjectTitle)" | Write-Information
+
         return $Environment.ProjectTitle
     }
 
     "No ProjectTitle found in Environment" | Write-Error
+    "ProjectTitle return : null" | Write-Information
 
     return $null
 }
 
-function Resolve-ProjectEnviroment{
+function Resolve-EnvironmentProject{
     [CmdletBinding(SupportsShouldProcess)]
     [Alias("rghpe")]
     param(
@@ -159,18 +172,18 @@ function Resolve-ProjectEnviroment{
     )
 
     # Get actual values from Environment
-    $env = Get-ProjectEnvironment
+    $env = Get-EnvironmentProject
 
     # Look for ProjectTitle
-    $ProjectTitle = Resolve-GhEnvironmentProjectTitle -ProjectTitle $ProjectTitle -Environment $env
+    $ProjectTitle = Resolve-EnvironmentProjectTitle -ProjectTitle $ProjectTitle -Environment $env
     if(!$ProjectTitle){return $null}
 
     # Look for Owner
-    $Owner = Resolve-GhEnvironmentOwner -Owner $Owner -Environment $env
+    $Owner = Resolve-EnvironmentProjectOwner -Owner $Owner -Environment $env
     if(!$Owner){return $null}
 
     # Look for ProjectNumber
-    $ProjectNumber = Resolve-GhEnvironmentProjectNumber -ProjectTitle $ProjectTitle -Owner $Owner -Environment $env -Force:$Force
+    $ProjectNumber = Resolve-EnvironmentProjectNumber -ProjectTitle $ProjectTitle -Owner $Owner -Environment $env -Force:$Force
     if($ProjectNumber -eq -1){return $null}
 
     # Return value
@@ -185,4 +198,4 @@ function Resolve-ProjectEnviroment{
 
     return $ret
 
-} Export-ModuleMember -Function Resolve-ProjectEnviroment -Alias rghpe
+} Export-ModuleMember -Function Resolve-EnvironmentProject -Alias rghpe

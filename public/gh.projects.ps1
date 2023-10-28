@@ -13,16 +13,10 @@ function New-ProjectItem{
     begin{}
 
     process{
-        $env = Resolve-ProjectEnviroment -Owner $Owner -ProjectTitle $ProjectTitle ; if(!$env){return $null}
         # Get default values from Environment
-        # $Owner = Find-ProjectOwnerFromEnvironment -Owner $Owner ; if(!$Owner){return $null}
-        # $ProjectTitle = Find-ProjectrojectTitleFromEnvironment($ProjectTitle) ; if(!$ProjectTitle){return $null}
-        # $ProjectNumber = Get-ProjectrojectNumber -ProjectTitle $ProjectTitle -Owner $Owner ; if($ProjectNumber -eq -1){return $null}
+        $env = Resolve-EnvironmentProject -Owner $Owner -ProjectTitle $ProjectTitle ; if(!$env){return $null}
 
         # Build expression
-        # $expressionPattern_Item_Create = "gh project item-create {0} --owner `"{1}`" --title `"{2}`" --body `"{3}`""
-        # $command = $expressionPattern_Item_Create -f $env.ProjectNumber, $env.Owner, $Title, $Body
-
         $command = Build-Command -CommandKey Project_Item_Create -Owner $env.Owner -ProjectNumber $env.ProjectNumber -Title $Title -Body $Body
 
         # Invoke Expresion
@@ -39,7 +33,7 @@ function New-ProjectItem{
     }
 } Export-ModuleMember -Function New-ProjectItem -Alias nghpd
 
-function Get-ProjectrojectNumber{
+function Get-ProjectNumber{
     [CmdletBinding(SupportsShouldProcess)]
     [OutputType([int])]
     [Alias("gghpn")]
@@ -49,10 +43,6 @@ function Get-ProjectrojectNumber{
         [Parameter()][switch]$Force
     )
     
-    # Build expression
-    # $expressionPattern_Project_List = 'gh project list --owner "{0}" --limit 1000 --format json'
-    # $command = $expressionPattern_Project_List -f $Owner
-
     $command = Build-Command -CommandKey Project_List_Owner -Owner $Owner
 
     if ($PSCmdlet.ShouldProcess("GitHub Cli", $command)) {
@@ -82,7 +72,7 @@ function Get-ProjectrojectNumber{
     }
 
     return $projectNumber
-}
+} Export-ModuleMember -Function Get-ProjectNumber -Alias gghpn
 
 function Get-ProjectList{
     [CmdletBinding(SupportsShouldProcess)]
@@ -92,16 +82,6 @@ function Get-ProjectList{
         [Parameter()][string]$Title,
         [Parameter()][switch]$Details
     )
-
-    # Build Command
-    # $expressionPattern_Project_List = 'gh project list --limit 1000 --format json'
-
-    # if($Owner){
-    #     $expressionPattern_Project_List += ' --owner "{0}"'
-    #     $command = $expressionPattern_Project_List -f $Owner
-    # } else {
-    #     $command = $expressionPattern_Project_List
-    # }
 
     if([string]::IsNullOrWhiteSpace($owner)){
         $command = Build-Command -CommandKey Project_List

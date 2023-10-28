@@ -6,11 +6,9 @@ function ProjectHelperTest_GHPEnvironment_Resolve{
 
     Set-MockCommand -CommandName 'Project_List_Owner'
 
-    $expressionPattern_Project_List = 'gh project list --owner "{0}" --limit 1000 --format json'
-
     Clear-ProjectEnvironment
 
-    $result = Resolve-ProjectEnviroment -ProjectTitle $ProjectTitle -Owner $owner  @InfoParameters
+    $result = Resolve-EnvironmentProject -ProjectTitle $ProjectTitle -Owner $owner  @InfoParameters
 
     Assert-Contains -Presented $infoVar.MessageData -Expected 'ProjectNumber NOT found in environment or Forced'
     Assert-AreEqual -Expected $result.ProjectNumber -Presented 11
@@ -18,13 +16,13 @@ function ProjectHelperTest_GHPEnvironment_Resolve{
     Assert-AreEqual -Expected $result.Owner -Presented rulasg
 
     # Second call with ProjectNumber cached on environment
-    $result = Resolve-ProjectEnviroment -ProjectTitle $ProjectTitle -Owner $owner  @InfoParameters
+    $result = Resolve-EnvironmentProject -ProjectTitle $ProjectTitle -Owner $owner  @InfoParameters
 
     Assert-Contains -Presented $infoVar.MessageData -Expected 'ProjectNumber found in Environment'
     Assert-AreEqual -Expected $result.ProjectNumber -Presented 11
 
     # With Force
-    $result = Resolve-ProjectEnviroment -ProjectTitle $ProjectTitle -Owner $owner -Force  @InfoParameters
+    $result = Resolve-EnvironmentProject -ProjectTitle $ProjectTitle -Owner $owner -Force  @InfoParameters
     Assert-Contains -Presented $infoVar.MessageData -Expected 'ProjectNumber found in Environment'
     Assert-Contains -Presented $infoVar.MessageData -Expected 'ProjectNumber NOT found in environment or Forced'
     Assert-AreEqual -Expected $result.ProjectNumber -Presented 11

@@ -5,22 +5,30 @@ function Get-ProjectItems{
     param(
         [Parameter()][string]$ProjectTitle,
         [Parameter()][string]$Owner,
-        [Parameter()][string]$ProjectNumber
+        [Parameter()][int32]$ProjectNumber = -1
     )
 
     process {
-        # # Get default values from Environment
-        # $Owner = Find-ProjectOwnerFromEnvironment -Owner $Owner ; if(!$Owner){return $null}
-        # $ProjectTitle = Find-ProjectrojectTitleFromEnvironment($ProjectTitle) ; if(!$ProjectTitle){return $null}
-        # [int]$ProjectNumber = Get-ProjectrojectNumber -ProjectTitle $ProjectTitle -Owner $Owner ; if($ProjectNumber -eq -1){return $null}
 
-        $env = Resolve-ProjectEnviroment -Owner $Owner -ProjectTitle $ProjectTitle; if(!$env){return $null}
-        
-        # Build expression
-        # $commandPattern_Item_List = 'gh project item-list {0} --owner "{1}"'
-        # $command = $commandPattern_Item_List -f $env.ProjectNumber, $env.Owner
+        # Resolve ProjectNumber
+        if($ProjectNumber -ne -1){
+            $projectNumberParam = $ProjectNumber
+            $ownerParam = $Owner
 
-        $command = Build-Command -CommandKey 'Project_Item_List' -Owner $env.Owner -ProjectNumber $env.ProjectNumber
+        } else{
+            # Resolve ProjectNumber from Environment
+            $env = Resolve-EnvironmentProject -Owner $Owner -ProjectTitle $ProjectTitle;
+
+            if($env.ProjectNumber -eq -1){
+                "Wrong project parameters please try again" | Write-Error
+            } else {
+                $projectNumberParam = $env.ProjectNumber
+                $ownerParam = $env.Owner
+            }
+        } 
+
+        #Build Command
+        $command = Build-Command -CommandKey 'Project_Item_List' -Owner $ownerParam -ProjectNumber $projectNumberParam
         
         # Invoke Expresion
         if ($PSCmdlet.ShouldProcess("GitHub cli", $command)) {
@@ -28,11 +36,11 @@ function Get-ProjectItems{
         } else {
             $command | Write-Information
         }
-        
+
         # Error checking
 
         # Transform o$result into a PowerShell object
-        
+
         # return
         return $result
     }
@@ -46,20 +54,13 @@ function Add-ProjectItem {
         [Parameter(Mandatory,ValueFromPipelineByPropertyName)][Alias("Url")][string]$IssueUrl
     )
 
-    begin{
-        # gh project item-add $ProjectNumber --owner $owner --url $IssueUrl
-        $commandPattern = 'gh project item-add {0} --owner {1} --url {2}'
-    }
-
     process {
         # Environment
-        # $Owner = Find-ProjectOwnerFromEnvironment -Owner $Owner ; if(!$Owner){return $null}
-        # $ProjectTitle = Find-ProjectrojectTitleFromEnvironment -ProjectTitle $ProjectTitle ; if(!$ProjectTitle){return $null}
-        # [int]$ProjectNumber = Get-ProjectrojectNumber -ProjectTitle $ProjectTitle -Owner $Owner ; if($ProjectNumber -eq -1){return $null}
-        $env = Resolve-ProjectEnviroment -Owner $Owner -ProjectTitle $ProjectTitle; if(!$env){return $null}
+        $env = Resolve-EnvironmentProject -Owner $Owner -ProjectTitle $ProjectTitle; if(!$env){return $null}
 
         # Build Expression
-        $command = $commandPattern -f $env.ProjectNumber, $env.Owner, $IssueUrl
+        $command = Build-Command -CommandKey Project_Item_Add -Owner $env.Owner -ProjectNumber $env.ProjectNumber -Url $IssueUrl
+        # $command = $commandPattern -f $env.ProjectNumber, $env.Owner, $IssueUrl
 
         # Invoke Expression
         if ($PSCmdlet.ShouldProcess("Target", "Operation")) {
