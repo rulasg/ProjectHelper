@@ -113,7 +113,7 @@ function Import-RequiredModule{
 #>
 function Get-RequiredModule{
     [CmdletBinding()]
-    [OutputType([hashtable[]])]
+    [OutputType([Object[]])]
     param()
 
     # Required Modules
@@ -135,7 +135,7 @@ function Get-RequiredModule{
 Import-RequiredModule "TestingHelper" -AllowPrerelease
 
 # Install and Load Module dependencies
-Get-RequiredModule | Import-RequiredModule -AllowPrerelease 
+Get-RequiredModule | Import-RequiredModule -AllowPrerelease
 
 if($TestName){
     Invoke-TestingHelper -TestName $TestName -ShowTestErrors:$ShowTestErrors

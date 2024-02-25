@@ -61,7 +61,7 @@ function Invoke-DeployModuleToPSGallery{
         # During testing we should use -WhatIf paarmetre when calling for deploy. 
         # Just reach this point when testing call failure
 
-        ## Install delendecies as Publish-Module 
+        ## Install delendecies as Publish-Module
         # will check if dependecies are installed locally due to a bug
         # in Test-ModuleManifest
         Install-Dependencies -ModuleManifestPath $psdPath
