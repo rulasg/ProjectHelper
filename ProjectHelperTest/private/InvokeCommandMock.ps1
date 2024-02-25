@@ -1,5 +1,8 @@
 # Managing dependencies
 $MODULE_INVOKATION_TAG = "ProjectHelperModule_Mock"
+$ROOT = $PSScriptRoot | Split-Path -Parent
+$MOCK_PATH = $ROOT | Join-Path -ChildPath 'private' -AdditionalChildPath 'mocks'
+
 
 function Set-InvokeCommandMock{
     [CmdletBinding()]
@@ -25,8 +28,7 @@ function MockCall{
 
     )
 
-    $root = $PSScriptRoot | Split-Path -Parent
-    $mockFile = $root | Join-Path -ChildPath 'public' -AdditionalChildPath 'testData', $filename
+    $mockFile = $MOCK_PATH | Join-Path -ChildPath $filename
     Set-InvokeCommandMock -Alias $command -Command "Get-Content -Path $(($mockFile | Get-Item).FullName)"
 }
 
