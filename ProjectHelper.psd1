@@ -51,7 +51,7 @@ Copyright = '(c) rulasg. All rights reserved.'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-# RequiredModules = @()
+RequiredModules = @(@{ModuleName="InvokeHelper"; ModuleVersion="1.2"})
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
