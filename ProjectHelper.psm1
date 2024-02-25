@@ -1,7 +1,9 @@
-Write-Information -Message ("Loading {0} ..." -f ($PSCommandPath | Split-Path -LeafBase)) -InformationAction continue
-
 #Module path is where resides the RootModule file. This file. :)
 $MODULE_PATH = $PSScriptRoot
+
+# Import START
+$START = $MODULE_PATH | Join-Path -ChildPath "private" -AdditionalChildPath 'START.ps1'
+if($START | Test-Path){ . $($START | Get-Item).FullName }
 
 #Get public and private function definition files.
 $Public  = @( Get-ChildItem -Path $MODULE_PATH\public\*.ps1 -ErrorAction SilentlyContinue )
