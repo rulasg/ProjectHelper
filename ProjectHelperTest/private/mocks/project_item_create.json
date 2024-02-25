@@ -1,1 +1,6 @@
-{"id":"PVTI_lAHOAGkMOM4AUB10zgKFIj8","title":"Title text","body":"Body text to be used","type":"DraftIssue"}
+{
+    "id": "PVTI_lAHOAGkMOM4AUB10zgKFIj8",
+    "title": "Title text",
+    "body": "Body text to be used",
+    "type": "DraftIssue"
+}
