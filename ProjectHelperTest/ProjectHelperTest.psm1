@@ -1,7 +1,8 @@
-Write-Information -Message ("Loading {0} ..." -f ($PSCommandPath | Split-Path -LeafBase)) -InformationAction continue
-
 #Module path is where resides the RootModule file. This file. :)
 $MODULE_PATH = $PSScriptRoot
+
+# Import InvokeCommandMock
+. $(($MODULE_PATH | Join-Path -ChildPath "private" -AdditionalChildPath InvokeCommandMock.ps1 | Get-Item).FullName)
 
 #Get public and private function definition files.
 $Public  = @( Get-ChildItem -Path $MODULE_PATH\public\*.ps1 -ErrorAction SilentlyContinue )
@@ -25,3 +26,8 @@ Foreach($import in @($Public + $Private))
 # Export Public functions ($Public.BaseName) for WIP modules
 # Set variables visible to the module and its functions only
 
+Export-ModuleMember -Function ProjectHelperTest_*
+
+# Disable calling dependencies
+# This requires that all dependecies are called through mocks
+Disable-InvokeCommandAlias -Tag ProjectHelperModule
