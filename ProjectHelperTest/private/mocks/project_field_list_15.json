@@ -1,0 +1,130 @@
+{
+    "fields": [
+        {
+            "id": "PVTF_lADOBCrGTM4AdUH_zgTAJgU",
+            "name": "Title",
+            "type": "ProjectV2Field"
+        },
+        {
+            "id": "PVTF_lADOBCrGTM4AdUH_zgTAJgY",
+            "name": "Assignees",
+            "type": "ProjectV2Field"
+        },
+        {
+            "id": "PVTSSF_lADOBCrGTM4AdUH_zgTAJgc",
+            "name": "Status",
+            "options": [
+                {
+                    "id": "f75ad846",
+                    "name": "Todo"
+                },
+                {
+                    "id": "47fc9ee4",
+                    "name": "In Progress"
+                },
+                {
+                    "id": "98236657",
+                    "name": "Done"
+                }
+            ],
+            "type": "ProjectV2SingleSelectField"
+        },
+        {
+            "id": "PVTF_lADOBCrGTM4AdUH_zgTAJgg",
+            "name": "Labels",
+            "type": "ProjectV2Field"
+        },
+        {
+            "id": "PVTF_lADOBCrGTM4AdUH_zgTAJgk",
+            "name": "Linked pull requests",
+            "type": "ProjectV2Field"
+        },
+        {
+            "id": "PVTF_lADOBCrGTM4AdUH_zgTAJgo",
+            "name": "Milestone",
+            "type": "ProjectV2Field"
+        },
+        {
+            "id": "PVTF_lADOBCrGTM4AdUH_zgTAJgs",
+            "name": "Repository",
+            "type": "ProjectV2Field"
+        },
+        {
+            "id": "PVTF_lADOBCrGTM4AdUH_zgTAJgw",
+            "name": "Tracks",
+            "type": "ProjectV2Field"
+        },
+        {
+            "id": "PVTF_lADOBCrGTM4AdUH_zgTAJg0",
+            "name": "Tracked by",
+            "type": "ProjectV2Field"
+        },
+        {
+            "id": "PVTF_lADOBCrGTM4AdUH_zgTAJg4",
+            "name": "Reviewers",
+            "type": "ProjectV2Field"
+        },
+        {
+            "id": "PVTF_lADOBCrGTM4AdUH_zgTAKtU",
+            "name": "Comment",
+            "type": "ProjectV2Field"
+        },
+        {
+            "id": "PVTSSF_lADOBCrGTM4AdUH_zgTAKxI",
+            "name": "Priority",
+            "options": [
+                {
+                    "id": "df9f2d5d",
+                    "name": "🔥Critical"
+                },
+                {
+                    "id": "40cc276f",
+                    "name": "🥵High"
+                },
+                {
+                    "id": "36eed5ae",
+                    "name": "😊Normal"
+                },
+                {
+                    "id": "7e2e70bf",
+                    "name": "🥶Low"
+                }
+            ],
+            "type": "ProjectV2SingleSelectField"
+        },
+        {
+            "id": "PVTSSF_lADOBCrGTM4AdUH_zgTAK3c",
+            "name": "Severity",
+            "options": [
+                {
+                    "id": "8b72e64f",
+                    "name": "Critical⭐️⭐️⭐️⭐️"
+                },
+                {
+                    "id": "03d02803",
+                    "name": "Important⭐️⭐️⭐️"
+                },
+                {
+                    "id": "6cb3e817",
+                    "name": "Needed⭐️⭐️"
+                },
+                {
+                    "id": "67ba4609",
+                    "name": "Nice⭐️"
+                }
+            ],
+            "type": "ProjectV2SingleSelectField"
+        },
+        {
+            "id": "PVTF_lADOBCrGTM4AdUH_zgTAK6U",
+            "name": "TimeTracker",
+            "type": "ProjectV2Field"
+        },
+        {
+            "id": "PVTF_lADOBCrGTM4AdUH_zgTALQY",
+            "name": "UserStories",
+            "type": "ProjectV2Field"
+        }
+    ],
+    "totalCount": 15
+}
