@@ -12,14 +12,14 @@ function ProjectHelperTest_EditProjetItems_SUCCESS{
     Edit-ProjectItem $owner $projectNumber $title $fieldTitle $fieldTitleValue
 
     $result = Get-ProjectItemsSaved -Owner $owner -ProjectNumber $projectNumber
-    
+
     Assert-Count -Expected 1 -Presented $result.Keys
     Assert-Contains -Expected $itemId -Presented $result.Keys
-    
+
     Assert-Count -Expected 2 -Presented $result.$itemId
     Assert-Contains -Expected "comment" -Presented $result.$itemId.Keys
     Assert-Contains -Expected "title" -Presented $result.$itemId.Keys
-    
+
     Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$itemId.comment.Value
     Assert-AreEqual -Expected $fieldTitleValue -Presented $result.$itemId.title.Value
 }
