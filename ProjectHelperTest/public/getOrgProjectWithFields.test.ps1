@@ -1,6 +1,4 @@
-function ProjectHelperTest_GetGitHubProjectFields{
-
-    Enable-InvokeCommandAlias -Tag ProjectHelperModule
+function ProjectHelperTest_GitHubProjectFields_SUCCESS{
 
     $owner = "solidifydemo" ; $projectnumber = 164
 
@@ -9,10 +7,12 @@ function ProjectHelperTest_GetGitHubProjectFields{
     
     Set-Mock_GitHubProjectFields -Content $content
 
-    $result = _GitHubProjectFields -Owner $owner -Project $projectnumber -Token $env:GITHUB_TOKEN
+    $result = _GitHubProjectFields -Owner $owner -Project $projectnumber
 
     Assert-AreEqual -Expected 164 -Presented $result.data.organization.projectv2.number
     Assert-AreEqual -Expected "PVT_kwDOBCrGTM4ActQa" -Presented $result.data.organization.projectv2.id
     Assert-Count -Expected 12 -Presented $result.data.organization.projectv2.items.nodes
     Assert-Count -Expected 18 -Presented $result.data.organization.projectv2.fields.nodes
+
+    Reset-Mock_GitHubProjectFields
 }

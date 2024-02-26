@@ -38,12 +38,18 @@ function Get-FieldList {
 function _GitHubProjectFields {
     param(
         [Parameter(Mandatory=$true)] [string]$Owner,
-        [Parameter(Mandatory=$true)] [string]$Project,
-        [Parameter(Mandatory=$true)] [string]$Token
+        [Parameter(Mandatory=$true)] [string]$Project
     )
 
     if($script:Mock_GitHubProjectFields_ContentFile){
-        return Invoke-Mock_GitHubProjectFields
+        $result = Invoke-Mock_GitHubProjectFields
+        return $result.data.organization.projectv2
+    }
+
+    # Use the environmentraviable 
+    $token = $env:GITHUB_TOKEN
+    if(-not $token){
+        throw "GITHUB_TOKEN environment variable not set"
     }
 
     # Define the GraphQL query with variables
@@ -52,7 +58,7 @@ function _GitHubProjectFields {
 
     # Define the headers for the request
     $headers = @{
-        "Authorization" = "Bearer $Token"
+        "Authorization" = "Bearer $token"
         "Content-Type" = "application/json"
     }
 
@@ -110,3 +116,13 @@ function Set-Mock_GitHubProjectFields{
     $script:Mock_GitHubProjectFields_ContentFile = $content
 
 } Export-ModuleMember -Function Set-Mock_GitHubProjectFields
+
+function Reset-Mock_GitHubProjectFields{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][string]$Content
+    )
+
+    $script:Mock_GitHubProjectFields_ContentFile = $null
+
+} Export-ModuleMember -Function Reset-Mock_GitHubProjectFields
