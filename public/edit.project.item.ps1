@@ -1,4 +1,11 @@
 
+<#
+.SYNOPSIS
+    Edit a project item
+.EXAMPLE
+    Edit-ProjectItem -Owner "someOwner" -ProjectNumber 666 -Title "Item 1 - title" -FieldName "comment" -Value "new value of the comment"
+    Edit-ProjectItem -Owner "someOwner" -ProjectNumber 666 -Title "Item 1 - title" -FieldName "title" -Value "new value of the title"
+#>
 function Edit-ProjectItem{
     [CmdletBinding()]
     param(
@@ -7,8 +14,7 @@ function Edit-ProjectItem{
         [Parameter(Position = 2)] [string]$Title,
         [Parameter(Position = 3)] [string]$FieldName,
         [Parameter(Position = 4)] [string]$Value,
-        [Parameter()][switch]$Force,
-        [Parameter()][switch]$Save
+        [Parameter()][switch]$Force
     )
 
     $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
@@ -25,6 +31,12 @@ function Edit-ProjectItem{
 
 } Export-ModuleMember -Function Edit-ProjectItem
 
+<#
+.SYNOPSIS
+    Get the saved items from a project
+.EXAMPLE
+    Get-ProjectItemsSaved -Owner "someOwner" -ProjectNumber 666
+#>
 function Get-ProjectItemsSaved{
     [CmdletBinding()]
     [OutputType([hashtable])]
