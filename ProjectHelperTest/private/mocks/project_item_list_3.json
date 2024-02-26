@@ -1,7 +1,7 @@
 {
     "items": [
         {
-            "comment": "New value for comment",
+            "comment": "Value for comment",
             "content": {
                 "type": "DraftIssue",
                 "body": "",
