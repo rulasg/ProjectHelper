@@ -6,6 +6,7 @@ function New-Database{
     return [PSCustomObject]@{
         Items = $null
         Fields = $null
+        Saved = @{}
     }
 }
 
