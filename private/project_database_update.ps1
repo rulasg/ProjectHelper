@@ -19,7 +19,7 @@ function Update-ProjectDatabase2 {
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    $result = _GitHubProjectFields -Owner $Owner -Project $ProjectNumber
+    $result = Invoke-GitHubOrgProjectWithFields -Owner $Owner -Project $ProjectNumber
 
     $items = Convert-ItemsFromResponse $result
     $fields = Convert-FieldsFromReponse $result
@@ -34,7 +34,9 @@ function Convert-ItemsFromResponse{
     )
     $items = @()
 
-    foreach($nodeItem in $Response.items.nodes){
+    $nodes = $Response.data.organization.projectV2.items.nodes
+
+    foreach($nodeItem in $nodes){
         $item = @{}
         $item.id = $nodeItem.id
 
@@ -42,6 +44,8 @@ function Convert-ItemsFromResponse{
         $item.type = $nodeItem.content.__typename
         $item.title = $nodeItem.content.title
         $item.body = $nodeItem.content.body
+
+        # Populate content info based on item type
         switch ($item.type) {
             "Issue" {
                 $item.url = $nodeItem.content.url
@@ -53,38 +57,39 @@ function Convert-ItemsFromResponse{
         foreach($nodefield in $nodeItem.fieldValues.nodes){
             switch($nodefield.__typename){
                 "ProjectV2ItemFieldTextValue" {
-                    $item.$($nodefield.field.name) = $nodefield.text
+                    $value = $nodefield.text
                 }
                 "ProjectV2ItemFieldSingleSelectValue" {
-                    $item.$($nodefield.field.name) = $nodefield.name
+                    $value = $nodefield.name
                 }
                 "ProjectV2ItemFieldNumberValue" {
-                    $item.$($nodefield.field.name) = $nodefield.number
+                    $value = $nodefield.number
                 }
                 "ProjectV2ItemFieldDateValue" {
-                    $item.$($nodefield.field.name) = $nodefield.date
+                    $value = $nodefield.date
                 }
                 "ProjectV2ItemFieldUserValue" {
-                    $item.$($nodefield.field.name) = GetUsers -FieldNode $nodefield
+                    $value = GetUsers -FieldNode $nodefield
                 }
                 "ProjectV2ItemFieldRepositoryValue" {
-                    $item.$($nodefield.field.name) = $nodefield.repository.url
+                    $value = $nodefield.repository.url
                 }
                 "ProjectV2ItemFieldLabelValue" {
-                    $item.$($nodefield.field.name) = GetLabels -FieldNode $nodefield
+                    $value = GetLabels -FieldNode $nodefield
                 }
                 "ProjectV2ItemFieldMilestoneValue" {
-                    $item.$($nodefield.field.name) = $nodefield.milestone.title
+                    $value = $nodefield.milestone.title
                 }
                 "ProjectV2ItemFieldPullRequestValue" {
-                    $item.$($nodefield.field.name) = GetPullRequests -FieldNode $nodefield
+                    $value = GetPullRequests -FieldNode $nodefield
                 }
                 Default {
-                    $item.$($nodefield.field.name) = $nodefield.text
+                    $value = $nodefield.text
                 }
             }
+            $item.$($nodefield.field.name) = $value
 
-            $item.$($nodefield.field.name) = $nodefield.name
+            # $item.$($nodefield.field.name) = $nodefield.name
         }
 
         $items += $item
@@ -99,7 +104,9 @@ function Convert-FieldsFromReponse{
     )
     $fields = @()
 
-    foreach($node in $Response.fields.nodes){
+    $nodes = $Response.data.organization.projectV2.fields.nodes
+
+    foreach($node in $nodes){
         $field = @{}
         $field.id = $node.id
         $field.name = $node.name
@@ -128,12 +135,8 @@ function GetUsers{
     if($FieldNode.__typename -ne "ProjectV2ItemFieldUserValue"){
         throw "GetUsers: FieldNode is not a ProjectV2ItemFieldUserValue"
     }
-    $ret = @()
-    foreach($node in $FieldNode.users.nodes){
-        $ret += $node.login
-    }
-    
-    $ret = $ret | ConvertTo-Json
+    $ret = $FieldNode.users.nodes.login
+    $ret = $ret -join ","
 
     return $ret
 }

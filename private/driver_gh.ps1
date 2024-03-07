@@ -1,5 +1,6 @@
 Set-MyInvokeCommandAlias -Alias GetProjectItems -Command 'gh project item-list {projectnumber} --owner {owner} --format json'
 Set-MyInvokeCommandAlias -Alias GetProjectFields -Command 'gh project field-list {projectnumber} --owner {owner} --format json'
+Set-MyInvokeCommandAlias -Alias GitHubOrgProjectWithFields -Command "Invoke-GitHubOrgProjectWithFields -Owner {owner} -Project {projectnumber}"
 
 function Get-ItemsList {
     [CmdletBinding()]
@@ -35,16 +36,26 @@ function Get-FieldList {
     return $result.Fields
 } Export-ModuleMember -Function Get-FieldList
 
-function _GitHubProjectFields {
+function Invoke-GitHubOrgProjectWithFields {
     param(
         [Parameter(Mandatory=$true)] [string]$Owner,
         [Parameter(Mandatory=$true)] [string]$Project
     )
 
-    if($script:Mock_GitHubProjectFields_ContentFile){
-        $result = Invoke-Mock_GitHubProjectFields
-        return $result.data.organization.projectv2
-    }
+    $params = @{ owner = $Owner ; projectnumber = $Project }
+
+    $result  = Invoke-MyCommand -Command GitHubOrgProjectWithFields -Parameters $params
+
+    # check for errors
+
+    return $result
+} Export-ModuleMember -Function Invoke-GitHubOrgProjectWithFields
+
+function _GitHubProjectFields {
+    param(
+        [Parameter(Mandatory=$true)] [string]$Owner,
+        [Parameter(Mandatory=$true)] [string]$Project
+    )
 
     # Use the environmentraviable 
     $token = $env:GITHUB_TOKEN
@@ -92,7 +103,7 @@ function _GitHubProjectFields {
 
     # Return the field names
     return $response.data.organization.projectv2
-} Export-ModuleMember -Function _GitHubProjectFields
+}
 
 #######################################
 

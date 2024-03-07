@@ -1,18 +1,15 @@
 function ProjectHelperTest_GitHubProjectFields_SUCCESS{
 
-    $owner = "solidifydemo" ; $projectnumber = 164
+    $Owner = "someOwner" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
 
-    $fileName = $MOCK_PATH | Join-Path -ChildPath 'orgprojectwithfields.json'
-    $content = Get-Content -Path $fileName | Out-String
-    
-    Set-Mock_GitHubProjectFields -Content $content
+    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields -Owner $Owner -Project $projectNumber"
 
-    $result = _GitHubProjectFields -Owner $owner -Project $projectnumber
+    $result = Invoke-GitHubOrgProjectWithFields -Owner $owner -Project $projectnumber
 
-    Assert-AreEqual -Expected 164 -Presented $result.data.organization.projectv2.number
+    Assert-AreEqual -Expected $ProjectNumber -Presented $result.data.organization.projectv2.number
     Assert-AreEqual -Expected "PVT_kwDOBCrGTM4ActQa" -Presented $result.data.organization.projectv2.id
-    Assert-Count -Expected 12 -Presented $result.data.organization.projectv2.items.nodes
-    Assert-Count -Expected 18 -Presented $result.data.organization.projectv2.fields.nodes
+    Assert-Count -Expected $itemsCount -Presented $result.data.organization.projectv2.items.nodes
+    Assert-Count -Expected $fieldsCount -Presented $result.data.organization.projectv2.fields.nodes
 
     Reset-Mock_GitHubProjectFields
 }

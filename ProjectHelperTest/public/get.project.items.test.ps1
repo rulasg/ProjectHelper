@@ -2,48 +2,53 @@ function ProjectHelperTest_GetProjetItems_SUCCESS{
 
     Reset-InvokeCommandMock
 
-    $Owner = "someOwner" ; $ProjectNumber = 666
+    $Owner = "someOwner" ; $ProjectNumber = 666 ; $itemsCount = 12
 
-    MockCall -Command "gh project item-list $ProjectNumber --owner $owner --format json" -filename project_item_list_3.json
-    MockCall -Command "gh project field-list $ProjectNumber --owner $owner --format json" -filename project_field_list_15.json
+    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields -Owner $Owner -Project $projectNumber"
 
     $result = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber
 
-    Assert-Count -Expected 3 -Presented $result
+    Assert-Count -Expected $itemsCount -Presented $result
+
+    # Item 10 - Chose one at random
+    Assert-AreEqual -Presented $result[10].UserStories  -Expected "8"
+    Assert-AreEqual -Presented $result[10].body         -Expected "some content in body"
+    Assert-AreEqual -Presented $result[10].Comment      -Expected "This"
+    Assert-AreEqual -Presented $result[10].title        -Expected "A draft in the project"
+    Assert-AreEqual -Presented $result[10].id           -Expected "PVTI_lADOBCrGTM4ActQazgMuXXc"
+    Assert-AreEqual -Presented $result[10].type         -Expected "DraftIssue"
+    Assert-AreEqual -Presented $result[10].TimeTracker  -Expected "890"
+    Assert-AreEqual -Presented $result[10].Severity     -Expected "Nice⭐️"
+    Assert-AreEqual -Presented $result[10].Status       -Expected "Todo"
+    Assert-AreEqual -Presented $result[10].Priority     -Expected "🥵High"
+    Assert-AreEqual -Presented $result[10].Assignees    -Expected "rulasg"
 
     Reset-InvokeCommandMock
 
     # Can call without mock because it will use the database information
     $result = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber
 
-    Assert-Count -Expected 3 -Presented $result
+    Assert-Count -Expected $itemsCount -Presented $result
 
 }
 
-function ProjectHelperTest_GetProjetItems_OrgProjectWithFields_SUCCESS{
+#####################
+<#
+    .SYNOPSIS
+    Mocks the call to GitHubOrgProjectWithFields
+    .DESCRIPTION
+    This function is used to mock the call to GitHubOrgProjectWithFields
+    Inovke helper when commanded for GitHubOrgProjectWithFields will call back this function to retrn the fake data
+    This is needed as Invoke-RestMethod returns objects and the parametrs ar too long to specify on a Set-InvokeCommandAlias
+#>
+function MockCall_GitHubOrgProjectWithFields{
+    param(
+        [Parameter(Mandatory=$true)] [string]$Owner,
+        [Parameter(Mandatory=$true)] [string]$Project
+    )
 
-    $owner = "solidifydemo" ; $projectnumber = 164
-
-    # Arrange
     $fileName = $MOCK_PATH | Join-Path -ChildPath 'orgprojectwithfields.json'
-    $content = Get-Content -Path $fileName | Out-String
-    Set-Mock_GitHubProjectFields -Content $content
+    $content = Get-Content -Path $fileName | Out-String | ConvertFrom-Json
 
-    $result = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber
-
-    Assert-Count -Expected 12 -Presented $result
-
-    Reset-Mock_GitHubProjectFields
-
-    # Set mock that will not be called as the second call will use the database information
-    Set-Mock_GitHubProjectFields -Content "This data will throw if github call is made"
-
-    $result = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber
-
-    Assert-Count -Expected 12 -Presented $result
-
-    Reset-Mock_GitHubProjectFields
-
-}
-
-#
+    return $content
+} Export-ModuleMember -Function MockCall_GitHubOrgProjectWithFields

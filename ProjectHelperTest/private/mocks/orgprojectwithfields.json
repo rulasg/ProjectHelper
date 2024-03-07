@@ -1903,7 +1903,7 @@
                 "content": {
                   "__typename": "DraftIssue",
                   "id": "DI_lADOBCrGTM4ActQazgFYYPQ",
-                  "body": "",
+                  "body": "some content in body",
                   "title": "A draft in the project"
                 },
                 "id": "PVTI_lADOBCrGTM4ActQazgMuXXc",
