@@ -1,7 +1,7 @@
 {
     "data": {
       "organization": {
-        "projectV2": {
+       "projectV2": {
           "number": 164,
           "url": "https://github.com/orgs/SolidifyDemo/projects/164",
           "shortDescription": "Created with [ProjectDemo] by [@rulasg]",
@@ -612,7 +612,7 @@
                 "content": {
                   "__typename": "Issue",
                   "body": "Series 2 of demo issues for the Front repo",
-                  "title": "Issue 60742dd0",
+                  "title": "Issue Name 1",
                   "number": 2,
                   "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/issues/2",
                   "repository": {
@@ -666,7 +666,7 @@
                     },
                     {
                       "__typename": "ProjectV2ItemFieldTextValue",
-                      "text": "Issue 60742dd0",
+                      "text": "ISSUE NAME 1",
                       "field": {
                         "__typename": "ProjectV2Field",
                         "id": "PVTF_lADOBCrGTM4ActQazgSkYm8",
@@ -1012,7 +1012,7 @@
                 "content": {
                   "__typename": "Issue",
                   "body": "Series 5 of demo issues for the Front repo",
-                  "title": "Issue a6f1c2b5",
+                  "title": "Issue Name 1",
                   "number": 5,
                   "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-back/issues/5",
                   "repository": {
@@ -1052,7 +1052,7 @@
                     },
                     {
                       "__typename": "ProjectV2ItemFieldTextValue",
-                      "text": "Issue a6f1c2b5",
+                      "text": "Issue Name 1",
                       "field": {
                         "__typename": "ProjectV2Field",
                         "id": "PVTF_lADOBCrGTM4ActQazgSkYm8",

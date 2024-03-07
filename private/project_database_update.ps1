@@ -1,30 +1,30 @@
+# We need to invoke a call back to allow the mock of this call on testing
+Set-MyInvokeCommandAlias -Alias GitHubOrgProjectWithFields -Command "Invoke-GitHubOrgProjectWithFields -Owner {owner} -ProjectNumber {projectnumber}"
 
 function Update-ProjectDatabase {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         [Parameter(Position = 0)][string]$Owner,
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    $items = Get-ItemsList -Owner $Owner -ProjectNumber $ProjectNumber
-    $fields = Get-FieldList -Owner $Owner -ProjectNumber $ProjectNumber
+    $params = @{ owner = $Owner ; projectnumber = $ProjectNumber }
 
-    Set-Database -Owner $Owner -ProjectNumber $ProjectNumber -Items $items -Fields $fields
-}
+    $result  = Invoke-MyCommand -Command GitHubOrgProjectWithFields -Parameters $params
 
-function Update-ProjectDatabase2 {
-    [CmdletBinding()]
-    param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber
-    )
-
-    $result = Invoke-GitHubOrgProjectWithFields -Owner $Owner -Project $ProjectNumber
+    # check if the result is empty
+    if($null -eq $result){
+        "Database not updated." | Write-MyError
+        return $false
+    }
 
     $items = Convert-ItemsFromResponse $result
     $fields = Convert-FieldsFromReponse $result
 
     Set-Database -Owner $Owner -ProjectNumber $ProjectNumber -Items $items -Fields $fields
+
+    return $true
 }
 
 function Convert-ItemsFromResponse{
@@ -42,8 +42,12 @@ function Convert-ItemsFromResponse{
 
         # Content
         $item.type = $nodeItem.content.__typename
-        $item.title = $nodeItem.content.title
         $item.body = $nodeItem.content.body
+        # Title is stored in two places. in the content and as a field.
+        # We will use the field value
+        # $item.title = $nodeItem.content.title
+        $item.number = $nodeItem.content.number
+        $item.url = $nodeItem.content.url
 
         # Populate content info based on item type
         switch ($item.type) {

@@ -12,6 +12,17 @@ function Test-ProjectDatabase{
     return Test-Database -Owner $Owner -ProjectNumber $ProjectNumber
 }
 
+function Test-ProjectDatabaseSaved{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][string]$Owner,
+        [Parameter(Position = 1)][int]$ProjectNumber
+    )
+
+    # Check if there is content Saved and not commited yet
+    return Test-DatabaseSaved -Owner $Owner -ProjectNumber $ProjectNumber
+}
+
 function Get-ProjectDatabase{
     [CmdletBinding()]
     param(
@@ -21,10 +32,23 @@ function Get-ProjectDatabase{
     )
 
     if($force -or -Not (Test-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber)){
-        Update-ProjectDatabase2 -Owner $Owner -ProjectNumber $ProjectNumber
+        $result = Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
+        if( ! $result){ return }
     }
 
     $db = Get-Database -Owner $Owner -ProjectNumber $ProjectNumber
 
     return $db
 }
+
+function Reset-ProjectDatabase{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][string]$Owner,
+        [Parameter(Position = 1)][int]$ProjectNumber
+    )
+
+    Reset-Database -Owner $Owner -ProjectNumber $ProjectNumber
+}
+
+

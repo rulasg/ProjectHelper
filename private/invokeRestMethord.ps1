@@ -1,6 +1,4 @@
 
-# $script:FAKE_MockInvokeRestMethord = $
-
 function Invoke-RestMethod{
     [CmdletBinding()]
     param(
@@ -9,10 +7,6 @@ function Invoke-RestMethod{
         [Parameter(Position = 2)][hashtable]$Headers,
         [Parameter(Position = 3)][string]$Body
     )
-
-    if($script:FAKE_MockInvokeRestMethord){
-        return & $script:FAKE_MockInvokeRestMethord
-    }
 
     $params = @{
         Method = $Method

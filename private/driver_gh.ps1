@@ -1,30 +1,22 @@
-Set-MyInvokeCommandAlias -Alias GitHubOrgProjectWithFields -Command "Invoke-GitHubOrgProjectWithFields -Owner {owner} -Project {projectnumber}"
+Set-MyinvokeCommandAlias -Alias GetToken -Command "gh auth token"
 
+<#
+    .SYNOPSIS
+    This function retrieves a GitHub organization project with fields.
+
+    .EXAMPLE
+    Invoke-GitHubOrgProjectWithFields -Owner "someOwner" -Project 164
+#>
 function Invoke-GitHubOrgProjectWithFields {
     param(
         [Parameter(Mandatory=$true)] [string]$Owner,
-        [Parameter(Mandatory=$true)] [string]$Project
-    )
-
-    $params = @{ owner = $Owner ; projectnumber = $Project }
-
-    $result  = Invoke-MyCommand -Command GitHubOrgProjectWithFields -Parameters $params
-
-    # check for errors
-
-    return $result
-} Export-ModuleMember -Function Invoke-GitHubOrgProjectWithFields
-
-function _GitHubProjectFields {
-    param(
-        [Parameter(Mandatory=$true)] [string]$Owner,
-        [Parameter(Mandatory=$true)] [string]$Project
+        [Parameter(Mandatory=$true)] [string]$ProjectNumber
     )
 
     # Use the environmentraviable 
-    $token = $env:GITHUB_TOKEN
+    $token = Get-GithubToken
     if(-not $token){
-        throw "GITHUB_TOKEN environment variable not set"
+        throw "GH Cli Auth Token not available. Run 'gh auth login' in your terminal."
     }
 
     # Define the GraphQL query with variables
@@ -38,7 +30,7 @@ function _GitHubProjectFields {
     }
 
     # Define the variables for the request
-    [int]$pn = $Project
+    [int]$pn = $ProjectNumber
     $variables = @{
         login = $Owner
         number = $pn
@@ -55,16 +47,23 @@ function _GitHubProjectFields {
     } | ConvertTo-Json
 
     # Send the request
-    # $response = Invoke-RestMethod -Uri 'https://api.github.com/graphql' -Method Post -Body $body -Headers $headers
     $response = Invoke-RestMethod -Uri 'https://api.github.com/graphql' -Method Post -Body $body -Headers $headers
 
-    $parameters = @{
-        body = $body
-        headers = $headers
+    # Check if here are errors
+    if($response.errors){
+        "[$($response.errors[0].type)] $($response.errors[0].message)" | Write-MyError
+        return
     }
-
-    $response = Invoke-MyCommand -Command OrgProjectWithFields -Parameters $parameters
 
     # Return the field names
     return $response.data.organization.projectv2
+} Export-ModuleMember -Function Invoke-GitHubOrgProjectWithFields
+
+function Get-GithubToken{
+    [CmdletBinding()]
+    param()
+
+    $token = Invoke-MyCommand -Command GetToken
+
+    return $token
 }

@@ -15,7 +15,7 @@ function ProjectHelperTest_EditProjetItems_SUCCESS{
     Edit-ProjectItem $owner $projectNumber $itemId $fieldComment $fieldCommentValue
     Edit-ProjectItem $owner $projectNumber $itemId $fieldTitle $fieldTitleValue
 
-    $result = Get-ProjectItemsSaved -Owner $owner -ProjectNumber $projectNumber
+    $result = Get-ProjectItemSaved -Owner $owner -ProjectNumber $projectNumber
 
     Assert-Count -Expected 1 -Presented $result.Keys
     Assert-Contains -Expected $itemId -Presented $result.Keys
