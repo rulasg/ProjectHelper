@@ -5,14 +5,15 @@ function ProjectHelperTest_EditProjetItems_SUCCESS{
     Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields -Owner $Owner -Project $projectNumber"
 
     # Item id 10
+    # $title = "A draft in the project" 
 
-    $title = "A draft in the project" ; $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
+    $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
 
     $fieldComment = "comment" ; $fieldCommentValue = "new value of the comment"
     $fieldTitle = "title" ; $fieldTitleValue = "new value of the title"
 
-    Edit-ProjectItem $owner $projectNumber $title $fieldComment $fieldCommentValue
-    Edit-ProjectItem $owner $projectNumber $title $fieldTitle $fieldTitleValue
+    Edit-ProjectItem $owner $projectNumber $itemId $fieldComment $fieldCommentValue
+    Edit-ProjectItem $owner $projectNumber $itemId $fieldTitle $fieldTitleValue
 
     $result = Get-ProjectItemsSaved -Owner $owner -ProjectNumber $projectNumber
 

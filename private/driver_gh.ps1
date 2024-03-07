@@ -1,40 +1,4 @@
-Set-MyInvokeCommandAlias -Alias GetProjectItems -Command 'gh project item-list {projectnumber} --owner {owner} --format json'
-Set-MyInvokeCommandAlias -Alias GetProjectFields -Command 'gh project field-list {projectnumber} --owner {owner} --format json'
 Set-MyInvokeCommandAlias -Alias GitHubOrgProjectWithFields -Command "Invoke-GitHubOrgProjectWithFields -Owner {owner} -Project {projectnumber}"
-
-function Get-ItemsList {
-    [CmdletBinding()]
-    param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber
-    )
-
-    $params = @{ owner = $Owner ; projectnumber = $ProjectNumber }
-
-    # Items
-    $result  = Invoke-MyCommandJsonAsync -Command GetProjectItems -Parameters $params
-
-    # check for errors
-
-    return $result.Items
-}
-
-function Get-FieldList {
-    [CmdletBinding()]
-    param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber
-    )
-
-    $params = @{ owner = $Owner ; projectnumber = $ProjectNumber }
-
-    # Fields
-    $result  = Invoke-MyCommandJsonAsync -Command GetProjectFields -Parameters $params
-
-    # check for errors
-
-    return $result.Fields
-} Export-ModuleMember -Function Get-FieldList
 
 function Invoke-GitHubOrgProjectWithFields {
     param(
@@ -104,36 +68,3 @@ function _GitHubProjectFields {
     # Return the field names
     return $response.data.organization.projectv2
 }
-
-#######################################
-
-$script:Mock_GitHubProjectFields_ContentFile = $null
-
-function Invoke-Mock_GitHubProjectFields{
-    [CmdletBinding()]
-    param()
-
-    $json = $script:Mock_GitHubProjectFields_ContentFile
-    $ret = $json | ConvertFrom-Json -Depth 100
-
-    return $ret
-}
-function Set-Mock_GitHubProjectFields{
-    [CmdletBinding()]
-    param(
-        [Parameter(Position = 0)][string]$Content
-    )
-
-    $script:Mock_GitHubProjectFields_ContentFile = $content
-
-} Export-ModuleMember -Function Set-Mock_GitHubProjectFields
-
-function Reset-Mock_GitHubProjectFields{
-    [CmdletBinding()]
-    param(
-        [Parameter(Position = 0)][string]$Content
-    )
-
-    $script:Mock_GitHubProjectFields_ContentFile = $null
-
-} Export-ModuleMember -Function Reset-Mock_GitHubProjectFields

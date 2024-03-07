@@ -1,30 +1,21 @@
-function Get-ItemId{
+function Get-Item{
     [CmdletBinding()]
     [OutputType([string])]
     param(
         [Parameter(Position = 0)][object[]]$Database,
-        [Parameter(Position = 1)][string]$Title
-    )
-
-    $item = $Database.items | Where-Object { $_.title -eq $Title }
-
-    return $item.id
-}
-
-function Get-ItemFieldValue{
-    [CmdletBinding()]
-    [OutputType([string])]
-    param(
-        [Parameter(Position = 0)][object[]]$Database,
-        [Parameter(Position = 1)][string]$ItemId,
-        [Parameter(Position = 2)][string]$FieldName
+        [Parameter(Position = 1)][string]$ItemId
     )
 
     $item = $Database.items | Where-Object { $_.id -eq $ItemId }
 
-    return $item.$FieldName
+    return $item
 }
 
+
+<#
+.SYNOPSIS
+    Stage a change to the database
+#>
 function Save-ItemFieldValue{
     [CmdletBinding()]
     [OutputType([object])]
@@ -42,9 +33,7 @@ function Save-ItemFieldValue{
         throw "Field $FieldName not found"
     }
 
-    $isValidChange = Test-FieldChange $field $Value
-
-    if(-Not $isValidChange){
+    if( !(Test-FieldChange $field $Value) ){
         throw "Invalid value [$Value] for field $FieldName"
     }
 
@@ -54,7 +43,19 @@ function Save-ItemFieldValue{
         Field = $field
     }
 }
+<#
+.SYNOPSIS
+    Creates a new hash key if it does not exists
+.DESCRIPTION
+    This allows a convenient way of creating a chain of hash tables as in a tree of data
+.EXAMPLE
+    The following sampel will create if not exist the path of the value in a tree of hash tables
+    $node = $Database | AddHashLink "Saved" | AddHashLink $level1 | AddHashLink $level2 | AddHashLink $level3
 
+    For later to set value to 
+    $Database.Saved.$level1.$level2.$level3.FieldName = "value"
+    
+#>
 function AddHashLink{
     [CmdletBinding()]
     [OutputType([hashtable])]

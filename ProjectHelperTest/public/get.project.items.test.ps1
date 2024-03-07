@@ -6,7 +6,7 @@ function ProjectHelperTest_GetProjetItems_SUCCESS{
 
     Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields -Owner $Owner -Project $projectNumber"
 
-    $result = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber
+    $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
 
     Assert-Count -Expected $itemsCount -Presented $result
 
@@ -26,7 +26,7 @@ function ProjectHelperTest_GetProjetItems_SUCCESS{
     Reset-InvokeCommandMock
 
     # Can call without mock because it will use the database information
-    $result = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber
+    $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
 
     Assert-Count -Expected $itemsCount -Presented $result
 
