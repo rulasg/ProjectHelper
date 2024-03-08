@@ -32,22 +32,3 @@ function Edit-ProjectItem{
     Save-ItemFieldValue $db $itemId $FieldName $Value
 
 } Export-ModuleMember -Function Edit-ProjectItem
-
-<#
-.SYNOPSIS
-    Get the saved items from a project
-.EXAMPLE
-    Get-ProjectItemStaged -Owner "someOwner" -ProjectNumber 666
-#>
-function Get-ProjectItemStaged{
-    [CmdletBinding()]
-    [OutputType([hashtable])]
-    param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber
-    )
-
-    $db = Get-ProjectDatabase $Owner $ProjectNumber
-
-    return $db.Staged
-} Export-ModuleMember -Function Get-ProjectItemStaged

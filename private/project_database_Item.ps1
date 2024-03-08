@@ -11,7 +11,6 @@ function Get-Item{
     return $item
 }
 
-
 <#
 .SYNOPSIS
     Stage a change to the database
@@ -28,21 +27,23 @@ function Save-ItemFieldValue{
 
     # TODO: Test that is a valid field based on field type
     $field = Get-Field $Database $FieldName
-
+    
     if($null -eq $field){
         throw "Field $FieldName not found"
     }
+    $fieldId = $field.id
 
     if( !(Test-FieldChange $field $Value) ){
         throw "Invalid value [$Value] for field $FieldName"
     }
 
     $node = $Database.Staged | AddHashLink $ItemId
-    $node.$FieldName = [PSCustomObject]@{
+    $node.$fieldId = [PSCustomObject]@{
         Value = $Value
         Field = $field
     }
 }
+
 <#
 .SYNOPSIS
     Creates a new hash key if it does not exists
