@@ -37,9 +37,9 @@ function Edit-ProjectItem{
 .SYNOPSIS
     Get the saved items from a project
 .EXAMPLE
-    Get-ProjectItemSaved -Owner "someOwner" -ProjectNumber 666
+    Get-ProjectItemStaged -Owner "someOwner" -ProjectNumber 666
 #>
-function Get-ProjectItemSaved{
+function Get-ProjectItemStaged{
     [CmdletBinding()]
     [OutputType([hashtable])]
     param(
@@ -49,5 +49,5 @@ function Get-ProjectItemSaved{
 
     $db = Get-ProjectDatabase $Owner $ProjectNumber
 
-    return $db.Saved
-} Export-ModuleMember -Function Get-ProjectItemSaved
+    return $db.Staged
+} Export-ModuleMember -Function Get-ProjectItemStaged

@@ -24,7 +24,7 @@ function Reset-ProjectItemList{
         [Parameter()][switch]$Force
     )
 
-    $saved = Test-ProjectDatabaseSaved -Owner $Owner -ProjectNumber $ProjectNumber
+    $saved = Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber
 
     if($saved -and -Not $Force){
         "There are unsaved changes, please commit or use -Force" | Write-MyError

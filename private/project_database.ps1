@@ -12,15 +12,15 @@ function Test-ProjectDatabase{
     return Test-Database -Owner $Owner -ProjectNumber $ProjectNumber
 }
 
-function Test-ProjectDatabaseSaved{
+function Test-ProjectDatabaseStaged{
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$Owner,
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    # Check if there is content Saved and not commited yet
-    return Test-DatabaseSaved -Owner $Owner -ProjectNumber $ProjectNumber
+    # Check if there is content Staged and not commited yet
+    return Test-DatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber
 }
 
 function Get-ProjectDatabase{

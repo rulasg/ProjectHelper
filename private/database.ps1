@@ -6,7 +6,7 @@ function New-Database{
     return [PSCustomObject]@{
         Items = $null
         Fields = $null
-        Saved = @{}
+        Staged = @{}
     }
 }
 
@@ -61,7 +61,7 @@ function Test-Database{
     return $true
 }
 
-function Test-DatabaseSaved{
+function Test-DatabaseStaged{
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$Owner,
@@ -74,7 +74,7 @@ function Test-DatabaseSaved{
         return $false
     }
 
-    if($null -eq $db.Saved){
+    if($null -eq $db.Staged){
         return $false
     }
 

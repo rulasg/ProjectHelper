@@ -37,7 +37,7 @@ function Save-ItemFieldValue{
         throw "Invalid value [$Value] for field $FieldName"
     }
 
-    $node = $Database.Saved | AddHashLink $ItemId
+    $node = $Database.Staged | AddHashLink $ItemId
     $node.$FieldName = [PSCustomObject]@{
         Value = $Value
         Field = $field
@@ -50,10 +50,10 @@ function Save-ItemFieldValue{
     This allows a convenient way of creating a chain of hash tables as in a tree of data
 .EXAMPLE
     The following sampel will create if not exist the path of the value in a tree of hash tables
-    $node = $Database | AddHashLink "Saved" | AddHashLink $level1 | AddHashLink $level2 | AddHashLink $level3
+    $node = $Database | AddHashLink "Staged" | AddHashLink $level1 | AddHashLink $level2 | AddHashLink $level3
 
     For later to set value to 
-    $Database.Saved.$level1.$level2.$level3.FieldName = "value"
+    $Database.Staged.$level1.$level2.$level3.FieldName = "value"
     
 #>
 function AddHashLink{
