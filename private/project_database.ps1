@@ -10,19 +10,17 @@ function Test-ProjectDatabase{
     # so far we only check if the database exists
     # TODO check if the database has expired
     return Test-Database -Owner $Owner -ProjectNumber $ProjectNumber
-} 
+}
 
-function Update-ProjectDatabase {
+function Test-ProjectDatabaseSaved{
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$Owner,
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    $items = Get-ItemsList -Owner $Owner -ProjectNumber $ProjectNumber
-    $fields = Get-FieldList -Owner $Owner -ProjectNumber $ProjectNumber
-
-    Set-Database -Owner $Owner -ProjectNumber $ProjectNumber -Items $items -Fields $fields
+    # Check if there is content Saved and not commited yet
+    return Test-DatabaseSaved -Owner $Owner -ProjectNumber $ProjectNumber
 }
 
 function Get-ProjectDatabase{
@@ -34,10 +32,23 @@ function Get-ProjectDatabase{
     )
 
     if($force -or -Not (Test-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber)){
-        Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
+        $result = Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
+        if( ! $result){ return }
     }
 
     $db = Get-Database -Owner $Owner -ProjectNumber $ProjectNumber
 
     return $db
 }
+
+function Reset-ProjectDatabase{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][string]$Owner,
+        [Parameter(Position = 1)][int]$ProjectNumber
+    )
+
+    Reset-Database -Owner $Owner -ProjectNumber $ProjectNumber
+}
+
+

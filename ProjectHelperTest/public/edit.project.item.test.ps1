@@ -1,17 +1,21 @@
 function ProjectHelperTest_EditProjetItems_SUCCESS{
     Reset-InvokeCommandMock
 
-    $owner = "someOwner" ; $projectNumber = 666 ; $title = "Item 1 - title" ; $itemId = "PVTI_lAHOAGkMOM4AUB10zgIiBZs"
+    $Owner = "someOwner" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
+    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields -Owner $Owner -Project $projectNumber"
+
+    # Item id 10
+    # $title = "A draft in the project" 
+
+    $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
+
     $fieldComment = "comment" ; $fieldCommentValue = "new value of the comment"
     $fieldTitle = "title" ; $fieldTitleValue = "new value of the title"
 
-    MockCall -Command "gh project item-list $ProjectNumber --owner $owner --format json" -filename project_item_list_3.json
-    MockCall -Command "gh project field-list $ProjectNumber --owner $owner --format json" -filename project_field_list_15.json
+    Edit-ProjectItem $owner $projectNumber $itemId $fieldComment $fieldCommentValue
+    Edit-ProjectItem $owner $projectNumber $itemId $fieldTitle $fieldTitleValue
 
-    Edit-ProjectItem $owner $projectNumber $title $fieldComment $fieldCommentValue
-    Edit-ProjectItem $owner $projectNumber $title $fieldTitle $fieldTitleValue
-
-    $result = Get-ProjectItemsSaved -Owner $owner -ProjectNumber $projectNumber
+    $result = Get-ProjectItemSaved -Owner $owner -ProjectNumber $projectNumber
 
     Assert-Count -Expected 1 -Presented $result.Keys
     Assert-Contains -Expected $itemId -Presented $result.Keys

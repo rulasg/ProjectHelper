@@ -1,36 +1,69 @@
-Set-MyInvokeCommandAlias -Alias GetProjectItems -Command 'gh project item-list {projectnumber} --owner {owner} --format json'
-Set-MyInvokeCommandAlias -Alias GetProjectFields -Command 'gh project field-list {projectnumber} --owner {owner} --format json'
+Set-MyinvokeCommandAlias -Alias GetToken -Command "gh auth token"
 
-function Get-ItemsList {
-    [CmdletBinding()]
+<#
+    .SYNOPSIS
+    This function retrieves a GitHub organization project with fields.
+
+    .EXAMPLE
+    Invoke-GitHubOrgProjectWithFields -Owner "someOwner" -Project 164
+#>
+function Invoke-GitHubOrgProjectWithFields {
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber
+        [Parameter(Mandatory=$true)] [string]$Owner,
+        [Parameter(Mandatory=$true)] [string]$ProjectNumber
     )
 
-    $params = @{ owner = $Owner ; projectnumber = $ProjectNumber }
+    # Use the environmentraviable 
+    $token = Get-GithubToken
+    if(-not $token){
+        throw "GH Cli Auth Token not available. Run 'gh auth login' in your terminal."
+    }
 
-    # Items
-    $result  = Invoke-MyCommandJsonAsync -Command GetProjectItems -Parameters $params
+    # Define the GraphQL query with variables
+    $querypath =  $PSScriptRoot | Join-Path -ChildPath orgprojectwithfields.query
+    $query = get-content -path $querypath | Out-String
 
-    # check for errors
+    # Define the headers for the request
+    $headers = @{
+        "Authorization" = "Bearer $token"
+        "Content-Type" = "application/json"
+    }
 
-    return $result.Items
-}
+    # Define the variables for the request
+    [int]$pn = $ProjectNumber
+    $variables = @{
+        login = $Owner
+        number = $pn
+        afterFields = $null
+        afterItems = $null
+        firstFields = 30
+        firstItems = 100
+    }
 
-function Get-FieldList {
+    # Define the body for the request
+    $body = @{
+        query = $query
+        variables = $variables
+    } | ConvertTo-Json
+
+    # Send the request
+    $response = Invoke-RestMethod -Uri 'https://api.github.com/graphql' -Method Post -Body $body -Headers $headers
+
+    # Check if here are errors
+    if($response.errors){
+        "[$($response.errors[0].type)] $($response.errors[0].message)" | Write-MyError
+        return
+    }
+
+    # Return the field names
+    return $response.data.organization.projectv2
+} Export-ModuleMember -Function Invoke-GitHubOrgProjectWithFields
+
+function Get-GithubToken{
     [CmdletBinding()]
-    param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber
-    )
+    param()
 
-    $params = @{ owner = $Owner ; projectnumber = $ProjectNumber }
+    $token = Invoke-MyCommand -Command GetToken
 
-    # Fields
-    $result  = Invoke-MyCommandJsonAsync -Command GetProjectFields -Parameters $params
-
-    # check for errors
-
-    return $result.Fields
+    return $token
 }

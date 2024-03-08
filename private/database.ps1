@@ -61,6 +61,26 @@ function Test-Database{
     return $true
 }
 
+function Test-DatabaseSaved{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][string]$Owner,
+        [Parameter(Position = 1)][int]$ProjectNumber
+    )
+
+    $db = $script:PROJECT_DATABASE_LIST."$owner/$projectnumber"
+
+    if($null -eq $db){
+        return $false
+    }
+
+    if($null -eq $db.Saved){
+        return $false
+    }
+
+    return $true
+}
+
 function Set-Database{
     [CmdletBinding()]
     param(
