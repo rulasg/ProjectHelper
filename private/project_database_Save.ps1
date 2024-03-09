@@ -1,8 +1,6 @@
 
-Set-MyInvokeCommandAlias -Alias GitHubSaveProjectItem -Command "gh project item-edit --id {itemid} --field-id {fieldid} --project-id {projectid} {valueparameter}"
-Set-MyInvokeCommandAlias -Alias GitHub_UpdateProjectV2ItemFieldValue -Command "Invoke-GitHubUpdateItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid} -Value {value} -Type {type}"
- 
- 
+Set-MyInvokeCommandAlias -Alias GitHubSaveProjectItem -Command 'gh project item-edit --id {itemid} --field-id {fieldid} --project-id {projectid} {valueparameter}'
+Set-MyInvokeCommandAlias -Alias GitHub_UpdateProjectV2ItemFieldValue -Command 'Invoke-GitHubUpdateItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid} -Value "{value}" -Type {type}'
 
 <#
 .SYNOPSIS
@@ -156,12 +154,13 @@ function ConvertTo-UpdateType{
             # [ValidateSet("singleSelectOptionId", "text", "number", "date", "iterationId")]
 
     switch ($DataType) {
-        "SINGLE_SELECT" { $ret = "singleSelectOptionId" }
-        ("TEXT", "TITLE")
-            { $ret = "text" }
-        "NUMBER"         { $ret = "number" }
-        "DATE"           { $ret = "date" }
-        "iterationId"    { $ret = "iterationId" }
+        "TEXT"           { $ret = "text"                 ;Break }
+        "TITLE"          { $ret = "text"                 ;Break }
+        "NUMBER"         { $ret = "number"               ; Break}
+        "DATE"           { $ret = "date"                 ; Break}
+        "iterationId"    { $ret = "iterationId"          ; Break}
+        "SINGLE_SELECT"  { $ret = "singleSelectOptionId" ;Break }
+
         default          { $ret = $null }
     }
 

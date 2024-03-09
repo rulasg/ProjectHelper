@@ -56,7 +56,7 @@ function Invoke-GitHubOrgProjectWithFields {
     }
 
     # Return the field names
-    return $response.data.organization.projectv2
+    return $response
 } Export-ModuleMember -Function Invoke-GitHubOrgProjectWithFields
 
 function Invoke-GitHubUpdateItemValues{
@@ -99,21 +99,23 @@ function Invoke-GitHubUpdateItemValues{
 
     # Define the body for the request
     $body = @{
-        mutation= $mutation
+        query= $mutation
         variables = $variables
-    } | ConvertTo-Json
+    } | ConvertTo-Json -Depth 10
 
     # Send the request
     $response = Invoke-RestMethod -Uri 'https://api.github.com/graphql' -Method Post -Body $body -Headers $headers
 
     # Check if here are errors
     if($response.errors){
-        "[$($response.errors[0].type)] $($response.errors[0].message)" | Write-MyError
-        return
+        $response.errors | foreach {
+            "RESPONSE Type[$($_.type)] $($_.message)" | Write-MyError
+        }
+        return $null
     }
 
     # Return the field names
-    return $response.data.organization.projectv2
+    return $response
 } Export-ModuleMember -Function Invoke-GitHubUpdateItemValues
 
 

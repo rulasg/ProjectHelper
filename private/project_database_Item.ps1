@@ -65,8 +65,15 @@ function AddHashLink{
         [Parameter(Position = 0)][string]$Name
     )
     process{
-        if(-Not ($parent.Keys -contains $Name)){
+
+        # element not present or $null
+        if ($null -eq $parent.$Name){
             $parent[$Name] = @{}
+        }
+        
+        #element present but not a hash table
+        if(-Not ($parent[$Name] -is [hashtable])){
+            throw "Element $Name is not a hash table"
         }
 
         return $parent[$Name]
