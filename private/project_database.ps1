@@ -86,12 +86,10 @@ function Reset-ProjectDatabase{
 function Set-ProjectDatabaseV2{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][object]$Response,
+        [Parameter(Position = 0)][object]$ProjectV2,
         [Parameter(Position = 1)][Object[]]$Items,
         [Parameter(Position = 2)][Object[]]$Fields
     )
-
-    $projectV2 = $Response.data.organization.ProjectV2
 
     $owner = $ProjectV2.owner.login
     $projectnumber = $ProjectV2.number
@@ -103,7 +101,7 @@ function Set-ProjectDatabaseV2{
     $db.public           = $ProjectV2.public
     $db.closed           = $ProjectV2.closed
     $db.title            = $ProjectV2.title
-    $db.id               = $ProjectV2.id
+    $db.ProjectId        = $ProjectV2.id
     $db.readme           = $ProjectV2.readme
     $db.owner            = $ProjectV2.owner
     $db.number           = $ProjectV2.number
@@ -113,3 +111,8 @@ function Set-ProjectDatabaseV2{
     
     Set-Database -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
 }
+
+<#
+.SYNOPSIS
+    Updates the local database with the information of an item
+#>

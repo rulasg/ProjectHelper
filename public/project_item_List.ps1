@@ -55,7 +55,7 @@ function Find-ProjectItemByTitle{
     # return if #db is null
     if($null -eq $items){ return $null }
 
-    $ret =  $items | Where-Object { $_.Title.Trim().ToLower() -eq $($Title.Trim().ToLower()) }
+    $ret =  $items.Values | Where-Object { $_.Title.Trim().ToLower() -eq $($Title.Trim().ToLower()) }
 
     return $ret
 
@@ -75,7 +75,7 @@ function Search-ProjectItemByTitle{
     # return if #db is null
     if($null -eq $items){ return $null}
     
-    $ret = $items | Where-Object { $_.Title -like "*$Title*" }
+    $ret = $items.Values | Where-Object { $_.Title -like "*$Title*" }
     
     return $ret
 

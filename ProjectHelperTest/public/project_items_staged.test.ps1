@@ -4,7 +4,7 @@ function ProjectHelperTest_CommitProjectItemsStaged_NoStaged{
     Initialize-DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
-    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields -Owner $Owner -Project $projectNumber"
+    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
 
     Start-MyTranscript
     $result = Save-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
@@ -18,8 +18,10 @@ function ProjectHelperTest_CommitProjectItemsStaged_SUCCESS{
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
-    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields -Owner $Owner -Project $projectNumber"
+    $Owner = "SomeOrg" ; $ProjectNumber = 164
+    Set-InvokeCommandMock -Alias GitHub_UpdateProjectV2ItemFieldValue -Command "MockCall_GitHub_UpdateProjectV2ItemFieldValue"
+    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
+
 
     # Item id 10
     # Name                           Value
@@ -38,13 +40,13 @@ function ProjectHelperTest_CommitProjectItemsStaged_SUCCESS{
     # url                            
     # type                           DraftIssue
 
-    $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
+    $itemId1 = "PVTI_lADOBCrGTM4ActQazgMuXXc"
 
-    $fieldComment = "comment" ; $fieldCommentValue = "new value of the comment 10"
-    $fieldTitle = "title" ; $fieldTitleValue = "new value of the title"
+    $fieldComment1 = "comment" ; $fieldCommentValue1 = "new value of the comment 10"
+    $fieldTitle1 = "title" ; $fieldTitleValue1 = "new value of the title"
 
-    Edit-ProjectItem $owner $projectNumber $itemId $fieldComment $fieldCommentValue
-    Edit-ProjectItem $owner $projectNumber $itemId $fieldTitle $fieldTitleValue
+    Edit-ProjectItem $owner $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
+    Edit-ProjectItem $owner $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
 
     # Name                           Value
     # ----                           -----
@@ -63,18 +65,31 @@ function ProjectHelperTest_CommitProjectItemsStaged_SUCCESS{
     # $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
 
 
-    $itemId = "PVTI_lADOBCrGTM4ActQazgMueM4"
-    $fieldComment = "comment" ; $fileCommentValue = "new value of the comment 11"
-    $fieldTitle = "title" ; $fileTitleValue = "new value of the title 11"
+    $itemId2 = "PVTI_lADOBCrGTM4ActQazgMueM4"
+    $fieldComment2 = "comment" ; $fileCommentValue2 = "new value of the comment 11"
+    $fieldTitle2 = "title" ; $fileTitleValue2 = "new value of the title 11"
 
-    Edit-ProjectItem $owner $projectNumber $itemId $fieldComment $fieldCommentValue
-    Edit-ProjectItem $owner $projectNumber $itemId $fieldTitle $fieldTitleValue
+    Edit-ProjectItem $owner $projectNumber $itemId2 $fieldComment2 $fileCommentValue2
+    Edit-ProjectItem $owner $projectNumber $itemId2 $fieldTitle2 $fileTitleValue2
 
 
-    # Start-MyTranscript
     $result = Save-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
-    # $tt = Stop-MyTranscript
 
-    Assert-NotImplemented
 
+    Assert-IsTrue -Condition $result
+
+    $database = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
+
+    Assert-AreEqual -Expected $fieldCommentValue1 -Presented $database.items.$itemId1.$fieldComment1
+    Assert-AreEqual -Expected $fieldTitleValue1 -Presented $database.items.$itemId1.$fieldTitle1
+    Assert-AreEqual -Expected $fileCommentValue2 -Presented $database.items.$itemId2.$fieldComment2
+    Assert-AreEqual -Expected $fileTitleValue2 -Presented $database.items.$itemId2.$fieldTitle2
 }
+
+function MockCall_GitHub_UpdateProjectV2ItemFieldValue{
+
+    $fileName = $MOCK_PATH | Join-Path -ChildPath 'updateProjectV2ItemFieldValue.json'
+    $content = Get-Content -Path $fileName | Out-String | ConvertFrom-Json
+
+    return $content
+} Export-ModuleMember -Function ProjectHelperTest_CommitProjectItemsStaged_NoStaged, ProjectHelperTest_CommitProjectItemsStaged_SUCCESS, MockCall_GitHub_UpdateProjectV2ItemFieldValue

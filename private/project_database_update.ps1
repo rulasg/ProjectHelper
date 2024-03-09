@@ -19,11 +19,13 @@ function Update-ProjectDatabase {
         return $false
     }
 
-    $items = Convert-ItemsFromResponse $result
-    $fields = Convert-FieldsFromReponse $result
+    $projectV2 = $result.data.organization.ProjectV2
+
+    $items = Convert-ItemsFromResponse $projectV2
+    $fields = Convert-FieldsFromReponse $projectV2
 
     # Set-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Items $items -Fields $fields
-    Set-ProjectDatabaseV2 $result -Items $items -Fields $fields
+    Set-ProjectDatabaseV2 $projectV2 -Items $items -Fields $fields
 
     return $true
 }
@@ -31,15 +33,20 @@ function Update-ProjectDatabase {
 function Convert-ItemsFromResponse{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][object]$Response
+        [Parameter(Position = 0)][object]$ProjectV2
     )
-    $items = @()
+    $items = @{}
 
-    $nodes = $Response.data.organization.projectV2.items.nodes
+    $nodes = $ProjectV2.items.nodes
 
     foreach($nodeItem in $nodes){
+
+        $itemId = $nodeItem.id
+
+        # TODO Recactor to call Convert-ItemFromResponse for each node utem
+
         $item = @{}
-        $item.id = $nodeItem.id
+        $item.id = $itemId
 
         # Content
         $item.type = $nodeItem.content.__typename
@@ -97,7 +104,7 @@ function Convert-ItemsFromResponse{
             # $item.$($nodefield.field.name) = $nodefield.name
         }
 
-        $items += $item
+        $items.$itemId += $item
     }
     return $Items
 }
@@ -105,18 +112,20 @@ function Convert-ItemsFromResponse{
 function Convert-FieldsFromReponse{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][object]$Response
+        [Parameter(Position = 0)][object]$ProjectV2
     )
-    $fields = @()
+    $fields = @{}
 
-    $nodes = $Response.data.organization.projectV2.fields.nodes
+    $nodes = $ProjectV2.fields.nodes
 
     foreach($node in $nodes){
+        $fieldId = $node.id
+
         $field = @{}
         $field.id = $node.id
         $field.name = $node.name
         $field.type = $node.__typename
-        $field.dataTYpe = $node.dataType
+        $field.dataType = $node.dataType
 
         if($field.type -eq "ProjectV2SingleSelectField"){
             $field.options = @{}
@@ -124,7 +133,7 @@ function Convert-FieldsFromReponse{
                 $field.options.$($option.name) = $option.id
             }
         }
-        $fields += $field
+        $fields.$fieldId = $field
     }
 
     return $fields
@@ -184,4 +193,75 @@ function GetPullRequests{
     $ret = $ret | ConvertTo-Json
 
     return $ret
+}
+
+function Convert-ItemFromResponse{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][object]$ProjectV2Item
+    )
+
+    $nodeItem = $ProjectV2Item
+
+    $item = @{}
+    $item.id = $nodeItem.id
+
+    # Content
+    $item.type = $nodeItem.content.__typename
+    $item.body = $nodeItem.content.body
+    # Title is stored in two places. in the content and as a field.
+    # We will use the field value
+    # $item.title = $nodeItem.content.title
+    $item.number = $nodeItem.content.number
+    $item.url = $nodeItem.content.url
+
+    # Populate content info based on item type
+    switch ($item.type) {
+        "Issue" {
+            $item.url = $nodeItem.content.url
+            }
+        Default {}
+    }
+
+    #Fields
+    foreach($nodefield in $nodeItem.fieldValues.nodes){
+        switch($nodefield.__typename){
+            "ProjectV2ItemFieldTextValue" {
+                $value = $nodefield.text
+            }
+            "ProjectV2ItemFieldSingleSelectValue" {
+                $value = $nodefield.name
+            }
+            "ProjectV2ItemFieldNumberValue" {
+                $value = $nodefield.number
+            }
+            "ProjectV2ItemFieldDateValue" {
+                $value = $nodefield.date
+            }
+            "ProjectV2ItemFieldUserValue" {
+                $value = GetUsers -FieldNode $nodefield
+            }
+            "ProjectV2ItemFieldRepositoryValue" {
+                $value = $nodefield.repository.url
+            }
+            "ProjectV2ItemFieldLabelValue" {
+                $value = GetLabels -FieldNode $nodefield
+            }
+            "ProjectV2ItemFieldMilestoneValue" {
+                $value = $nodefield.milestone.title
+            }
+            "ProjectV2ItemFieldPullRequestValue" {
+                $value = GetPullRequests -FieldNode $nodefield
+            }
+            Default {
+                $value = $nodefield.text
+            }
+        }
+        $item.$($nodefield.field.name) = $value
+
+        # $item.$($nodefield.field.name) = $nodefield.name
+    }
+
+    return $item
+
 }
