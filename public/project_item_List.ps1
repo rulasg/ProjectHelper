@@ -11,6 +11,12 @@ function Get-ProjectItemList{
 
     $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
+    # Check if $db is null
+    if($null -eq $db){
+        "Project not found. Check owner and projectnumber" | Write-MyError
+        return $null
+    }
+
     # if $db is null it rill return null
     return $db.items
 
@@ -44,12 +50,12 @@ function Find-ProjectItemByTitle{
         [Parameter()][switch]$Force
     )
 
-    $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+    $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
     # return if #db is null
-    if($null -eq $db){ return }
+    if($null -eq $items){ return $null }
 
-    $ret =  $db.items | Where-Object { $_.Title.Trim().ToLower() -eq $($Title.Trim().ToLower()) }
+    $ret =  $items | Where-Object { $_.Title.Trim().ToLower() -eq $($Title.Trim().ToLower()) }
 
     return $ret
 
@@ -64,12 +70,12 @@ function Search-ProjectItemByTitle{
         [Parameter()][switch]$Force
     )
 
-    $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+    $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
     # return if #db is null
-    if($null -eq $db){ return }
+    if($null -eq $items){ return $null}
     
-    $ret = $db.items | Where-Object { $_.Title -like "*$Title*" }
+    $ret = $items | Where-Object { $_.Title -like "*$Title*" }
     
     return $ret
 

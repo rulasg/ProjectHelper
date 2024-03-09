@@ -39,21 +39,20 @@ function ProjectHelperTest_GetProjetItems_FAIL{
 
     MockCallToNull -Command GitHubOrgProjectWithFields
 
-    Reset-ProjectItemList $owner $ProjectNumber -Force
+    Initialize-DatabaseRoot
 
     # Start the transcript
     
     # Run the command
-    Start-Transcript -Path "./transcript.txt"
+    Start-MyTranscript
     $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
-    Stop-Transcript
-    $transcriptContent = Get-Content -Path "transcript.txt"
+    $tt = Stop-MyTranscript
     
     # Capture the standard output
-    $erroMessage= "Error: Database not updated."
+    $erroMessage1= "Error: Project not found. Check owner and projectnumber"
 
     Assert-IsNull -Object $result
-    Assert-Contains -Expected $erroMessage -Presented $transcriptContent
+    Assert-Contains -Expected $erroMessage1 -Presented $tt
 }
 
 function ProjectHelperTest_FindProjectItemByTitle_SUCCESS{
@@ -103,18 +102,19 @@ function ProjectHelperTest_FindProjectItemByTitle_FAIL{
     Reset-InvokeCommandMock
 
     $Owner = "someOwner" ; $ProjectNumber = 666 
-    $erroMessage= "Error: Database not updated."
 
     MockCallToNull -Command GitHubOrgProjectWithFields
 
     # Run the command
-    Start-Transcript -Path "./transcript.txt"
+    Start-MyTranscript
     $result = Find-ProjectItemByTitle -Owner $Owner -ProjectNumber $ProjectNumber
-    Stop-Transcript
-    $transcriptContent = Get-Content -Path "transcript.txt"
+    $tt = Stop-MyTranscript
     
+    # Capture the standard output
+    $erroMessage1= "Error: Project not found. Check owner and projectnumber"
+
     Assert-IsNull -Object $result
-    Assert-Contains -Expected $erroMessage -Presented $transcriptContent
+    Assert-Contains -Expected $erroMessage1 -Presented $tt
 }
 
 function ProjectHelperTest_SearchProjectItemByTitle_SUCCESS{
@@ -145,20 +145,19 @@ function ProjectHelperTest_SearchProjectItemByTitle_FAIL{
     Reset-InvokeCommandMock
 
     $Owner = "someOwner" ; $ProjectNumber = 666 
-    $erroMessage= "Error: Database not updated."
+    $erroMessage= "Error: Project not found. Check owner and projectnumber"
 
-    Reset-ProjectItemList  $Owner  $ProjectNumber -Force
+    Initialize-DatabaseRoot
 
     MockCallToNull -Command GitHubOrgProjectWithFields
 
     # Run the command
-    Start-Transcript -Path "./transcript.txt"
+    Start-MyTranscript
     $result = Search-ProjectItemByTitle -Owner $Owner -ProjectNumber $ProjectNumber
-    Stop-Transcript
-    $transcriptContent = Get-Content -Path "transcript.txt"
+    $tt = Stop-MyTranscript
     
     Assert-IsNull -Object $result
-    Assert-Contains -Expected $erroMessage -Presented $transcriptContent
+    Assert-Contains -Expected $erroMessage -Presented $tt
 }
 
 #####################

@@ -15,14 +15,14 @@ function Update-ProjectDatabase {
 
     # check if the result is empty
     if($null -eq $result){
-        "Database not updated." | Write-MyError
+        "Updating ProjectDatabase for project [$Owner/$ProjectNumber]" | Write-MyError
         return $false
     }
 
     $items = Convert-ItemsFromResponse $result
     $fields = Convert-FieldsFromReponse $result
 
-    Set-Database -Owner $Owner -ProjectNumber $ProjectNumber -Items $items -Fields $fields
+    Set-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Items $items -Fields $fields
 
     return $true
 }

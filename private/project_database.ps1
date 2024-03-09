@@ -7,9 +7,11 @@ function Test-ProjectDatabase{
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    # so far we only check if the database exists
-    # TODO check if the database has expired
-    return Test-Database -Owner $Owner -ProjectNumber $ProjectNumber
+    $db = Get-Database -Owner $Owner -ProjectNumber $ProjectNumber
+
+    $ret = $null -ne $db
+
+    return $ret 
 }
 
 function Test-ProjectDatabaseStaged{
@@ -19,8 +21,17 @@ function Test-ProjectDatabaseStaged{
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    # Check if there is content Staged and not commited yet
-    return Test-DatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
+
+    if($null -eq $db){
+        return $false
+    }
+
+    if($null -eq $db.Staged){
+        return $false
+    }
+
+    return $true
 }
 
 function Get-ProjectDatabase{
@@ -39,7 +50,7 @@ function Get-ProjectDatabase{
     $db = Get-Database -Owner $Owner -ProjectNumber $ProjectNumber
 
     return $db
-}
+} Export-ModuleMember -Function Get-ProjectDatabase
 
 function Reset-ProjectDatabase{
     [CmdletBinding()]
@@ -48,7 +59,61 @@ function Reset-ProjectDatabase{
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    Reset-Database -Owner $Owner -ProjectNumber $ProjectNumber
+    $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
+
+    if($null -ne $db){
+        $db = New-ProjectDatabase
+    }
 }
 
+function New-ProjectDatabase{
+    return [PSCustomObject]@{
+        Items = $null
+        Fields = $null
+        Staged = @{}
+    }
+}
 
+function Set-ProjectDatabase{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][string]$Owner,
+        [Parameter(Position = 1)][int]$ProjectNumber,
+        [Parameter(Position = 2)][Object[]]$Items,
+        [Parameter(Position = 3)][Object[]]$Fields
+    )
+
+    $db = New-ProjectDatabase
+
+    $db.items = $items
+    $db.fields = $fields
+
+    Set-Database -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
+}
+
+function Set-ProjectDatabaseV2{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][PsCustomObject]$ProjectV2,
+        [Parameter(Position = 1)][Object[]]$Items,
+        [Parameter(Position = 2)][Object[]]$Fields
+    )
+
+    $owner = $ProjectV2.owner.login
+    $projectnumber = $ProjectV2.number
+
+    $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
+
+    $db.items = $items
+    $db.fields = $fields
+
+    # $db.url              = $ProjectV2.url
+    # $db.shortDescription = $ProjectV2.shortDescription
+    # $db.public           = $ProjectV2.public
+    # $db.closed           = $ProjectV2.closed
+    # $db.title            = $ProjectV2.title
+    # $db.id               = $ProjectV2.id
+    # $db.readme           = $ProjectV2.readme
+    # $db.owner            = $ProjectV2.owner
+
+}

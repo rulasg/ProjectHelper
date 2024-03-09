@@ -9,7 +9,7 @@ function Save-ProjectDatabase{
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    $db = Get-Database -Owner $Owner -ProjectNumber $ProjectNumber
+    $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
 
     foreach($idemId in $db.Staged.Keys){
         foreach($fieldId in $db.staged.$idemId.Keys){
