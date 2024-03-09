@@ -37,7 +37,7 @@ function Save-ItemFieldValue{
         throw "Invalid value [$Value] for field $FieldName"
     }
 
-    $node = $Database.Staged | AddHashLink $ItemId
+    $node = $Database | AddHashLink Staged | AddHashLink $ItemId
     $node.$fieldId = [PSCustomObject]@{
         Value = $Value
         Field = $field

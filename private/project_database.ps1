@@ -27,6 +27,10 @@ function Test-ProjectDatabaseStaged{
         return $false
     }
 
+    if($null -eq $db.Staged){
+        return $false
+    }
+
     if($db.Staged.Count -eq 0){
         return $false
     }
@@ -59,37 +63,25 @@ function Reset-ProjectDatabase{
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
-
-    if($null -ne $db){
-        $db = New-ProjectDatabase
-    }
+    Set-Database -Owner $Owner -ProjectNumber $ProjectNumber -Database $null
 }
 
-function New-ProjectDatabase{
-    return [PSCustomObject]@{
-        Items = $null
-        Fields = $null
-        Staged = @{}
-    }
-}
+# function Set-ProjectDatabase{
+#     [CmdletBinding()]
+#     param(
+#         [Parameter(Position = 0)][string]$Owner,
+#         [Parameter(Position = 1)][int]$ProjectNumber,
+#         [Parameter(Position = 2)][Object[]]$Items,
+#         [Parameter(Position = 3)][Object[]]$Fields
+#     )
 
-function Set-ProjectDatabase{
-    [CmdletBinding()]
-    param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber,
-        [Parameter(Position = 2)][Object[]]$Items,
-        [Parameter(Position = 3)][Object[]]$Fields
-    )
+#     $db = New-ProjectDatabase
 
-    $db = New-ProjectDatabase
+#     $db.items = $items
+#     $db.fields = $fields
 
-    $db.items = $items
-    $db.fields = $fields
-
-    Set-Database -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
-}
+#     Set-Database -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
+# }
 
 function Set-ProjectDatabaseV2{
     [CmdletBinding()]
@@ -104,21 +96,20 @@ function Set-ProjectDatabaseV2{
     $owner = $ProjectV2.owner.login
     $projectnumber = $ProjectV2.number
 
-    $db =New-ProjectDatabase
+    $db = @{}
+    
+    $db.url              = $ProjectV2.url
+    $db.shortDescription = $ProjectV2.shortDescription
+    $db.public           = $ProjectV2.public
+    $db.closed           = $ProjectV2.closed
+    $db.title            = $ProjectV2.title
+    $db.id               = $ProjectV2.id
+    $db.readme           = $ProjectV2.readme
+    $db.owner            = $ProjectV2.owner
+    $db.number           = $ProjectV2.number
 
     $db.items = $items
     $db.fields = $fields
     
     Set-Database -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
-
-
-    # $db.url              = $ProjectV2.url
-    # $db.shortDescription = $ProjectV2.shortDescription
-    # $db.public           = $ProjectV2.public
-    # $db.closed           = $ProjectV2.closed
-    # $db.title            = $ProjectV2.title
-    # $db.id               = $ProjectV2.id
-    # $db.readme           = $ProjectV2.readme
-    # $db.owner            = $ProjectV2.owner
-
 }
