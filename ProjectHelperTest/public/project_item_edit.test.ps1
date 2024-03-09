@@ -1,9 +1,8 @@
 function ProjectHelperTest_EditProjetItems_SUCCESS{
     Reset-InvokeCommandMock
-
     Initialize-DatabaseRoot
     
-    $Owner = "someOwner" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
+    $Owner = "Solidifydemo" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
     Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields -Owner $Owner -Project $projectNumber"
     
     $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber

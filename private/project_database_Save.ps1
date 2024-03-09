@@ -1,8 +1,8 @@
 
-Set-MyInvokeCommandAlias -Alias GitHubSaveProjectItem -Command "gh project item-edit --id {idemid} --field-id {fieldid} --project-id {projectid} {valueparameter}"
+Set-MyInvokeCommandAlias -Alias GitHubSaveProjectItem -Command "gh project item-edit --id {itemid} --field-id {fieldid} --project-id {projectid} {valueparameter}"
 
 function Save-ProjectDatabase{
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     [OutputType([bool])]
     param(
         [Parameter(Position = 0)][string]$Owner,
@@ -13,11 +13,12 @@ function Save-ProjectDatabase{
 
     foreach($idemId in $db.Staged.Keys){
         foreach($fieldId in $db.staged.$idemId.Keys){
-            "Saving $item.Id $field.Id $field.Value" | Write-MyHost
 
+            $projectid = 
             $item_id = $idemId
             $field_id = $fieldId
-
+            
+            "Saving $($item.Id) $($field.Id) $($field.Value)" | Write-MyHost
         }
         
     }

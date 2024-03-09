@@ -1,6 +1,7 @@
 function ProjectHelperTest_MockTest_SUCCESS{
 
     Reset-InvokeCommandMock
+    Initialize-DatabaseRoot
 
     ## Throw with no mock
     # throw if you do not mock the call on testing

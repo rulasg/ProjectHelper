@@ -2,7 +2,7 @@
 .SYNOPSIS
     Get the saved items from a project
 .EXAMPLE
-    Get-ProjectItemStaged -Owner "someOwner" -ProjectNumber 666
+    Get-ProjectItemStaged -Owner "someOwner" -ProjectNumber 164
 #>
 function Get-ProjectItemStaged{
     [CmdletBinding()]

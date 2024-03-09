@@ -1,8 +1,9 @@
 
 function ProjectHelperTest_CommitProjectItemsStaged_NoStaged{
     Reset-InvokeCommandMock
+    Initialize-DatabaseRoot
 
-    $Owner = "someOwner" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
+    $Owner = "Solidifydemo" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
     Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields -Owner $Owner -Project $projectNumber"
 
     Start-MyTranscript
@@ -15,8 +16,9 @@ function ProjectHelperTest_CommitProjectItemsStaged_NoStaged{
 
 function ProjectHelperTest_CommitProjectItemsStaged_SUCCESS{
     Reset-InvokeCommandMock
+    Initialize-DatabaseRoot
 
-    $Owner = "someOwner" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
+    $Owner = "Solidifydemo" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
     Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields -Owner $Owner -Project $projectNumber"
 
     # Item id 10
@@ -69,9 +71,10 @@ function ProjectHelperTest_CommitProjectItemsStaged_SUCCESS{
     Edit-ProjectItem $owner $projectNumber $itemId $fieldTitle $fieldTitleValue
 
 
-    Start-MyTranscript
+    # Start-MyTranscript
     $result = Save-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
-    $t = Stop-MyTranscript
+    # $tt = Stop-MyTranscript
 
+    Assert-NotImplemented
 
 }

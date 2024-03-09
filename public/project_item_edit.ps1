@@ -3,8 +3,8 @@
 .SYNOPSIS
     Edit a project item
 .EXAMPLE
-    Edit-ProjectItem -Owner "someOwner" -ProjectNumber 666 -Title "Item 1 - title" -FieldName "comment" -Value "new value of the comment"
-    Edit-ProjectItem -Owner "someOwner" -ProjectNumber 666 -Title "Item 1 - title" -FieldName "title" -Value "new value of the title"
+    Edit-ProjectItem -Owner "someOwner" -ProjectNumber 164 -Title "Item 1 - title" -FieldName "comment" -Value "new value of the comment"
+    Edit-ProjectItem -Owner "someOwner" -ProjectNumber 164 -Title "Item 1 - title" -FieldName "title" -Value "new value of the title"
 #>
 function Edit-ProjectItem{
     [CmdletBinding()]

@@ -22,7 +22,8 @@ function Update-ProjectDatabase {
     $items = Convert-ItemsFromResponse $result
     $fields = Convert-FieldsFromReponse $result
 
-    Set-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Items $items -Fields $fields
+    # Set-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Items $items -Fields $fields
+    Set-ProjectDatabaseV2 $result -Items $items -Fields $fields
 
     return $true
 }

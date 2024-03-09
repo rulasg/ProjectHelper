@@ -27,7 +27,7 @@ function Test-ProjectDatabaseStaged{
         return $false
     }
 
-    if($null -eq $db.Staged){
+    if($db.Staged.Count -eq 0){
         return $false
     }
 
@@ -94,18 +94,23 @@ function Set-ProjectDatabase{
 function Set-ProjectDatabaseV2{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][PsCustomObject]$ProjectV2,
+        [Parameter(Position = 0)][object]$Response,
         [Parameter(Position = 1)][Object[]]$Items,
         [Parameter(Position = 2)][Object[]]$Fields
     )
 
+    $projectV2 = $Response.data.organization.ProjectV2
+
     $owner = $ProjectV2.owner.login
     $projectnumber = $ProjectV2.number
 
-    $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
+    $db =New-ProjectDatabase
 
     $db.items = $items
     $db.fields = $fields
+    
+    Set-Database -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
+
 
     # $db.url              = $ProjectV2.url
     # $db.shortDescription = $ProjectV2.shortDescription
