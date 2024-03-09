@@ -6,7 +6,16 @@ function Get-Item{
         [Parameter(Position = 1)][string]$ItemId
     )
 
-    $item = $Database.items | Where-Object { $_.id -eq $ItemId }
+    $item = $Database.items.$ItemId
+
+    # Check if is staged
+    if($database.Staged.$ItemId){
+        foreach($field in $database.Staged.$ItemId.keys){
+            $fieldname = $database.Staged.$ItemId.$field.Field.Name
+            $fieldValue =$database.Staged.$ItemId.$field.Value
+            $item.$fieldname = $fieldValue
+        }
+    }
 
     return $item
 }

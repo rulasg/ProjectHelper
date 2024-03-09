@@ -1,6 +1,30 @@
 
 <#
 .SYNOPSIS
+    Get a project item.
+.DESCRIPTION
+    Fields will show th emerge between Project and Staged Item fields values
+.EXAMPLE
+    Get-ProjectItem -Owner "someOwner" -ProjectNumber 164 -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc
+    #>
+function Get-ProjectItem{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][string]$Owner,
+        [Parameter(Position = 1)][int]$ProjectNumber,
+        [Parameter(Position = 2)][string]$ItemId,
+        [Parameter()][switch]$Force
+    )
+
+    $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+
+    $item = Get-Item $db $ItemId
+
+    return $item
+} Export-ModuleMember -Function Get-ProjectItem
+
+<#
+.SYNOPSIS
     Edit a project item
 .EXAMPLE
     Edit-ProjectItem -Owner "someOwner" -ProjectNumber 164 -Title "Item 1 - title" -FieldName "comment" -Value "new value of the comment"

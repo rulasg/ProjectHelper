@@ -1,3 +1,36 @@
+
+function ProjectHelperTest_GetProjectItem_SUCCESS{
+    Reset-InvokeCommandMock
+    Initialize-DatabaseRoot
+
+    $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
+    $fieldComment = "comment" ; $fieldTitle = "title"
+
+    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
+
+    $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
+    $fieldTitleValue = "A draft in the project"
+    $fieldCommentValue = "This"
+
+    $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
+
+    Assert-AreEqual -Expected $itemId -Presented $result.Id
+    Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$fieldComment
+    Assert-AreEqual -Expected $fieldTitleValue -Presented $result.$fieldTitle
+
+    # Edit to see the staged references
+    $fieldCommentValue = "new value of the comment 10.1"
+    $fieldTitleValue = "new value of the title 10.1"
+    Edit-ProjectItem $owner $projectNumber $itemId $fieldComment $fieldCommentValue
+    Edit-ProjectItem $owner $projectNumber $itemId $fieldTitle $fieldTitleValue
+
+    $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
+
+    Assert-AreEqual -Expected $itemId -Presented $result.Id
+    Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$fieldComment
+    Assert-AreEqual -Expected $fieldTitleValue -Presented $result.$fieldTitle
+}
+
 function ProjectHelperTest_EditProjetItems_SUCCESS{
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot
@@ -32,3 +65,4 @@ function ProjectHelperTest_EditProjetItems_SUCCESS{
     Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$itemId.$comment_fieldid.Value
     Assert-AreEqual -Expected $fieldTitleValue -Presented $result.$itemId.$title_fieldid.Value
 }
+
