@@ -3,7 +3,7 @@ function ProjectHelperTest_GetProjetItems_SUCCESS{
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot
 
-    $Owner = "Solidifydemo" ; $ProjectNumber = 164 ; $itemsCount = 12
+    $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12
 
     Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields -Owner $Owner -Project $projectNumber"
 
@@ -37,7 +37,7 @@ function ProjectHelperTest_GetProjetItems_FAIL{
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot
 
-    $Owner = "Solidifydemo" ; $ProjectNumber = 164 ; $itemsCount = 12
+    $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12
 
     MockCallToNull -Command GitHubOrgProjectWithFields
 
@@ -62,7 +62,7 @@ function ProjectHelperTest_FindProjectItemByTitle_SUCCESS{
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot
 
-    $Owner = "Solidifydemo" ; $ProjectNumber = 164  ; $id = "PVTI_lADOBCrGTM4ActQazgMtRO0"
+    $Owner = "SomeOrg" ; $ProjectNumber = 164  ; $id = "PVTI_lADOBCrGTM4ActQazgMtRO0"
 
     # title refrence with differnt case and spaces
     $title = "epic 1"
@@ -81,7 +81,7 @@ function ProjectHelperTest_FindProjectItemByTitle_SUCCESS_MultipleResults{
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot
 
-    $Owner = "Solidifydemo" ; $ProjectNumber = 164  ; 
+    $Owner = "SomeOrg" ; $ProjectNumber = 164  ; 
     $id1 = "PVTI_lADOBCrGTM4ActQazgMtROk"
     $id2 = "PVTI_lADOBCrGTM4ActQazgMtRPA"
 
@@ -106,7 +106,7 @@ function ProjectHelperTest_FindProjectItemByTitle_FAIL{
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot
 
-    $Owner = "Solidifydemo" ; $ProjectNumber = 164 
+    $Owner = "SomeOrg" ; $ProjectNumber = 164 
 
     MockCallToNull -Command GitHubOrgProjectWithFields
 
@@ -127,7 +127,7 @@ function ProjectHelperTest_SearchProjectItemByTitle_SUCCESS{
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot
 
-    $Owner = "Solidifydemo" ; $ProjectNumber = 164  ; $id = "PVTI_lADOBCrGTM4ActQazgMtRO0"
+    $Owner = "SomeOrg" ; $ProjectNumber = 164  ; $id = "PVTI_lADOBCrGTM4ActQazgMtRO0"
 
     # title refrence with differnt case and spaces
     $title = "epic"
@@ -151,7 +151,7 @@ function ProjectHelperTest_SearchProjectItemByTitle_FAIL{
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot
 
-    $Owner = "Solidifydemo" ; $ProjectNumber = 164 
+    $Owner = "SomeOrg" ; $ProjectNumber = 164 
     $erroMessage= "Error: Project not found. Check owner and projectnumber"
 
     Initialize-DatabaseRoot

@@ -3,7 +3,7 @@
       "organization": {
        "projectV2": {
           "number": 164,
-          "url": "https://github.com/orgs/SolidifyDemo/projects/164",
+          "url": "https://github.com/orgs/SomeOrg/projects/164",
           "shortDescription": "Created with [ProjectDemo] by [@rulasg]",
           "public": true,
           "closed": false,
@@ -23,9 +23,9 @@
                   "body": "Series 5 of demo issues for the Front repo",
                   "title": "Issue 994d2f72",
                   "number": 5,
-                  "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/issues/5",
+                  "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-front/issues/5",
                   "repository": {
-                    "nameWithOwner": "SolidifyDemo/ProjectDemoTest-repo-front"
+                    "nameWithOwner": "SomeOrg/ProjectDemoTest-repo-front"
                   }
                 },
                 "id": "PVTI_lADOBCrGTM4ActQazgMtRN4",
@@ -50,7 +50,7 @@
                     {
                       "__typename": "ProjectV2ItemFieldRepositoryValue",
                       "repository": {
-                        "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front"
+                        "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-front"
                       },
                       "field": {
                         "__typename": "ProjectV2Field",
@@ -234,9 +234,9 @@
                   "body": "Series 4 of demo issues for the Front repo",
                   "title": "Issue 4c348750",
                   "number": 4,
-                  "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/issues/4",
+                  "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-front/issues/4",
                   "repository": {
-                    "nameWithOwner": "SolidifyDemo/ProjectDemoTest-repo-front"
+                    "nameWithOwner": "SomeOrg/ProjectDemoTest-repo-front"
                   }
                 },
                 "id": "PVTI_lADOBCrGTM4ActQazgMtROE",
@@ -261,7 +261,7 @@
                     {
                       "__typename": "ProjectV2ItemFieldRepositoryValue",
                       "repository": {
-                        "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front"
+                        "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-front"
                       },
                       "field": {
                         "__typename": "ProjectV2Field",
@@ -423,9 +423,9 @@
                   "body": "Series 3 of demo issues for the Front repo",
                   "title": "Issue 455d29e3",
                   "number": 3,
-                  "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/issues/3",
+                  "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-front/issues/3",
                   "repository": {
-                    "nameWithOwner": "SolidifyDemo/ProjectDemoTest-repo-front"
+                    "nameWithOwner": "SomeOrg/ProjectDemoTest-repo-front"
                   }
                 },
                 "id": "PVTI_lADOBCrGTM4ActQazgMtROU",
@@ -450,7 +450,7 @@
                     {
                       "__typename": "ProjectV2ItemFieldRepositoryValue",
                       "repository": {
-                        "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front"
+                        "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-front"
                       },
                       "field": {
                         "__typename": "ProjectV2Field",
@@ -614,9 +614,9 @@
                   "body": "Series 2 of demo issues for the Front repo",
                   "title": "Issue Name 1",
                   "number": 2,
-                  "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/issues/2",
+                  "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-front/issues/2",
                   "repository": {
-                    "nameWithOwner": "SolidifyDemo/ProjectDemoTest-repo-front"
+                    "nameWithOwner": "SomeOrg/ProjectDemoTest-repo-front"
                   }
                 },
                 "id": "PVTI_lADOBCrGTM4ActQazgMtROk",
@@ -641,7 +641,7 @@
                     {
                       "__typename": "ProjectV2ItemFieldRepositoryValue",
                       "repository": {
-                        "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front"
+                        "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-front"
                       },
                       "field": {
                         "__typename": "ProjectV2Field",
@@ -820,12 +820,12 @@
               {
                 "content": {
                   "__typename": "Issue",
-                  "body": "Series 1 of demo issues for the Front repo\n```[tasklist]\n### Tasks\n- [ ] https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/issues/2\n- [ ] https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/issues/4\n- [ ] https://github.com/microsoft/vscode/issues/205290\n- [ ] https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/issues/5\n```\n",
+                  "body": "Series 1 of demo issues for the Front repo\n```[tasklist]\n### Tasks\n- [ ] https://github.com/SomeOrg/ProjectDemoTest-repo-front/issues/2\n- [ ] https://github.com/SomeOrg/ProjectDemoTest-repo-front/issues/4\n- [ ] https://github.com/microsoft/vscode/issues/205290\n- [ ] https://github.com/SomeOrg/ProjectDemoTest-repo-front/issues/5\n```\n",
                   "title": "EPIC 1 ",
                   "number": 1,
-                  "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/issues/1",
+                  "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-front/issues/1",
                   "repository": {
-                    "nameWithOwner": "SolidifyDemo/ProjectDemoTest-repo-front"
+                    "nameWithOwner": "SomeOrg/ProjectDemoTest-repo-front"
                   }
                 },
                 "id": "PVTI_lADOBCrGTM4ActQazgMtRO0",
@@ -850,7 +850,7 @@
                     {
                       "__typename": "ProjectV2ItemFieldRepositoryValue",
                       "repository": {
-                        "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front"
+                        "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-front"
                       },
                       "field": {
                         "__typename": "ProjectV2Field",
@@ -864,7 +864,7 @@
                       "pullRequests": {
                         "nodes": [
                           {
-                            "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/pull/6"
+                            "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-front/pull/6"
                           }
                         ]
                       },
@@ -1014,9 +1014,9 @@
                   "body": "Series 5 of demo issues for the Front repo",
                   "title": "Issue Name 1",
                   "number": 5,
-                  "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-back/issues/5",
+                  "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-back/issues/5",
                   "repository": {
-                    "nameWithOwner": "SolidifyDemo/ProjectDemoTest-repo-back"
+                    "nameWithOwner": "SomeOrg/ProjectDemoTest-repo-back"
                   }
                 },
                 "id": "PVTI_lADOBCrGTM4ActQazgMtRPA",
@@ -1041,7 +1041,7 @@
                     {
                       "__typename": "ProjectV2ItemFieldRepositoryValue",
                       "repository": {
-                        "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-back"
+                        "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-back"
                       },
                       "field": {
                         "__typename": "ProjectV2Field",
@@ -1189,9 +1189,9 @@
                   "body": "Series 4 of demo issues for the Front repo",
                   "title": "Issue ae1df480",
                   "number": 4,
-                  "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-back/issues/4",
+                  "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-back/issues/4",
                   "repository": {
-                    "nameWithOwner": "SolidifyDemo/ProjectDemoTest-repo-back"
+                    "nameWithOwner": "SomeOrg/ProjectDemoTest-repo-back"
                   }
                 },
                 "id": "PVTI_lADOBCrGTM4ActQazgMtRPE",
@@ -1216,7 +1216,7 @@
                     {
                       "__typename": "ProjectV2ItemFieldRepositoryValue",
                       "repository": {
-                        "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-back"
+                        "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-back"
                       },
                       "field": {
                         "__typename": "ProjectV2Field",
@@ -1364,9 +1364,9 @@
                   "body": "Series 3 of demo issues for the Front repo",
                   "title": "Issue 793748be",
                   "number": 3,
-                  "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-back/issues/3",
+                  "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-back/issues/3",
                   "repository": {
-                    "nameWithOwner": "SolidifyDemo/ProjectDemoTest-repo-back"
+                    "nameWithOwner": "SomeOrg/ProjectDemoTest-repo-back"
                   }
                 },
                 "id": "PVTI_lADOBCrGTM4ActQazgMtRPQ",
@@ -1391,7 +1391,7 @@
                     {
                       "__typename": "ProjectV2ItemFieldRepositoryValue",
                       "repository": {
-                        "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-back"
+                        "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-back"
                       },
                       "field": {
                         "__typename": "ProjectV2Field",
@@ -1539,9 +1539,9 @@
                   "body": "Series 2 of demo issues for the Front repo",
                   "title": "Issue 814adf19",
                   "number": 2,
-                  "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-back/issues/2",
+                  "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-back/issues/2",
                   "repository": {
-                    "nameWithOwner": "SolidifyDemo/ProjectDemoTest-repo-back"
+                    "nameWithOwner": "SomeOrg/ProjectDemoTest-repo-back"
                   }
                 },
                 "id": "PVTI_lADOBCrGTM4ActQazgMtRPc",
@@ -1566,7 +1566,7 @@
                     {
                       "__typename": "ProjectV2ItemFieldRepositoryValue",
                       "repository": {
-                        "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-back"
+                        "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-back"
                       },
                       "field": {
                         "__typename": "ProjectV2Field",
@@ -1711,12 +1711,12 @@
               {
                 "content": {
                   "__typename": "Issue",
-                  "body": "Series 1 of demo issues for the Front repo\n```[tasklist]\n### Tasks\n- [ ] https://github.com/SolidifyDemo/ProjectDemoTest-repo-back/issues/2\n- [ ] https://github.com/SolidifyDemo/ProjectDemoTest-repo-back/issues/3\n- [ ] https://github.com/SolidifyDemo/ProjectDemoTest-repo-back/issues/4\n- [ ] https://github.com/SolidifyDemo/ProjectDemoTest-repo-back/issues/5\n```\n",
+                  "body": "Series 1 of demo issues for the Front repo\n```[tasklist]\n### Tasks\n- [ ] https://github.com/SomeOrg/ProjectDemoTest-repo-back/issues/2\n- [ ] https://github.com/SomeOrg/ProjectDemoTest-repo-back/issues/3\n- [ ] https://github.com/SomeOrg/ProjectDemoTest-repo-back/issues/4\n- [ ] https://github.com/SomeOrg/ProjectDemoTest-repo-back/issues/5\n```\n",
                   "title": "EPIC 2",
                   "number": 1,
-                  "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-back/issues/1",
+                  "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-back/issues/1",
                   "repository": {
-                    "nameWithOwner": "SolidifyDemo/ProjectDemoTest-repo-back"
+                    "nameWithOwner": "SomeOrg/ProjectDemoTest-repo-back"
                   }
                 },
                 "id": "PVTI_lADOBCrGTM4ActQazgMtRPg",
@@ -1741,7 +1741,7 @@
                     {
                       "__typename": "ProjectV2ItemFieldRepositoryValue",
                       "repository": {
-                        "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-back"
+                        "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-back"
                       },
                       "field": {
                         "__typename": "ProjectV2Field",
@@ -2054,9 +2054,9 @@
                   "body": "",
                   "title": "Update README.md",
                   "number": 6,
-                  "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/pull/6",
+                  "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-front/pull/6",
                   "repository": {
-                    "nameWithOwner": "SolidifyDemo/ProjectDemoTest-repo-front"
+                    "nameWithOwner": "SomeOrg/ProjectDemoTest-repo-front"
                   }
                 },
                 "id": "PVTI_lADOBCrGTM4ActQazgMueM4",
@@ -2081,7 +2081,7 @@
                     {
                       "__typename": "ProjectV2ItemFieldRepositoryValue",
                       "repository": {
-                        "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front"
+                        "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-front"
                       },
                       "field": {
                         "__typename": "ProjectV2Field",
@@ -2328,7 +2328,7 @@
           },
           "owner": {
             "__typename": "Organization",
-            "login": "SolidifyDemo"
+            "login": "SomeOrg"
           }
         }
       }
