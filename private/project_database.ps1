@@ -21,7 +21,7 @@ function Test-ProjectDatabaseStaged{
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
+    $db = Get-Database -Owner $Owner -ProjectNumber $ProjectNumber
 
     if($null -eq $db){
         return $false
@@ -54,7 +54,7 @@ function Get-ProjectDatabase{
     $db = Get-Database -Owner $Owner -ProjectNumber $ProjectNumber
 
     return $db
-} Export-ModuleMember -Function Get-ProjectDatabase
+}
 
 function Reset-ProjectDatabase{
     [CmdletBinding()]
@@ -111,8 +111,3 @@ function Set-ProjectDatabaseV2{
     
     Set-Database -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
 }
-
-<#
-.SYNOPSIS
-    Updates the local database with the information of an item
-#>

@@ -75,15 +75,20 @@ function ProjectHelperTest_CommitProjectItemsStaged_SUCCESS{
 
     $result = Save-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
 
-
+    # Return true
     Assert-IsTrue -Condition $result
 
-    $database = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
+    # Staged list is empty
+    $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    Assert-IsNull -Object $staged
 
-    Assert-AreEqual -Expected $fieldCommentValue1 -Presented $database.items.$itemId1.$fieldComment1
-    Assert-AreEqual -Expected $fieldTitleValue1 -Presented $database.items.$itemId1.$fieldTitle1
-    Assert-AreEqual -Expected $fileCommentValue2 -Presented $database.items.$itemId2.$fieldComment2
-    Assert-AreEqual -Expected $fileTitleValue2 -Presented $database.items.$itemId2.$fieldTitle2
+    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.$fieldComment1
+    Assert-AreEqual -Expected $fieldTitleValue1 -Presented $item1.$fieldTitle1
+
+    $item2 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId2
+    Assert-AreEqual -Expected $fileCommentValue2 -Presented $item2.$fieldComment2
+    Assert-AreEqual -Expected $fileTitleValue2 -Presented $item2.$fieldTitle2
 }
 
 function MockCall_GitHub_UpdateProjectV2ItemFieldValue{

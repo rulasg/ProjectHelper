@@ -19,7 +19,7 @@ function Reset-InvokeCommandMock{
     param()
 
     InvokeHelper\Reset-InvokeCommandAlias -Tag $MODULE_INVOKATION_TAG
-} Export-ModuleMember -Function Reset-InvokeCommandMock
+}
 
 function MockCall{
     param(

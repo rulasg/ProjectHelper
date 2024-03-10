@@ -6,10 +6,18 @@ function Update-ProjectDatabase {
     [OutputType([bool])]
     param(
         [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber
+        [Parameter(Position = 1)][int]$ProjectNumber,
+        [Parameter()][switch]$Force
     )
 
     $params = @{ owner = $Owner ; projectnumber = $ProjectNumber }
+
+    # check if there are unsaved changes
+    $saved = Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    if($saved -and -Not $Force){
+        "There are unsaved changes. Reset-ProjectItemStaged first and try again" | Write-MyError
+        return
+    }
 
     $result  = Invoke-MyCommand -Command GitHubOrgProjectWithFields -Parameters $params
 
