@@ -5,9 +5,12 @@ function Get-ProjectItemList{
     [OutputType([string[]])]
     param(
         [Parameter(Position = 0)] [string]$Owner,
-        [Parameter(Position = 1)] [int]$ProjectNumber,
+        [Parameter(Position = 1)] [string]$ProjectNumber,
         [Parameter()][switch]$Force
     )
+
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
     $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
@@ -26,7 +29,7 @@ function Get-ProjectItemList{
 #     [CmdletBinding()]
 #     param(
 #         [Parameter(Position = 0)] [string]$Owner,
-#         [Parameter(Position = 1)] [int]$ProjectNumber,
+#         [Parameter(Position = 1)] [string]$ProjectNumber,
 #         [Parameter()][switch]$Force
 #     )
 
@@ -45,10 +48,13 @@ function Find-ProjectItemByTitle{
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)] [string]$Owner,
-        [Parameter(Position = 1)] [int]$ProjectNumber,
+        [Parameter(Position = 1)] [string]$ProjectNumber,
         [Parameter(Position = 2)] [string]$Title,
         [Parameter()][switch]$Force
     )
+
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
     $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
@@ -65,7 +71,7 @@ function Search-ProjectItemByTitle{
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)] [string]$Owner,
-        [Parameter(Position = 1)] [int]$ProjectNumber,
+        [Parameter(Position = 1)] [string]$ProjectNumber,
         [Parameter(Position = 2)] [string]$Title,
         [Parameter()][switch]$Force
     )

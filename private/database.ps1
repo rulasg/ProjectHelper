@@ -5,10 +5,7 @@ $script:PROJECT_DATABASE_LIST = $null
 
 function Initialize-DatabaseRoot{
     [CmdletBinding()]
-    param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber
-        )
+    param()
     
         $script:PROJECT_DATABASE_LIST = @{}
 

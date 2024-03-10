@@ -8,8 +8,11 @@ function Get-ProjectItemStaged{
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber
+        [Parameter(Position = 1)][string]$ProjectNumber
     )
+
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
     $db = Get-ProjectDatabase $Owner $ProjectNumber
 
@@ -27,10 +30,11 @@ function Save-ProjectItemStaged{
     [OutputType([hashtable])]
     param(
         [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber
+        [Parameter(Position = 1)][string]$ProjectNumber
     )
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    
     if(! $(Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber)){
         "Nothing to commit" | Write-MyHost
         return
@@ -50,8 +54,11 @@ function Reset-ProjectItemStaged{
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber
+        [Parameter(Position = 1)][string]$ProjectNumber
     )
+
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
     $db = Get-ProjectDatabase $Owner $ProjectNumber
 

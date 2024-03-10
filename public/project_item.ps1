@@ -11,10 +11,13 @@ function Get-ProjectItem{
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber,
+        [Parameter(Position = 1)][string]$ProjectNumber,
         [Parameter(Position = 2)][string]$ItemId,
         [Parameter()][switch]$Force
     )
+
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
     $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
@@ -34,12 +37,14 @@ function Edit-ProjectItem{
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)] [string]$Owner,
-        [Parameter(Position = 1)] [int]$ProjectNumber,
+        [Parameter(Position = 1)] [string]$ProjectNumber,
         [Parameter(Position = 2)] [string]$ItemId,
         [Parameter(Position = 3)] [string]$FieldName,
         [Parameter(Position = 4)] [string]$Value,
         [Parameter()][switch]$Force
     )
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
     # get the database
     $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
