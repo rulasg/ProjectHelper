@@ -6,11 +6,19 @@ function Get-Item{
         [Parameter(Position = 1)][string]$ItemId
     )
 
-    $item = $Database.items | Where-Object { $_.id -eq $ItemId }
+    $item = $Database.items.$ItemId
+
+    # Check if is staged
+    if($database.Staged.$ItemId){
+        foreach($field in $database.Staged.$ItemId.keys){
+            $fieldname = $database.Staged.$ItemId.$field.Field.Name
+            $fieldValue =$database.Staged.$ItemId.$field.Value
+            $item.$fieldname = $fieldValue
+        }
+    }
 
     return $item
 }
-
 
 <#
 .SYNOPSIS
@@ -28,21 +36,23 @@ function Save-ItemFieldValue{
 
     # TODO: Test that is a valid field based on field type
     $field = Get-Field $Database $FieldName
-
+    
     if($null -eq $field){
         throw "Field $FieldName not found"
     }
+    $fieldId = $field.id
 
     if( !(Test-FieldChange $field $Value) ){
         throw "Invalid value [$Value] for field $FieldName"
     }
 
-    $node = $Database.Saved | AddHashLink $ItemId
-    $node.$FieldName = [PSCustomObject]@{
+    $node = $Database | AddHashLink Staged | AddHashLink $ItemId
+    $node.$fieldId = [PSCustomObject]@{
         Value = $Value
         Field = $field
     }
 }
+
 <#
 .SYNOPSIS
     Creates a new hash key if it does not exists
@@ -50,10 +60,10 @@ function Save-ItemFieldValue{
     This allows a convenient way of creating a chain of hash tables as in a tree of data
 .EXAMPLE
     The following sampel will create if not exist the path of the value in a tree of hash tables
-    $node = $Database | AddHashLink "Saved" | AddHashLink $level1 | AddHashLink $level2 | AddHashLink $level3
+    $node = $Database | AddHashLink "Staged" | AddHashLink $level1 | AddHashLink $level2 | AddHashLink $level3
 
     For later to set value to 
-    $Database.Saved.$level1.$level2.$level3.FieldName = "value"
+    $Database.Staged.$level1.$level2.$level3.FieldName = "value"
     
 #>
 function AddHashLink{
@@ -64,8 +74,15 @@ function AddHashLink{
         [Parameter(Position = 0)][string]$Name
     )
     process{
-        if(-Not ($parent.Keys -contains $Name)){
+
+        # element not present or $null
+        if ($null -eq $parent.$Name){
             $parent[$Name] = @{}
+        }
+        
+        #element present but not a hash table
+        if(-Not ($parent[$Name] -is [hashtable])){
+            throw "Element $Name is not a hash table"
         }
 
         return $parent[$Name]

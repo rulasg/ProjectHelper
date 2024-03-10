@@ -1,26 +1,25 @@
 # Database driver to store and cacche project content and schema
 
-$script:PROJECT_DATABASE_LIST = @{}
 
-function New-Database{
-    return [PSCustomObject]@{
-        Items = $null
-        Fields = $null
-        Saved = @{}
-    }
-}
+$script:PROJECT_DATABASE_LIST = $null
 
-function Reset-Database{
+function Initialize-DatabaseRoot{
     [CmdletBinding()]
-    param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber
-        )
+    param()
     
-        $db = New-Database
+        $script:PROJECT_DATABASE_LIST = @{}
 
-        $script:PROJECT_DATABASE_LIST."$owner/$projectnumber" = $db
+} Export-ModuleMember -Function Initialize-DatabaseRoot
 
+function Get-DatabaseRoot{
+    [CmdletBinding()]
+    param()
+
+    if($null -eq $script:PROJECT_DATABASE_LIST){
+        Initialize-DatabaseRoot
+    }
+
+    return $script:PROJECT_DATABASE_LIST
 }
 
 function Get-Database{
@@ -28,57 +27,13 @@ function Get-Database{
     param(
         [Parameter(Position = 0)][string]$Owner,
         [Parameter(Position = 1)][int]$ProjectNumber
-        )
-
-        if( -Not (Test-Database -Owner $Owner -ProjectNumber $ProjectNumber)){
-           Reset-Database -Owner $Owner -ProjectNumber $ProjectNumber
-        }
-
-        return $script:PROJECT_DATABASE_LIST."$owner/$projectnumber"
-    }
-
-function Test-Database{
-    [CmdletBinding()]
-    param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    $db = $script:PROJECT_DATABASE_LIST."$owner/$projectnumber"
+    $root = Get-DatabaseRoot
 
-    if($null -eq $db){
-        return $false
-    }
+    $ret = $root."$owner/$projectnumber"
 
-    if($null -eq $db.Items){
-        return $false
-    }
-
-    if($null -eq $db.Fields){
-        return $false
-    }
-
-    return $true
-}
-
-function Test-DatabaseSaved{
-    [CmdletBinding()]
-    param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber
-    )
-
-    $db = $script:PROJECT_DATABASE_LIST."$owner/$projectnumber"
-
-    if($null -eq $db){
-        return $false
-    }
-
-    if($null -eq $db.Saved){
-        return $false
-    }
-
-    return $true
+    return $ret
 }
 
 function Set-Database{
@@ -86,12 +41,10 @@ function Set-Database{
     param(
         [Parameter(Position = 0)][string]$Owner,
         [Parameter(Position = 1)][int]$ProjectNumber,
-        [Parameter(Position = 2)][Object[]]$Items,
-        [Parameter(Position = 3)][Object[]]$Fields
+        [Parameter(Position = 2)][Object]$Database
     )
 
-    $db = Get-Database -Owner $Owner -ProjectNumber $ProjectNumber
+    $root = Get-DatabaseRoot
 
-    $db.items = $items
-    $db.fields = $fields
+    $root."$owner/$projectnumber" = $Database
 }

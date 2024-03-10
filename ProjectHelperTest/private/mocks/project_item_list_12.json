@@ -8,10 +8,10 @@
             "content": {
                 "body": "Series 5 of demo issues for the Front repo",
                 "number": 5,
-                "repository": "SolidifyDemo/ProjectDemoTest-repo-front",
+                "repository": "SomeOrg/ProjectDemoTest-repo-front",
                 "title": "Issue 994d2f72",
                 "type": "Issue",
-                "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/issues/5"
+                "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-front/issues/5"
             },
             "end Date": "2024-02-24",
             "id": "PVTI_lADOBCrGTM4ActQazgMtRN4",
@@ -20,7 +20,7 @@
             ],
             "next Action Date": "2024-02-15",
             "priority": "🥵High",
-            "repository": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front",
+            "repository": "https://github.com/SomeOrg/ProjectDemoTest-repo-front",
             "severity": "Nice⭐️",
             "start Date": "2024-02-19",
             "status": "Todo",
@@ -36,10 +36,10 @@
             "content": {
                 "body": "Series 4 of demo issues for the Front repo",
                 "number": 4,
-                "repository": "SolidifyDemo/ProjectDemoTest-repo-front",
+                "repository": "SomeOrg/ProjectDemoTest-repo-front",
                 "title": "Issue 4c348750",
                 "type": "Issue",
-                "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/issues/4"
+                "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-front/issues/4"
             },
             "id": "PVTI_lADOBCrGTM4ActQazgMtROE",
             "milestone": {
@@ -49,7 +49,7 @@
             },
             "next Action Date": "2024-02-20",
             "priority": "🔥Critical",
-            "repository": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front",
+            "repository": "https://github.com/SomeOrg/ProjectDemoTest-repo-front",
             "severity": "Nice⭐️",
             "status": "In Progress",
             "timeTracker": 522,
@@ -64,10 +64,10 @@
             "content": {
                 "body": "Series 3 of demo issues for the Front repo",
                 "number": 3,
-                "repository": "SolidifyDemo/ProjectDemoTest-repo-front",
+                "repository": "SomeOrg/ProjectDemoTest-repo-front",
                 "title": "Issue 455d29e3",
                 "type": "Issue",
-                "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/issues/3"
+                "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-front/issues/3"
             },
             "id": "PVTI_lADOBCrGTM4ActQazgMtROU",
             "labels": [
@@ -75,7 +75,7 @@
             ],
             "next Action Date": "2024-02-20",
             "priority": "🥶Low",
-            "repository": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front",
+            "repository": "https://github.com/SomeOrg/ProjectDemoTest-repo-front",
             "severity": "Critical⭐️⭐️⭐️⭐️",
             "status": "Done",
             "timeTracker": 684,
@@ -90,10 +90,10 @@
             "content": {
                 "body": "Series 2 of demo issues for the Front repo",
                 "number": 2,
-                "repository": "SolidifyDemo/ProjectDemoTest-repo-front",
+                "repository": "SomeOrg/ProjectDemoTest-repo-front",
                 "title": "Issue 60742dd0",
                 "type": "Issue",
-                "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/issues/2"
+                "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-front/issues/2"
             },
             "end Date": "2024-02-18",
             "id": "PVTI_lADOBCrGTM4ActQazgMtROk",
@@ -104,7 +104,7 @@
             },
             "next Action Date": "2024-02-18",
             "priority": "😊Normal",
-            "repository": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front",
+            "repository": "https://github.com/SomeOrg/ProjectDemoTest-repo-front",
             "severity": "Needed⭐️⭐️",
             "start Date": "2024-02-15",
             "status": "Todo",
@@ -118,20 +118,20 @@
             ],
             "comment": "This",
             "content": {
-                "body": "Series 1 of demo issues for the Front repo\n```[tasklist]\n### Tasks\n- [ ] https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/issues/2\n- [ ] https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/issues/4\n- [ ] https://github.com/microsoft/vscode/issues/205290\n- [ ] https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/issues/5\n```\n",
+                "body": "Series 1 of demo issues for the Front repo\n```[tasklist]\n### Tasks\n- [ ] https://github.com/SomeOrg/ProjectDemoTest-repo-front/issues/2\n- [ ] https://github.com/SomeOrg/ProjectDemoTest-repo-front/issues/4\n- [ ] https://github.com/microsoft/vscode/issues/205290\n- [ ] https://github.com/SomeOrg/ProjectDemoTest-repo-front/issues/5\n```\n",
                 "number": 1,
-                "repository": "SolidifyDemo/ProjectDemoTest-repo-front",
+                "repository": "SomeOrg/ProjectDemoTest-repo-front",
                 "title": "EPIC 1 ",
                 "type": "Issue",
-                "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/issues/1"
+                "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-front/issues/1"
             },
             "id": "PVTI_lADOBCrGTM4ActQazgMtRO0",
             "linked pull requests": [
-                "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/pull/6"
+                "https://github.com/SomeOrg/ProjectDemoTest-repo-front/pull/6"
             ],
             "next Action Date": "2024-02-21",
             "priority": "🥵High",
-            "repository": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front",
+            "repository": "https://github.com/SomeOrg/ProjectDemoTest-repo-front",
             "severity": "Important⭐️⭐️⭐️",
             "status": "Todo",
             "timeTracker": 874,
@@ -146,15 +146,15 @@
             "content": {
                 "body": "Series 5 of demo issues for the Front repo",
                 "number": 5,
-                "repository": "SolidifyDemo/ProjectDemoTest-repo-back",
+                "repository": "SomeOrg/ProjectDemoTest-repo-back",
                 "title": "Issue a6f1c2b5",
                 "type": "Issue",
-                "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-back/issues/5"
+                "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-back/issues/5"
             },
             "id": "PVTI_lADOBCrGTM4ActQazgMtRPA",
             "next Action Date": "2024-02-16",
             "priority": "🥶Low",
-            "repository": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-back",
+            "repository": "https://github.com/SomeOrg/ProjectDemoTest-repo-back",
             "severity": "Critical⭐️⭐️⭐️⭐️",
             "status": "Done",
             "timeTracker": 896,
@@ -169,15 +169,15 @@
             "content": {
                 "body": "Series 4 of demo issues for the Front repo",
                 "number": 4,
-                "repository": "SolidifyDemo/ProjectDemoTest-repo-back",
+                "repository": "SomeOrg/ProjectDemoTest-repo-back",
                 "title": "Issue ae1df480",
                 "type": "Issue",
-                "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-back/issues/4"
+                "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-back/issues/4"
             },
             "id": "PVTI_lADOBCrGTM4ActQazgMtRPE",
             "next Action Date": "2024-02-20",
             "priority": "🥶Low",
-            "repository": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-back",
+            "repository": "https://github.com/SomeOrg/ProjectDemoTest-repo-back",
             "severity": "Nice⭐️",
             "status": "Todo",
             "timeTracker": 779,
@@ -192,15 +192,15 @@
             "content": {
                 "body": "Series 3 of demo issues for the Front repo",
                 "number": 3,
-                "repository": "SolidifyDemo/ProjectDemoTest-repo-back",
+                "repository": "SomeOrg/ProjectDemoTest-repo-back",
                 "title": "Issue 793748be",
                 "type": "Issue",
-                "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-back/issues/3"
+                "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-back/issues/3"
             },
             "id": "PVTI_lADOBCrGTM4ActQazgMtRPQ",
             "next Action Date": "2024-02-22",
             "priority": "😊Normal",
-            "repository": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-back",
+            "repository": "https://github.com/SomeOrg/ProjectDemoTest-repo-back",
             "severity": "Needed⭐️⭐️",
             "status": "In Progress",
             "timeTracker": 575,
@@ -215,15 +215,15 @@
             "content": {
                 "body": "Series 2 of demo issues for the Front repo",
                 "number": 2,
-                "repository": "SolidifyDemo/ProjectDemoTest-repo-back",
+                "repository": "SomeOrg/ProjectDemoTest-repo-back",
                 "title": "Issue 814adf19",
                 "type": "Issue",
-                "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-back/issues/2"
+                "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-back/issues/2"
             },
             "id": "PVTI_lADOBCrGTM4ActQazgMtRPc",
             "next Action Date": "2024-02-21",
             "priority": "🔥Critical",
-            "repository": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-back",
+            "repository": "https://github.com/SomeOrg/ProjectDemoTest-repo-back",
             "severity": "Nice⭐️",
             "status": "In Progress",
             "timeTracker": 761,
@@ -236,12 +236,12 @@
             ],
             "comment": "This",
             "content": {
-                "body": "Series 1 of demo issues for the Front repo\n```[tasklist]\n### Tasks\n- [ ] https://github.com/SolidifyDemo/ProjectDemoTest-repo-back/issues/2\n- [ ] https://github.com/SolidifyDemo/ProjectDemoTest-repo-back/issues/3\n- [ ] https://github.com/SolidifyDemo/ProjectDemoTest-repo-back/issues/4\n- [ ] https://github.com/SolidifyDemo/ProjectDemoTest-repo-back/issues/5\n```\n",
+                "body": "Series 1 of demo issues for the Front repo\n```[tasklist]\n### Tasks\n- [ ] https://github.com/SomeOrg/ProjectDemoTest-repo-back/issues/2\n- [ ] https://github.com/SomeOrg/ProjectDemoTest-repo-back/issues/3\n- [ ] https://github.com/SomeOrg/ProjectDemoTest-repo-back/issues/4\n- [ ] https://github.com/SomeOrg/ProjectDemoTest-repo-back/issues/5\n```\n",
                 "number": 1,
-                "repository": "SolidifyDemo/ProjectDemoTest-repo-back",
+                "repository": "SomeOrg/ProjectDemoTest-repo-back",
                 "title": "EPIC 2",
                 "type": "Issue",
-                "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-back/issues/1"
+                "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-back/issues/1"
             },
             "id": "PVTI_lADOBCrGTM4ActQazgMtRPg",
             "labels": [
@@ -249,7 +249,7 @@
             ],
             "next Action Date": "2024-02-18",
             "priority": "🔥Critical",
-            "repository": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-back",
+            "repository": "https://github.com/SomeOrg/ProjectDemoTest-repo-back",
             "severity": "Critical⭐️⭐️⭐️⭐️",
             "status": "Done",
             "timeTracker": 329,
@@ -281,14 +281,14 @@
             "content": {
                 "body": "",
                 "number": 6,
-                "repository": "SolidifyDemo/ProjectDemoTest-repo-front",
+                "repository": "SomeOrg/ProjectDemoTest-repo-front",
                 "title": "Update README.md",
                 "type": "PullRequest",
-                "url": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/pull/6"
+                "url": "https://github.com/SomeOrg/ProjectDemoTest-repo-front/pull/6"
             },
             "id": "PVTI_lADOBCrGTM4ActQazgMueM4",
             "next Action Date": "2024-02-23",
-            "repository": "https://github.com/SolidifyDemo/ProjectDemoTest-repo-front",
+            "repository": "https://github.com/SomeOrg/ProjectDemoTest-repo-front",
             "start Date": "2024-02-23",
             "status": "In Progress",
             "timeTracker": 888,

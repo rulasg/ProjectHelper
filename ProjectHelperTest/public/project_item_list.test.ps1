@@ -1,27 +1,30 @@
 function ProjectHelperTest_GetProjetItems_SUCCESS{
 
     Reset-InvokeCommandMock
+    Initialize-DatabaseRoot
 
-    $Owner = "someOwner" ; $ProjectNumber = 666 ; $itemsCount = 12
+    $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12
 
-    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields -Owner $Owner -Project $projectNumber"
+    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
 
     $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
 
     Assert-Count -Expected $itemsCount -Presented $result
 
+    $randomItem = $result.PVTI_lADOBCrGTM4ActQazgMuXXc
+
     # Item 10 - Chose one at random
-    Assert-AreEqual -Presented $result[10].UserStories  -Expected "8"
-    Assert-AreEqual -Presented $result[10].body         -Expected "some content in body"
-    Assert-AreEqual -Presented $result[10].Comment      -Expected "This"
-    Assert-AreEqual -Presented $result[10].title        -Expected "A draft in the project"
-    Assert-AreEqual -Presented $result[10].id           -Expected "PVTI_lADOBCrGTM4ActQazgMuXXc"
-    Assert-AreEqual -Presented $result[10].type         -Expected "DraftIssue"
-    Assert-AreEqual -Presented $result[10].TimeTracker  -Expected "890"
-    Assert-AreEqual -Presented $result[10].Severity     -Expected "Nice⭐️"
-    Assert-AreEqual -Presented $result[10].Status       -Expected "Todo"
-    Assert-AreEqual -Presented $result[10].Priority     -Expected "🥵High"
-    Assert-AreEqual -Presented $result[10].Assignees    -Expected "rulasg"
+    Assert-AreEqual -Presented $randomItem.UserStories  -Expected "8"
+    Assert-AreEqual -Presented $randomItem.body         -Expected "some content in body"
+    Assert-AreEqual -Presented $randomItem.Comment      -Expected "This"
+    Assert-AreEqual -Presented $randomItem.title        -Expected "A draft in the project"
+    Assert-AreEqual -Presented $randomItem.id           -Expected "PVTI_lADOBCrGTM4ActQazgMuXXc"
+    Assert-AreEqual -Presented $randomItem.type         -Expected "DraftIssue"
+    Assert-AreEqual -Presented $randomItem.TimeTracker  -Expected "890"
+    Assert-AreEqual -Presented $randomItem.Severity     -Expected "Nice⭐️"
+    Assert-AreEqual -Presented $randomItem.Status       -Expected "Todo"
+    Assert-AreEqual -Presented $randomItem.Priority     -Expected "🥵High"
+    Assert-AreEqual -Presented $randomItem.Assignees    -Expected "rulasg"
 
     Reset-InvokeCommandMock
 
@@ -34,39 +37,40 @@ function ProjectHelperTest_GetProjetItems_SUCCESS{
 function ProjectHelperTest_GetProjetItems_FAIL{
 
     Reset-InvokeCommandMock
+    Initialize-DatabaseRoot
 
-    $Owner = "someOwner" ; $ProjectNumber = 666 ; $itemsCount = 12
+    $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12
 
     MockCallToNull -Command GitHubOrgProjectWithFields
 
-    Reset-ProjectItemList $owner $ProjectNumber -Force
+    Initialize-DatabaseRoot
 
     # Start the transcript
     
     # Run the command
-    Start-Transcript -Path "./transcript.txt"
+    Start-MyTranscript
     $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
-    Stop-Transcript
-    $transcriptContent = Get-Content -Path "transcript.txt"
+    $tt = Stop-MyTranscript
     
     # Capture the standard output
-    $erroMessage= "Error: Database not updated."
+    $erroMessage1= "Error: Project not found. Check owner and projectnumber"
 
     Assert-IsNull -Object $result
-    Assert-Contains -Expected $erroMessage -Presented $transcriptContent
+    Assert-Contains -Expected $erroMessage1 -Presented $tt
 }
 
 function ProjectHelperTest_FindProjectItemByTitle_SUCCESS{
 
     Reset-InvokeCommandMock
+    Initialize-DatabaseRoot
 
-    $Owner = "someOwner" ; $ProjectNumber = 666  ; $id = "PVTI_lADOBCrGTM4ActQazgMtRO0"
+    $Owner = "SomeOrg" ; $ProjectNumber = 164  ; $id = "PVTI_lADOBCrGTM4ActQazgMtRO0"
 
     # title refrence with differnt case and spaces
     $title = "epic 1"
     $actual = "EPIC 1 "
 
-    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields -Owner $Owner -Project $projectNumber"
+    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
 
     $result = Find-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $title
 
@@ -77,8 +81,9 @@ function ProjectHelperTest_FindProjectItemByTitle_SUCCESS{
 function ProjectHelperTest_FindProjectItemByTitle_SUCCESS_MultipleResults{
 
     Reset-InvokeCommandMock
+    Initialize-DatabaseRoot
 
-    $Owner = "someOwner" ; $ProjectNumber = 666  ; 
+    $Owner = "SomeOrg" ; $ProjectNumber = 164  ; 
     $id1 = "PVTI_lADOBCrGTM4ActQazgMtROk"
     $id2 = "PVTI_lADOBCrGTM4ActQazgMtRPA"
 
@@ -87,7 +92,7 @@ function ProjectHelperTest_FindProjectItemByTitle_SUCCESS_MultipleResults{
     $title1 = "Issue Name 1"
     $title2 = "ISSUE NAME 1"
 
-    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields -Owner $Owner -Project $projectNumber"
+    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
 
     $result = Find-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $title -Force
 
@@ -101,32 +106,35 @@ function ProjectHelperTest_FindProjectItemByTitle_SUCCESS_MultipleResults{
 function ProjectHelperTest_FindProjectItemByTitle_FAIL{
 
     Reset-InvokeCommandMock
+    Initialize-DatabaseRoot
 
-    $Owner = "someOwner" ; $ProjectNumber = 666 
-    $erroMessage= "Error: Database not updated."
+    $Owner = "SomeOrg" ; $ProjectNumber = 164 
 
     MockCallToNull -Command GitHubOrgProjectWithFields
 
     # Run the command
-    Start-Transcript -Path "./transcript.txt"
+    Start-MyTranscript
     $result = Find-ProjectItemByTitle -Owner $Owner -ProjectNumber $ProjectNumber
-    Stop-Transcript
-    $transcriptContent = Get-Content -Path "transcript.txt"
+    $tt = Stop-MyTranscript
     
+    # Capture the standard output
+    $erroMessage1= "Error: Project not found. Check owner and projectnumber"
+
     Assert-IsNull -Object $result
-    Assert-Contains -Expected $erroMessage -Presented $transcriptContent
+    Assert-Contains -Expected $erroMessage1 -Presented $tt
 }
 
 function ProjectHelperTest_SearchProjectItemByTitle_SUCCESS{
 
     Reset-InvokeCommandMock
+    Initialize-DatabaseRoot
 
-    $Owner = "someOwner" ; $ProjectNumber = 666  ; $id = "PVTI_lADOBCrGTM4ActQazgMtRO0"
+    $Owner = "SomeOrg" ; $ProjectNumber = 164  ; $id = "PVTI_lADOBCrGTM4ActQazgMtRO0"
 
     # title refrence with differnt case and spaces
     $title = "epic"
 
-    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields -Owner $Owner -Project $projectNumber"
+    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
 
     $result = Search-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $title
 
@@ -143,22 +151,22 @@ function ProjectHelperTest_SearchProjectItemByTitle_SUCCESS{
 function ProjectHelperTest_SearchProjectItemByTitle_FAIL{
 
     Reset-InvokeCommandMock
+    Initialize-DatabaseRoot
 
-    $Owner = "someOwner" ; $ProjectNumber = 666 
-    $erroMessage= "Error: Database not updated."
+    $Owner = "SomeOrg" ; $ProjectNumber = 164 
+    $erroMessage= "Error: Project not found. Check owner and projectnumber"
 
-    Reset-ProjectItemList  $Owner  $ProjectNumber -Force
+    Initialize-DatabaseRoot
 
     MockCallToNull -Command GitHubOrgProjectWithFields
 
     # Run the command
-    Start-Transcript -Path "./transcript.txt"
+    Start-MyTranscript
     $result = Search-ProjectItemByTitle -Owner $Owner -ProjectNumber $ProjectNumber
-    Stop-Transcript
-    $transcriptContent = Get-Content -Path "transcript.txt"
+    $tt = Stop-MyTranscript
     
     Assert-IsNull -Object $result
-    Assert-Contains -Expected $erroMessage -Presented $transcriptContent
+    Assert-Contains -Expected $erroMessage -Presented $tt
 }
 
 #####################
@@ -171,12 +179,9 @@ function ProjectHelperTest_SearchProjectItemByTitle_FAIL{
     This is needed as Invoke-RestMethod returns objects and the parametrs ar too long to specify on a Set-InvokeCommandAlias
 #>
 function MockCall_GitHubOrgProjectWithFields{
-    param(
-        [Parameter(Mandatory=$true)] [string]$Owner,
-        [Parameter(Mandatory=$true)] [string]$Project
-    )
+    param()
 
-    $fileName = $MOCK_PATH | Join-Path -ChildPath 'orgprojectwithfields.json'
+    $fileName = $MOCK_PATH | Join-Path -ChildPath 'projectV2.json'
     $content = Get-Content -Path $fileName | Out-String | ConvertFrom-Json
 
     return $content
