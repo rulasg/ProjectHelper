@@ -12,7 +12,7 @@ function Get-ProjectItem{
     param(
         [Parameter(Position = 0)][string]$Owner,
         [Parameter(Position = 1)][string]$ProjectNumber,
-        [Parameter(Position = 2)][string]$ItemId,
+        [Parameter(Mandatory,Position = 2)][string]$ItemId,
         [Parameter()][switch]$Force
     )
 
