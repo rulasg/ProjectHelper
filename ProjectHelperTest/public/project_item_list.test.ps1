@@ -169,6 +169,35 @@ function ProjectHelperTest_SearchProjectItemByTitle_FAIL{
     Assert-Contains -Expected $erroMessage -Presented $tt
 }
 
+function ProjectHelperTest_SearchProjectItem_SUCCESS{
+
+    Reset-InvokeCommandMock
+    Initialize-DatabaseRoot
+
+    $Owner = "SomeOrg" ; $ProjectNumber = 164  ; $id = "PVTI_lADOBCrGTM4ActQazgMtRO0"
+
+    # title refrence with differnt case and spaces
+    $filter = "epic"
+
+    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
+
+    $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Filter $filter -Fields ("id","title","url","id")
+    
+    Assert-Count -Expected 2 -Presented $result
+    
+    Assert-Contains -Expected "EPIC 1 " -Presented $result.title
+    Assert-Contains -Expected "PVTI_lADOBCrGTM4ActQazgMtRO0" -Presented $result.id
+    Assert-Contains -Expected "EPIC 2"  -Presented $result.title
+    Assert-Contains -Expected "PVTI_lADOBCrGTM4ActQazgMtRPg" -Presented $result.id
+    
+    
+    $result = Search-ProjectItem 684
+    Assert-AreEqual -Expected "Issue 455d29e3" -Presented $result[0].title
+    Assert-AreEqual -Expected "PVTI_lADOBCrGTM4ActQazgMtROU" -Presented $result[0].id
+    Assert-AreEqual -Expected "https://github.com/SomeOrg/ProjectDemoTest-repo-front/issues/3" -Presented $result[0].url
+
+}
+
 #####################
 <#
     .SYNOPSIS

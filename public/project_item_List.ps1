@@ -87,3 +87,26 @@ function Search-ProjectItemByTitle{
 
 } Export-ModuleMember -Function Search-ProjectItemByTitle
 
+function Search-ProjectItem{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)] [string]$filter,
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter()][string[]]$Fields,
+        [Parameter()][switch]$Force
+    )
+
+    $Fields = Get-EnvironmentDisplayFields -Fields $Fields
+
+    $itemList = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+
+    if($null -eq $itemList){ return $null}
+
+    $itemListValues = $itemList.Values | FilterItems -Filter $filter
+
+    $items = $itemListValues | ConvertToItemDisplay -Fields $Fields
+
+    return $items
+
+} Export-ModuleMember -Function Search-ProjectItem
