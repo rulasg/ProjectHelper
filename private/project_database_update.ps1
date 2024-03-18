@@ -51,7 +51,7 @@ function Convert-ItemsFromResponse{
 
         $itemId = $nodeItem.id
 
-        # TODO Recactor to call Convert-ItemFromResponse for each node utem
+        # TODO !! - Refactor to call Convert-ItemFromResponse for each node utem
 
         $item = @{}
         $item.id = $itemId

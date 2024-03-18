@@ -34,7 +34,8 @@ function Save-ItemFieldValue{
         [Parameter(Position = 3)][string]$Value
     )
 
-    # TODO: Test that is a valid field based on field type
+    # TODO !! : Test that is a valid field based on field type
+    
     $field = Get-Field $Database $FieldName
     
     if($null -eq $field){

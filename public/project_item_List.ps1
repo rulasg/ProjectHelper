@@ -107,6 +107,12 @@ function Search-ProjectItem{
 
     $items = $itemListValues | ConvertToItemDisplay -Fields $Fields
 
+    Write-MyHost
+    "Filter: $filter" | Write-MyHost
+    Write-MyHost
+
     return $items
 
 } Export-ModuleMember -Function Search-ProjectItem
+
+# TODO !! - Figure a way to show table always
