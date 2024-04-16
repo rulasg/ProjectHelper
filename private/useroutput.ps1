@@ -12,14 +12,14 @@ function Write-MyError{
 
 function Write-MyVerbose{
     param(
-        [Parameter(Mandatory,ValueFromPipeline)][string]$Message
+        [Parameter(ValueFromPipeline)][string]$Message
     )
     Write-Verbose -Message $message
 }
 
 function Write-MyHost{
     param(
-        [Parameter(Mandatory,ValueFromPipeline)][string]$Message
+        [Parameter(ValueFromPipeline)][string]$Message
     )
     Write-Host $message -ForegroundColor $OUTPUT_COLOR
 }

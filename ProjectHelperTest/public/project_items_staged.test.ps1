@@ -97,4 +97,37 @@ function MockCall_GitHub_UpdateProjectV2ItemFieldValue{
     $content = Get-Content -Path $fileName | Out-String | ConvertFrom-Json
 
     return $content
-} Export-ModuleMember -Function ProjectHelperTest_CommitProjectItemsStaged_NoStaged, ProjectHelperTest_CommitProjectItemsStaged_SUCCESS, MockCall_GitHub_UpdateProjectV2ItemFieldValue
+} Export-ModuleMember -Function  MockCall_GitHub_UpdateProjectV2ItemFieldValue
+
+function ProjectHelperTest_ShowProjectItemsStaged{
+
+    Reset-InvokeCommandMock
+    Initialize-DatabaseRoot
+
+    $Owner = "SomeOrg" ; $ProjectNumber = 164
+    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
+
+    $itemId1 = "PVTI_lADOBCrGTM4ActQazgMuXXc"
+    $fieldComment1 = "comment" ; $fieldCommentValue1 = "new value of the comment 10"
+    $fieldTitle1 = "title" ; $fieldTitleValue1 = "new value of the title"
+    Edit-ProjectItem $owner $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
+    Edit-ProjectItem $owner $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
+
+    $itemId2 = "PVTI_lADOBCrGTM4ActQazgMueM4"
+    $fieldComment2 = "comment" ; $fileCommentValue2 = "new value of the comment 11"
+    $fieldTitle2 = "title" ; $fileTitleValue2 = "new value of the title 11"
+    Edit-ProjectItem $owner $projectNumber $itemId2 $fieldComment2 $fileCommentValue2
+    Edit-ProjectItem $owner $projectNumber $itemId2 $fieldTitle2 $fileTitleValue2
+
+    $result = Show-ProjectItemStaged -Owner $owner -ProjectNumber $ProjectNumber
+
+    $result1 = $result | Where-Object { $_.id -eq $itemId1 }
+    Assert-AreEqual -Expected "DraftIssue" -Presented $result1.type
+    Assert-AreEqual -Expected $fieldCommentValue1 -Presented $result1.Fields.$fieldComment1
+    Assert-AreEqual -Expected $fieldTitleValue1 -Presented $result1.Fields.$fieldTitle1
+    
+    $result2 = $result | Where-Object { $_.id -eq $itemId2 }
+    Assert-AreEqual -Expected "PullRequest" -Presented $result2.type
+    Assert-AreEqual -Expected $fileCommentValue2 -Presented $result2.Fields.$fieldComment2
+    Assert-AreEqual -Expected $fileTitleValue2 -Presented $result2.Fields.$fieldTitle2
+}

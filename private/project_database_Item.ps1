@@ -3,21 +3,63 @@ function Get-Item{
     [OutputType([string])]
     param(
         [Parameter(Position = 0)][object[]]$Database,
-        [Parameter(Position = 1)][string]$ItemId
+        [Parameter(ValueFromPipeline, Position = 1)][string]$ItemId
     )
 
-    $item = $Database.items.$ItemId
+    process {
 
-    # Check if is staged
-    if($database.Staged.$ItemId){
-        foreach($field in $database.Staged.$ItemId.keys){
-            $fieldname = $database.Staged.$ItemId.$field.Field.Name
-            $fieldValue =$database.Staged.$ItemId.$field.Value
-            $item.$fieldname = $fieldValue
+        $item = $Database.items.$ItemId
+        
+        # Check if is staged
+        if($database.Staged.$ItemId){
+            foreach($field in $database.Staged.$ItemId.keys){
+                $fieldname = $database.Staged.$ItemId.$field.Field.Name
+                $fieldValue =$database.Staged.$ItemId.$field.Value
+                $item.$fieldname = $fieldValue
+            }
         }
+        
+        return $item
     }
+}
 
-    return $item
+function Get-ItemStaged{
+    [CmdletBinding()]
+    [OutputType([string])]
+    param(
+        [Parameter(Position = 0)][object[]]$Database,
+        [Parameter(ValueFromPipeline, Position = 1)][string]$ItemId
+    )
+
+    process {
+
+        $item = Get-Item $db $itemId
+        
+        $changedItem = @{}
+
+        # Heade
+        $changedItem.Id = $item.id
+        $changedItem.type = $item.type
+
+        # Add RepoNumber as human identifier
+        if($item.url){
+            $uri = [uri]$item.url
+            $num = $uri | Split-Path -leaf
+            $repo = $uri | Split-Path -Parent | Split-Path -parent | Split-Path -leaf
+
+            $changedItem.RepoNumber = "$repo/$num"
+        }
+
+        $changedItem.Fields = @{}
+
+        # Fields
+        foreach($Field in $staged.$itemId.Values){
+            $changedItem.Fields.$($Field.Field.Name) = $Field.Value
+        }
+
+        return [pscustomobject] $changedItem
+
+    }
 }
 
 <#
@@ -34,7 +76,8 @@ function Save-ItemFieldValue{
         [Parameter(Position = 3)][string]$Value
     )
 
-    # TODO: Test that is a valid field based on field type
+    # TODO !! : Test that is a valid field based on field type
+    
     $field = Get-Field $Database $FieldName
     
     if($null -eq $field){
