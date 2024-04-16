@@ -65,3 +65,20 @@ function Reset-ProjectItemStaged{
     $db.Staged = $null
 
 } Export-ModuleMember -Function Reset-ProjectItemStaged
+
+function Show-ProjectItemStaged{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][string]$Owner,
+        [Parameter(Position = 1)][string]$ProjectNumber
+    )
+
+    $db = Get-ProjectDatabase $Owner $ProjectNumber
+
+    $staged = $db.Staged
+
+    $ret = $staged.keys | Get-ItemStaged $db
+
+    return $ret
+ 
+} Export-ModuleMember -Function Show-ProjectItemStaged
