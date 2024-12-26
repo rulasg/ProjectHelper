@@ -12,18 +12,22 @@ function Get-ProjectItem{
     param(
         [Parameter(Position = 0)][string]$Owner,
         [Parameter(Position = 1)][string]$ProjectNumber,
-        [Parameter(Mandatory,Position = 2)][string]$ItemId,
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 2)][Alias("Id")][string]$ItemId,
         [Parameter()][switch]$Force
     )
 
-    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+    begin{
+        ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+        if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+        $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+    }
 
-    $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+    process{
+        $item = Get-Item $db $ItemId
+        return $item
+    }
 
-    $item = Get-Item $db $ItemId
 
-    return $item
 } Export-ModuleMember -Function Get-ProjectItem
 
 <#

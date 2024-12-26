@@ -7,70 +7,60 @@ query OrgProjectWithFields($afterFields:String$afterItems:String$firstFields:Int
                         }
                     },id,fieldValues(first: 100){nodes{__typename,... on ProjectV2ItemFieldDateValue{date,field{__typename,... on ProjectV2Field{id,name,dataType
                                     },... on ProjectV2IterationField{id,name,dataType
-                                    },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
-                                        }
+                                    },... on ProjectV2SingleSelectField{id,name,dataType
                                     }
                                 }
                             },... on ProjectV2ItemFieldIterationValue{title,startDate,duration,field{__typename,... on ProjectV2Field{id,name,dataType
                                     },... on ProjectV2IterationField{id,name,dataType
-                                    },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
-                                        }
+                                    },... on ProjectV2SingleSelectField{id,name,dataType
                                     }
                                 }
                             },... on ProjectV2ItemFieldLabelValue{labels(first: 10){nodes{name
                                     }
                                 },field{__typename,... on ProjectV2Field{id,name,dataType
                                     },... on ProjectV2IterationField{id,name,dataType
-                                    },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
-                                        }
+                                    },... on ProjectV2SingleSelectField{id,name,dataType
                                     }
                                 }
                             },... on ProjectV2ItemFieldNumberValue{number,field{__typename,... on ProjectV2Field{id,name,dataType
                                     },... on ProjectV2IterationField{id,name,dataType
-                                    },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
-                                        }
+                                    },... on ProjectV2SingleSelectField{id,name,dataType
                                     }
                                 }
                             },... on ProjectV2ItemFieldSingleSelectValue{name,field{__typename,... on ProjectV2Field{id,name,dataType
                                     },... on ProjectV2IterationField{id,name,dataType
-                                    },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
-                                        }
+                                    },... on ProjectV2SingleSelectField{id,name,dataType
                                     }
                                 }
                             },... on ProjectV2ItemFieldTextValue{text,field{__typename,... on ProjectV2Field{id,name,dataType
                                     },... on ProjectV2IterationField{id,name,dataType
-                                    },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
-                                        }
+                                    },... on ProjectV2SingleSelectField{id,name,dataType
                                     }
                                 }
                             },... on ProjectV2ItemFieldMilestoneValue{milestone{title,description,dueOn
                                 },field{__typename,... on ProjectV2Field{id,name,dataType
                                     },... on ProjectV2IterationField{id,name,dataType
-                                    },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
-                                        }
+                                    },... on ProjectV2SingleSelectField{id,name,dataType
                                     }
                                 }
                             },... on ProjectV2ItemFieldPullRequestValue{pullRequests(first: 10){nodes{url
                                     }
                                 },field{__typename,... on ProjectV2Field{id,name,dataType
                                     },... on ProjectV2IterationField{id,name,dataType
-                                    },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
-                                        }
+                                    },... on ProjectV2SingleSelectField{id,name,dataType
                                     }
                                 }
                             },... on ProjectV2ItemFieldRepositoryValue{repository{url
                                 },field{__typename,... on ProjectV2Field{id,name,dataType
                                     },... on ProjectV2IterationField{id,name,dataType
-                                    },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
-                                        }
+                                    },... on ProjectV2SingleSelectField{id,name,dataType
                                     }
                                 }
                             },... on ProjectV2ItemFieldUserValue{users(first: 10){nodes{login
                                     }
                                 },field{__typename,... on ProjectV2Field{id,name,dataType
                                     },... on ProjectV2IterationField{id,name,dataType
-                                    },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
-                                        }
+                                    },... on ProjectV2SingleSelectField{id,name,dataType
                                     }
                                 }
                             },... on ProjectV2ItemFieldReviewerValue{reviewers(first: 10){nodes{__typename,... on Team{name
@@ -79,8 +69,7 @@ query OrgProjectWithFields($afterFields:String$afterItems:String$firstFields:Int
                                     }
                                 },field{__typename,... on ProjectV2Field{id,name,dataType
                                     },... on ProjectV2IterationField{id,name,dataType
-                                    },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
-                                        }
+                                    },... on ProjectV2SingleSelectField{id,name,dataType
                                     }
                                 }
                             }
@@ -88,8 +77,9 @@ query OrgProjectWithFields($afterFields:String$afterItems:String$firstFields:Int
                     }
                 }
             },fields(first: $firstFields, after: $afterFields){totalCount,nodes{__typename,... on ProjectV2Field{id,name,dataType
-                    },... on ProjectV2IterationField{id,name,dataType
-                    },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
+                    },... on ProjectV2IterationField{id,name,dataType, configuration{iterations{id,title,startDate,duration}
+                        }
+                    },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name,color,description
                         }
                     }
                 },pageInfo{endCursor,hasNextPage

@@ -24,7 +24,7 @@ function Get-OwnerAndProjectNumber{
     }
 
     return ($owner, $ProjectNumber)
-}
+} Export-ModuleMember -Function Get-OwnerAndProjectNumber
 
 function Get-EnvironmentDisplayFields{
     [CmdletBinding()]
