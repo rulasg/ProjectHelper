@@ -1,4 +1,4 @@
-function ProjectHelperTest_GetProjectFields_SUCCESS{
+function Test_GetProjectFields_SUCCESS{
 
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot

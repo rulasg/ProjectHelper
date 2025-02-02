@@ -1,4 +1,4 @@
-# function ProjectHelperTest_MockTest_SUCCESS{
+# function Test_MockTest_SUCCESS{
 
 #     Reset-InvokeCommandMock
 #     Initialize-DatabaseRoot
