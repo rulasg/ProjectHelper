@@ -1,4 +1,4 @@
-function ProjectHelperTest_GetProjetItems_SUCCESS{
+function Test_GetProjetItems_SUCCESS{
 
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot
@@ -34,7 +34,7 @@ function ProjectHelperTest_GetProjetItems_SUCCESS{
     Assert-Count -Expected $itemsCount -Presented $result
 }
 
-function ProjectHelperTest_GetProjetItems_FAIL{
+function Test_GetProjetItems_FAIL{
 
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot
@@ -59,7 +59,7 @@ function ProjectHelperTest_GetProjetItems_FAIL{
     Assert-Contains -Expected $erroMessage1 -Presented $tt
 }
 
-function ProjectHelperTest_FindProjectItemByTitle_SUCCESS{
+function Test_FindProjectItemByTitle_SUCCESS{
 
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot
@@ -78,7 +78,7 @@ function ProjectHelperTest_FindProjectItemByTitle_SUCCESS{
     Assert-AreEqual -Expected $actual -Presented $result.Title
 }
 
-function ProjectHelperTest_FindProjectItemByTitle_SUCCESS_MultipleResults{
+function Test_FindProjectItemByTitle_SUCCESS_MultipleResults{
 
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot
@@ -103,7 +103,7 @@ function ProjectHelperTest_FindProjectItemByTitle_SUCCESS_MultipleResults{
     Assert-AreEqual -Expected $title2 -Presented $result[1].Title
 }
 
-function ProjectHelperTest_FindProjectItemByTitle_FAIL{
+function Test_FindProjectItemByTitle_FAIL{
 
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot
@@ -124,7 +124,7 @@ function ProjectHelperTest_FindProjectItemByTitle_FAIL{
     Assert-Contains -Expected $erroMessage1 -Presented $tt
 }
 
-function ProjectHelperTest_SearchProjectItemByTitle_SUCCESS{
+function Test_SearchProjectItemByTitle_SUCCESS{
 
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot
@@ -148,7 +148,7 @@ function ProjectHelperTest_SearchProjectItemByTitle_SUCCESS{
 }
 
 
-function ProjectHelperTest_SearchProjectItemByTitle_FAIL{
+function Test_SearchProjectItemByTitle_FAIL{
 
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot
@@ -169,7 +169,7 @@ function ProjectHelperTest_SearchProjectItemByTitle_FAIL{
     Assert-Contains -Expected $erroMessage -Presented $tt
 }
 
-function ProjectHelperTest_SearchProjectItem_SUCCESS{
+function Test_SearchProjectItem_SUCCESS{
 
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot

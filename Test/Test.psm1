@@ -26,8 +26,8 @@ Foreach($import in @($Public + $Private))
 # Export Public functions ($Public.BaseName) for WIP modules
 # Set variables visible to the module and its functions only
 
-Export-ModuleMember -Function ProjectHelperTest_*
+Export-ModuleMember -Function Test_*
 
 # Disable calling dependencies
 # This requires that all dependecies are called through mocks
-Disable-InvokeCommandAlias -Tag ProjectHelperModule
+Reset-InvokeCommandMock

@@ -1,5 +1,5 @@
 
-function ProjectHelperTest_GetProjectItem_SUCCESS{
+function Test_GetProjectItem_SUCCESS{
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot
 
@@ -31,7 +31,7 @@ function ProjectHelperTest_GetProjectItem_SUCCESS{
     Assert-AreEqual -Expected $fieldTitleValue -Presented $result.$fieldTitle
 }
 
-function ProjectHelperTest_EditProjetItems_SUCCESS{
+function Test_EditProjetItems_SUCCESS{
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot
     
@@ -64,7 +64,7 @@ function ProjectHelperTest_EditProjetItems_SUCCESS{
     Assert-AreEqual -Expected $fieldTitleValue -Presented $result.$itemId.$title_fieldid.Value
 }
 
-function ProjectHelperTest_UpdateProjectDatabase_Fail_With_Staged{
+function Test_UpdateProjectDatabase_Fail_With_Staged{
     # When changes are staged list update should fail.
     # As Update-ProjectDatabase is a private function, we will test it through the public function Get-ProjectItemList with Force
 

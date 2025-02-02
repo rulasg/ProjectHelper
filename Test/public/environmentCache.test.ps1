@@ -2,7 +2,7 @@
 # Testing Environment cache
 # as we do not have access to it we will use Get-ProjectItem function
 
-function ProjectHelperTest_EnvironmentCache{
+function Test_EnvironmentCache{
 
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot

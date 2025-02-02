@@ -1,5 +1,5 @@
 
-function ProjectHelperTest_CommitProjectItemsStaged_NoStaged{
+function Test_CommitProjectItemsStaged_NoStaged{
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot
 
@@ -14,7 +14,7 @@ function ProjectHelperTest_CommitProjectItemsStaged_NoStaged{
     Assert-IsNull -Object $result
 }
 
-function ProjectHelperTest_CommitProjectItemsStaged_SUCCESS{
+function Test_CommitProjectItemsStaged_SUCCESS{
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot
 
@@ -99,7 +99,7 @@ function MockCall_GitHub_UpdateProjectV2ItemFieldValue{
     return $content
 } Export-ModuleMember -Function  MockCall_GitHub_UpdateProjectV2ItemFieldValue
 
-function ProjectHelperTest_ShowProjectItemsStaged{
+function Test_ShowProjectItemsStaged{
 
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot
