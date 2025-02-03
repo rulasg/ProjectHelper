@@ -50,4 +50,16 @@ function Test_ConvertToProjectCO {
     Assert-AreEqual -Expected "OwnerName" -Presented $project.Owner
     Assert-AreEqual -Expected "http://example.com" -Presented $project.URL
     Assert-AreEqual -Expected "Test Description" -Presented $project.Description
+    Assert-IsTrue -Condition ($project -is [PSCustomObject])
+
+    $json | ConvertTo-ProjectCO | ForEach-Object {
+        Assert-AreEqual -Expected "1" -Presented $_.Id
+        Assert-AreEqual -Expected "Test Project" -Presented $_.Title
+        Assert-AreEqual -Expected 123 -Presented $_.Number
+        Assert-AreEqual -Expected "OwnerName" -Presented $_.Owner
+        Assert-AreEqual -Expected "http://example.com" -Presented $_.URL
+        Assert-AreEqual -Expected "Test Description" -Presented $_.Description
+        Assert-IsTrue -Condition ($_ -is [PSCustomObject])
+        Assert-IsTrue -Condition (Test-ProjectCO -Project $_)
+    }
 }
