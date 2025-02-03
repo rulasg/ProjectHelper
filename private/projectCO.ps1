@@ -21,7 +21,7 @@ function New-ProjectCO {
 
 function Test-ProjectCO {
     param (
-        [hashtable]$Project
+        [Parameter(ValueFromPipeline)][PSCustomObject]$Project
     )
     if (-not $Project.Id) { return $false }
     if (-not $Project.Title) { return $false }
@@ -34,7 +34,11 @@ function Test-ProjectCO {
 
 function ConvertTo-ProjectCO {
     param (
-        [string]$Json
+        [Parameter(ValueFromPipeline)][string]$Json
     )
-    return $Json | ConvertFrom-Json
+    $project = $Json | ConvertFrom-Json
+    if (-not (Test-ProjectCO -Project $project)) {
+        throw "Invalid ProjectCO object"
+    }
+    return $project
 }

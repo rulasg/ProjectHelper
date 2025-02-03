@@ -1,8 +1,4 @@
 function Test_NewItemCO {
-    <#
-    .SYNOPSIS
-    Tests the New-ItemCO function.
-    #>
     . "$PSScriptRoot/../../private/itemCO.ps1"
 
     $item = New-ItemCO -Id "1" -Title "Test Item" -URL "http://example.com"
@@ -13,10 +9,6 @@ function Test_NewItemCO {
 }
 
 function Test_TestItemCO {
-    <#
-    .SYNOPSIS
-    Tests the Test-ItemCO function.
-    #>
     . "$PSScriptRoot/../../private/itemCO.ps1"
     
     $validItem = @{
@@ -36,10 +28,6 @@ function Test_TestItemCO {
 }
 
 function Test_ConvertToItemCO {
-    <#
-    .SYNOPSIS
-    Tests the ConvertTo-ItemCO function.
-    #>
     . "$PSScriptRoot/../../private/itemCO.ps1"
 
     $json = '{"Id":"1","Title":"Test Item","URL":"http://example.com"}'
@@ -48,4 +36,13 @@ function Test_ConvertToItemCO {
     Assert-AreEqual -Expected "1" -Presented $item.Id
     Assert-AreEqual -Expected "Test Item" -Presented $item.Title
     Assert-AreEqual -Expected "http://example.com" -Presented $item.URL
+    Assert-IsTrue -Condition ($item -is [PSCustomObject])
+
+    $json | ConvertTo-ItemCO | ForEach-Object {
+        Assert-AreEqual -Expected "1" -Presented $_.Id
+        Assert-AreEqual -Expected "Test Item" -Presented $_.Title
+        Assert-AreEqual -Expected "http://example.com" -Presented $_.URL
+        Assert-IsTrue -Condition ($_ -is [PSCustomObject])
+        Assert-IsTrue -Condition (Test-ItemCO -Item $_)
+    }
 }
