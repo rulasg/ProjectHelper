@@ -19,7 +19,7 @@ function Get-ProjectItem{
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    $db = Get-ProjectFromDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
     $item = Get-Item $db $ItemId
 
@@ -47,7 +47,7 @@ function Edit-ProjectItem{
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
     # get the database
-    $db = Get-ProjectFromDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
     # Find the item by title
     $item = Get-Item $db $ItemId

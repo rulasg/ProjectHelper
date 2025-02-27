@@ -13,7 +13,7 @@ function Get-ProjectItemList{
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
     try {
-            $db = Get-ProjectFromDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+            $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
         
             # Check if $db is null
             if($null -eq $db){

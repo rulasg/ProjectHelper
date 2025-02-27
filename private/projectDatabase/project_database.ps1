@@ -44,14 +44,8 @@ function Get-ProjectFromDatabase{
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber,
-        [Parameter()][switch]$Force
+        [Parameter(Position = 1)][int]$ProjectNumber
     )
-
-    if($force -or -Not (Test-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber)){
-        $result = Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
-        if( ! $result){ return }
-    }
 
     $key = GetDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
     $prj = Get-Database -Key $key

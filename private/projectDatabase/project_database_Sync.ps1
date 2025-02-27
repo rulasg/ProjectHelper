@@ -19,7 +19,7 @@ function Sync-ProjectDatabase{
 
     $dbkey = GetDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
 
-    $db = Get-ProjectFromDatabase -Owner $Owner -ProjectNumber $ProjectNumber
+    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
     foreach($idemId in $db.Staged.Keys){
         foreach($fieldId in $db.Staged.$idemId.Keys){
