@@ -14,7 +14,7 @@ function Get-ProjectItemStaged{
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    $db = Get-ProjectDatabase $Owner $ProjectNumber
+    $db = Get-ProjectFromDatabase $Owner $ProjectNumber
 
     $ret = $db.Staged
 
@@ -60,10 +60,11 @@ function Reset-ProjectItemStaged{
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    $db = Get-ProjectDatabase $Owner $ProjectNumber
+    $dbkey = GetDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
+    $db = Get-ProjectFromDatabase $Owner $ProjectNumber
 
     $db.Staged = $null
-    Save-Database -Database $db
+    Save-Database -Key $dbkey -Database $db
 
 } Export-ModuleMember -Function Reset-ProjectItemStaged
 
@@ -74,7 +75,7 @@ function Show-ProjectItemStaged{
         [Parameter(Position = 1)][string]$ProjectNumber
     )
 
-    $db = Get-ProjectDatabase $Owner $ProjectNumber
+    $db = Get-ProjectFromDatabase $Owner $ProjectNumber
 
     $staged = $db.Staged
 

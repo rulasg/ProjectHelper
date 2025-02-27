@@ -17,7 +17,9 @@ function Sync-ProjectDatabase{
         return
     }
 
-    $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
+    $dbkey = GetDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
+
+    $db = Get-ProjectFromDatabase -Owner $Owner -ProjectNumber $ProjectNumber
 
     foreach($idemId in $db.Staged.Keys){
         foreach($fieldId in $db.Staged.$idemId.Keys){
@@ -81,7 +83,7 @@ function Sync-ProjectDatabase{
 
     if($different.Count -eq 0){
         $db.Staged = $null
-        Save-Database -Database $db
+        Save-Database -Key $dbkey -Database $db
         return $true
     } else {
         "Error: Staged values are not equal to actual values" | Write-MyError

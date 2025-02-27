@@ -34,10 +34,11 @@ function Test_GetProjectItem_SUCCESS{
 function Test_EditProjetItems_SUCCESS{
     Reset-InvokeCommandMock
     Initialize-DatabaseRoot
-    
+
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
     Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
-
+    
+    Initialize-DatabaseRoot
     # Item id 10
     # $title = "A draft in the project" 
 

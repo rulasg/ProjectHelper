@@ -19,7 +19,7 @@ function Get-ProjectItem{
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+    $db = Get-ProjectFromDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
     $item = Get-Item $db $ItemId
 
@@ -47,7 +47,7 @@ function Edit-ProjectItem{
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
     # get the database
-    $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+    $db = Get-ProjectFromDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
     # Find the item by title
     $item = Get-Item $db $ItemId
@@ -64,6 +64,6 @@ function Edit-ProjectItem{
     Save-ItemFieldValue $db $itemId $FieldName $Value
 
     # Commit change changes to the database
-    Save-ProjectDatabase -Database $db
+    Save-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
 
 } Export-ModuleMember -Function Edit-ProjectItem

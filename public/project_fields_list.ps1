@@ -10,7 +10,7 @@ function Get-ProjectFields{
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+    $db = Get-ProjectFromDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
     # Check if $db is null
     if($null -eq $db){
