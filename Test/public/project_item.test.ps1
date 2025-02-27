@@ -4,7 +4,7 @@ function Test_GetProjectItem_SUCCESS{
     Initialize-DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
-    $fieldComment = "comment" ; $fieldTitle = "title"
+    $fieldComment = "Comment" ; $fieldTitle = "Title"
 
     Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
 
@@ -14,7 +14,7 @@ function Test_GetProjectItem_SUCCESS{
 
     $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
 
-    Assert-AreEqual -Expected $itemId -Presented $result.Id
+    Assert-AreEqual -Expected $itemId -Presented $result.id
     Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$fieldComment
     Assert-AreEqual -Expected $fieldTitleValue -Presented $result.$fieldTitle
 
@@ -26,7 +26,7 @@ function Test_GetProjectItem_SUCCESS{
 
     $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
 
-    Assert-AreEqual -Expected $itemId -Presented $result.Id
+    Assert-AreEqual -Expected $itemId -Presented $result.id
     Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$fieldComment
     Assert-AreEqual -Expected $fieldTitleValue -Presented $result.$fieldTitle
 }
@@ -57,8 +57,8 @@ function Test_EditProjetItems_SUCCESS{
     Assert-Contains -Expected $itemId -Presented $result.Keys
 
     Assert-Count -Expected 2 -Presented $result.$itemId
-    Assert-AreEqual -Expected "Comment" -Presented $result.$itemId.$comment_fieldid.Field.Name
-    Assert-AreEqual -Expected "Title" -Presented $result.$itemId.$title_fieldid.Field.Name 
+    Assert-AreEqual -Expected "Comment" -Presented $result.$itemId.$comment_fieldid.Field.name
+    Assert-AreEqual -Expected "Title" -Presented $result.$itemId.$title_fieldid.Field.name 
 
     Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$itemId.$comment_fieldid.Value
     Assert-AreEqual -Expected $fieldTitleValue -Presented $result.$itemId.$title_fieldid.Value
@@ -72,9 +72,13 @@ function Test_UpdateProjectDatabase_Fail_With_Staged{
     Initialize-DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ;
+    $itemId = "PVTI_lADOBCrGTM4ActQazgMueM4"
     $fieldComment = "comment" ; $fieldCommentValue = "new value of the comment 10.1"
     Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
 
+
+    # Calling Get-ProjectItemList with Force to trigger update-projectdatabase that should fail as their are 
+    # staged changes not yet synced to remote.
     $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force
     Assert-Count -Expected $itemsCount -Presented $result
 
@@ -83,6 +87,7 @@ function Test_UpdateProjectDatabase_Fail_With_Staged{
 
     $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
     Assert-Count -Expected 1 -Presented $result.Keys
+    Assert-AreEqual -Expected $itemId -Presented $result.Keys
 
     # This call should fail as there are staged changes
     Start-MyTranscript
@@ -90,7 +95,7 @@ function Test_UpdateProjectDatabase_Fail_With_Staged{
     $tt = Stop-MyTranscript
 
     Assert-IsNull -Object $result
-    $message = "Error: There are unsaved changes. Reset-ProjectItemStaged first and try again"
+    $message = "Error: Can not get item list with Force [True]; There are unsaved changes. Restore changes with Reset-ProjectItemStaged or sync projects with Sync-ProjectItemStaged first and try again"
     Assert-Contains -Expected $message -Presented $tt
 
     # Reset the staged changes

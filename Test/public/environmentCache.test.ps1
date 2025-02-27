@@ -18,10 +18,10 @@ function Test_EnvironmentCache{
 
     $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
     
-    Assert-AreEqual -Expected $itemId -Presented $result.Id
+    Assert-AreEqual -Expected $itemId -Presented $result.id
     
     $result = Get-ProjectItem -ItemId $itemId
-    Assert-AreEqual -Expected $itemId -Presented $result.Id
+    Assert-AreEqual -Expected $itemId -Presented $result.id
 
 
 }

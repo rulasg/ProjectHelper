@@ -25,7 +25,7 @@ function Get-ProjectItemStaged{
 .SYNOPSIS
     Commits SAved changes in the DB to the project
 #>
-function Save-ProjectItemStaged{
+function Sync-ProjectItemStaged{
     [CmdletBinding()]
     [OutputType([hashtable])]
     param(
@@ -40,11 +40,11 @@ function Save-ProjectItemStaged{
         return
     }
 
-   $result = Save-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
+   $result = Sync-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
 
    return $result
 
-} Export-ModuleMember -Function Save-ProjectItemStaged
+} Export-ModuleMember -Function Sync-ProjectItemStaged
 
 <#
 .SYNOPSIS
@@ -63,6 +63,7 @@ function Reset-ProjectItemStaged{
     $db = Get-ProjectDatabase $Owner $ProjectNumber
 
     $db.Staged = $null
+    Save-Database -Database $db
 
 } Export-ModuleMember -Function Reset-ProjectItemStaged
 

@@ -63,25 +63,8 @@ function Reset-ProjectDatabase{
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    Set-Database -Owner $Owner -ProjectNumber $ProjectNumber -Database $null
+    Reset-Database -Owner $Owner -ProjectNumber $ProjectNumber
 }
-
-# function Set-ProjectDatabase{
-#     [CmdletBinding()]
-#     param(
-#         [Parameter(Position = 0)][string]$Owner,
-#         [Parameter(Position = 1)][int]$ProjectNumber,
-#         [Parameter(Position = 2)][Object[]]$Items,
-#         [Parameter(Position = 3)][Object[]]$Fields
-#     )
-
-#     $db = New-ProjectDatabase
-
-#     $db.items = $items
-#     $db.fields = $fields
-
-#     Set-Database -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
-# }
 
 function Set-ProjectDatabaseV2{
     [CmdletBinding()]
@@ -103,11 +86,21 @@ function Set-ProjectDatabaseV2{
     $db.title            = $ProjectV2.title
     $db.ProjectId        = $ProjectV2.id
     $db.readme           = $ProjectV2.readme
-    $db.owner            = $ProjectV2.owner
-    $db.number           = $ProjectV2.number
+
+    $db.owner            = $owner
+    $db.number           = $projectnumber
 
     $db.items = $items
     $db.fields = $fields
     
-    Set-Database -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
+    Save-Database -Database $db
+}
+
+function Save-ProjectDatabase{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][hashtable]$Database
+    )
+
+    Save-Database -Database $Database
 }

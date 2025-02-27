@@ -13,7 +13,7 @@ function Get-Item{
         # Check if is staged
         if($database.Staged.$ItemId){
             foreach($field in $database.Staged.$ItemId.keys){
-                $fieldname = $database.Staged.$ItemId.$field.Field.Name
+                $fieldname = $database.Staged.$ItemId.$field.Field.name
                 $fieldValue =$database.Staged.$ItemId.$field.Value
                 $item.$fieldname = $fieldValue
             }
@@ -54,7 +54,7 @@ function Get-ItemStaged{
 
         # Fields
         foreach($Field in $staged.$itemId.Values){
-            $changedItem.Fields.$($Field.Field.Name) = $Field.Value
+            $changedItem.Fields.$($Field.Field.name) = $Field.Value
         }
 
         return [pscustomobject] $changedItem

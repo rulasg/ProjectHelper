@@ -15,8 +15,7 @@ function Update-ProjectDatabase {
     # check if there are unsaved changes
     $saved = Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber
     if($saved -and -Not $Force){
-        "There are unsaved changes. Reset-ProjectItemStaged first and try again" | Write-MyError
-        return
+        throw "There are unsaved changes. Restore changes with Reset-ProjectItemStaged or sync projects with Sync-ProjectItemStaged first and try again"
     }
 
     $result  = Invoke-MyCommand -Command GitHubOrgProjectWithFields -Parameters $params

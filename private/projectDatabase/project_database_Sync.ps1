@@ -1,7 +1,7 @@
 
 Set-MyInvokeCommandAlias -Alias GitHub_UpdateProjectV2ItemFieldValue -Command 'Invoke-GitHubUpdateItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid} -Value "{value}" -Type {type}'
 
-function Save-ProjectDatabase{
+function Sync-ProjectDatabase{
     [CmdletBinding(SupportsShouldProcess)]
     [OutputType([bool])]
     param(
@@ -9,16 +9,24 @@ function Save-ProjectDatabase{
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+
+    if(! $(Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber)){
+        "Nothing to commit" | Write-MyHost
+        return
+    }
+
     $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
 
     foreach($idemId in $db.Staged.Keys){
-        foreach($fieldId in $db.staged.$idemId.Keys){
+        foreach($fieldId in $db.Staged.$idemId.Keys){
 
             $project_id = $db.ProjectId
             $item_id = $idemId
             $field_id = $fieldId
-            $value = $db.staged.$idemId.$fieldId.Value
-            $type = ConvertTo-UpdateType $db.staged.$idemId.$fieldId.Field.DataType
+            $value = $db.Staged.$idemId.$fieldId.Value
+            $type = ConvertTo-UpdateType $db.Staged.$idemId.$fieldId.Field.dataType
 
             $params = @{
                 projectid = $project_id
@@ -52,10 +60,10 @@ function Save-ProjectDatabase{
     # Check that all values are updated before cleanring staging
     $different = @{}
     foreach($idemId in $db.Staged.Keys){
-        foreach($fieldId in $db.staged.$idemId.Keys){
+        foreach($fieldId in $db.Staged.$idemId.Keys){
             $fieldName = $db.fields.$fieldId.name
 
-            $stagedV = $db.staged.$idemId.$fieldId.Value
+            $stagedV = $db.Staged.$idemId.$fieldId.Value
             $actualV = $db.items.$idemId.$fieldName
 
             if(!($stagedV -eq $actualV)){
@@ -73,6 +81,7 @@ function Save-ProjectDatabase{
 
     if($different.Count -eq 0){
         $db.Staged = $null
+        Save-Database -Database $db
         return $true
     } else {
         "Error: Staged values are not equal to actual values" | Write-MyError
@@ -82,20 +91,20 @@ function Save-ProjectDatabase{
 
 }
 
-function Set-ProjectV2Item2Database {
-    [CmdletBinding()]
-    param(
-        [Parameter(Position = 0)][object]$Database,
-        [Parameter(Position = 1)][object]$projectV2Item,
-        [Parameter(Position = 2)][Object]$Item
-    )
+# function Set-ProjectV2Item2Database {
+#     [CmdletBinding()]
+#     param(
+#         [Parameter(Position = 0)][object]$Database,
+#         [Parameter(Position = 1)][object]$projectV2Item,
+#         [Parameter(Position = 2)][Object]$Item
+#     )
 
-    $itemId = $Projectv2item.id
+#     $itemId = $Projectv2item.id
 
-    foreach($field in $item.keys){
-        $Database.items.$itemId.$field = $item.$field
-    }
-}
+#     foreach($field in $item.keys){
+#         $Database.items.$itemId.$field = $item.$field
+#     }
+# }
 
 function ConvertTo-UpdateType{
     [CmdletBinding()]

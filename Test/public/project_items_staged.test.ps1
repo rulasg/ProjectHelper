@@ -7,7 +7,7 @@ function Test_CommitProjectItemsStaged_NoStaged{
     Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
 
     Start-MyTranscript
-    $result = Save-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    $result = Sync-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     $t = Stop-MyTranscript
 
     Assert-Contains -Presented $t -Expected "Nothing to commit"
@@ -42,8 +42,8 @@ function Test_CommitProjectItemsStaged_SUCCESS{
 
     $itemId1 = "PVTI_lADOBCrGTM4ActQazgMuXXc"
 
-    $fieldComment1 = "comment" ; $fieldCommentValue1 = "new value of the comment 10"
-    $fieldTitle1 = "title" ; $fieldTitleValue1 = "new value of the title"
+    $fieldComment1 = "Comment" ; $fieldCommentValue1 = "new value of the comment 10"
+    $fieldTitle1 = "Title" ; $fieldTitleValue1 = "new value of the title"
 
     Edit-ProjectItem $owner $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
     Edit-ProjectItem $owner $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
@@ -66,14 +66,14 @@ function Test_CommitProjectItemsStaged_SUCCESS{
 
 
     $itemId2 = "PVTI_lADOBCrGTM4ActQazgMueM4"
-    $fieldComment2 = "comment" ; $fileCommentValue2 = "new value of the comment 11"
-    $fieldTitle2 = "title" ; $fileTitleValue2 = "new value of the title 11"
+    $fieldComment2 = "Comment" ; $fileCommentValue2 = "new value of the comment 11"
+    $fieldTitle2 = "Title" ; $fileTitleValue2 = "new value of the title 11"
 
     Edit-ProjectItem $owner $projectNumber $itemId2 $fieldComment2 $fileCommentValue2
     Edit-ProjectItem $owner $projectNumber $itemId2 $fieldTitle2 $fileTitleValue2
 
 
-    $result = Save-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    $result = Sync-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
 
     # Return true
     Assert-IsTrue -Condition $result
@@ -83,8 +83,8 @@ function Test_CommitProjectItemsStaged_SUCCESS{
     Assert-IsNull -Object $staged
 
     $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
-    Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.Comment
-    Assert-AreEqual -Expected $fieldTitleValue1 -Presented $item1.Title
+    Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.$fieldComment1
+    Assert-AreEqual -Expected $fieldTitleValue1 -Presented $item1.$fieldTitle1
 
     $item2 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId2
     Assert-AreEqual -Expected $fileCommentValue2 -Presented $item2.$fieldComment2

@@ -52,6 +52,9 @@ function Edit-ProjectItem{
     # Find the item by title
     $item = Get-Item $db $ItemId
 
+    # if the item is not found
+    if($null -eq $item){ "Item [$ItemId] not found" | Write-MyError; return $null}
+
     # check if the value is the same
     if($item.$FieldName -eq $Value){
         return
@@ -59,5 +62,8 @@ function Edit-ProjectItem{
 
     # save the new value
     Save-ItemFieldValue $db $itemId $FieldName $Value
+
+    # Commit change changes to the database
+    Save-ProjectDatabase -Database $db
 
 } Export-ModuleMember -Function Edit-ProjectItem

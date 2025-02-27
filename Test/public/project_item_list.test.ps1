@@ -17,7 +17,7 @@ function Test_GetProjetItems_SUCCESS{
     Assert-AreEqual -Presented $randomItem.UserStories  -Expected "8"
     Assert-AreEqual -Presented $randomItem.body         -Expected "some content in body"
     Assert-AreEqual -Presented $randomItem.Comment      -Expected "This"
-    Assert-AreEqual -Presented $randomItem.title        -Expected "A draft in the project"
+    Assert-AreEqual -Presented $randomItem.Title        -Expected "A draft in the project"
     Assert-AreEqual -Presented $randomItem.id           -Expected "PVTI_lADOBCrGTM4ActQazgMuXXc"
     Assert-AreEqual -Presented $randomItem.type         -Expected "DraftIssue"
     Assert-AreEqual -Presented $randomItem.TimeTracker  -Expected "890"
@@ -74,7 +74,7 @@ function Test_FindProjectItemByTitle_SUCCESS{
 
     $result = Find-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $title
 
-    Assert-AreEqual -Expected $id -Presented $result.Id
+    Assert-AreEqual -Expected $id -Presented $result.id
     Assert-AreEqual -Expected $actual -Presented $result.Title
 }
 
@@ -97,8 +97,8 @@ function Test_FindProjectItemByTitle_SUCCESS_MultipleResults{
     $result = Find-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $title -Force
 
     Assert-Count -Expected 2 -Presented $result
-    Assert-Contains -Expected $id1 -Presented $result.Id
-    Assert-Contains -Expected $id2 -Presented $result.Id
+    Assert-Contains -Expected $id1 -Presented $result.id
+    Assert-Contains -Expected $id2 -Presented $result.id
     Assert-AreEqual -Expected $title1 -Presented $result[0].Title
     Assert-AreEqual -Expected $title2 -Presented $result[1].Title
 }
@@ -140,9 +140,9 @@ function Test_SearchProjectItemByTitle_SUCCESS{
 
     Assert-Count -Expected 2 -Presented $result
 
-    Assert-Contains -Expected "EPIC 1 " -Presented $result.title
+    Assert-Contains -Expected "EPIC 1 " -Presented $result.Title
     Assert-Contains -Expected "PVTI_lADOBCrGTM4ActQazgMtRO0" -Presented $result.id
-    Assert-Contains -Expected "EPIC 2"  -Presented $result.title
+    Assert-Contains -Expected "EPIC 2"  -Presented $result.Title
     Assert-Contains -Expected "PVTI_lADOBCrGTM4ActQazgMtRPg" -Presented $result.id
 
 }

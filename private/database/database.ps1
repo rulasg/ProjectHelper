@@ -36,7 +36,7 @@
 #     return $ret
 # }
 
-# function Set-Database{
+# function Save-Database{
 #     [CmdletBinding()]
 #     param(
 #         [Parameter(Position = 0)][string]$Owner,
