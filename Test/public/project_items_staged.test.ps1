@@ -83,8 +83,8 @@ function Test_CommitProjectItemsStaged_SUCCESS{
     Assert-IsNull -Object $staged
 
     $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
-    Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.$fieldComment1
-    Assert-AreEqual -Expected $fieldTitleValue1 -Presented $item1.$fieldTitle1
+    Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.Comment
+    Assert-AreEqual -Expected $fieldTitleValue1 -Presented $item1.Title
 
     $item2 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId2
     Assert-AreEqual -Expected $fileCommentValue2 -Presented $item2.$fieldComment2

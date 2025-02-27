@@ -7,7 +7,7 @@ function Get-Field{
         [Parameter(Position = 1)][string]$FieldName
     )
 
-    $field = $Database.Fields.Values | Where-Object { $_.name -eq $FieldName }
+    $field = $Database.fields.Values | Where-Object { $_.name -eq $FieldName }
 
     return $field
 }

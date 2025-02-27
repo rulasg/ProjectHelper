@@ -5,8 +5,8 @@ $MODULE_PATH = $PSScriptRoot
 . $(($MODULE_PATH | Join-Path -ChildPath "private" -AdditionalChildPath InvokeCommandMock.ps1 | Get-Item).FullName)
 
 #Get public and private function definition files.
-$Public  = @( Get-ChildItem -Path $MODULE_PATH\public\*.ps1 -ErrorAction SilentlyContinue )
-$Private = @( Get-ChildItem -Path $MODULE_PATH\private\*.ps1 -ErrorAction SilentlyContinue )
+$Public  = @( Get-ChildItem -Path $MODULE_PATH\public\*.ps1 -Recurse -ErrorAction SilentlyContinue )
+$Private = @( Get-ChildItem -Path $MODULE_PATH\private\*.ps1 -Recurse -ErrorAction SilentlyContinue )
 
 #Dot source the files
 Foreach($import in @($Public + $Private))
