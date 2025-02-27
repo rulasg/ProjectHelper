@@ -2,6 +2,9 @@
 
 Set-MyInvokeCommandAlias -Alias GetDatabaseStorePath -Command "Invoke-GetDatabaseStorePath"
 
+$MODULE_NAME = "ProjectHelper"
+$DATABASE_ROOT = [System.Environment]::GetFolderPath('UserProfile') | Join-Path -ChildPath ".helpers" -AdditionalChildPath $MODULE_NAME, "databaseCache"
+
 function Reset-DatabaseRoot{
     [CmdletBinding()]
     param()
@@ -70,7 +73,7 @@ function Invoke-GetDatabaseStorePath{
     [CmdletBinding()]
     param()
 
-    $databaseRoot = "~/.helpers/projecthelper/databaseV2"
+    $databaseRoot = $DATABASE_ROOT
 
     return $databaseRoot
 } Export-ModuleMember -Function Invoke-GetDatabaseStorePath
