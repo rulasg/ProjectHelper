@@ -5,6 +5,11 @@ Set-MyInvokeCommandAlias -Alias GetDatabaseStorePath -Command "Invoke-GetDatabas
 $MODULE_NAME = "ProjectHelper"
 $DATABASE_ROOT = [System.Environment]::GetFolderPath('UserProfile') | Join-Path -ChildPath ".helpers" -AdditionalChildPath $MODULE_NAME, "databaseCache"
 
+# Create the database root if it does not exist
+if(-Not (Test-Path $DATABASE_ROOT)){
+    New-Item -Path $DATABASE_ROOT -ItemType Directory
+}
+
 function Reset-DatabaseRoot{
     [CmdletBinding()]
     param()
