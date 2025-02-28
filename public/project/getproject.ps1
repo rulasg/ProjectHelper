@@ -6,6 +6,9 @@ function Get-Project{
         [Parameter()][switch]$Force
     )
 
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+
     if($force -or -Not (Test-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber)){
         $result = Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
         if( ! $result){ return }
