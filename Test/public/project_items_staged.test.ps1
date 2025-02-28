@@ -107,6 +107,9 @@ function Test_ShowProjectItemsStaged{
     $Owner = "SomeOrg" ; $ProjectNumber = 164
     Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
 
+    $result = Show-ProjectItemStaged -Owner $owner -ProjectNumber $ProjectNumber
+    Assert-IsNull -Object $result
+
     $itemId1 = "PVTI_lADOBCrGTM4ActQazgMuXXc"
     $fieldComment1 = "comment" ; $fieldCommentValue1 = "new value of the comment 10"
     $fieldTitle1 = "title" ; $fieldTitleValue1 = "new value of the title"

@@ -10,7 +10,7 @@ function Test_Get_Project_ItemId_Equal_Case_Sensitive{
     # MockCallJson -Command "Invoke-GitHubOrgProjectWithFields -Owner github -ProjectNumber 20521" -Filename "invoke-GitHubOrgProjectWithFields-github-20521.json"
     MockCallJson -Command "GitHubOrgProjectWithFields" -Filename "invoke-GitHubOrgProjectWithFields-github-20521.json"
 
-    $result = Get-Project -owner github -ProjectNumber 20521 -Verbose
+    $result = Get-Project -owner github -ProjectNumber 20521
     Assert-Count -Expected 86 -Presented $result.items.keys
 
     $result = Get-ProjectItem  -ItemId $item1

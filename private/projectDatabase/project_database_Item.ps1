@@ -34,7 +34,11 @@ function Get-ItemStaged{
     process {
 
         $item = Get-Item $db $itemId
-        
+
+        if($null -eq $item){
+            return
+        }
+
         $changedItem = @{}
 
         # Heade
