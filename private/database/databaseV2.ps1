@@ -1,8 +1,8 @@
-# Database driver to store and cacche project content and schema
+# Database driver to store the cache
 
+# Invoke to allow mockig the store path on testing
 Set-MyInvokeCommandAlias -Alias GetDatabaseStorePath -Command "Invoke-GetDatabaseStorePath"
 
-$MODULE_NAME = "ProjectHelper"
 $DATABASE_ROOT = [System.Environment]::GetFolderPath('UserProfile') | Join-Path -ChildPath ".helpers" -AdditionalChildPath $MODULE_NAME, "databaseCache"
 
 # Create the database root if it does not exist
@@ -10,7 +10,7 @@ if(-Not (Test-Path $DATABASE_ROOT)){
     New-Item -Path $DATABASE_ROOT -ItemType Directory
 }
 
-function Reset-DatabaseRoot{
+function Reset-DatabaseStore{
     [CmdletBinding()]
     param()
 
@@ -20,7 +20,17 @@ function Reset-DatabaseRoot{
 
         New-Item -Path $databaseRoot -ItemType Directory
 
-} Export-ModuleMember -Function Reset-DatabaseRoot
+} Export-ModuleMember -Function Reset-DatabaseStore
+
+function Get-DatabaseStore{
+    [CmdletBinding()]
+    param()
+
+        $databaseRoot = Invoke-MyCommand -Command GetDatabaseStorePath
+    
+        return $databaseRoot
+
+} Export-ModuleMember -Function Get-DatabaseStore
 
 function Get-Database{
     [CmdletBinding()]

@@ -27,3 +27,6 @@ Foreach($import in @($Public + $Private))
 # Export Public functions ($Public.BaseName) for WIP modules
 # Set variables visible to the module and its functions only
 
+# Extract the module name from the module manifest or file name
+$MODULE_NAME = (Get-ChildItem -Path $PSScriptRoot -Filter *.psd1 | Select-Object -First 1).BaseName
+$MODULE_PATH = $PSScriptRoot
