@@ -44,7 +44,7 @@ function Test_GetProjetItems_FAIL{
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12
 
-    MockCallToNull -Command GitHubOrgProjectWithFields
+    MockCall_GitHubOrgProjectWithFields_SomeOrg_164_Null
 
     Mock_DatabaseRoot
 
@@ -113,7 +113,7 @@ function Test_FindProjectItemByTitle_FAIL{
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 
 
-    MockCallToNull -Command GitHubOrgProjectWithFields
+    MockCall_GitHubOrgProjectWithFields_SomeOrg_164_Null
 
     # Run the command
     Start-MyTranscript
@@ -161,7 +161,7 @@ function Test_SearchProjectItemByTitle_FAIL{
 
     Mock_DatabaseRoot
 
-    MockCallToNull -Command GitHubOrgProjectWithFields
+    MockCall_GitHubOrgProjectWithFields_SomeOrg_164_Null
 
     # Run the command
     Start-MyTranscript
@@ -221,7 +221,7 @@ function MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164{
     # MockCallJson -Command $Command -Filename 'projectV2.json'
 }
 
-function MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164_Null{
+function MockCall_GitHubOrgProjectWithFields_SomeOrg_164_Null{
 
     # MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
     # MockCallJson -Command GitHubOrgProjectWithFields -Filename 'projectV2.json'
