@@ -5,7 +5,7 @@ function Test_GetProjetItems_SUCCESS{
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12
 
-    MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
+    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
     $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
 
@@ -73,7 +73,7 @@ function Test_FindProjectItemByTitle_SUCCESS{
     $title = "epic 1"
     $actual = "EPIC 1 "
 
-    MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
+    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
     $result = Find-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $title
 
@@ -95,7 +95,7 @@ function Test_FindProjectItemByTitle_SUCCESS_MultipleResults{
     $title1 = "Issue Name 1"
     $title2 = "ISSUE NAME 1"
 
-    MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
+    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
     $result = Find-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $title -Force
 
@@ -137,7 +137,7 @@ function Test_SearchProjectItemByTitle_SUCCESS{
     # title refrence with differnt case and spaces
     $title = "epic"
 
-    MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
+    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
     $result = Search-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $title
 
@@ -182,7 +182,7 @@ function Test_SearchProjectItem_SUCCESS{
     # title refrence with differnt case and spaces
     $filter = "epic"
 
-    MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
+    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
     $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Filter $filter -Fields ("id","title","url","id")
     
@@ -212,7 +212,7 @@ function Test_SearchProjectItem_SUCCESS{
 #>
 
 
-function MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164{
+function MockCall_GitHubOrgProjectWithFields_SomeOrg_164{
 
     MockCallJson -Command "Invoke-GitHubOrgProjectWithFields -Owner SomeOrg -ProjectNumber 164" -Filename 'projectV2.json'
 }

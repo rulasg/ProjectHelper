@@ -4,7 +4,7 @@ function Test_CommitProjectItemsStaged_NoStaged{
     Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
-    MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
+    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
     Start-MyTranscript
     $result = Sync-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
@@ -61,7 +61,7 @@ function Test_CommitProjectItemsStaged_SUCCESS{
     $fieldComment2 = "Comment" ; $fileCommentValue2 = "new value of the comment 11"
     $fieldTitle2 = "Title" ; $fileTitleValue2 = "new value of the title 11"
 
-    MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
+    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
     MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc -FieldId PVTF_lADOBCrGTM4ActQazgSl5GU -Value "new value of the comment 10" -Type text'
     MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc -FieldId PVTF_lADOBCrGTM4ActQazgSkYm8 -Value "new value of the title" -Type text'
     MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMueM4 -FieldId PVTF_lADOBCrGTM4ActQazgSl5GU -Value "new value of the comment 11" -Type text'
@@ -97,7 +97,7 @@ function Test_ShowProjectItemsStaged{
     Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164
-    MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
+    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
     $result = Show-ProjectItemStaged -Owner $owner -ProjectNumber $ProjectNumber
     Assert-IsNull -Object $result
