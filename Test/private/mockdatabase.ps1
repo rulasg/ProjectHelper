@@ -1,6 +1,10 @@
-function Mock_DatabaseRoot(){
+function Mock_DatabaseRoot([switch]$NotReset){
 
     MockCallToString "Invoke-ProjectHelperGetDatabaseStorePath" -OutString "test_database_path"
 
-    Reset-DatabaseStore
+    #check $NotReset
+    if(-Not $NotReset){
+        Reset-DatabaseStore
+    }
 }
+
