@@ -1,7 +1,7 @@
 function Test_EditProjectItemWithValues_Integration{
 
     # Assert-SkipTest
-    # Reset-InvokeCommandMock
+    Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
     $owner = "octodemo"
@@ -9,10 +9,7 @@ function Test_EditProjectItemWithValues_Integration{
     $itemId = "PVTI_lADOAlIw4c4A0Lf4zgYNTc0"
     $fieldSlug = "sf_"
 
-    #MockCallJson -Command "GitHubOrgProjectWithFields" -Filename "invoke-GitHubOrgProjectWithFields-github-20521.json"
-    MockCallJson -Command "GitHubOrgProjectWithFields" -Filename "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber.json"
-    # MockCallJson -Command "Invoke-GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectnumber" -Filename "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber.json"
-
+    MockCallJson -Command "Invoke-GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectnumber" -Filename "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber.json"
 
     $data = @{
         "Text1" = "value1"
