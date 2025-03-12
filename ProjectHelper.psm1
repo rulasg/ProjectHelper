@@ -6,11 +6,12 @@ $START = $MODULE_PATH | Join-Path -ChildPath "private" -AdditionalChildPath 'STA
 if($START | Test-Path){ . $($START | Get-Item).FullName }
 
 #Get public and private function definition files.
-$Public  = @( Get-ChildItem -Path $MODULE_PATH\public\*.ps1 -Recurse -ErrorAction SilentlyContinue )
+$include = @( Get-ChildItem -Path $MODULE_PATH\include\*.ps1 -ErrorAction SilentlyContinue )
 $Private = @( Get-ChildItem -Path $MODULE_PATH\private\*.ps1 -Recurse -ErrorAction SilentlyContinue )
+$Public  = @( Get-ChildItem -Path $MODULE_PATH\public\*.ps1 -Recurse -ErrorAction SilentlyContinue )
 
 #Dot source the files
-Foreach($import in @($Public + $Private))
+Foreach($import in @($include + $Private + $Public))
 {
     Try
     {
@@ -27,6 +28,3 @@ Foreach($import in @($Public + $Private))
 # Export Public functions ($Public.BaseName) for WIP modules
 # Set variables visible to the module and its functions only
 
-# Extract the module name from the module manifest or file name
-$MODULE_NAME = (Get-ChildItem -Path $PSScriptRoot -Filter *.psd1 | Select-Object -First 1).BaseName
-$MODULE_PATH = $PSScriptRoot
