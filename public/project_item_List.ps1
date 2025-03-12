@@ -81,6 +81,9 @@ function Search-ProjectItemByTitle{
         [Parameter()][switch]$Force
     )
 
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+
     $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
     # return if #db is null
