@@ -214,20 +214,10 @@ function Test_SearchProjectItem_SUCCESS{
 
 function MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164{
 
-    # MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
-    MockCallJson -Command GitHubOrgProjectWithFields -Filename 'projectV2.json'
-
-    # $Command = "Invoke-GitHubOrgProjectWithFields -Owner SomeOrg -ProjectNumber 164"
-    # MockCallJson -Command $Command -Filename 'projectV2.json'
+    MockCallJson -Command "Invoke-GitHubOrgProjectWithFields -Owner SomeOrg -ProjectNumber 164" -Filename 'projectV2.json'
 }
 
 function MockCall_GitHubOrgProjectWithFields_SomeOrg_164_Null{
 
-    # MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
-    # MockCallJson -Command GitHubOrgProjectWithFields -Filename 'projectV2.json'
-
-    MockCallToNull -Command GitHubOrgProjectWithFields
-
-    # $Command = "Invoke-GitHubOrgProjectWithFields -Owner SomeOrg -ProjectNumber 164"
-    # MockCallJson -Command $Command -Filename 'projectV2.json'
+    MockCalltoNull -Command "Invoke-GitHubOrgProjectWithFields -Owner SomeOrg -ProjectNumber 164"
 }
