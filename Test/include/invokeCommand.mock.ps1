@@ -38,6 +38,10 @@ function Reset-InvokeCommandMock{
 
     # Disable all dependecies of the library
     Disable-InvokeCommandAlias -Tag $MODULE_INVOKATION_TAG
+
+    # Clear Enviroment variables used
+    Get-Variable -scope Global -Name "$($MODULE_INVOKATION_TAG_MOCK)_*"  | Remove-Variable -Force -Scope Global
+
 } Export-ModuleMember -Function Reset-InvokeCommandMock
 
 function Enable-InvokeCommandAliasModule{
@@ -116,6 +120,22 @@ function MockCallToString{
     $outputstring = $outputstring -replace "{output}", $OutString
 
     Set-InvokeCommandMock -Alias $command -Command $outputstring
+}
+
+
+function MockCallToObject{
+    param(
+        [Parameter(Position=0)][string] $command,
+        [Parameter(Position=1)][object] $OutObject
+    )
+
+    $random = [System.Guid]::NewGuid().ToString()
+    $varName = "$MODULE_INVOKATION_TAG_MOCK" + "_$random"
+
+    Set-Variable -Name $varName -Value $OutObject -Scope Global
+
+    Set-InvokeCommandMock -Alias $command -Command "(Get-Variable -Name $varName -Scope Global).Value"
+
 }
 
 function MockCallToNull{
