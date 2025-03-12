@@ -17,11 +17,8 @@ function Test_CommitProjectItemsStaged_NoStaged{
 function Test_CommitProjectItemsStaged_SUCCESS{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
-
+    
     $Owner = "SomeOrg" ; $ProjectNumber = 164
-    Set-InvokeCommandMock -Alias GitHub_UpdateProjectV2ItemFieldValue -Command "MockCall_GitHub_UpdateProjectV2ItemFieldValue"
-    MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
-
 
     # Item id 10
     # Name                           Value
@@ -41,12 +38,8 @@ function Test_CommitProjectItemsStaged_SUCCESS{
     # type                           DraftIssue
 
     $itemId1 = "PVTI_lADOBCrGTM4ActQazgMuXXc"
-
     $fieldComment1 = "Comment" ; $fieldCommentValue1 = "new value of the comment 10"
     $fieldTitle1 = "Title" ; $fieldTitleValue1 = "new value of the title"
-
-    Edit-ProjectItem $owner $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
-    Edit-ProjectItem $owner $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
 
     # Name                           Value
     # ----                           -----
@@ -64,14 +57,20 @@ function Test_CommitProjectItemsStaged_SUCCESS{
     # url                            https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/pull/6
     # $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
 
-
     $itemId2 = "PVTI_lADOBCrGTM4ActQazgMueM4"
     $fieldComment2 = "Comment" ; $fileCommentValue2 = "new value of the comment 11"
     $fieldTitle2 = "Title" ; $fileTitleValue2 = "new value of the title 11"
 
+    MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
+    MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc -FieldId PVTF_lADOBCrGTM4ActQazgSl5GU -Value "new value of the comment 10" -Type text'
+    MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc -FieldId PVTF_lADOBCrGTM4ActQazgSkYm8 -Value "new value of the title" -Type text'
+    MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMueM4 -FieldId PVTF_lADOBCrGTM4ActQazgSl5GU -Value "new value of the comment 11" -Type text'
+    MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMueM4 -FieldId PVTF_lADOBCrGTM4ActQazgSkYm8 -Value "new value of the title 11" -Type text'
+
+    Edit-ProjectItem $owner $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
+    Edit-ProjectItem $owner $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
     Edit-ProjectItem $owner $projectNumber $itemId2 $fieldComment2 $fileCommentValue2
     Edit-ProjectItem $owner $projectNumber $itemId2 $fieldTitle2 $fileTitleValue2
-
 
     $result = Sync-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
 
@@ -91,13 +90,6 @@ function Test_CommitProjectItemsStaged_SUCCESS{
     Assert-AreEqual -Expected $fileTitleValue2 -Presented $item2.$fieldTitle2
 }
 
-function MockCall_GitHub_UpdateProjectV2ItemFieldValue{
-
-    $fileName = $MOCK_PATH | Join-Path -ChildPath 'updateProjectV2ItemFieldValue.json'
-    $content = Get-Content -Path $fileName | Out-String | ConvertFrom-Json
-
-    return $content
-} Export-ModuleMember -Function  MockCall_GitHub_UpdateProjectV2ItemFieldValue
 
 function Test_ShowProjectItemsStaged{
 
