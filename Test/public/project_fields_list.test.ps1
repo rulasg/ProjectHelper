@@ -1,7 +1,7 @@
 function Test_GetProjectFields_SUCCESS{
 
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 
 

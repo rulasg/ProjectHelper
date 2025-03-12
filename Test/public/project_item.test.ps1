@@ -1,7 +1,7 @@
 
 function Test_GetProjectItem_SUCCESS{
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
     $fieldComment = "Comment" ; $fieldTitle = "Title"
@@ -33,12 +33,12 @@ function Test_GetProjectItem_SUCCESS{
 
 function Test_EditProjetItems_SUCCESS{
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
     Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
     
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
     # Item id 10
     # $title = "A draft in the project" 
 
@@ -70,7 +70,7 @@ function Test_UpdateProjectDatabase_Fail_With_Staged{
     # As Update-ProjectDatabase is a private function, we will test it through the public function Get-ProjectItemList with Force
 
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ;
     $itemId = "PVTI_lADOBCrGTM4ActQazgMueM4"

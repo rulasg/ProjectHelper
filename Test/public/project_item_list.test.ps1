@@ -1,7 +1,7 @@
 function Test_GetProjetItems_SUCCESS{
 
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12
 
@@ -40,13 +40,13 @@ function Test_GetProjetItems_SUCCESS{
 function Test_GetProjetItems_FAIL{
 
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12
 
     MockCallToNull -Command GitHubOrgProjectWithFields
 
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     # Start the transcript
     
@@ -65,7 +65,7 @@ function Test_GetProjetItems_FAIL{
 function Test_FindProjectItemByTitle_SUCCESS{
 
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164  ; $id = "PVTI_lADOBCrGTM4ActQazgMtRO0"
 
@@ -84,7 +84,7 @@ function Test_FindProjectItemByTitle_SUCCESS{
 function Test_FindProjectItemByTitle_SUCCESS_MultipleResults{
 
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164  ; 
     $id1 = "PVTI_lADOBCrGTM4ActQazgMtROk"
@@ -109,7 +109,7 @@ function Test_FindProjectItemByTitle_SUCCESS_MultipleResults{
 function Test_FindProjectItemByTitle_FAIL{
 
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 
 
@@ -130,7 +130,7 @@ function Test_FindProjectItemByTitle_FAIL{
 function Test_SearchProjectItemByTitle_SUCCESS{
 
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164  ; $id = "PVTI_lADOBCrGTM4ActQazgMtRO0"
 
@@ -154,12 +154,12 @@ function Test_SearchProjectItemByTitle_SUCCESS{
 function Test_SearchProjectItemByTitle_FAIL{
 
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 
     $erroMessage= "Error: Project not found. Check owner and projectnumber"
 
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     MockCallToNull -Command GitHubOrgProjectWithFields
 
@@ -175,7 +175,7 @@ function Test_SearchProjectItemByTitle_FAIL{
 function Test_SearchProjectItem_SUCCESS{
 
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164  ; $id = "PVTI_lADOBCrGTM4ActQazgMtRO0"
 

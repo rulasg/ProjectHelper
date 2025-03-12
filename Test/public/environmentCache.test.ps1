@@ -5,7 +5,7 @@
 function Test_EnvironmentCache{
 
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
     $fieldComment = "comment" ; $fieldTitle = "title"

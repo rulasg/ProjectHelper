@@ -1,6 +1,6 @@
 function Test_Get_Project_ItemId_Equal_Case_Sensitive{
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     # This project has -Owner github -ProjectNumber 20521 has two items with the same Id case sensitive
     $item1 ="PVTI_lADNJr_OALnx2s4Fqq8F"

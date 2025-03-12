@@ -3,20 +3,20 @@
 
 # $script:PROJECT_DATABASE_LIST = $null
 
-# function Initialize-DatabaseRoot{
+# function Mock_DatabaseRoot{
 #     [CmdletBinding()]
 #     param()
     
 #         $script:PROJECT_DATABASE_LIST = @{}
 
-# } Export-ModuleMember -Function Initialize-DatabaseRoot
+# } Export-ModuleMember -Function Mock_DatabaseRoot
 
 # function Get-DatabaseRoot{
 #     [CmdletBinding()]
 #     param()
 
 #     if($null -eq $script:PROJECT_DATABASE_LIST){
-#         Initialize-DatabaseRoot
+#         Mock_DatabaseRoot
 #     }
 
 #     return $script:PROJECT_DATABASE_LIST

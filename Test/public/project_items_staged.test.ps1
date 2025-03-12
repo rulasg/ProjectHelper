@@ -1,7 +1,7 @@
 
 function Test_CommitProjectItemsStaged_NoStaged{
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
     Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
@@ -16,7 +16,7 @@ function Test_CommitProjectItemsStaged_NoStaged{
 
 function Test_CommitProjectItemsStaged_SUCCESS{
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164
     Set-InvokeCommandMock -Alias GitHub_UpdateProjectV2ItemFieldValue -Command "MockCall_GitHub_UpdateProjectV2ItemFieldValue"
@@ -102,7 +102,7 @@ function MockCall_GitHub_UpdateProjectV2ItemFieldValue{
 function Test_ShowProjectItemsStaged{
 
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164
     Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
