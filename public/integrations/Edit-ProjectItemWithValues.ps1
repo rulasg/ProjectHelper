@@ -34,19 +34,3 @@ function Edit-ProjectItemWithValues {
 
 } Export-ModuleMember -Function Edit-ProjectItemWithValues
 
-function Update-ItemWithIntegration_POC{
-    [CmdletBinding()]
-    param(
-        [Parameter(Position = 0)] [string]$Owner,
-        [Parameter(Position = 1)] [string]$ProjectNumber
-    )
-    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
-
-    # Get project
-    $items = Get-ProjectItemList -owner $Owner -ProjectNumber $ProjectNumber
-
-    # List the items that have the integration ID
-    $itemswithIntegration = $items
-    
-} Export-ModuleMember -Function Update-ItemWithIntegration_POC
