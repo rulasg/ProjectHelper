@@ -4,7 +4,7 @@ function Test_CommitProjectItemsStaged_NoStaged{
     Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
-    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
+    MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
     Start-MyTranscript
     $result = Sync-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
@@ -20,7 +20,7 @@ function Test_CommitProjectItemsStaged_SUCCESS{
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164
     Set-InvokeCommandMock -Alias GitHub_UpdateProjectV2ItemFieldValue -Command "MockCall_GitHub_UpdateProjectV2ItemFieldValue"
-    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
+    MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
 
     # Item id 10
@@ -105,7 +105,7 @@ function Test_ShowProjectItemsStaged{
     Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164
-    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
+    MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
     $result = Show-ProjectItemStaged -Owner $owner -ProjectNumber $ProjectNumber
     Assert-IsNull -Object $result

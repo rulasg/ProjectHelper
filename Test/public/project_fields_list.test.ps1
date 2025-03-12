@@ -8,7 +8,7 @@ function Test_GetProjectFields_SUCCESS{
     # title refrence with differnt case and spaces
     $filter = "epic"
 
-    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
+    MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
     $result = Get-ProjectFields -Owner $owner -ProjectNumber $projectNumber
 

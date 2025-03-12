@@ -10,7 +10,7 @@ function Test_EnvironmentCache{
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
     $fieldComment = "comment" ; $fieldTitle = "title"
 
-    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
+    MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
     $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
     $fieldTitleValue = "A draft in the project"

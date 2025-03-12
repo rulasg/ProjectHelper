@@ -5,7 +5,7 @@ function Test_GetProjetItems_SUCCESS{
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12
 
-    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
+    MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
     $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
 
@@ -73,7 +73,7 @@ function Test_FindProjectItemByTitle_SUCCESS{
     $title = "epic 1"
     $actual = "EPIC 1 "
 
-    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
+    MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
     $result = Find-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $title
 
@@ -95,7 +95,7 @@ function Test_FindProjectItemByTitle_SUCCESS_MultipleResults{
     $title1 = "Issue Name 1"
     $title2 = "ISSUE NAME 1"
 
-    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
+    MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
     $result = Find-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $title -Force
 
@@ -137,7 +137,7 @@ function Test_SearchProjectItemByTitle_SUCCESS{
     # title refrence with differnt case and spaces
     $title = "epic"
 
-    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
+    MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
     $result = Search-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $title
 
@@ -182,7 +182,7 @@ function Test_SearchProjectItem_SUCCESS{
     # title refrence with differnt case and spaces
     $filter = "epic"
 
-    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
+    MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
     $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Filter $filter -Fields ("id","title","url","id")
     
@@ -210,11 +210,24 @@ function Test_SearchProjectItem_SUCCESS{
     Inovke helper when commanded for GitHubOrgProjectWithFields will call back this function to retrn the fake data
     This is needed as Invoke-RestMethod returns objects and the parametrs ar too long to specify on a Set-InvokeCommandAlias
 #>
-function MockCall_GitHubOrgProjectWithFields{
-    param()
 
-    $fileName = $MOCK_PATH | Join-Path -ChildPath 'projectV2.json'
-    $content = Get-Content -Path $fileName | Out-String | ConvertFrom-Json
 
-    return $content
-} Export-ModuleMember -Function MockCall_GitHubOrgProjectWithFields
+function MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164{
+
+    # MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
+    MockCallJson -Command GitHubOrgProjectWithFields -Filename 'projectV2.json'
+
+    # $Command = "Invoke-GitHubOrgProjectWithFields -Owner SomeOrg -ProjectNumber 164"
+    # MockCallJson -Command $Command -Filename 'projectV2.json'
+}
+
+function MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164_Null{
+
+    # MockCall_MockCall_GitHubOrgProjectWithFields_SomeOrg_164
+    # MockCallJson -Command GitHubOrgProjectWithFields -Filename 'projectV2.json'
+
+    MockCallToNull -Command GitHubOrgProjectWithFields
+
+    # $Command = "Invoke-GitHubOrgProjectWithFields -Owner SomeOrg -ProjectNumber 164"
+    # MockCallJson -Command $Command -Filename 'projectV2.json'
+}
