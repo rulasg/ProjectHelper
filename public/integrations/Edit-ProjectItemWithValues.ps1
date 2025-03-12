@@ -24,16 +24,11 @@ function Edit-ProjectItemWithValues {
         # Check if field exists 
         $field = $fields | Where-Object { $_.name -eq $fieldName }
         if ($null -eq $field) {
-            "Field $fieldName not found" | Write-MyError
+            "Field $fieldName not found" | Write-MyVerbose
             continue
         }
 
-        $result = Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $ItemId -FieldName $fieldName -Value $Values[$key]
-
-        if ($null -eq $result) {
-            "Return to Edit-ProjectItem is not $null" | Write-MyError
-            continue
-        }
+        Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $ItemId -FieldName $fieldName -Value $Values[$key]
 
     }
 
