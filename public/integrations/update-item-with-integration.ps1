@@ -25,7 +25,6 @@ function Update-ItemWithIntegration_POC{
     # Get project
     $items = Get-ProjectItemList -owner $Owner -ProjectNumber $ProjectNumber
 
-
     # List the items that have the integration ID
-    $items
+    
 } Export-ModuleMember -Function Update-ItemWithIntegration_POC
