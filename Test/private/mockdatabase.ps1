@@ -1,6 +1,6 @@
 function Initialize-DatabaseRoot(){
 
-    MockCallToString "Invoke-GetDatabaseStorePath" -OutString "test_database_path"
+    MockCallToString "Invoke-ProjectHelperGetDatabaseStorePath" -OutString "test_database_path"
 
     Reset-DatabaseStore
 }

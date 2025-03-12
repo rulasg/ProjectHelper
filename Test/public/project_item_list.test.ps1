@@ -29,7 +29,7 @@ function Test_GetProjetItems_SUCCESS{
     # Reset all mock invokes
     Reset-InvokeCommandMock
     # Add getdatabasstorepatn mock as is used to reach the test database. No external call.
-    MockCallToString "Invoke-GetDatabaseStorePath" -OutString "test_database_path"
+    MockCallToString "Invoke-ProjectHelperGetDatabaseStorePath" -OutString "test_database_path"
 
     # Can call without mock because it will use the database information
     $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber

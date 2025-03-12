@@ -1,7 +1,7 @@
 # Database driver to store the cache
 
 # Invoke to allow mockig the store path on testing
-Set-MyInvokeCommandAlias -Alias GetDatabaseStorePath -Command "Invoke-GetDatabaseStorePath"
+Set-MyInvokeCommandAlias -Alias GetDatabaseStorePath -Command "Invoke-ProjectHelperGetDatabaseStorePath"
 
 $DATABASE_ROOT = [System.Environment]::GetFolderPath('UserProfile') | Join-Path -ChildPath ".helpers" -AdditionalChildPath $MODULE_NAME, "databaseCache"
 
@@ -84,11 +84,11 @@ function GetDatabaseFile{
     return $path
 }
 
-function Invoke-GetDatabaseStorePath{
+function Invoke-ProjectHelperGetDatabaseStorePath{
     [CmdletBinding()]
     param()
 
     $databaseRoot = $DATABASE_ROOT
 
     return $databaseRoot
-} Export-ModuleMember -Function Invoke-GetDatabaseStorePath
+} Export-ModuleMember -Function Invoke-ProjectHelperGetDatabaseStorePath
