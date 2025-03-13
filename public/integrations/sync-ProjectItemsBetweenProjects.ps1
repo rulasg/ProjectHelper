@@ -7,18 +7,19 @@ function Sync-ProjectItemsBetweenProjects {
         [Parameter(Position = 1)][string]$SourceProjectNumber,
         [Parameter(Position = 2)][string]$DestinationOwner,
         [Parameter(Position = 3)][string]$DestinationProjectNumber,
-        [Parameter(Mandatory)][object]$FieldsList
+        [Parameter(Mandatory)][object]$FieldsList,
+        [Parameter()][string]$FieldSlug
     )
 
     # Get destination project for error handling and caching
     ($DestinationOwner,$DestinationProjectNumber) = Get-OwnerAndProjectNumber -Owner $DestinationOwner -ProjectNumber $DestinationProjectNumber
     if([string]::IsNullOrWhiteSpace($DestinationOwner) -or [string]::IsNullOrWhiteSpace($DestinationProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
-    $destinationProject = Get-Project -Owner $DestinationOwner -ProjectNumber $DestinationProjectNumber
+    $destinationProject = Get-Project -Owner $DestinationOwner -ProjectNumber $DestinationProjectNumber -Force
 
     # Get source project for error handling and caching
     ($SourceOwner,$SourceProjectNumber) = Get-OwnerAndProjectNumber -Owner $SourceOwner -ProjectNumber $SourceProjectNumber
     if([string]::IsNullOrWhiteSpace($SourceOwner) -or [string]::IsNullOrWhiteSpace($SourceProjectNumber)){ "Source Owner and ProjectNumber are required" | Write-MyError; return $null}
-    $sourceProject = Get-Project -Owner $SourceOwner -ProjectNumber $SourceProjectNumber
+    $sourceProject = Get-Project -Owner $SourceOwner -ProjectNumber $SourceProjectNumber -Force
 
     # check if any of the projects are null
     if($null -eq $sourceProject -or $null -eq $destinationProject){
@@ -53,7 +54,14 @@ function Sync-ProjectItemsBetweenProjects {
         }
 
         # Check if values is empty or null
-        Edit-ProjectItemWithValues -Owner $DestinationOwner -ProjectNumber $DestinationProjectNumber -ItemId $destinationItem.id -Values $values 
+        $param = @{
+            Owner = $destinationOwner
+            ProjectNumber = $DestinationProjectNumber
+            ItemId = $destinationItem.id
+            Values = $values
+            FieldSlug = $FieldSlug
+        }
+        Edit-ProjectItemWithValues  @param
 
     }
 } Export-ModuleMember -Function Sync-ProjectItemsBetweenProjects
