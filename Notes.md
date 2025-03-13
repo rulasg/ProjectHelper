@@ -10,10 +10,10 @@ graph TD;
     
 
     subgraph Module
-        0([Save-ProjectItemStaged])
+        0([Sync-ProjectItemStaged])
         1[Save-ProjectDatabase]
-        2[Get-ProjectDatabase]
-        3[Get-ProjectDatabase]
+        2[Get-Project]
+        3[Get-Project]
         4[Set-ProjectV2Item]
         0<-->1
         1<-->2

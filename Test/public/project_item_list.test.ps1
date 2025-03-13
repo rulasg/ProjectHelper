@@ -1,11 +1,11 @@
 function Test_GetProjetItems_SUCCESS{
 
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12
 
-    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
+    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
     $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
 
@@ -17,7 +17,7 @@ function Test_GetProjetItems_SUCCESS{
     Assert-AreEqual -Presented $randomItem.UserStories  -Expected "8"
     Assert-AreEqual -Presented $randomItem.body         -Expected "some content in body"
     Assert-AreEqual -Presented $randomItem.Comment      -Expected "This"
-    Assert-AreEqual -Presented $randomItem.title        -Expected "A draft in the project"
+    Assert-AreEqual -Presented $randomItem.Title        -Expected "A draft in the project"
     Assert-AreEqual -Presented $randomItem.id           -Expected "PVTI_lADOBCrGTM4ActQazgMuXXc"
     Assert-AreEqual -Presented $randomItem.type         -Expected "DraftIssue"
     Assert-AreEqual -Presented $randomItem.TimeTracker  -Expected "890"
@@ -26,7 +26,10 @@ function Test_GetProjetItems_SUCCESS{
     Assert-AreEqual -Presented $randomItem.Priority     -Expected "🥵High"
     Assert-AreEqual -Presented $randomItem.Assignees    -Expected "rulasg"
 
+    # Reset all mock invokes
     Reset-InvokeCommandMock
+    # Reset Database Mock calls. Keep database content
+    Mock_DatabaseRoot -NotReset
 
     # Can call without mock because it will use the database information
     $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
@@ -37,13 +40,13 @@ function Test_GetProjetItems_SUCCESS{
 function Test_GetProjetItems_FAIL{
 
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12
 
-    MockCallToNull -Command GitHubOrgProjectWithFields
+    MockCall_GitHubOrgProjectWithFields_SomeOrg_164_Null
 
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     # Start the transcript
     
@@ -62,7 +65,7 @@ function Test_GetProjetItems_FAIL{
 function Test_FindProjectItemByTitle_SUCCESS{
 
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164  ; $id = "PVTI_lADOBCrGTM4ActQazgMtRO0"
 
@@ -70,18 +73,18 @@ function Test_FindProjectItemByTitle_SUCCESS{
     $title = "epic 1"
     $actual = "EPIC 1 "
 
-    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
+    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
     $result = Find-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $title
 
-    Assert-AreEqual -Expected $id -Presented $result.Id
+    Assert-AreEqual -Expected $id -Presented $result.id
     Assert-AreEqual -Expected $actual -Presented $result.Title
 }
 
 function Test_FindProjectItemByTitle_SUCCESS_MultipleResults{
 
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164  ; 
     $id1 = "PVTI_lADOBCrGTM4ActQazgMtROk"
@@ -92,13 +95,13 @@ function Test_FindProjectItemByTitle_SUCCESS_MultipleResults{
     $title1 = "Issue Name 1"
     $title2 = "ISSUE NAME 1"
 
-    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
+    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
     $result = Find-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $title -Force
 
     Assert-Count -Expected 2 -Presented $result
-    Assert-Contains -Expected $id1 -Presented $result.Id
-    Assert-Contains -Expected $id2 -Presented $result.Id
+    Assert-Contains -Expected $id1 -Presented $result.id
+    Assert-Contains -Expected $id2 -Presented $result.id
     Assert-AreEqual -Expected $title1 -Presented $result[0].Title
     Assert-AreEqual -Expected $title2 -Presented $result[1].Title
 }
@@ -106,11 +109,11 @@ function Test_FindProjectItemByTitle_SUCCESS_MultipleResults{
 function Test_FindProjectItemByTitle_FAIL{
 
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 
 
-    MockCallToNull -Command GitHubOrgProjectWithFields
+    MockCall_GitHubOrgProjectWithFields_SomeOrg_164_Null
 
     # Run the command
     Start-MyTranscript
@@ -127,22 +130,22 @@ function Test_FindProjectItemByTitle_FAIL{
 function Test_SearchProjectItemByTitle_SUCCESS{
 
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164  ; $id = "PVTI_lADOBCrGTM4ActQazgMtRO0"
 
     # title refrence with differnt case and spaces
     $title = "epic"
 
-    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
+    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
     $result = Search-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $title
 
     Assert-Count -Expected 2 -Presented $result
 
-    Assert-Contains -Expected "EPIC 1 " -Presented $result.title
+    Assert-Contains -Expected "EPIC 1 " -Presented $result.Title
     Assert-Contains -Expected "PVTI_lADOBCrGTM4ActQazgMtRO0" -Presented $result.id
-    Assert-Contains -Expected "EPIC 2"  -Presented $result.title
+    Assert-Contains -Expected "EPIC 2"  -Presented $result.Title
     Assert-Contains -Expected "PVTI_lADOBCrGTM4ActQazgMtRPg" -Presented $result.id
 
 }
@@ -151,14 +154,14 @@ function Test_SearchProjectItemByTitle_SUCCESS{
 function Test_SearchProjectItemByTitle_FAIL{
 
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 
     $erroMessage= "Error: Project not found. Check owner and projectnumber"
 
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
-    MockCallToNull -Command GitHubOrgProjectWithFields
+    MockCall_GitHubOrgProjectWithFields_SomeOrg_164_Null
 
     # Run the command
     Start-MyTranscript
@@ -172,14 +175,14 @@ function Test_SearchProjectItemByTitle_FAIL{
 function Test_SearchProjectItem_SUCCESS{
 
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164  ; $id = "PVTI_lADOBCrGTM4ActQazgMtRO0"
 
     # title refrence with differnt case and spaces
     $filter = "epic"
 
-    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
+    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
     $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Filter $filter -Fields ("id","title","url","id")
     
@@ -207,11 +210,14 @@ function Test_SearchProjectItem_SUCCESS{
     Inovke helper when commanded for GitHubOrgProjectWithFields will call back this function to retrn the fake data
     This is needed as Invoke-RestMethod returns objects and the parametrs ar too long to specify on a Set-InvokeCommandAlias
 #>
-function MockCall_GitHubOrgProjectWithFields{
-    param()
 
-    $fileName = $MOCK_PATH | Join-Path -ChildPath 'projectV2.json'
-    $content = Get-Content -Path $fileName | Out-String | ConvertFrom-Json
 
-    return $content
-} Export-ModuleMember -Function MockCall_GitHubOrgProjectWithFields
+function MockCall_GitHubOrgProjectWithFields_SomeOrg_164{
+
+    MockCallJson -Command "Invoke-GitHubOrgProjectWithFields -Owner SomeOrg -ProjectNumber 164" -Filename 'projectV2.json'
+}
+
+function MockCall_GitHubOrgProjectWithFields_SomeOrg_164_Null{
+
+    MockCalltoNull -Command "Invoke-GitHubOrgProjectWithFields -Owner SomeOrg -ProjectNumber 164"
+}

@@ -14,7 +14,7 @@ function Get-ProjectItemStaged{
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    $db = Get-ProjectDatabase $Owner $ProjectNumber
+    $db = Get-Project $Owner $ProjectNumber
 
     $ret = $db.Staged
 
@@ -25,7 +25,7 @@ function Get-ProjectItemStaged{
 .SYNOPSIS
     Commits SAved changes in the DB to the project
 #>
-function Save-ProjectItemStaged{
+function Sync-ProjectItemStaged{
     [CmdletBinding()]
     [OutputType([hashtable])]
     param(
@@ -40,11 +40,11 @@ function Save-ProjectItemStaged{
         return
     }
 
-   $result = Save-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
+   $result = Sync-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
 
    return $result
 
-} Export-ModuleMember -Function Save-ProjectItemStaged
+} Export-ModuleMember -Function Sync-ProjectItemStaged
 
 <#
 .SYNOPSIS
@@ -60,9 +60,11 @@ function Reset-ProjectItemStaged{
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    $db = Get-ProjectDatabase $Owner $ProjectNumber
+    $dbkey = GetDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
+    $db = Get-Project $Owner $ProjectNumber
 
     $db.Staged = $null
+    Save-Database -Key $dbkey -Database $db
 
 } Export-ModuleMember -Function Reset-ProjectItemStaged
 
@@ -73,9 +75,16 @@ function Show-ProjectItemStaged{
         [Parameter(Position = 1)][string]$ProjectNumber
     )
 
-    $db = Get-ProjectDatabase $Owner $ProjectNumber
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+
+    $db = Get-Project $Owner $ProjectNumber
 
     $staged = $db.Staged
+
+    if($staged.keys.count -eq 0){
+        return
+    }
 
     $ret = $staged.keys | Get-ItemStaged $db
 

@@ -1,14 +1,14 @@
 function Test_GetProjectFields_SUCCESS{
 
     Reset-InvokeCommandMock
-    Initialize-DatabaseRoot
+    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 
 
     # title refrence with differnt case and spaces
     $filter = "epic"
 
-    Set-InvokeCommandMock -Alias GitHubOrgProjectWithFields -Command "MockCall_GitHubOrgProjectWithFields"
+    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
     $result = Get-ProjectFields -Owner $owner -ProjectNumber $projectNumber
 

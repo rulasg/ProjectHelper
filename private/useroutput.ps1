@@ -1,5 +1,6 @@
 
 $ERROR_COLOR = "Red"
+$WARNING_COLOR = "Yellow"
 $OUTPUT_COLOR = "DarkCyan"
 
 function Write-MyError{
@@ -7,7 +8,13 @@ function Write-MyError{
         [Parameter(Mandatory,ValueFromPipeline)][string]$Message
     )
     Write-Host "Error: $message" -ForegroundColor $ERROR_COLOR
+}
 
+function Write-MyWarning{
+    param(
+        [Parameter(Mandatory,ValueFromPipeline)][string]$Message
+    )
+    Write-Host "Error: $message" -ForegroundColor $WARNING_COLOR
 }
 
 function Write-MyVerbose{

@@ -7,9 +7,10 @@ function Test-ProjectDatabase{
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    $db = Get-Database -Owner $Owner -ProjectNumber $ProjectNumber
+    $key = GetDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
+    $prj = Get-Database -Key $key
 
-    $ret = $null -ne $db
+    $ret = $null -ne $prj
 
     return $ret 
 }
@@ -21,39 +22,35 @@ function Test-ProjectDatabaseStaged{
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    $db = Get-Database -Owner $Owner -ProjectNumber $ProjectNumber
+    $key = GetDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
+    $prj = Get-Database -Key $key
 
-    if($null -eq $db){
+    if($null -eq $prj){
         return $false
     }
 
-    if($null -eq $db.Staged){
+    if($null -eq $prj.Staged){
         return $false
     }
 
-    if($db.Staged.Count -eq 0){
+    if($prj.Staged.Count -eq 0){
         return $false
     }
 
     return $true
 }
 
-function Get-ProjectDatabase{
+function Get-ProjectFromDatabase{
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber,
-        [Parameter()][switch]$Force
+        [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    if($force -or -Not (Test-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber)){
-        $result = Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
-        if( ! $result){ return }
-    }
+    $key = GetDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
+    $prj = Get-Database -Key $key
 
-    $db = Get-Database -Owner $Owner -ProjectNumber $ProjectNumber
-
-    return $db
+    return $prj
 }
 
 function Reset-ProjectDatabase{
@@ -63,25 +60,9 @@ function Reset-ProjectDatabase{
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    Set-Database -Owner $Owner -ProjectNumber $ProjectNumber -Database $null
+    $dbKey = GetDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
+    Reset-Database -Key $dbKey
 }
-
-# function Set-ProjectDatabase{
-#     [CmdletBinding()]
-#     param(
-#         [Parameter(Position = 0)][string]$Owner,
-#         [Parameter(Position = 1)][int]$ProjectNumber,
-#         [Parameter(Position = 2)][Object[]]$Items,
-#         [Parameter(Position = 3)][Object[]]$Fields
-#     )
-
-#     $db = New-ProjectDatabase
-
-#     $db.items = $items
-#     $db.fields = $fields
-
-#     Set-Database -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
-# }
 
 function Set-ProjectDatabaseV2{
     [CmdletBinding()]
@@ -94,6 +75,8 @@ function Set-ProjectDatabaseV2{
     $owner = $ProjectV2.owner.login
     $projectnumber = $ProjectV2.number
 
+    $dbkey = GetDatabaseKey -Owner $owner -ProjectNumber $projectnumber
+
     $db = @{}
     
     $db.url              = $ProjectV2.url
@@ -103,11 +86,36 @@ function Set-ProjectDatabaseV2{
     $db.title            = $ProjectV2.title
     $db.ProjectId        = $ProjectV2.id
     $db.readme           = $ProjectV2.readme
-    $db.owner            = $ProjectV2.owner
-    $db.number           = $ProjectV2.number
+
+    $db.owner            = $owner
+    $db.number           = $projectnumber
 
     $db.items = $items
     $db.fields = $fields
     
-    Set-Database -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
+    Save-Database -Key $dbkey -Database $db
+}
+
+function Save-ProjectDatabase{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][string]$Owner,
+        [Parameter(Position = 1)][int]$ProjectNumber,
+        [Parameter(Position = 0)][hashtable]$Database
+    )
+
+    $dbkey = GetDatabaseKey -Owner $owner -ProjectNumber $projectnumber
+    Save-Database -Key $dbkey -Database $Database
+}
+
+function GetDatabaseKey{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][string]$Owner,
+        [Parameter(Position = 1)][int]$ProjectNumber
+    )
+
+    $ret = "$($owner)_$($projectnumber)"
+
+    return $ret
 }

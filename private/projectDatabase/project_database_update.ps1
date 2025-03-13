@@ -15,8 +15,7 @@ function Update-ProjectDatabase {
     # check if there are unsaved changes
     $saved = Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber
     if($saved -and -Not $Force){
-        "There are unsaved changes. Reset-ProjectItemStaged first and try again" | Write-MyError
-        return
+        throw "There are unsaved changes. Restore changes with Reset-ProjectItemStaged or sync projects with Sync-ProjectItemStaged first and try again"
     }
 
     $result  = Invoke-MyCommand -Command GitHubOrgProjectWithFields -Parameters $params
@@ -43,11 +42,14 @@ function Convert-ItemsFromResponse{
     param(
         [Parameter(Position = 0)][object]$ProjectV2
     )
-    $items = @{}
+
+    $items = new-object System.Collections.Hashtable
 
     $nodes = $ProjectV2.items.nodes
 
     foreach($nodeItem in $nodes){
+
+        "Processing Item $($nodeItem.id) - $($nodeItem.content.title)" | Write-Verbose
 
         $itemId = $nodeItem.id
 
@@ -75,6 +77,9 @@ function Convert-ItemsFromResponse{
 
         #Fields
         foreach($nodefield in $nodeItem.fieldValues.nodes){
+
+            "      Procesing $($nodefield.field.name)" | Write-Verbose
+
             switch($nodefield.__typename){
                 "ProjectV2ItemFieldTextValue" {
                     $value = $nodefield.text
@@ -112,7 +117,11 @@ function Convert-ItemsFromResponse{
             # $item.$($nodefield.field.name) = $nodefield.name
         }
 
-        $items.$itemId += $item
+        try {
+            $items.$itemId += $item
+        } catch {
+            "Failed to add item $itemId to items collection" | Write-Error
+        }
     }
     return $Items
 }

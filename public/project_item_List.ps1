@@ -12,16 +12,21 @@ function Get-ProjectItemList{
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    $db = Get-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
-
-    # Check if $db is null
-    if($null -eq $db){
-        "Project not found. Check owner and projectnumber" | Write-MyError
-        return $null
+    try {
+            $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+        
+            # Check if $db is null
+            if($null -eq $db){
+                "Project not found. Check owner and projectnumber" | Write-MyError
+                return $null
+            }
+        
+            # if $db is null it rill return null
+            return $db.items
     }
-
-    # if $db is null it rill return null
-    return $db.items
+    catch {
+        "Can not get item list with Force [$Force]; $_" | Write-MyError
+    }
 
 } Export-ModuleMember -Function Get-ProjectItemList
 
@@ -75,6 +80,9 @@ function Search-ProjectItemByTitle{
         [Parameter(Position = 2)] [string]$Title,
         [Parameter()][switch]$Force
     )
+
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
     $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
