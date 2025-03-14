@@ -41,6 +41,12 @@ function Sync-ProjectItemsBetweenProjects {
     foreach($sourceItem in $sourceItems){
         # Find matchin item destination project
         # Use URL
+        # By the moment we are not going to sync Drafts as they belong to single project and therefore no matching is posible
+        if($null -eq $sourceItem.url){
+            "Item with no URL probably a draft. Skipping." | Write-MyVerbose
+            continue
+        }
+        
         $destinationItem = $destinationProject.items.Values | Where-Object { $_.url -eq $sourceItem.url }
         if($null -eq $destinationItem){
             "Item with URL $($sourceItem.url) not found in destination project" | Write-MyVerbose
