@@ -39,7 +39,7 @@ function Get-ItemStaged{
             return
         }
 
-        $changedItem = @{}
+        $changedItem = New-Object System.Collections.Hashtable
 
         # Heade
         $changedItem.Id = $item.id
@@ -54,7 +54,7 @@ function Get-ItemStaged{
             $changedItem.RepoNumber = "$repo/$num"
         }
 
-        $changedItem.Fields = @{}
+        $changedItem.Fields = New-Object System.Collections.Hashtable
 
         # Fields
         foreach($Field in $staged.$itemId.Values){
@@ -124,7 +124,7 @@ function AddHashLink{
 
         # element not present or $null
         if ($null -eq $parent.$Name){
-            $parent[$Name] = @{}
+            $parent[$Name] = New-Object System.Collections.Hashtable
         }
         
         #element present but not a hash table

@@ -8,7 +8,7 @@ function Test_GetProjectFields_SUCCESS{
     # title refrence with differnt case and spaces
     $filter = "epic"
 
-    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
 
     $result = Get-ProjectFields -Owner $owner -ProjectNumber $projectNumber
 

@@ -9,7 +9,7 @@ function Test_EditProjectItemWithValues_Integration{
     $itemId = "PVTI_lADOAlIw4c4A0Lf4zgYNTc0"
     $fieldSlug = "sf_"
 
-    Mock_GetProject_Octodemop_625
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$Owner-$ProjectNumber.2.json" 
 
     $data = @{
         "Text1" = "value1"
@@ -52,7 +52,7 @@ function Test_UpdateProjectWithIntegration{
     $IntegrationField = "sfUrl"
     $IntegrationCommand = "Get-SfAccount"
 
-    Mock_GetProject_Octodemop_625
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$Owner-$ProjectNumber.2.json" 
 
     $data1 = @{
         "Text1" = "value11"
@@ -96,21 +96,4 @@ function Test_UpdateProjectWithIntegration{
     Assert-AreEqual -Expected $($data2.Text1) -Presented $result.PVTI_lADOAlIw4c4A0Lf4zgYNTxI.PVTF_lADOAlIw4c4A0Lf4zgp2lxM.Value
     Assert-AreEqual -Expected $($data2.Text2) -Presented $result.PVTI_lADOAlIw4c4A0Lf4zgYNTxI.PVTF_lADOAlIw4c4A0Lf4zgp2l3o.Value
     Assert-AreEqual -Expected $($data2.Number1) -Presented $result.PVTI_lADOAlIw4c4A0Lf4zgYNTxI.PVTF_lADOAlIw4c4A0Lf4zgp2mBs.Value
-}
-
-
-function Mock_GetProject_Octodemop_625{
-
-    $owner = "octodemo"
-    $projectNumber = "625"
-
-    $params = @{
-
-        Command = "Invoke-GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber"
-        Filename = "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber.2.json"
-    }
-
-    # MockCallJson -Command "Invoke-GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectnumber" -Filename "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber.2.json"
-    MockCallJson @params
-
 }

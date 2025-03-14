@@ -4,7 +4,7 @@ function Test_CommitProjectItemsStaged_NoStaged{
     Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
-    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
 
     Start-MyTranscript
     $result = Sync-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
@@ -61,7 +61,7 @@ function Test_CommitProjectItemsStaged_SUCCESS{
     $fieldComment2 = "Comment" ; $fileCommentValue2 = "new value of the comment 11"
     $fieldTitle2 = "Title" ; $fileTitleValue2 = "new value of the title 11"
 
-    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
     MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc -FieldId PVTF_lADOBCrGTM4ActQazgSl5GU -Value "new value of the comment 10" -Type text'
     MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc -FieldId PVTF_lADOBCrGTM4ActQazgSkYm8 -Value "new value of the title" -Type text'
     MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMueM4 -FieldId PVTF_lADOBCrGTM4ActQazgSl5GU -Value "new value of the comment 11" -Type text'
@@ -97,20 +97,20 @@ function Test_ShowProjectItemsStaged{
     Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164
-    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
 
     $result = Show-ProjectItemStaged -Owner $owner -ProjectNumber $ProjectNumber
     Assert-IsNull -Object $result
 
     $itemId1 = "PVTI_lADOBCrGTM4ActQazgMuXXc"
-    $fieldComment1 = "comment" ; $fieldCommentValue1 = "new value of the comment 10"
-    $fieldTitle1 = "title" ; $fieldTitleValue1 = "new value of the title"
+    $fieldComment1 = "Comment" ; $fieldCommentValue1 = "new value of the comment 10"
+    $fieldTitle1 = "Title" ; $fieldTitleValue1 = "new value of the title"
     Edit-ProjectItem $owner $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
     Edit-ProjectItem $owner $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
 
     $itemId2 = "PVTI_lADOBCrGTM4ActQazgMueM4"
-    $fieldComment2 = "comment" ; $fileCommentValue2 = "new value of the comment 11"
-    $fieldTitle2 = "title" ; $fileTitleValue2 = "new value of the title 11"
+    $fieldComment2 = "Comment" ; $fileCommentValue2 = "new value of the comment 11"
+    $fieldTitle2 = "Title" ; $fileTitleValue2 = "new value of the title 11"
     Edit-ProjectItem $owner $projectNumber $itemId2 $fieldComment2 $fileCommentValue2
     Edit-ProjectItem $owner $projectNumber $itemId2 $fieldTitle2 $fileTitleValue2
 

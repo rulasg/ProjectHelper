@@ -1,5 +1,5 @@
 # We need to invoke a call back to allow the mock of this call on testing
-Set-MyInvokeCommandAlias -Alias GitHubOrgProjectWithFields -Command "Invoke-GitHubOrgProjectWithFields -Owner {owner} -ProjectNumber {projectnumber}"
+Set-MyInvokeCommandAlias -Alias GitHubOrgProjectWithFields -Command 'Invoke-GitHubOrgProjectWithFields -Owner {owner} -ProjectNumber {projectnumber} -afterFields "{afterFields}" -afterItems "{afterItems}"'
 
 function Update-ProjectDatabase {
     [CmdletBinding()]
@@ -10,31 +10,91 @@ function Update-ProjectDatabase {
         [Parameter()][switch]$Force
     )
 
-    $params = @{ owner = $Owner ; projectnumber = $ProjectNumber }
-
+    $params = @{ owner = $Owner ; projectnumber = $ProjectNumber ; afterFields = "" ; afterItems = "" }
+    
     # check if there are unsaved changes
     $saved = Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber
     if($saved -and -Not $Force){
         throw "There are unsaved changes. Restore changes with Reset-ProjectItemStaged or sync projects with Sync-ProjectItemStaged first and try again"
     }
 
-    $result  = Invoke-MyCommand -Command GitHubOrgProjectWithFields -Parameters $params
+    $items = New-Object System.Collections.Hashtable
+    $fields = New-Object System.Collections.Hashtable
 
-    # check if the result is empty
-    if($null -eq $result){
-        "Updating ProjectDatabase for project [$Owner/$ProjectNumber]" | Write-MyError
+    do {
+        $result  = Invoke-MyCommand -Command GitHubOrgProjectWithFields -Parameters $params
+
+        # check if the result is empty
+        if($null -eq $result){
+            "Updating ProjectDatabase for project [$Owner/$ProjectNumber]" | Write-MyError
+            return $false
+        }
+
+        $projectV2 = $result.data.organization.ProjectV2
+
+        # Check if we have already processed all the items
+        if($result.data.organization.projectv2.items.totalCount -ne $items.Count){
+            $items = Convert-ItemsFromResponse $projectV2 | Add2HashTable $items
+        }
+
+        # Check if we have already processed all the fields
+        if($result.data.organization.projectv2.fields.totalCount -ne $fields.Count){
+            $fields = Convert-FieldsFromReponse $projectV2 | Add2HashTable $fields
+        }
+
+        $params.afterItems = $result.data.organization.projectv2.items.pageInfo.endCursor
+        $params.afterFields = $result.data.organization.projectv2.fields.pageInfo.endCursor
+
+        "GithubOrgProjectWithFields - Items [$($items.count)/$($result.data.organization.ProjectV2.Items.totalCount)] Fields [$($fields.count)/$($result.data.organization.ProjectV2.fields.totalCount)]" | Write-MyHost
+
+    } while (
+        $result.data.organization.projectv2.items.pageInfo.hasNextPage -or $result.data.organization.projectv2.fields.pageInfo.hasNextPage
+    )
+
+    # Check that we have retreived all the items
+    if($result.data.organization.projectv2.items.totalCount -ne $items.Count){
+        "Items count mismatch. Expected [$($result.data.organization.projectv2.items.totalCount)] Found [$($items.count)]" | Write-MyWarning
         return $false
     }
-
-    $projectV2 = $result.data.organization.ProjectV2
-
-    $items = Convert-ItemsFromResponse $projectV2
-    $fields = Convert-FieldsFromReponse $projectV2
+    # Check that we have retreived all the fields
+    if($result.data.organization.projectv2.fields.totalCount -ne $fields.Count){
+        "Fields count mismatch. Expected [$($result.data.organization.projectv2.fields.totalCount)] Found [$($fields.count)]" | Write-MyWarning
+        return $false
+    }
 
     # Set-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Items $items -Fields $fields
     Set-ProjectDatabaseV2 $projectV2 -Items $items -Fields $fields
 
     return $true
+}
+
+<#
+.SYNOPSIS
+    This function adds the content of a hashtable to another hashtable.
+.DESCRIPTION
+    # HTA += HTB
+    # $HTA Add-ToHashTable $HTB
+    # We can not use += operator as it will create a key case sensitive hashtable.
+    # This way it does not fail when adding the same key with different case
+    # $items += $ut
+#>
+function Add2HashTable{
+    [CmdletBinding()]
+    [OutputType([hashtable])]
+    param(
+        [Parameter(Position = 0)][hashtable]$HTA,
+        [Parameter(ValueFromPipeline,Position = 1)][hashtable]$HTB
+    )
+
+    process {
+        foreach ($key in $HTB.Keys) {
+            $HTA[$key] = $HTB[$key]
+        }
+    }
+
+    end{
+        return $HTA
+    }
 }
 
 function Convert-ItemsFromResponse{
@@ -55,7 +115,7 @@ function Convert-ItemsFromResponse{
 
         # TODO !! - Refactor to call Convert-ItemFromResponse for each node utem
 
-        $item = @{}
+        $item = New-Object System.Collections.Hashtable
         $item.id = $itemId
 
         # Content
@@ -131,21 +191,21 @@ function Convert-FieldsFromReponse{
     param(
         [Parameter(Position = 0)][object]$ProjectV2
     )
-    $fields = @{}
+    $fields = New-Object System.Collections.Hashtable
 
     $nodes = $ProjectV2.fields.nodes
 
     foreach($node in $nodes){
         $fieldId = $node.id
 
-        $field = @{}
+        $field = New-Object System.Collections.Hashtable
         $field.id = $node.id
         $field.name = $node.name
         $field.type = $node.__typename
         $field.dataType = $node.dataType
 
         if($field.type -eq "ProjectV2SingleSelectField"){
-            $field.options = @{}
+            $field.options = New-Object System.Collections.Hashtable
             foreach($option in $node.options){
                 $field.options.$($option.name) = $option.id
             }
@@ -220,7 +280,7 @@ function Convert-ItemFromResponse{
 
     $nodeItem = $ProjectV2Item
 
-    $item = @{}
+    $item = New-Object System.Collections.Hashtable
     $item.id = $nodeItem.id
 
     # Content

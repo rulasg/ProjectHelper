@@ -5,7 +5,7 @@ function Test_GetProjetItems_SUCCESS{
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12
 
-    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
 
     $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
 
@@ -44,7 +44,7 @@ function Test_GetProjetItems_FAIL{
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12
 
-    MockCall_GitHubOrgProjectWithFields_SomeOrg_164_Null
+    MockCall_GitHubOrgProjectWithFields_Null  -Owner $owner -ProjectNumber $projectNumber
 
     Mock_DatabaseRoot
 
@@ -73,7 +73,7 @@ function Test_FindProjectItemByTitle_SUCCESS{
     $title = "epic 1"
     $actual = "EPIC 1 "
 
-    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
 
     $result = Find-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $title
 
@@ -95,7 +95,7 @@ function Test_FindProjectItemByTitle_SUCCESS_MultipleResults{
     $title1 = "Issue Name 1"
     $title2 = "ISSUE NAME 1"
 
-    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
 
     $result = Find-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $title -Force
 
@@ -113,7 +113,7 @@ function Test_FindProjectItemByTitle_FAIL{
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 
 
-    MockCall_GitHubOrgProjectWithFields_SomeOrg_164_Null
+    MockCall_GitHubOrgProjectWithFields_Null  -Owner $owner -ProjectNumber $projectNumber
 
     # Run the command
     Start-MyTranscript
@@ -137,7 +137,7 @@ function Test_SearchProjectItemByTitle_SUCCESS{
     # title refrence with differnt case and spaces
     $title = "epic"
 
-    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
 
     $result = Search-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $title
 
@@ -161,7 +161,7 @@ function Test_SearchProjectItemByTitle_FAIL{
 
     Mock_DatabaseRoot
 
-    MockCall_GitHubOrgProjectWithFields_SomeOrg_164_Null
+    MockCall_GitHubOrgProjectWithFields_Null  -Owner $owner -ProjectNumber $projectNumber
 
     # Run the command
     Start-MyTranscript
@@ -182,7 +182,7 @@ function Test_SearchProjectItem_SUCCESS{
     # title refrence with differnt case and spaces
     $filter = "epic"
 
-    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
 
     $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Filter $filter -Fields ("id","title","url","id")
     
@@ -199,25 +199,4 @@ function Test_SearchProjectItem_SUCCESS{
     Assert-AreEqual -Expected "PVTI_lADOBCrGTM4ActQazgMtROU" -Presented $result[0].id
     Assert-AreEqual -Expected "https://github.com/SomeOrg/ProjectDemoTest-repo-front/issues/3" -Presented $result[0].url
 
-}
-
-#####################
-<#
-    .SYNOPSIS
-    Mocks the call to GitHubOrgProjectWithFields
-    .DESCRIPTION
-    This function is used to mock the call to GitHubOrgProjectWithFields
-    Inovke helper when commanded for GitHubOrgProjectWithFields will call back this function to retrn the fake data
-    This is needed as Invoke-RestMethod returns objects and the parametrs ar too long to specify on a Set-InvokeCommandAlias
-#>
-
-
-function MockCall_GitHubOrgProjectWithFields_SomeOrg_164{
-
-    MockCallJson -Command "Invoke-GitHubOrgProjectWithFields -Owner SomeOrg -ProjectNumber 164" -Filename 'projectV2.json'
-}
-
-function MockCall_GitHubOrgProjectWithFields_SomeOrg_164_Null{
-
-    MockCalltoNull -Command "Invoke-GitHubOrgProjectWithFields -Owner SomeOrg -ProjectNumber 164"
 }

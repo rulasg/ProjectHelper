@@ -6,7 +6,7 @@ function Test_GetProjectItem_SUCCESS{
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
     $fieldComment = "Comment" ; $fieldTitle = "Title"
 
-    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
 
     $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
     $fieldTitleValue = "A draft in the project"
@@ -36,7 +36,7 @@ function Test_EditProjetItems_SUCCESS{
     Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
-    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
     
     Mock_DatabaseRoot
     # Item id 10
@@ -75,7 +75,7 @@ function Test_UpdateProjectDatabase_Fail_With_Staged{
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ;
     $itemId = "PVTI_lADOBCrGTM4ActQazgMueM4"
     $fieldComment = "comment" ; $fieldCommentValue = "new value of the comment 10.1"
-    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
 
 
     # Calling Get-ProjectItemList with Force to trigger update-projectdatabase that should fail as their are 
