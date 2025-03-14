@@ -2,13 +2,16 @@ function Test_SyncProjectItemsBetweenProjects{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    Mock_GetProject_Octodemop_625_626_Sync
-
-    
     $owner = "octodemo"
     $sourceProjectNumber = 625
     $destinationProjectNumber = 626
-    
+
+    # Mock poject calls
+    $sourceProjectNumber, $destinationProjectNumber | ForEach-Object {
+        $projectNumber = $_
+        MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber.syncprj.json"
+    }
+
     $fieldlist = @("Int1", "Int2")
 
     $params = @{
@@ -44,11 +47,15 @@ function Test_SyncProjectItemsBetweenProjects_SameValues{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    Mock_GetProject_Octodemop_625_626_Sync
-
     $owner = "octodemo"
     $sourceProjectNumber = 625
     $destinationProjectNumber = 625
+
+    # Mock poject calls
+    $sourceProjectNumber, $destinationProjectNumber | ForEach-Object {
+        $projectNumber = $_
+        MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber.syncprj.json"
+    }
 
     $fieldlist = @("Int1", "Int2")
 

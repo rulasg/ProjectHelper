@@ -1,5 +1,29 @@
 
+<#
+.SYNOPSIS
+    Syncs project items fields between two projects.
+.DESCRIPTION
+    This function syncs project items fields between two projects.
+    It will download both projects and compare the items fields by name using slug prefix in destination used. (See FieldSlug parameter).
+    The function will only update the fields that are defined in the FieldsList parameter.
+    Changes will be commited to the module project staging area. Use `Show-ProjectItemStaged`to see the changes. Use `Sync-ProjectItemStaged` to commit the changes to the destination project.
 
+.PARAMETER SourceOwner
+    The owner of the source project.
+.PARAMETER SourceProjectNumber
+    The project number of the source project.
+.PARAMETER DestinationOwner
+    The owner of the destination project.
+.PARAMETER DestinationProjectNumber
+    The project number of the destination project.
+.PARAMETER FieldsList
+    The list of fields to sync between the source and destination projects.
+.PARAMETER FieldSlug
+    The slug to use for the fields in the destination project.
+    Slug is the prefix of the field name in the destination project.
+.EXAMPLE
+    Sync-ProjectItemsbetweenProjects -SourceOwner github -DestinationOwner github -SourceProjectNumber $oaProject -DestinationProjectNumber $rlProject -FieldsList @("Focus","Country") -FieldSlug "oa_"
+    #>
 function Sync-ProjectItemsBetweenProjects {
     [CmdletBinding()]
     param (
@@ -46,7 +70,7 @@ function Sync-ProjectItemsBetweenProjects {
             "Item with no URL probably a draft. Skipping." | Write-MyVerbose
             continue
         }
-        
+
         $destinationItem = $destinationProject.items.Values | Where-Object { $_.url -eq $sourceItem.url }
         if($null -eq $destinationItem){
             "Item with URL $($sourceItem.url) not found in destination project" | Write-MyVerbose

@@ -56,7 +56,8 @@ function Edit-ProjectItem{
     if($null -eq $item){ "Item [$ItemId] not found" | Write-MyError; return $null}
 
     # check if the value is the same
-    if($item.$FieldName -eq $Value){
+    $obj1 = $item.$FieldName ; $obj2 = $Value
+    if(IsAreEqual -Object1:$obj1 -Object2:$obj2){
         return
     }
 
@@ -67,3 +68,18 @@ function Edit-ProjectItem{
     Save-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
 
 } Export-ModuleMember -Function Edit-ProjectItem
+
+function IsAreEqual{
+    param(
+        [object]$Object1,
+        [object]$Object2
+    )
+
+    $Object1 = [string]::IsNullOrEmpty($Object1) ? $null : $Object1
+    $Object2 = [string]::IsNullOrEmpty($Object2) ? $null : $Object2
+
+    # Check if the objects are equal
+    $ret = $Object1 -eq $Object2
+
+    return $ret
+}
