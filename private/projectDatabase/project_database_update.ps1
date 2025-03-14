@@ -1,5 +1,5 @@
 # We need to invoke a call back to allow the mock of this call on testing
-Set-MyInvokeCommandAlias -Alias GitHubOrgProjectWithFields -Command "Invoke-GitHubOrgProjectWithFields -Owner {owner} -ProjectNumber {projectnumber}"
+Set-MyInvokeCommandAlias -Alias GitHubOrgProjectWithFields -Command 'Invoke-GitHubOrgProjectWithFields -Owner {owner} -ProjectNumber {projectnumber} -afterFields "{afterFields}" -afterItems "{afterItems}"'
 
 function Update-ProjectDatabase {
     [CmdletBinding()]
@@ -10,26 +10,46 @@ function Update-ProjectDatabase {
         [Parameter()][switch]$Force
     )
 
-    $params = @{ owner = $Owner ; projectnumber = $ProjectNumber }
-
+    $params = @{ owner = $Owner ; projectnumber = $ProjectNumber ; afterFields = "" ; afterItems = "" }
+    
     # check if there are unsaved changes
     $saved = Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber
     if($saved -and -Not $Force){
         throw "There are unsaved changes. Restore changes with Reset-ProjectItemStaged or sync projects with Sync-ProjectItemStaged first and try again"
     }
 
-    $result  = Invoke-MyCommand -Command GitHubOrgProjectWithFields -Parameters $params
+    $items = New-Object System.Collections.Hashtable
+    $fields = New-Object System.Collections.Hashtable
 
-    # check if the result is empty
-    if($null -eq $result){
-        "Updating ProjectDatabase for project [$Owner/$ProjectNumber]" | Write-MyError
-        return $false
-    }
+    do {
+        $result  = Invoke-MyCommand -Command GitHubOrgProjectWithFields -Parameters $params
 
-    $projectV2 = $result.data.organization.ProjectV2
+        # check if the result is empty
+        if($null -eq $result){
+            "Updating ProjectDatabase for project [$Owner/$ProjectNumber]" | Write-MyError
+            return $false
+        }
 
-    $items = Convert-ItemsFromResponse $projectV2
-    $fields = Convert-FieldsFromReponse $projectV2
+        $projectV2 = $result.data.organization.ProjectV2
+
+        # Check if we have already processed all the items
+        if($result.data.organization.projectv2.items.totalCount -ne $items.Count){
+            $items += Convert-ItemsFromResponse $projectV2
+        }
+
+        # Check if we have already processed all the fields
+        if($result.data.organization.projectv2.fields.totalCount -ne $fields.Count){
+            $fields += Convert-FieldsFromReponse $projectV2
+        }
+
+        $params.afterItems = $result.data.organization.projectv2.items.pageInfo.endCursor
+        $params.afterFields = $result.data.organization.projectv2.fields.pageInfo.endCursor
+
+        "GithubOrgProjectWithFields - Items [$($items.count)/$($result.data.organization.ProjectV2.Items.totalCount)] Fields [$($fields.count)/$($result.data.organization.ProjectV2.fields.totalCount)]" | Write-MyHost
+
+    } while (
+        $result.data.organization.projectv2.items.pageInfo.hasNextPage -or $result.data.organization.projectv2.fields.pageInfo.hasNextPage
+    )
 
     # Set-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Items $items -Fields $fields
     Set-ProjectDatabaseV2 $projectV2 -Items $items -Fields $fields

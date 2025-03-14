@@ -10,7 +10,9 @@ Set-MyinvokeCommandAlias -Alias GetToken -Command "gh auth token"
 function Invoke-GitHubOrgProjectWithFields {
     param(
         [Parameter(Mandatory=$true)] [string]$Owner,
-        [Parameter(Mandatory=$true)] [string]$ProjectNumber
+        [Parameter(Mandatory=$true)] [string]$ProjectNumber,
+        [Parameter(Mandatory=$false)] [string]$afterFields = $null,
+        [Parameter(Mandatory=$false)] [string]$afterItems = $null
     )
 
     # Use the environmentraviable 
@@ -34,9 +36,9 @@ function Invoke-GitHubOrgProjectWithFields {
     $variables = @{
         login = $Owner
         number = $pn
-        afterFields = $null
-        afterItems = $null
-        firstFields = 30
+        afterFields = $afterFields
+        afterItems = $afterItems
+        firstFields = 100
         firstItems = 100
     }
 
@@ -117,19 +119,6 @@ function Invoke-GitHubUpdateItemValues{
     # Return the field names
     return $response
 } Export-ModuleMember -Function Invoke-GitHubUpdateItemValues
-
-
-
-# GraphQL variables: {
-#     "input": {
-#         "projectId": "PVT_kwDOBCrGTM4ActQa",
-#         "itemId": "PVTI_lADOBCrGTM4ActQazgMuXXc",
-#         "fieldId": "PVTF_lADOBCrGTM4ActQazgSkYm8",
-#         "value": {
-#             "text": "some text"
-#         }
-#     }
-# }
 
 function Get-GithubToken{
     [CmdletBinding()]
