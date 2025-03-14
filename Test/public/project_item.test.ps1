@@ -35,7 +35,8 @@ function Test_EditProjetItems_SUCCESS{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
+    $Owner = "SomeOrg" ; $ProjectNumber = 164 ; 
+    #$itemsCount = 12 ; $fieldsCount = 18
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
     
     # Item id 10
@@ -68,18 +69,18 @@ function Test_EditProejctItems_SameValue{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164 
+    $Owner = "SomeOrg" ; $ProjectNumber = 164
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
 
     $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
-    $actualtitle = $prj.items.$itemId."Title"
-    
+    #$actualtitle = $prj.items.$itemId."Title"
+
     # Item id 10
-    # $title = "A draft in the project" 
+    # $title = "A draft in the project"
 
     $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
-    $title_fieldid= "PVTF_lADOBCrGTM4ActQazgSkYm8"
-    $comment_fieldid = "PVTF_lADOBCrGTM4ActQazgSl5GU"
+    #$title_fieldid= "PVTF_lADOBCrGTM4ActQazgSkYm8"
+    #$comment_fieldid = "PVTF_lADOBCrGTM4ActQazgSl5GU"
 
     $fieldComment = "Comment" ; $fieldCommentValue = $prj.items.$itemId."Comment"
     $fieldTitle = "Title" ; $fieldTitleValue = $prj.items.$itemId."Title"

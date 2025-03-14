@@ -67,6 +67,7 @@ function Test_SyncProjectItemsBetweenProjects_SameValues{
         FieldsList = $fieldlist
     }
     $result = Sync-ProjectItemsBetweenProjects @params
+    Assert-IsNull -Object $result
 
     $staged = Get-ProjectItemStaged -Owner $owner -ProjectNumber $destinationProjectNumber
 

@@ -15,7 +15,7 @@ function Test_UpdateProjectItemsWithIntegration{
         IntegrationCommand = "Get-SfAccount"
         Slug = "sf_"
     }
-    
+
     Update-ProjectItemsWithIntegration @params
 
     Show-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber

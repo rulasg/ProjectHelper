@@ -7,7 +7,7 @@ function Test_UpdateProjectWithIntegration{
 
     $owner = "octodemo"
     $projectNumber = "625"
-    $itemId = "PVTI_lADOAlIw4c4A0Lf4zgYNTc0"
+    # $itemId = "PVTI_lADOAlIw4c4A0Lf4zgYNTc0"
     $fieldSlug = "sf_"
     $IntegrationField = "sfUrl"
     $IntegrationCommand = "Get-SfAccount"
