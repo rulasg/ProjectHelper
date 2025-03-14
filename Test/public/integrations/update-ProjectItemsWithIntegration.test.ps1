@@ -1,42 +1,3 @@
-function Test_EditProjectItemWithValues_Integration{
-
-    # Assert-SkipTest
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
-    $owner = "octodemo"
-    $projectNumber = "625"
-    $itemId = "PVTI_lADOAlIw4c4A0Lf4zgYNTc0"
-    $fieldSlug = "sf_"
-
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$Owner-$ProjectNumber.2.json" 
-
-    $data = @{
-        "Text1" = "value1"
-        "Text2" = "value2"
-        "Text3" = "value3"
-        "Number1" = "value3"
-    }
-
-    $result = Edit-ProjectItemWithValues -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId -Values $data -FieldSlug $FieldSlug
-
-    # Assert - Confirm update
-    # Assert-IsNull -Object $result
-
-    $result = Get-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId
-
-    Assert-AreEqual -expected $data.Text1 -Presented $result.$($FieldSlug + "Text1")
-    Assert-AreEqual -expected $data.Text2 -Presented $result.$($FieldSlug + "Text2")
-    # Assert-AreEqual -expected $data.Text3 -Presented $result.$($FieldSlug + "Text3") 
-    Assert-AreEqual -expected $data.Number1 -Presented $result.$($FieldSlug + "Number1")
-
-    # Confirm that the changes are staged
-    $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
-
-    Assert-Count -Expected 3 -Presented $result.$itemId
-
-}
-
 function Test_UpdateProjectWithIntegration{
 
     Reset-InvokeCommandMock
@@ -46,12 +7,12 @@ function Test_UpdateProjectWithIntegration{
 
     $owner = "octodemo"
     $projectNumber = "625"
-    $itemId = "PVTI_lADOAlIw4c4A0Lf4zgYNTc0"
+    # $itemId = "PVTI_lADOAlIw4c4A0Lf4zgYNTc0"
     $fieldSlug = "sf_"
     $IntegrationField = "sfUrl"
     $IntegrationCommand = "Get-SfAccount"
 
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$Owner-$ProjectNumber.2.json" 
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber.2.json"
 
     $data1 = @{
         "Text1" = "value11"

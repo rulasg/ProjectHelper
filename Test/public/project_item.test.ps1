@@ -35,10 +35,10 @@ function Test_EditProjetItems_SUCCESS{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
+    $Owner = "SomeOrg" ; $ProjectNumber = 164 ; 
+    #$itemsCount = 12 ; $fieldsCount = 18
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
     
-    Mock_DatabaseRoot
     # Item id 10
     # $title = "A draft in the project" 
 
@@ -63,6 +63,34 @@ function Test_EditProjetItems_SUCCESS{
 
     Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$itemId.$comment_fieldid.Value
     Assert-AreEqual -Expected $fieldTitleValue -Presented $result.$itemId.$title_fieldid.Value
+}
+
+function Test_EditProejctItems_SameValue{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $Owner = "SomeOrg" ; $ProjectNumber = 164
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+
+    $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+    #$actualtitle = $prj.items.$itemId."Title"
+
+    # Item id 10
+    # $title = "A draft in the project"
+
+    $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
+    #$title_fieldid= "PVTF_lADOBCrGTM4ActQazgSkYm8"
+    #$comment_fieldid = "PVTF_lADOBCrGTM4ActQazgSl5GU"
+
+    $fieldComment = "Comment" ; $fieldCommentValue = $prj.items.$itemId."Comment"
+    $fieldTitle = "Title" ; $fieldTitleValue = $prj.items.$itemId."Title"
+
+    Edit-ProjectItem $owner $projectNumber $itemId $fieldComment $fieldCommentValue
+    Edit-ProjectItem $owner $projectNumber $itemId $fieldTitle $fieldTitleValue
+
+    $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
+
+    Assert-Count -Expected 0 -Presented $result.Keys
 }
 
 function Test_UpdateProjectDatabase_Fail_With_Staged{

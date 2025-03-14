@@ -1,0 +1,751 @@
+{
+  "data": {
+    "organization": {
+      "projectV2": {
+        "number": 625,
+        "url": "https://github.com/orgs/octodemo/projects/625",
+        "shortDescription": null,
+        "public": false,
+        "closed": false,
+        "title": "rulasg-dev-project-1",
+        "id": "PVT_kwDOAlIw4c4A0Lf4",
+        "readme": null,
+        "items": {
+          "pageInfo": {
+            "endCursor": "Y3Vyc29yOnYyOpK5MDAwMDAwMDAuMTExMTExMTExMTExMTExMc4GFHnL",
+            "hasNextPage": false
+          },
+          "totalCount": 9,
+          "nodes": [
+            {
+              "content": {
+                "__typename": "DraftIssue",
+                "id": "DI_lADOAlIw4c4A0Lf4zgJQEVU",
+                "body": "",
+                "title": "Target Item"
+              },
+              "id": "PVTI_lADOAlIw4c4A0Lf4zgYNTc0",
+              "fieldValues": {
+                "nodes": [
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Target Item",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lTg",
+                      "name": "Title",
+                      "dataType": "TITLE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "https://some.com/1234/viuew",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lpw",
+                      "name": "sfUrl",
+                      "dataType": "TEXT"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Text1_value_target",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lxM",
+                      "name": "sf_Text1",
+                      "dataType": "TEXT"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Text2_value",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2l3o",
+                      "name": "sf_Text2",
+                      "dataType": "TEXT"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldNumberValue",
+                    "number": 666.0,
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2mBs",
+                      "name": "sf_Number1",
+                      "dataType": "NUMBER"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Value 1",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp6aFk",
+                      "name": "Int1",
+                      "dataType": "TEXT"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "Option1",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4A0Lf4zgp9CRc",
+                      "name": "IntSS",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "ae9ef0df",
+                          "name": "Option1"
+                        },
+                        {
+                          "id": "9f685ff0",
+                          "name": "Option2"
+                        },
+                        {
+                          "id": "e8a519ad",
+                          "name": "Option3"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldNumberValue",
+                    "number": 0.0,
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp6aIw",
+                      "name": "Int2",
+                      "dataType": "NUMBER"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "content": {
+                "__typename": "DraftIssue",
+                "id": "DI_lADOAlIw4c4A0Lf4zgJQEX0",
+                "body": "",
+                "title": "draft 1"
+              },
+              "id": "PVTI_lADOAlIw4c4A0Lf4zgYNTwo",
+              "fieldValues": {
+                "nodes": [
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "draft 1",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lTg",
+                      "name": "Title",
+                      "dataType": "TITLE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Text1_value_1",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lxM",
+                      "name": "sf_Text1",
+                      "dataType": "TEXT"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldNumberValue",
+                    "number": 100.0,
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2mBs",
+                      "name": "sf_Number1",
+                      "dataType": "NUMBER"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "content": {
+                "__typename": "DraftIssue",
+                "id": "DI_lADOAlIw4c4A0Lf4zgJQEX4",
+                "body": "",
+                "title": "draft2"
+              },
+              "id": "PVTI_lADOAlIw4c4A0Lf4zgYNTxI",
+              "fieldValues": {
+                "nodes": [
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "draft2",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lTg",
+                      "name": "Title",
+                      "dataType": "TITLE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Text2_value_2",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2l3o",
+                      "name": "sf_Text2",
+                      "dataType": "TEXT"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldNumberValue",
+                    "number": 200.0,
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2mBs",
+                      "name": "sf_Number1",
+                      "dataType": "NUMBER"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "https://some.com/4321/viuew",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lpw",
+                      "name": "sfUrl",
+                      "dataType": "TEXT"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "content": {
+                "__typename": "DraftIssue",
+                "id": "DI_lADOAlIw4c4A0Lf4zgJQEYA",
+                "body": "",
+                "title": "draft3"
+              },
+              "id": "PVTI_lADOAlIw4c4A0Lf4zgYNTyM",
+              "fieldValues": {
+                "nodes": [
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "draft3",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lTg",
+                      "name": "Title",
+                      "dataType": "TITLE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Text1_value_3",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lxM",
+                      "name": "sf_Text1",
+                      "dataType": "TEXT"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Text2_value_3",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2l3o",
+                      "name": "sf_Text2",
+                      "dataType": "TEXT"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldNumberValue",
+                    "number": 300.0,
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2mBs",
+                      "name": "sf_Number1",
+                      "dataType": "NUMBER"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "content": {
+                "__typename": "Issue",
+                "body": "",
+                "title": "Issue1",
+                "number": 1,
+                "url": "https://github.com/octodemo/rulasg-dev-repo/issues/1",
+                "repository": {
+                  "nameWithOwner": "octodemo/rulasg-dev-repo"
+                }
+              },
+              "id": "PVTI_lADOAlIw4c4A0Lf4zgYQpP4",
+              "fieldValues": {
+                "nodes": [
+                  {
+                    "__typename": "ProjectV2ItemFieldRepositoryValue",
+                    "repository": {
+                      "url": "https://github.com/octodemo/rulasg-dev-repo"
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lT4",
+                      "name": "Repository",
+                      "dataType": "REPOSITORY"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Issue1",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lTg",
+                      "name": "Title",
+                      "dataType": "TITLE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Value issue 1",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp6aFk",
+                      "name": "Int1",
+                      "dataType": "TEXT"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldNumberValue",
+                    "number": 11.0,
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp6aIw",
+                      "name": "Int2",
+                      "dataType": "NUMBER"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "Option1",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4A0Lf4zgp9CRc",
+                      "name": "IntSS",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "ae9ef0df",
+                          "name": "Option1"
+                        },
+                        {
+                          "id": "9f685ff0",
+                          "name": "Option2"
+                        },
+                        {
+                          "id": "e8a519ad",
+                          "name": "Option3"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "content": {
+                "__typename": "Issue",
+                "body": "",
+                "title": "Issue2",
+                "number": 2,
+                "url": "https://github.com/octodemo/rulasg-dev-repo/issues/2",
+                "repository": {
+                  "nameWithOwner": "octodemo/rulasg-dev-repo"
+                }
+              },
+              "id": "PVTI_lADOAlIw4c4A0Lf4zgYQpRc",
+              "fieldValues": {
+                "nodes": [
+                  {
+                    "__typename": "ProjectV2ItemFieldRepositoryValue",
+                    "repository": {
+                      "url": "https://github.com/octodemo/rulasg-dev-repo"
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lT4",
+                      "name": "Repository",
+                      "dataType": "REPOSITORY"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Issue2",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lTg",
+                      "name": "Title",
+                      "dataType": "TITLE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Value issue 2",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp6aFk",
+                      "name": "Int1",
+                      "dataType": "TEXT"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldNumberValue",
+                    "number": 22.0,
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp6aIw",
+                      "name": "Int2",
+                      "dataType": "NUMBER"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "Option2",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4A0Lf4zgp9CRc",
+                      "name": "IntSS",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "ae9ef0df",
+                          "name": "Option1"
+                        },
+                        {
+                          "id": "9f685ff0",
+                          "name": "Option2"
+                        },
+                        {
+                          "id": "e8a519ad",
+                          "name": "Option3"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "content": {
+                "__typename": "Issue",
+                "body": "",
+                "title": "Issue3",
+                "number": 3,
+                "url": "https://github.com/octodemo/rulasg-dev-repo/issues/3",
+                "repository": {
+                  "nameWithOwner": "octodemo/rulasg-dev-repo"
+                }
+              },
+              "id": "PVTI_lADOAlIw4c4A0Lf4zgYQpSY",
+              "fieldValues": {
+                "nodes": [
+                  {
+                    "__typename": "ProjectV2ItemFieldRepositoryValue",
+                    "repository": {
+                      "url": "https://github.com/octodemo/rulasg-dev-repo"
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lT4",
+                      "name": "Repository",
+                      "dataType": "REPOSITORY"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Issue3",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lTg",
+                      "name": "Title",
+                      "dataType": "TITLE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Value issue 3",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp6aFk",
+                      "name": "Int1",
+                      "dataType": "TEXT"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldNumberValue",
+                    "number": 33.0,
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp6aIw",
+                      "name": "Int2",
+                      "dataType": "NUMBER"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "Option3",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4A0Lf4zgp9CRc",
+                      "name": "IntSS",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "ae9ef0df",
+                          "name": "Option1"
+                        },
+                        {
+                          "id": "9f685ff0",
+                          "name": "Option2"
+                        },
+                        {
+                          "id": "e8a519ad",
+                          "name": "Option3"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "content": {
+                "__typename": "Issue",
+                "body": "",
+                "title": "Issue4",
+                "number": 4,
+                "url": "https://github.com/octodemo/rulasg-dev-repo/issues/4",
+                "repository": {
+                  "nameWithOwner": "octodemo/rulasg-dev-repo"
+                }
+              },
+              "id": "PVTI_lADOAlIw4c4A0Lf4zgYUeW4",
+              "fieldValues": {
+                "nodes": [
+                  {
+                    "__typename": "ProjectV2ItemFieldRepositoryValue",
+                    "repository": {
+                      "url": "https://github.com/octodemo/rulasg-dev-repo"
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lT4",
+                      "name": "Repository",
+                      "dataType": "REPOSITORY"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Issue4",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lTg",
+                      "name": "Title",
+                      "dataType": "TITLE"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "content": {
+                "__typename": "Issue",
+                "body": "",
+                "title": "Issue5",
+                "number": 5,
+                "url": "https://github.com/octodemo/rulasg-dev-repo/issues/5",
+                "repository": {
+                  "nameWithOwner": "octodemo/rulasg-dev-repo"
+                }
+              },
+              "id": "PVTI_lADOAlIw4c4A0Lf4zgYUecs",
+              "fieldValues": {
+                "nodes": [
+                  {
+                    "__typename": "ProjectV2ItemFieldRepositoryValue",
+                    "repository": {
+                      "url": "https://github.com/octodemo/rulasg-dev-repo"
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lT4",
+                      "name": "Repository",
+                      "dataType": "REPOSITORY"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Issue5",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lTg",
+                      "name": "Title",
+                      "dataType": "TITLE"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "fields": {
+          "totalCount": 17,
+          "nodes": [
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lTg",
+              "name": "Title",
+              "dataType": "TITLE"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lTk",
+              "name": "Assignees",
+              "dataType": "ASSIGNEES"
+            },
+            {
+              "__typename": "ProjectV2SingleSelectField",
+              "id": "PVTSSF_lADOAlIw4c4A0Lf4zgp2lTo",
+              "name": "Status",
+              "dataType": "SINGLE_SELECT",
+              "options": [
+                {
+                  "id": "f75ad846",
+                  "name": "Todo"
+                },
+                {
+                  "id": "47fc9ee4",
+                  "name": "In Progress"
+                },
+                {
+                  "id": "98236657",
+                  "name": "Done"
+                }
+              ]
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lTs",
+              "name": "Labels",
+              "dataType": "LABELS"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lTw",
+              "name": "Linked pull requests",
+              "dataType": "LINKED_PULL_REQUESTS"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lT0",
+              "name": "Milestone",
+              "dataType": "MILESTONE"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lT4",
+              "name": "Repository",
+              "dataType": "REPOSITORY"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lUI",
+              "name": "Reviewers",
+              "dataType": "REVIEWERS"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lUM",
+              "name": "Parent issue",
+              "dataType": "PARENT_ISSUE"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lUQ",
+              "name": "Sub-issues progress",
+              "dataType": "SUB_ISSUES_PROGRESS"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lpw",
+              "name": "sfUrl",
+              "dataType": "TEXT"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lxM",
+              "name": "sf_Text1",
+              "dataType": "TEXT"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4A0Lf4zgp2l3o",
+              "name": "sf_Text2",
+              "dataType": "TEXT"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4A0Lf4zgp2mBs",
+              "name": "sf_Number1",
+              "dataType": "NUMBER"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4A0Lf4zgp6aFk",
+              "name": "Int1",
+              "dataType": "TEXT"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4A0Lf4zgp6aIw",
+              "name": "Int2",
+              "dataType": "NUMBER"
+            },
+            {
+              "__typename": "ProjectV2SingleSelectField",
+              "id": "PVTSSF_lADOAlIw4c4A0Lf4zgp9CRc",
+              "name": "IntSS",
+              "dataType": "SINGLE_SELECT",
+              "options": [
+                {
+                  "id": "ae9ef0df",
+                  "name": "Option1"
+                },
+                {
+                  "id": "9f685ff0",
+                  "name": "Option2"
+                },
+                {
+                  "id": "e8a519ad",
+                  "name": "Option3"
+                }
+              ]
+            }
+          ],
+          "pageInfo": {
+            "endCursor": "MTc",
+            "hasNextPage": false
+          }
+        },
+        "owner": {
+          "__typename": "Organization",
+          "login": "octodemo"
+        }
+      }
+    }
+  }
+}

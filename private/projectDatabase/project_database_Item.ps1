@@ -80,6 +80,7 @@ function Save-ItemFieldValue{
         [Parameter(Position = 3)][string]$Value
     )
 
+    "Staging item [$ItemId] with field [$FieldName] and value [$Value] in Project [$($Database.ProjectId)]" | Write-MyHost
     # TODO !! : Test that is a valid field based on field type
     
     $field = Get-Field $Database $FieldName

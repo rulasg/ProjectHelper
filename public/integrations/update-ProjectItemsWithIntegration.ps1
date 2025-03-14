@@ -24,15 +24,17 @@ function Update-ProjectItemsWithIntegration{
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
     # Get project
-    $project = Get-Project -Owner $owner -ProjectNumber $projectNumber
+    $project = Get-Project -Owner $owner -ProjectNumber $projectNumber -Force
 
     # Extract all items that have value on the integration field.
     # This field is the value that will work as parameter to the integration command
     $itemList = $project.items.Values | Where-Object { -Not [string]::IsNullOrWhiteSpace($_.$IntegrationField) }
+    "Items with $IntegrationField value to update: $($itemList.Count)" | Write-MyHost
 
     foreach($item in $itemList){
         
         try {
+            "Calling integration [ $IntegrationCommand $($item.$IntegrationField)]" | Write-MyHost
             $values = Invoke-MyCommand -Command "$IntegrationCommand $($item.$IntegrationField)"
         }
         catch {
