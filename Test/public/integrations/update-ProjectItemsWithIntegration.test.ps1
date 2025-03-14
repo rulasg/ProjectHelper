@@ -12,7 +12,7 @@ function Test_UpdateProjectWithIntegration{
     $IntegrationField = "sfUrl"
     $IntegrationCommand = "Get-SfAccount"
 
-    Mock_GetProject_Octodemop_625
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber.2.json"
 
     $data1 = @{
         "Text1" = "value11"

@@ -67,9 +67,9 @@ function Test_EditProjetItems_SUCCESS{
 function Test_EditProejctItems_SameValue{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
-    MockCall_GitHubOrgProjectWithFields_SomeOrg_164
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
 
     $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
     $actualtitle = $prj.items.$itemId."Title"
