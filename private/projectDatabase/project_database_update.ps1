@@ -34,12 +34,12 @@ function Update-ProjectDatabase {
 
         # Check if we have already processed all the items
         if($result.data.organization.projectv2.items.totalCount -ne $items.Count){
-            $items += Convert-ItemsFromResponse $projectV2
+            $items = Convert-ItemsFromResponse $projectV2 | Add2HashTable $items
         }
 
         # Check if we have already processed all the fields
         if($result.data.organization.projectv2.fields.totalCount -ne $fields.Count){
-            $fields += Convert-FieldsFromReponse $projectV2
+            $fields = Convert-FieldsFromReponse $projectV2 | Add2HashTable $fields
         }
 
         $params.afterItems = $result.data.organization.projectv2.items.pageInfo.endCursor
@@ -51,10 +51,50 @@ function Update-ProjectDatabase {
         $result.data.organization.projectv2.items.pageInfo.hasNextPage -or $result.data.organization.projectv2.fields.pageInfo.hasNextPage
     )
 
+    # Check that we have retreived all the items
+    if($result.data.organization.projectv2.items.totalCount -ne $items.Count){
+        "Items count mismatch. Expected [$($result.data.organization.projectv2.items.totalCount)] Found [$($items.count)]" | Write-MyWarning
+        return $false
+    }
+    # Check that we have retreived all the fields
+    if($result.data.organization.projectv2.fields.totalCount -ne $fields.Count){
+        "Fields count mismatch. Expected [$($result.data.organization.projectv2.fields.totalCount)] Found [$($fields.count)]" | Write-MyWarning
+        return $false
+    }
+
     # Set-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Items $items -Fields $fields
     Set-ProjectDatabaseV2 $projectV2 -Items $items -Fields $fields
 
     return $true
+}
+
+<#
+.SYNOPSIS
+    This function adds the content of a hashtable to another hashtable.
+.DESCRIPTION
+    # HTA += HTB
+    # $HTA Add-ToHashTable $HTB
+    # We can not use += operator as it will create a key case sensitive hashtable.
+    # This way it does not fail when adding the same key with different case
+    # $items += $ut
+#>
+function Add2HashTable{
+    [CmdletBinding()]
+    [OutputType([hashtable])]
+    param(
+        [Parameter(Position = 0)][hashtable]$HTA,
+        [Parameter(ValueFromPipeline,Position = 1)][hashtable]$HTB
+    )
+
+    process {
+        foreach ($key in $HTB.Keys) {
+            $HTA[$key] = $HTB[$key]
+        }
+    }
+
+    end{
+        return $HTA
+    }
 }
 
 function Convert-ItemsFromResponse{
@@ -75,7 +115,7 @@ function Convert-ItemsFromResponse{
 
         # TODO !! - Refactor to call Convert-ItemFromResponse for each node utem
 
-        $item = @{}
+        $item = New-Object System.Collections.Hashtable
         $item.id = $itemId
 
         # Content
@@ -151,21 +191,21 @@ function Convert-FieldsFromReponse{
     param(
         [Parameter(Position = 0)][object]$ProjectV2
     )
-    $fields = @{}
+    $fields = New-Object System.Collections.Hashtable
 
     $nodes = $ProjectV2.fields.nodes
 
     foreach($node in $nodes){
         $fieldId = $node.id
 
-        $field = @{}
+        $field = New-Object System.Collections.Hashtable
         $field.id = $node.id
         $field.name = $node.name
         $field.type = $node.__typename
         $field.dataType = $node.dataType
 
         if($field.type -eq "ProjectV2SingleSelectField"){
-            $field.options = @{}
+            $field.options = New-Object System.Collections.Hashtable
             foreach($option in $node.options){
                 $field.options.$($option.name) = $option.id
             }
@@ -240,7 +280,7 @@ function Convert-ItemFromResponse{
 
     $nodeItem = $ProjectV2Item
 
-    $item = @{}
+    $item = New-Object System.Collections.Hashtable
     $item.id = $nodeItem.id
 
     # Content

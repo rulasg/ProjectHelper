@@ -103,14 +103,14 @@ function Test_ShowProjectItemsStaged{
     Assert-IsNull -Object $result
 
     $itemId1 = "PVTI_lADOBCrGTM4ActQazgMuXXc"
-    $fieldComment1 = "comment" ; $fieldCommentValue1 = "new value of the comment 10"
-    $fieldTitle1 = "title" ; $fieldTitleValue1 = "new value of the title"
+    $fieldComment1 = "Comment" ; $fieldCommentValue1 = "new value of the comment 10"
+    $fieldTitle1 = "Title" ; $fieldTitleValue1 = "new value of the title"
     Edit-ProjectItem $owner $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
     Edit-ProjectItem $owner $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
 
     $itemId2 = "PVTI_lADOBCrGTM4ActQazgMueM4"
-    $fieldComment2 = "comment" ; $fileCommentValue2 = "new value of the comment 11"
-    $fieldTitle2 = "title" ; $fileTitleValue2 = "new value of the title 11"
+    $fieldComment2 = "Comment" ; $fileCommentValue2 = "new value of the comment 11"
+    $fieldTitle2 = "Title" ; $fileTitleValue2 = "new value of the title 11"
     Edit-ProjectItem $owner $projectNumber $itemId2 $fieldComment2 $fileCommentValue2
     Edit-ProjectItem $owner $projectNumber $itemId2 $fieldTitle2 $fileTitleValue2
 

@@ -60,7 +60,7 @@ function Sync-ProjectDatabase{
     }
 
     # Check that all values are updated before cleanring staging
-    $different = @{}
+    $different = New-Object System.Collections.Hashtable
     foreach($idemId in $db.Staged.Keys){
         foreach($fieldId in $db.Staged.$idemId.Keys){
             $fieldName = $db.fields.$fieldId.name

@@ -77,7 +77,7 @@ function Set-ProjectDatabaseV2{
 
     $dbkey = GetDatabaseKey -Owner $owner -ProjectNumber $projectnumber
 
-    $db = @{}
+    $db = New-Object System.Collections.Hashtable
     
     $db.url              = $ProjectV2.url
     $db.shortDescription = $ProjectV2.shortDescription
