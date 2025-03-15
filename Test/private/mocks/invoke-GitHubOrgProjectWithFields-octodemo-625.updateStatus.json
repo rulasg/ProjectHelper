@@ -15,7 +15,7 @@
             "endCursor": "Y3Vyc29yOnYyOpK5MDAwMDAwMDAuMTExMTExMTExMTExMTExMc4GFHnL",
             "hasNextPage": false
           },
-          "totalCount": 9,
+          "totalCount": 10,
           "nodes": [
             {
               "content": {
@@ -315,6 +315,63 @@
             },
             {
               "content": {
+                "__typename": "DraftIssue",
+                "id": "DI_lADOAlIw4c4A0Lf4zgJRF5k",
+                "body": "",
+                "title": "draft4"
+              },
+              "id": "PVTI_lADOAlIw4c4A0Lf4zgYVsJc",
+              "fieldValues": {
+                "nodes": [
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "draft4",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lTg",
+                      "name": "Title",
+                      "dataType": "TITLE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldDateValue",
+                    "date": "2025-03-09",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgqDG_s",
+                      "name": "NCC",
+                      "dataType": "DATE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "Done",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4A0Lf4zgp2lTo",
+                      "name": "Status",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "f75ad846",
+                          "name": "Todo"
+                        },
+                        {
+                          "id": "47fc9ee4",
+                          "name": "In Progress"
+                        },
+                        {
+                          "id": "98236657",
+                          "name": "Done"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "content": {
                 "__typename": "Issue",
                 "body": "",
                 "title": "Issue1",
@@ -391,16 +448,6 @@
                           "name": "Option3"
                         }
                       ]
-                    }
-                  },
-                  {
-                    "__typename": "ProjectV2ItemFieldDateValue",
-                    "date": "2025-03-15",
-                    "field": {
-                      "__typename": "ProjectV2Field",
-                      "id": "PVTF_lADOAlIw4c4A0Lf4zgqDG_s",
-                      "name": "NCC",
-                      "dataType": "DATE"
                     }
                   }
                 ]
