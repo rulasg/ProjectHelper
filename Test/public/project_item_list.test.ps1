@@ -87,7 +87,7 @@ function Test_FindProjectItemByTitle_SUCCESS_MultipleResults{
     Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164  ; 
-    $id1 = "PVTI_lADOBCrGTM4ActQazgMtROk"
+    $id1 = "PVTI_lADNJr_OALnx2s4Fqq8P"
     $id2 = "PVTI_lADOBCrGTM4ActQazgMtRPA"
 
     # title refrence with differnt case and spaces
@@ -177,7 +177,7 @@ function Test_SearchProjectItem_SUCCESS{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164  ; $id = "PVTI_lADOBCrGTM4ActQazgMtRO0"
+    $Owner = "SomeOrg" ; $ProjectNumber = 164
 
     # title refrence with differnt case and spaces
     $filter = "epic"
@@ -196,7 +196,7 @@ function Test_SearchProjectItem_SUCCESS{
     
     $result = Search-ProjectItem 684
     Assert-AreEqual -Expected "Issue 455d29e3" -Presented $result[0].title
-    Assert-AreEqual -Expected "PVTI_lADOBCrGTM4ActQazgMtROU" -Presented $result[0].id
+    Assert-AreEqual -Expected "PVTI_lADNJr_OALnx2s4Fqq8p" -Presented $result[0].id
     Assert-AreEqual -Expected "https://github.com/SomeOrg/ProjectDemoTest-repo-front/issues/3" -Presented $result[0].url
 
 }

@@ -26,6 +26,7 @@ function Update-ProjectItemsWithIntegration{
     # Get project
     $project = Get-Project -Owner $owner -ProjectNumber $projectNumber -Force
 
+
     # Extract all items that have value on the integration field.
     # This field is the value that will work as parameter to the integration command
     $itemList = $project.items.Values | Where-Object { -Not [string]::IsNullOrWhiteSpace($_.$IntegrationField) }
