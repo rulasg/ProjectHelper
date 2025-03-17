@@ -30,25 +30,6 @@ function Get-ProjectItemList{
 
 } Export-ModuleMember -Function Get-ProjectItemList
 
-# function Reset-ProjectItemList{
-#     [CmdletBinding()]
-#     param(
-#         [Parameter(Position = 0)] [string]$Owner,
-#         [Parameter(Position = 1)] [string]$ProjectNumber,
-#         [Parameter()][switch]$Force
-#     )
-
-#     $saved = Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber
-
-#     if($saved -and -Not $Force){
-#         "There are unsaved changes, please commit or use -Force" | Write-MyError
-#         return
-#     }
-
-#     Reset-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
-
-# } Export-ModuleMember -Function Reset-ProjectItemList
-
 function Find-ProjectItemByTitle{
     [CmdletBinding()]
     param(

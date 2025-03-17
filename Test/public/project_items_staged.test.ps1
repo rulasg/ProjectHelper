@@ -126,3 +126,30 @@ function Test_ShowProjectItemsStaged{
     Assert-AreEqual -Expected $fileCommentValue2 -Presented $result2.Fields.$fieldComment2
     Assert-AreEqual -Expected $fileTitleValue2 -Presented $result2.Fields.$fieldTitle2
 }
+
+
+function Test_TestProjectItemStaged{
+
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+    
+    $Owner = "SomeOrg" ; $ProjectNumber = 164
+
+    # no project information available
+    $result = Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    Assert-IsFalse -Condition $result
+
+    # Project is cached
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    $null = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
+    $result = Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    Assert-IsFalse -Condition $result
+
+    # Edit some thing
+    MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc -FieldId PVTF_lADOBCrGTM4ActQazgSl5GU -Value "new value of the comment 10" -Type text'
+    Edit-ProjectItem $owner $projectNumber PVTI_lADOBCrGTM4ActQazgMuXXc "Comment" "new value of the comment 10"
+
+    $result = Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    Assert-IsTrue -Condition $result
+
+}
