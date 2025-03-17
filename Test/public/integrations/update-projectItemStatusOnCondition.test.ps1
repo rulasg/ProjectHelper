@@ -3,6 +3,7 @@ function Test_UpdateProjectItemStatusOnDueDate{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
     MockCall_GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 625 -FileName "invoke-GitHubOrgProjectWithFields-octodemo-625.updateStatus.json"
+    MockCallToString -Command "Get-Date -Format yyyy-MM-dd" -OutString "2025-03-15"
 
     $params = @{
         Owner = "octodemo"
