@@ -45,7 +45,7 @@ function Update-ProjectItemStatusOnDueDate{
     $itemKeys = $itemKeys | Where-Object { $null -ne $prj.items.$_."NCC" }
 
     # Filter keys that have over due date
-    $today = Get-Date -Format "yyyy-MM-dd"
+    $today = Get-DateToday
     $itemKeys = $itemKeys | Where-Object {$today -ge $prj.items.$_.$DueDateFieldName}
 
     # Update status of the items
