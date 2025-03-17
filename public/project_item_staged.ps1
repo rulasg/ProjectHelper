@@ -25,6 +25,24 @@ function Get-ProjectItemStaged{
 .SYNOPSIS
     Commits SAved changes in the DB to the project
 #>
+function Test-ProjectItemStaged{
+    [CmdletBinding()]
+    [OutputType([hashtable])]
+    param(
+        [Parameter(Position = 0)][string]$Owner,
+        [Parameter(Position = 1)][string]$ProjectNumber
+    )
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+
+    return $(Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber)
+
+} Export-ModuleMember -Function Test-ProjectItemStaged
+
+<#
+.SYNOPSIS
+    Commits SAved changes in the DB to the project
+#>
 function Sync-ProjectItemStaged{
     [CmdletBinding()]
     [OutputType([hashtable])]
@@ -35,7 +53,7 @@ function Sync-ProjectItemStaged{
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    if(! $(Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber)){
+    if(! $(Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber)){
         "Nothing to commit" | Write-MyHost
         return
     }
