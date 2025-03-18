@@ -1,5 +1,5 @@
 
-Set-InvokeCommandAlias -Alias "GetDateToday" -Command "Get-Date -Format yyyy-MM-dd"
+Set-MyInvokeCommandAlias -Alias "GetDateToday" -Command "Get-Date -Format yyyy-MM-dd" 
 
 function Get-DateToday{
     [CmdletBinding()]

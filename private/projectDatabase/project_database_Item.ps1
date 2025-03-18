@@ -94,6 +94,12 @@ function Save-ItemFieldValue{
         throw "Invalid value [$Value] for field $FieldName"
     }
 
+    $value = Get-FieldValue $field $Value
+    if($null -eq $value){
+         "Invalid value [$Value] for field $FieldName [$($field.dataType)]" | Write-MyError
+         return
+    }
+
     $node = $Database | AddHashLink Staged | AddHashLink $ItemId
     $node.$fieldId = [PSCustomObject]@{
         Value = $Value

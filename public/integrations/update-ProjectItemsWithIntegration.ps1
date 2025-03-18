@@ -23,9 +23,13 @@ function Update-ProjectItemsWithIntegration{
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
+    if(Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber){
+        "Project has staged items, please Sync-ProjectItemStaged or Reset-ProjectItemStaged and try again" | Write-Error
+        return
+    }
+
     # Get project
     $project = Get-Project -Owner $owner -ProjectNumber $projectNumber -Force
-
 
     # Extract all items that have value on the integration field.
     # This field is the value that will work as parameter to the integration command
