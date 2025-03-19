@@ -123,7 +123,7 @@
                   },
                   {
                     "__typename": "ProjectV2ItemFieldTextValue",
-                    "text": "Issue2",
+                    "text": "Issue3",
                     "field": {
                       "__typename": "ProjectV2Field",
                       "id": "PVTF_lADOAlIw4c4A0QAozgp6Zxc",

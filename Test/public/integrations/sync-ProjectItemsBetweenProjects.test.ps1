@@ -19,7 +19,6 @@ function Test_SyncProjectItemsBetweenProjects{
         SourceProjectNumber = $sourceProjectNumber
         DestinationOwner = $owner
         DestinationProjectNumber = $destinationProjectNumber
-        FieldsList = $fieldlist
     }
     $result = Update-ProjectItemsBetweenProjects @params
 
