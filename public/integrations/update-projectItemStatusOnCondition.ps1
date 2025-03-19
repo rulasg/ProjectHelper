@@ -33,6 +33,11 @@ function Update-ProjectItemStatusOnDueDate{
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
+    if(Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber){
+        "Project has staged items, please Sync-ProjectItemStaged or Reset-ProjectItemStaged and try again" | Write-Error
+        return
+    }
+
     # Get the project
     $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 

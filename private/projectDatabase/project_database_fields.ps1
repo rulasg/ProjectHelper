@@ -25,3 +25,26 @@ function Test-FieldChange{
 
     return $true
 }
+
+function Get-FieldValue{
+    [CmdletBinding()]
+    [OutputType([string])]
+    param(
+        [Parameter(Position = 0)][object]$Field,
+        [Parameter(Position = 1)][string]$Value
+    )
+
+    $dataType = $Field.dataType
+
+    switch ($dataType) {
+        "TITLE"          { $ret = $value                                 ;Break }
+        "TEXT"           { $ret = $value                                 ;Break }
+        "NUMBER"         { $ret = $value                                 ;Break}
+        "DATE"           { $ret = $value                                 ;Break}
+        "SINGLE_SELECT"  { $ret = $Field.options.$Value                  ;Break}
+
+        default          { $ret = $null }
+    }
+
+    return $ret
+}

@@ -8,7 +8,7 @@ function Test_UpdateProjectItemStatusOnDueDate{
     $params = @{
         Owner = "octodemo"
         ProjectNumber = 625
-        Status = "ActionRequired"
+        Status = "Todo"
         DueDateFieldName = "NCC"
     }
 
