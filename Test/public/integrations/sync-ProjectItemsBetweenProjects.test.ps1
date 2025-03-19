@@ -19,7 +19,6 @@ function Test_SyncProjectItemsBetweenProjects{
         SourceProjectNumber = $sourceProjectNumber
         DestinationOwner = $owner
         DestinationProjectNumber = $destinationProjectNumber
-        FieldsList = $fieldlist
     }
     $result = Update-ProjectItemsBetweenProjects @params
 
@@ -57,14 +56,11 @@ function Test_SyncProjectItemsBetweenProjects_SameValues{
         MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber.syncprj.json"
     }
 
-    $fieldlist = @("Int1", "Int2")
-
     $params = @{
         SourceOwner = $owner
         SourceProjectNumber = $sourceProjectNumber
         DestinationOwner = $owner
         DestinationProjectNumber = $destinationProjectNumber
-        FieldsList = $fieldlist
     }
     $result = Update-ProjectItemsBetweenProjects @params
     Assert-IsNull -Object $result

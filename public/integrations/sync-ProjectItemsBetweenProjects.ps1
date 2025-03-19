@@ -31,7 +31,6 @@ function Update-ProjectItemsBetweenProjects {
         [Parameter(Position = 1)][string]$SourceProjectNumber,
         [Parameter(Position = 2)][string]$DestinationOwner,
         [Parameter(Position = 3)][string]$DestinationProjectNumber,
-        [Parameter(Mandatory)][object]$FieldsList,
         [Parameter()][string]$FieldSlug
     )
 
@@ -51,14 +50,8 @@ function Update-ProjectItemsBetweenProjects {
         return $null
     }
 
-    # Check if all fields in fieldlist exist in the source project
-    $sourceFields = $sourceProject.fields.Values
-    $sourceFieldNames = $sourceFields | Select-Object -ExpandProperty name
-    $missingFields = $FieldsList | Where-Object { $_ -notin $sourceFieldNames }
-    if($missingFields.Count -gt 0){
-        "The following fields are missing in the source project: $($missingFields -join ', ')" | Write-MyError
-        return $null
-    }
+    # Check all the fields on the source project
+    $FieldsList = $sourceProject.fields.Values.name
 
     # Get source project items
     $sourceItems = $sourceProject.items.Values
