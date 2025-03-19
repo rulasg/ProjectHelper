@@ -24,7 +24,7 @@
 .EXAMPLE
     Sync-ProjectItemsbetweenProjects -SourceOwner github -DestinationOwner github -SourceProjectNumber $oaProject -DestinationProjectNumber $rlProject -FieldsList @("Focus","Country") -FieldSlug "oa_"
     #>
-function Sync-ProjectItemsBetweenProjects {
+function Update-ProjectItemsBetweenProjects {
     [CmdletBinding()]
     param (
         [Parameter(Position = 0)][string]$SourceOwner,
@@ -94,4 +94,4 @@ function Sync-ProjectItemsBetweenProjects {
         Edit-ProjectItemWithValues  @param
 
     }
-} Export-ModuleMember -Function Sync-ProjectItemsBetweenProjects
+} Export-ModuleMember -Function Update-ProjectItemsBetweenProjects
