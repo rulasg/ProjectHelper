@@ -90,7 +90,8 @@ function Show-ProjectItemStaged{
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][string]$ProjectNumber
+        [Parameter(Position = 1)][string]$ProjectNumber,
+        [Parameter(Position = 2)][string]$Id
     )
 
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
@@ -98,14 +99,45 @@ function Show-ProjectItemStaged{
 
     $db = Get-Project $Owner $ProjectNumber
 
-    $staged = $db.Staged
+    if([string]::IsNullOrWhiteSpace($Id)){
+        
+        # list all staged items
 
-    if($staged.keys.count -eq 0){
-        return
+        $staged = $db.Staged
+
+        if($staged.keys.count -eq 0){
+            return
+        }
+
+        $itemsToShow = $staged.keys | Get-ItemStaged $db
+
+        $ret = $itemsToShow | Select-Object -Property id, type, Title, `
+             @{Name="FieldsCount"; Expression={$_.Fields.Count}}, `
+             @{Name="FieldsName";Expression={$_.Fields.Name}}
+    
+    } else{
+
+        # show a specific item
+
+        $ret = @()
+        
+        $item = $db.Staged.$Id
+        if($null -eq $item){
+            return
+        }
+        
+        $itemToShow = Get-ItemStaged $db $Id
+        
+        $itemToShow.Fields | ForEach-Object{
+            $ret += [PSCustomObject]@{
+                Name = $_.Name
+                Value = $_.Value
+                Before = $db.items.$Id.$($_.Name)
+            }
+        }
     }
 
-    $ret = $staged.keys | Get-ItemStaged $db
-
     return $ret
+
  
 } Export-ModuleMember -Function Show-ProjectItemStaged

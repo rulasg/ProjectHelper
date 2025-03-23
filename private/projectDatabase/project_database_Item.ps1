@@ -34,8 +34,9 @@ function Get-ItemStaged{
     process {
 
         $item = Get-Item $db $itemId
+        $staged = $db.Staged.$itemId
 
-        if($null -eq $item){
+        if($null -eq $staged){
             return
         }
 
@@ -44,21 +45,26 @@ function Get-ItemStaged{
         # Heade
         $changedItem.Id = $item.id
         $changedItem.type = $item.type
-
+        $changedItem.Title = $item.Title
+        
         # Add RepoNumber as human identifier
+        # Url not present for draftitems
         if($item.url){
             $uri = [uri]$item.url
             $num = $uri | Split-Path -leaf
             $repo = $uri | Split-Path -Parent | Split-Path -parent | Split-Path -leaf
-
+            
             $changedItem.RepoNumber = "$repo/$num"
         }
-
-        $changedItem.Fields = New-Object System.Collections.Hashtable
-
+        
+        $changedItem.Fields = @()
+        
         # Fields
-        foreach($Field in $staged.$itemId.Values){
-            $changedItem.Fields.$($Field.Field.name) = $Field.Value
+        foreach($Field in $staged.Values){
+            $changedItem.Fields += [PSCustomObject]@{
+                Name = $Field.Field.name
+                Value = $Field.Value
+            }
         }
 
         return [pscustomobject] $changedItem
@@ -94,6 +100,7 @@ function Save-ItemFieldValue{
         throw "Invalid value [$Value] for field $FieldName"
     }
 
+    #Transform value if needed. Sample SingleSelect will change form String to option
     $value = Get-FieldValue $field $Value
     if($null -eq $value){
          "Invalid value [$Value] for field $FieldName [$($field.dataType)]" | Write-MyError
