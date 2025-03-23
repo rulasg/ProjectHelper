@@ -12,7 +12,7 @@ function Test_UpdateProjectItemStatusOnDueDate{
         DueDateFieldName = "NCC"
     }
 
-    $result = Update-ProjectItemStatusOnDueDate @params
+    $result = Update-ProjectItemsStatusOnDueDate @params
 
     Assert-IsNull -Object $result
 
