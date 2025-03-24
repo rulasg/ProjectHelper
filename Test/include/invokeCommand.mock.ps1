@@ -2,22 +2,17 @@
 # INVOKE COMMAND MOCK
 #
 # This includes help commands to mock invokes in a test module
-# You need to set the following variables
-# $MODULE_INVOKATION_TAG : name of the module that you are testing. This needs to match with the Tag used in the module you are testing.
-# $MODULE_INVOKATION_TAG_MOCK : Tag for the mock functions on the testing moodule you are loading this include in
-# MOCK_PATH : path to the mocks folder. This is where the mock files will be saved and loaded from.
 #
-# Sample:
-# $MODULE_INVOKATION_TAG = "SfHelperModule"
-# $MODULE_INVOKATION_TAG_MOCK = "SfHelperModule-Mock"
-# $MOCK_PATH = $PSScriptRoot | Split-Path -Parent | Join-Path -ChildPath 'private' -AdditionalChildPath 'mocks'
+# THIS INCLUDE REQURED module.helper.ps1
+if(-not $MODULE_NAME){ throw "Missing MODULE_NAME varaible initialization. Check for module.helerp.ps1 file." }
+if(-not $MODULE_ROOT_PATH){ throw "Missing MODULE_ROOT_PATH varaible initialization. Check for module.helerp.ps1 file." }
 
-# Managing dependencies
-$MODULE_INVOKATION_TAG = "ProjectHelperModule"
-$MODULE_INVOKATION_TAG_MOCK = "ProjectHelperModule_Mock"
-$ROOT = $PSScriptRoot | Split-Path -Parent
-$MOCK_PATH = $ROOT | Join-Path -ChildPath 'private' -AdditionalChildPath 'mocks'
 
+$testRootPath = $MODULE_ROOT_PATH | Join-Path -ChildPath 'Test'
+$MOCK_PATH = $testRootPath | Join-Path -ChildPath 'private' -AdditionalChildPath 'mocks'
+
+$MODULE_INVOKATION_TAG = "$($MODULE_NAME)Module"
+$MODULE_INVOKATION_TAG_MOCK = "$($MODULE_INVOKATION_TAG)_Mock"
 
 function Set-InvokeCommandMock{
     [CmdletBinding()]
@@ -158,6 +153,21 @@ function MockCallThrow{
 
     Set-InvokeCommandMock -Alias $command -Command $mockCommand
 }
+
+function MockCallExpression{
+    param(
+        [Parameter(Position=0)][string] $command,
+        [Parameter(Position=1)][string] $expression
+    )
+
+    $mockCommand = @'
+    Invoke-Expression -Command '{expression}'
+'@
+    $mockCommand = $mockCommand -replace "{expression}", $expression
+
+    Set-InvokeCommandMock -Alias $command -Command $expression
+}
+
 
 function Save-InvokeAsMockFile{
     param(
