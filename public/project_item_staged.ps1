@@ -109,12 +109,28 @@ function Show-ProjectItemStaged{
             return
         }
 
-        $itemsToShow = $staged.keys | Get-ItemStaged $db
+        $ret = @()
 
-        $ret = $itemsToShow | Select-Object -Property id, type, Title, `
-             @{Name="FieldsCount"; Expression={$_.Fields.Count}}, `
-             @{Name="FieldsName";Expression={$_.Fields.Name}}
-    
+        foreach($itemKey in $staged.keys){
+            $stagedItem = Get-ItemStaged $db $itemKey
+            $item = Get-Item $db $itemKey
+
+            $itemToShow = @{}
+            $itemToShow.id = $itemKey
+            # $itemToShow.type = $item.type
+            $itemToShow.Title = $item.Title
+            # $itemToShow.FieldsCount = $stagedItem.Count
+            $itemToShow.FieldsName = $stagedItem.Keys
+            # $itemToShow.Fields = @{}
+            # foreach($field in $staged.Keys){
+            #     $itemToShow.Fields = [PSCustomObject]@{
+            #         Value = $staged.$field
+            #         Before = $item.$field
+            #     }
+            # }
+
+            $ret += [PSCustomObject] $itemToShow
+        }
     } else{
 
         # show a specific item
@@ -125,16 +141,19 @@ function Show-ProjectItemStaged{
         if($null -eq $item){
             return
         }
-        
-        $itemToShow = Get-ItemStaged $db $Id
-        
-        $itemToShow.Fields | ForEach-Object{
-            $ret += [PSCustomObject]@{
-                Name = $_.Name
-                Value = $_.Value
-                Before = $db.items.$Id.$($_.Name)
+
+        $staged = Get-ItemStaged $db $Id
+        $item = $db.items.$Id
+
+        $ret = @{}
+
+        foreach($field in $staged.Keys){
+            $ret.$Field = [PSCustomObject]@{
+                Value = $staged.$field
+                Before = $item.$field
             }
         }
+
     }
 
     return $ret

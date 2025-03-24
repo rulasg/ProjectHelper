@@ -38,6 +38,8 @@ function Test_EditProjetItems_SUCCESS{
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; 
     #$itemsCount = 12 ; $fieldsCount = 18
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+
+    $before = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
     
     # Item id 10
     # $title = "A draft in the project" 
@@ -46,12 +48,23 @@ function Test_EditProjetItems_SUCCESS{
     $title_fieldid= "PVTF_lADOBCrGTM4ActQazgSkYm8"
     $comment_fieldid = "PVTF_lADOBCrGTM4ActQazgSl5GU"
 
-    $fieldComment = "comment" ; $fieldCommentValue = "new value of the comment 10.1"
-    $fieldTitle = "title" ; $fieldTitleValue = "new value of the title 10.1"
+    $fieldComment = "Comment" ; $fieldCommentValue = "new value of the comment 10.1" ; $fieldCommentValue_Before = $before.items.$itemId.$fieldComment
+    $fieldTitle = "Title" ; $fieldTitleValue = "new value of the title 10.1" ; $fieldTitleValue_Before = $before.items.$itemId.$fieldTitle
 
+    # Act
     Edit-ProjectItem $owner $projectNumber $itemId $fieldComment $fieldCommentValue
+    $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
     Edit-ProjectItem $owner $projectNumber $itemId $fieldTitle $fieldTitleValue
 
+    # Assert
+
+    # Confirm that the new value is staged but the original value is not changed
+    $after = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+    Assert-AreEqual -Expected $fieldCommentValue_Before -Presented $after.items.$itemId.$fieldComment -Comment "The original value should not be changed"
+    Assert-AreEqual -Expected $fieldTitleValue_Before -Presented $after.items.$itemId.$fieldTitle -Comment "The original value should not be changed"
+
+
+    # Cofirm that the new value is staged 
     $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
 
     Assert-Count -Expected 1 -Presented $result.Keys

@@ -9,17 +9,19 @@ function Get-Item{
     process {
 
         $item = $Database.items.$ItemId
-        
+
+        $ret = $item | Copy-MyHashTable
+
         # Check if is staged
         if($database.Staged.$ItemId){
             foreach($field in $database.Staged.$ItemId.keys){
                 $fieldname = $database.Staged.$ItemId.$field.Field.name
                 $fieldValue =$database.Staged.$ItemId.$field.Value
-                $item.$fieldname = $fieldValue
+                $ret.$fieldname = $fieldValue
             }
         }
         
-        return $item
+        return $ret
     }
 }
 
@@ -33,41 +35,20 @@ function Get-ItemStaged{
 
     process {
 
-        $item = Get-Item $db $itemId
         $staged = $db.Staged.$itemId
 
         if($null -eq $staged){
             return
         }
 
-        $changedItem = New-Object System.Collections.Hashtable
+        $ret = New-Object System.Collections.Hashtable
 
-        # Heade
-        $changedItem.Id = $item.id
-        $changedItem.type = $item.type
-        $changedItem.Title = $item.Title
-        
-        # Add RepoNumber as human identifier
-        # Url not present for draftitems
-        if($item.url){
-            $uri = [uri]$item.url
-            $num = $uri | Split-Path -leaf
-            $repo = $uri | Split-Path -Parent | Split-Path -parent | Split-Path -leaf
-            
-            $changedItem.RepoNumber = "$repo/$num"
-        }
-        
-        $changedItem.Fields = @()
-        
         # Fields
         foreach($Field in $staged.Values){
-            $changedItem.Fields += [PSCustomObject]@{
-                Name = $Field.Field.name
-                Value = $Field.Value
-            }
+            $ret.$($Field.Field.name) = $($Field.Value)
         }
 
-        return [pscustomobject] $changedItem
+        return $ret
 
     }
 }
@@ -147,5 +128,28 @@ function AddHashLink{
         }
 
         return $parent[$Name]
+    }
+}
+
+function Copy-MyHashTable{
+    [CmdletBinding()]
+    [OutputType([object])]
+    param(
+        [Parameter(ValueFromPipeline,Position = 0)][object]$Object
+    )
+
+    process{
+
+        if($null -eq $Object){
+            return $null
+        }
+
+        if(-not( $object -is [Hashtable])){
+            throw "Object is not a hashtable"
+        }
+        
+        $ret = $Object | ConvertTo-Json | ConvertFrom-Json -AsHashtable
+
+        return $ret
     }
 }
