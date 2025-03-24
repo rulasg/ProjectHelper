@@ -31,7 +31,8 @@ function Update-ProjectItemsBetweenProjects {
         [Parameter(Position = 1)][string]$SourceProjectNumber,
         [Parameter(Position = 2)][string]$DestinationOwner,
         [Parameter(Position = 3)][string]$DestinationProjectNumber,
-        [Parameter()][string]$FieldSlug
+        [Parameter()][string]$FieldSlug,
+        [Parameter()][switch]$NotDone
     )
 
     # Get destination project for error handling and caching
@@ -54,8 +55,11 @@ function Update-ProjectItemsBetweenProjects {
     $FieldsList = $sourceProject.fields.Values.name
 
     # Get source project items
-    $sourceItems = $sourceProject.items.Values
-    foreach($sourceItem in $sourceItems){
+    # Filter items based on the NotDone parameter
+    $sourceItems = $NotDone ? $($sourceProject.items | Select-ProjectItemsNotDone) : $sourceProject.items
+
+    # Process each item in the source project
+    foreach($sourceItem in $sourceItems.Values){
         # Find matchin item destination project
         # Use URL
         # By the moment we are not going to sync Drafts as they belong to single project and therefore no matching is posible

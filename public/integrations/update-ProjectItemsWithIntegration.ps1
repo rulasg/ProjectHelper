@@ -18,7 +18,8 @@ function Update-ProjectItemsWithIntegration{
         [Parameter(Position = 1)] [string]$ProjectNumber,
         [Parameter(Mandatory)][string]$IntegrationField,
         [Parameter(Mandatory)][string]$IntegrationCommand,
-        [Parameter()] [string]$Slug
+        [Parameter()] [string]$Slug,
+        [Parameter()] [switch]$NotDone
     )
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
@@ -31,9 +32,12 @@ function Update-ProjectItemsWithIntegration{
     # Get project
     $project = Get-Project -Owner $owner -ProjectNumber $projectNumber -Force
 
+    # Filter items based on the NotDone parameter
+    $items = $NotDone ? $($project.items | Select-ProjectItemsNotDone) : $project.items
+
     # Extract all items that have value on the integration field.
     # This field is the value that will work as parameter to the integration command
-    $itemList = $project.items.Values | Where-Object { -Not [string]::IsNullOrWhiteSpace($_.$IntegrationField) }
+    $itemList = $items.Values | Where-Object { -Not [string]::IsNullOrWhiteSpace($_.$IntegrationField) }
     "Items with $IntegrationField value to update: $($itemList.Count)" | Write-MyHost
 
     foreach($item in $itemList){

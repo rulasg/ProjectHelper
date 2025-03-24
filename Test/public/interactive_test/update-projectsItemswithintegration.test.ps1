@@ -20,6 +20,5 @@ function Test_UpdateProjectItemsWithIntegration{
 
     Show-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
 
-
     Assert-NotImplemented
 }
