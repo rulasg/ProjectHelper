@@ -102,29 +102,54 @@ function Test_ShowProjectItemsStaged{
     $result = Show-ProjectItemStaged -Owner $owner -ProjectNumber $ProjectNumber
     Assert-IsNull -Object $result
 
+    $projectBefore = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+
+    # Item 1
     $itemId1 = "PVTI_lADOBCrGTM4ActQazgMuXXc"
-    $fieldComment1 = "Comment" ; $fieldCommentValue1 = "new value of the comment 10"
-    $fieldTitle1 = "Title" ; $fieldTitleValue1 = "new value of the title"
+    
+    $fieldComment1 = "Comment" ; $fieldCommentValue1 = "new value of the comment 10" 
+    $fieldCommentValue1_Before = $projectBefore.items.$itemId1.$fieldComment1
+    
+    $fieldTitle1 = "Title" ; $fieldTitleValue1 = "new value of the title" 
+    $fieldTitleValue1_Before = $projectBefore.items.$itemId1.$fieldTitle1
+    
     Edit-ProjectItem $owner $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
     Edit-ProjectItem $owner $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
-
+    
+    # Item 2
     $itemId2 = "PVTI_lADOBCrGTM4ActQazgMueM4"
     $fieldComment2 = "Comment" ; $fileCommentValue2 = "new value of the comment 11"
     $fieldTitle2 = "Title" ; $fileTitleValue2 = "new value of the title 11"
+
     Edit-ProjectItem $owner $projectNumber $itemId2 $fieldComment2 $fileCommentValue2
     Edit-ProjectItem $owner $projectNumber $itemId2 $fieldTitle2 $fileTitleValue2
 
+    # Act all staged items
     $result = Show-ProjectItemStaged -Owner $owner -ProjectNumber $ProjectNumber
 
+    Assert-Count -Expected 2 -Presented $result
+
     $result1 = $result | Where-Object { $_.id -eq $itemId1 }
-    Assert-AreEqual -Expected "DraftIssue" -Presented $result1.type
-    Assert-AreEqual -Expected $fieldCommentValue1 -Presented $result1.Fields.$fieldComment1
-    Assert-AreEqual -Expected $fieldTitleValue1 -Presented $result1.Fields.$fieldTitle1
+    # Assert-AreEqual -Expected "DraftIssue" -Presented $result1.type
+    Assert-Contains -Expected $fieldComment1 -Presented $result1.FieldsName
+    Assert-Contains -Expected $fieldTitle1 -Presented $result1.FieldsName
     
     $result2 = $result | Where-Object { $_.id -eq $itemId2 }
-    Assert-AreEqual -Expected "PullRequest" -Presented $result2.type
-    Assert-AreEqual -Expected $fileCommentValue2 -Presented $result2.Fields.$fieldComment2
-    Assert-AreEqual -Expected $fileTitleValue2 -Presented $result2.Fields.$fieldTitle2
+    # Assert-AreEqual -Expected "PullRequest" -Presented $result2.type
+    Assert-Contains -Expected $fieldComment2 -Presented $result2.FieldsName
+    Assert-Contains -Expected $fieldTitle2 -Presented $result2.FieldsName
+
+    # Act single item
+
+    $result = Show-ProjectItemStaged -Owner $owner -ProjectNumber $ProjectNumber -Id $itemId1
+
+    Assert-Count -Expected 2 -Presented $result
+
+    Assert-AreEqual -Expected $fieldCommentValue1 -Presented $result.$fieldComment1.Value
+    Assert-AreEqual -Expected $fieldCommentValue1_Before -Presented $result.$fieldComment1.Before
+
+    Assert-AreEqual -Expected $fieldTitleValue1 -Presented $result.$fieldTitle1.Value
+    Assert-AreEqual -Expected $fieldTitleValue1_Before -Presented $result.$fieldTitle1.Before
 }
 
 

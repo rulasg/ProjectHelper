@@ -49,15 +49,18 @@ function Edit-ProjectItem{
     # get the database
     $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
-    # Find the item by title
+    # Find the actual value of the item. Item+Staged
     $item = Get-Item $db $ItemId
+    $itemStaged = Get-ItemStaged $db $ItemId
 
     # if the item is not found
     if($null -eq $item){ "Item [$ItemId] not found" | Write-MyError; return $null}
 
+    # Consolidate value with staged to calculate the actual value
+    $actualFieldValue = $itemStaged.Fields.$FieldName ?? $item.$FieldName
+
     # check if the value is the same
-    $obj1 = $item.$FieldName ; $obj2 = $Value
-    if(IsAreEqual -Object1:$obj1 -Object2:$obj2){
+    if(IsAreEqual -Object1:$actualFieldValue -Object2:$Value){
         return
     }
 

@@ -49,7 +49,7 @@ function Update-ProjectItemsWithIntegration{
 
         # Check if Values is empty or null
         if($null -eq $values -or $values.Count -eq 0){
-            "No values returned from the integration commandfor $($item.id)" | Write-MyWarning
+            "No values returned from the integration command for $($item.id)" | Write-MyVerbose
             continue
         }
 

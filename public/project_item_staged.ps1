@@ -90,7 +90,8 @@ function Show-ProjectItemStaged{
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][string]$ProjectNumber
+        [Parameter(Position = 1)][string]$ProjectNumber,
+        [Parameter(Position = 2)][string]$Id
     )
 
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
@@ -98,14 +99,64 @@ function Show-ProjectItemStaged{
 
     $db = Get-Project $Owner $ProjectNumber
 
-    $staged = $db.Staged
+    if([string]::IsNullOrWhiteSpace($Id)){
+        
+        # list all staged items
 
-    if($staged.keys.count -eq 0){
-        return
+        $staged = $db.Staged
+
+        if($staged.keys.count -eq 0){
+            return
+        }
+
+        $ret = @()
+
+        foreach($itemKey in $staged.keys){
+            $stagedItem = Get-ItemStaged $db $itemKey
+            $item = Get-Item $db $itemKey
+
+            $itemToShow = @{}
+            $itemToShow.id = $itemKey
+            # $itemToShow.type = $item.type
+            $itemToShow.Title = $item.Title
+            # $itemToShow.FieldsCount = $stagedItem.Count
+            $itemToShow.FieldsName = $stagedItem.Keys
+            # $itemToShow.Fields = @{}
+            # foreach($field in $staged.Keys){
+            #     $itemToShow.Fields = [PSCustomObject]@{
+            #         Value = $staged.$field
+            #         Before = $item.$field
+            #     }
+            # }
+
+            $ret += [PSCustomObject] $itemToShow
+        }
+    } else{
+
+        # show a specific item
+
+        $ret = @()
+        
+        $item = $db.Staged.$Id
+        if($null -eq $item){
+            return
+        }
+
+        $staged = Get-ItemStaged $db $Id
+        $item = $db.items.$Id
+
+        $ret = @{}
+
+        foreach($field in $staged.Keys){
+            $ret.$Field = [PSCustomObject]@{
+                Value = $staged.$field
+                Before = $item.$field
+            }
+        }
+
     }
 
-    $ret = $staged.keys | Get-ItemStaged $db
-
     return $ret
+
  
 } Export-ModuleMember -Function Show-ProjectItemStaged
