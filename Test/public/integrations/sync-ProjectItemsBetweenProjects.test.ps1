@@ -1,4 +1,4 @@
-function Test_SyncProjectItemsBetweenProjects{
+function Test_UpdateProjectItemsBetweenProjects{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 

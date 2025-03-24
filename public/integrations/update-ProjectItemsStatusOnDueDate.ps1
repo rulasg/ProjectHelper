@@ -26,7 +26,8 @@ function Update-ProjectItemsStatusOnDueDate{
         [Parameter(Position = 1)][int]$ProjectNumber,
         [Parameter(Position = 2)][string]$DueDateFieldName,
         [Parameter(Position = 3)][string]$Status,
-        [Parameter()][switch]$Force
+        [Parameter()][switch]$Force,
+        [Parameter()][switch]$NotDone
     )
 
     "Updating project items status with due date for project $owner/$ProjectNumber" | Write-MyHost
@@ -42,15 +43,15 @@ function Update-ProjectItemsStatusOnDueDate{
     # Get the project
     $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
-    $itemKeys = $prj.items.Keys
+    # Filter items based on the NotDone parameter
+    $items = $NotDone ? $($prj.items | Select-ProjectItemsNotDone) : $prj.items
 
-    # filter keys that status is not done
-    $itemKeys = $itemKeys | Where-Object {"Done" -ne $prj.items.$_.Status}
+    $itemKeys = $items.Keys
 
-    # Filter keys that have due the DueDateFieldName
-    $itemKeys = $itemKeys | Where-Object { $null -ne $prj.items.$_."NCC" }
+    # Select keys that have due date field
+    $itemKeys = $itemKeys | Where-Object { $null -ne $prj.items.$_.$DueDateFieldName }
 
-    # Filter keys that have over due date
+    # Select keys that have over due date
     $today = Get-DateToday
     $itemKeys = $itemKeys | Where-Object {$today -ge $prj.items.$_.$DueDateFieldName}
 
