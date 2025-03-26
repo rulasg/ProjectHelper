@@ -19,7 +19,7 @@ function Update-ProjectItemsWithIntegration{
         [Parameter(Mandatory)][string]$IntegrationField,
         [Parameter(Mandatory)][string]$IntegrationCommand,
         [Parameter()] [string]$Slug,
-        [Parameter()] [switch]$NotDone
+        [Parameter()] [switch]$IncludeNotDone
     )
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
@@ -33,7 +33,7 @@ function Update-ProjectItemsWithIntegration{
     $project = Get-Project -Owner $owner -ProjectNumber $projectNumber -Force
 
     # Filter items based on the NotDone parameter
-    $items = $NotDone ? $($project.items | Select-ProjectItemsNotDone) : $project.items
+    $items = $IncludeNotDone ? $project.items : $($project.items | Select-ProjectItemsNotDone)
 
     # Extract all items that have value on the integration field.
     # This field is the value that will work as parameter to the integration command
