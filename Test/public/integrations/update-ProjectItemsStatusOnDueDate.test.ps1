@@ -40,26 +40,26 @@ function Test_UpdateProjectItemStatusOnDueDate{
 
     $staged = Get-ProjectItemStaged -Owner octodemo -ProjectNumber 625
 
-    Assert-Count -Expected 6 -Presented $staged
+    Assert-Count -Expected 5 -Presented $staged
 
     Assert-Contains -Expected PVTI_lADOAlIw4c4A0Lf4zgYNTc0 -Presented $staged.Keys
     Assert-Contains -Expected PVTI_lADOAlIw4c4A0Lf4zgYNTwo -Presented $staged.Keys
     Assert-Contains -Expected PVTI_lADOAlIw4c4A0Lf4zgYNTxI -Presented $staged.Keys
     Assert-Contains -Expected PVTI_lADOAlIw4c4A0Lf4zgYQpRc -Presented $staged.Keys
     Assert-Contains -Expected PVTI_lADOAlIw4c4A0Lf4zgYUeW4 -Presented $staged.Keys
-    Assert-Contains -Expected PVTI_lADOAlIw4c4A0Lf4zgYVsJc -Presented $staged.Keys -Comment "Done item is staged"
-    Assert-NotContains -Expected PVTI_lADOAlIw4c4A0Lf4zgYQpP4 -Presented $staged.Keys -Comment "Item without NCC should not be staged"
+    Assert-NotContains -Expected PVTI_lADOAlIw4c4A0Lf4zgYVsJc -Presented $staged.Keys -Comment "Done item"
+    Assert-NotContains -Expected PVTI_lADOAlIw4c4A0Lf4zgYQpP4 -Presented $staged.Keys -Comment "Item without NCC"
 
     # Act with NotDone
     Reset-ProjectItemStaged -Owner octodemo -ProjectNumber 625
 
     # Act
-    $result = Update-ProjectItemsStatusOnDueDate @params -NotDone
+    $result = Update-ProjectItemsStatusOnDueDate @params -IncludeNotDone
     
     # Assert
     Assert-IsNull -Object $result
     $staged = Get-ProjectItemStaged -Owner octodemo -ProjectNumber 625
-    Assert-Count -Expected 5 -Presented $staged
-    Assert-NotContains -Expected PVTI_lADOAlIw4c4A0Lf4zgYVsJc -Presented $staged.Keys -Comment "Done item should not be staged"
+    Assert-Count -Expected 6 -Presented $staged
+    Assert-Contains -Expected PVTI_lADOAlIw4c4A0Lf4zgYVsJc -Presented $staged.Keys -Comment "Done item "
 
 }

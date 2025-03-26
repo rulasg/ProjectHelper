@@ -32,7 +32,7 @@ function Update-ProjectItemsBetweenProjects {
         [Parameter(Position = 2)][string]$DestinationOwner,
         [Parameter(Position = 3)][string]$DestinationProjectNumber,
         [Parameter()][string]$FieldSlug,
-        [Parameter()][switch]$NotDone
+        [Parameter()][switch]$IncludeNotDone
     )
 
     # Get destination project for error handling and caching
@@ -56,13 +56,13 @@ function Update-ProjectItemsBetweenProjects {
 
     # Get source project items
     # Filter items based on the NotDone parameter
-    $sourceItems = $NotDone ? $($sourceProject.items | Select-ProjectItemsNotDone) : $sourceProject.items
+    $sourceItems = $IncludeNotDone ? $sourceProject.items : $($sourceProject.items | Select-ProjectItemsNotDone)
 
     # Process each item in the source project
     foreach($sourceItem in $sourceItems.Values){
-        # Find matchin item destination project
+        # Find matching item in destination project
         # Use URL
-        # By the moment we are not going to sync Drafts as they belong to single project and therefore no matching is posible
+        # By the moment we are not going to sync Drafts as they belong to single project and therefore no matching is possible
         if($null -eq $sourceItem.url){
             "Item with no URL probably a draft. Skipping." | Write-MyVerbose
             continue
