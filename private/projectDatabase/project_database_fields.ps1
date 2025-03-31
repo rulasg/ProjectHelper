@@ -23,9 +23,9 @@ function Test-FieldValue{
 
     switch ($dataType) {
         "TITLE"          { $ret = $true;Break }
-        "TEXT"           { $ret = $true                                 ;Break }
+        "TEXT"           { $ret = $true                                  ;Break }
         "NUMBER"         { $ret = $Value -match '^\d+$'                  ;Break }
-        "DATE"           { $ret = $Value -match '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z?$' ;Break }
+        "DATE"           { $ret = $Value | Test-DateFormat    ;Break }
         "SINGLE_SELECT"  { $ret = $($null -ne $Field.options.$Value)     ;Break}
 
         default          { $ret = $null }
@@ -36,6 +36,27 @@ function Test-FieldValue{
     }
 
     return $ret
+}
+
+# funciton Test-DateFormat what will test strings with the date format YYYY-MM-DD
+function Test-DateFormat{
+    [CmdletBinding()]
+    [OutputType([bool])]
+    param(
+        [Parameter(ValueFromPipeline,Position = 0)][string]$Date
+    )
+
+    process{
+
+        try {
+            $null = [datetime]::ParseExact($Date, 'yyyy-MM-dd', $null)
+            
+            return $true
+        }
+        catch {
+            return $false
+        }
+    }
 }
 
 function ConvertTo-FieldValue{

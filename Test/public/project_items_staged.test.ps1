@@ -115,10 +115,14 @@ function Test_ShowProjectItemsStaged{
 
     $fieldStatus = "Status" ; $fieldStatusValue1 = "Done"
     $fieldStatusValue1_Before = $projectBefore.items.$itemId1.$fieldStatus
+
+    $fieldDate = "Next Action Date" ; $fieldDateValue1 = "2024-03-31"
+    $fieldDateValue1_Before = $projectBefore.items.$itemId1.$fieldDate
     
     Edit-ProjectItem $owner $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
     Edit-ProjectItem $owner $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
     Edit-ProjectItem $owner $projectNumber $itemId1 $fieldStatus $fieldStatusValue1
+    Edit-ProjectItem $owner $projectNumber $itemId1 $fieldDate $fieldDateValue1
     
     # Item 2
     $itemId2 = "PVTI_lADOBCrGTM4ActQazgMueM4"
@@ -148,7 +152,7 @@ function Test_ShowProjectItemsStaged{
 
     $result = Show-ProjectItemStaged -Owner $owner -ProjectNumber $ProjectNumber -Id $itemId1
 
-    Assert-Count -Expected 3 -Presented $result
+    Assert-Count -Expected 4 -Presented $result
 
     Assert-AreEqual -Expected $fieldCommentValue1 -Presented $result.$fieldComment1.Value
     Assert-AreEqual -Expected $fieldCommentValue1_Before -Presented $result.$fieldComment1.Before
@@ -158,6 +162,9 @@ function Test_ShowProjectItemsStaged{
 
     Assert-AreEqual -Expected $fieldStatusValue1 -Presented $result.$fieldStatus.Value
     Assert-AreEqual -Expected $fieldStatusValue1_Before -Presented $result.$fieldStatus.Before
+
+    Assert-AreEqual -Expected $fieldDateValue1 -Presented $result.$fieldDate.Value
+    Assert-AreEqual -Expected $fieldDateValue1_Before -Presented $result.$fieldDate.Before
 }
 
 
