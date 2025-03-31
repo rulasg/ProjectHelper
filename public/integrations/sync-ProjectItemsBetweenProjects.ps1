@@ -32,7 +32,7 @@ function Update-ProjectItemsBetweenProjects {
         [Parameter(Position = 2)][string]$DestinationOwner,
         [Parameter(Position = 3)][string]$DestinationProjectNumber,
         [Parameter()][string]$FieldSlug,
-        [Parameter()][switch]$IncludeNotDone
+        [Parameter()][switch]$IncludeDoneItems
     )
 
     # Get destination project for error handling and caching
@@ -56,7 +56,7 @@ function Update-ProjectItemsBetweenProjects {
 
     # Get source project items
     # Filter items based on the NotDone parameter
-    $sourceItems = $IncludeNotDone ? $sourceProject.items : $($sourceProject.items | Select-ProjectItemsNotDone)
+    $sourceItems = $IncludeDoneItems ? $sourceProject.items : $($sourceProject.items | Select-ProjectItemsNotDone)
 
     # Process each item in the source project
     foreach($sourceItem in $sourceItems.Values){

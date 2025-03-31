@@ -6,7 +6,7 @@ function Test_UpdateProjectItemsBetweenProjects{
     $sourceProjectNumber = 625
     $destinationProjectNumber = 626
 
-    # Mock poject calls
+    # Mock project calls
     $sourceProjectNumber, $destinationProjectNumber | ForEach-Object {
         $projectNumber = $_
         MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber.syncprj.json"
@@ -20,7 +20,7 @@ function Test_UpdateProjectItemsBetweenProjects{
         DestinationOwner = $owner
         DestinationProjectNumber = $destinationProjectNumber
     }
-    $result = Update-ProjectItemsBetweenProjects @params
+    $result = Update-ProjectItemsBetweenProjects -IncludeDoneItems     @params
 
     Assert-IsNull -Object $result
 

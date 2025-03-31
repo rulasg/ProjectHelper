@@ -9,14 +9,14 @@ function Test_SelectProjectItemNotDone{
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
 
     $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
-    $IncludeNotDoneItems = $prj.items.values | Where-Object { $_.Status -ne "Done" }
+    $IncludeDoneItemsItems = $prj.items.values | Where-Object { $_.Status -ne "Done" }
     Assert-Count -Expected 12 -Presented $prj.items.values
-    Assert-Count -Expected 9 -Presented $IncludeNotDoneItems
+    Assert-Count -Expected 9 -Presented $IncludeDoneItemsItems
 
     # Act
     $result = $prj.items | Select-ProjectItemsNotDone
 
-    $IncludeNotDoneItems.id | ForEach-Object {
+    $IncludeDoneItemsItems.id | ForEach-Object {
         Assert-Contains -Expected $_ -Presented $result.Keys
     }
 }

@@ -27,7 +27,7 @@ function Update-ProjectItemsStatusOnDueDate{
         [Parameter(Position = 2)][string]$DueDateFieldName,
         [Parameter(Position = 3)][string]$Status,
         [Parameter()][switch]$Force,
-        [Parameter()][switch]$IncludeNotDone
+        [Parameter()][switch]$IncludeDoneItems
     )
 
     "Updating project items status with due date for project $owner/$ProjectNumber" | Write-MyHost
@@ -44,7 +44,7 @@ function Update-ProjectItemsStatusOnDueDate{
     $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
     # Filter items based on the NotDone parameter
-    $items = $IncludeNotDone ? $prj.items : $($prj.items | Select-ProjectItemsNotDone)
+    $items = $IncludeDoneItems ? $prj.items : $($prj.items | Select-ProjectItemsNotDone)
 
     $itemKeys = $items.Keys
 
