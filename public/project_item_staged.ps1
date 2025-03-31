@@ -64,6 +64,28 @@ function Sync-ProjectItemStaged{
 
 } Export-ModuleMember -Function Sync-ProjectItemStaged
 
+function Sync-ProjectItemStagedAsync{
+    [CmdletBinding()]
+    [OutputType([hashtable])]
+    param(
+        [Parameter(Position = 0)][string]$Owner,
+        [Parameter(Position = 1)][string]$ProjectNumber
+    )
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+
+    if(! $(Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber)){
+        "Nothing to commit" | Write-MyHost
+        return
+    }
+
+   $result = Sync-ProjectDatabaseAsync -Owner $Owner -ProjectNumber $ProjectNumber
+
+   return $result
+
+} Export-ModuleMember -Function Sync-ProjectItemStagedAsync
+
+
 <#
 .SYNOPSIS
     Discards the staged changes
