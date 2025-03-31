@@ -1904,7 +1904,8 @@
                   "__typename": "DraftIssue",
                   "id": "DI_lADOBCrGTM4ActQazgFYYPQ",
                   "body": "some content in body",
-                  "title": "A draft in the project"
+                  "title": "A draft in the project",
+                  "state":"CLOSED"
                 },
                 "id": "PVTI_lADOBCrGTM4ActQazgMuXXc",
                 "fieldValues": {

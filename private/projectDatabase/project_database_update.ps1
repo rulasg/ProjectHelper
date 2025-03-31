@@ -126,14 +126,7 @@ function Convert-ItemsFromResponse{
         # $item.title = $nodeItem.content.title
         $item.number = $nodeItem.content.number
         $item.url = $nodeItem.content.url
-
-        # Populate content info based on item type
-        switch ($item.type) {
-            "Issue" {
-                $item.url = $nodeItem.content.url
-             }
-            Default {}
-        }
+        $item.state = $nodeItem.content.state
 
         #Fields
         foreach($nodefield in $nodeItem.fieldValues.nodes){
