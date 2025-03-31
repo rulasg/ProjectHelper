@@ -12,21 +12,33 @@ function Get-Field{
     return $field
 }
 
-function Test-FieldChange{
+function Test-FieldValue{
     [CmdletBinding()]
     [OutputType([bool])]
     param(
         [Parameter(Position = 1)][object]$Field,
         [Parameter(Position = 2)][string]$Value
     )
+    $dataType = $Field.dataType
 
-    # TODO !! : Pending check if value is correct based on field type
-    # So far the Fields do not contain the field type.
+    switch ($dataType) {
+        "TITLE"          { $ret = $true;Break }
+        "TEXT"           { $ret = $true                                 ;Break }
+        "NUMBER"         { $ret = $Value -match '^\d+$'                  ;Break }
+        "DATE"           { $ret = $Value -match '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z?$' ;Break }
+        "SINGLE_SELECT"  { $ret = $($null -ne $Field.options.$Value)     ;Break}
 
-    return $true
+        default          { $ret = $null }
+    }
+
+    if(-not $ret){
+        "not valid value [$Value] for field [$($Field.name)] with type [$($Field.dataType)]" | Write-Verbose
+    }
+
+    return $ret
 }
 
-function Get-FieldValue{
+function ConvertTo-FieldValue{
     [CmdletBinding()]
     [OutputType([string])]
     param(
@@ -42,6 +54,29 @@ function Get-FieldValue{
         "NUMBER"         { $ret = $value                                 ;Break}
         "DATE"           { $ret = $value                                 ;Break}
         "SINGLE_SELECT"  { $ret = $Field.options.$Value                  ;Break}
+
+        default          { $ret = $null }
+    }
+
+    return $ret
+}
+
+function ConvertFrom-FieldValue{
+    [CmdletBinding()]
+    [OutputType([string])]
+    param(
+        [Parameter(Position = 0)][object]$Field,
+        [Parameter(Position = 1)][string]$Value
+    )
+
+    $dataType = $Field.dataType
+
+    switch ($dataType) {
+        "TITLE"          { $ret = $value                                                            ;Break }
+        "TEXT"           { $ret = $value                                                            ;Break }
+        "NUMBER"         { $ret = $value                                                            ;Break}
+        "DATE"           { $ret = $value                                                            ;Break}
+        "SINGLE_SELECT"  { $ret = $Field.options.Keys | Where-Object {$Field.options.$_ -eq $value} ;Break}
 
         default          { $ret = $null }
     }
