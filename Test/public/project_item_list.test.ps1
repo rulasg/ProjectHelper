@@ -18,6 +18,7 @@ function Test_GetProjetItems_SUCCESS{
     Assert-AreEqual -Presented $randomItem.body         -Expected "some content in body"
     Assert-AreEqual -Presented $randomItem.Comment      -Expected "This"
     Assert-AreEqual -Presented $randomItem.Title        -Expected "A draft in the project"
+    Assert-AreEqual -Presented $randomItem.state        -Expected "CLOSED"
     Assert-AreEqual -Presented $randomItem.id           -Expected "PVTI_lADOBCrGTM4ActQazgMuXXc"
     Assert-AreEqual -Presented $randomItem.type         -Expected "DraftIssue"
     Assert-AreEqual -Presented $randomItem.TimeTracker  -Expected "890"
