@@ -112,9 +112,17 @@ function Test_ShowProjectItemsStaged{
     
     $fieldTitle1 = "Title" ; $fieldTitleValue1 = "new value of the title" 
     $fieldTitleValue1_Before = $projectBefore.items.$itemId1.$fieldTitle1
+
+    $fieldStatus = "Status" ; $fieldStatusValue1 = "Done"
+    $fieldStatusValue1_Before = $projectBefore.items.$itemId1.$fieldStatus
+
+    $fieldDate = "Next Action Date" ; $fieldDateValue1 = "2024-03-31"
+    $fieldDateValue1_Before = $projectBefore.items.$itemId1.$fieldDate
     
     Edit-ProjectItem $owner $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
     Edit-ProjectItem $owner $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
+    Edit-ProjectItem $owner $projectNumber $itemId1 $fieldStatus $fieldStatusValue1
+    Edit-ProjectItem $owner $projectNumber $itemId1 $fieldDate $fieldDateValue1
     
     # Item 2
     $itemId2 = "PVTI_lADOBCrGTM4ActQazgMueM4"
@@ -133,6 +141,7 @@ function Test_ShowProjectItemsStaged{
     # Assert-AreEqual -Expected "DraftIssue" -Presented $result1.type
     Assert-Contains -Expected $fieldComment1 -Presented $result1.FieldsName
     Assert-Contains -Expected $fieldTitle1 -Presented $result1.FieldsName
+    Assert-Contains -Expected $fieldStatus -Presented $result1.FieldsName
     
     $result2 = $result | Where-Object { $_.id -eq $itemId2 }
     # Assert-AreEqual -Expected "PullRequest" -Presented $result2.type
@@ -143,13 +152,19 @@ function Test_ShowProjectItemsStaged{
 
     $result = Show-ProjectItemStaged -Owner $owner -ProjectNumber $ProjectNumber -Id $itemId1
 
-    Assert-Count -Expected 2 -Presented $result
+    Assert-Count -Expected 4 -Presented $result
 
     Assert-AreEqual -Expected $fieldCommentValue1 -Presented $result.$fieldComment1.Value
     Assert-AreEqual -Expected $fieldCommentValue1_Before -Presented $result.$fieldComment1.Before
 
     Assert-AreEqual -Expected $fieldTitleValue1 -Presented $result.$fieldTitle1.Value
     Assert-AreEqual -Expected $fieldTitleValue1_Before -Presented $result.$fieldTitle1.Before
+
+    Assert-AreEqual -Expected $fieldStatusValue1 -Presented $result.$fieldStatus.Value
+    Assert-AreEqual -Expected $fieldStatusValue1_Before -Presented $result.$fieldStatus.Before
+
+    Assert-AreEqual -Expected $fieldDateValue1 -Presented $result.$fieldDate.Value
+    Assert-AreEqual -Expected $fieldDateValue1_Before -Presented $result.$fieldDate.Before
 }
 
 

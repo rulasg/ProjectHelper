@@ -147,10 +147,12 @@ function Show-ProjectItemStaged{
 
         $ret = @{}
 
-        foreach($field in $staged.Keys){
-            $ret.$Field = [PSCustomObject]@{
-                Value = $staged.$field
-                Before = $item.$field
+        foreach($key in $staged.Keys){
+            $field = Get-Field $db $key
+            $stagedFieldValue = ConvertFrom-FieldValue -Field $field -Value $staged.$key
+            $ret.$key = [PSCustomObject]@{
+                Value = $stagedFieldValue
+                Before = $item.$key
             }
         }
 

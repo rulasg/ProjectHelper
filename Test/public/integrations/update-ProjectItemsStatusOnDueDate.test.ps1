@@ -54,7 +54,7 @@ function Test_UpdateProjectItemStatusOnDueDate{
     Reset-ProjectItemStaged -Owner octodemo -ProjectNumber 625
 
     # Act
-    $result = Update-ProjectItemsStatusOnDueDate @params -IncludeNotDone
+    $result = Update-ProjectItemsStatusOnDueDate -IncludeDoneItems @params
     
     # Assert
     Assert-IsNull -Object $result

@@ -1971,6 +1971,16 @@
                       }
                     },
                     {
+                      "__typename": "ProjectV2ItemFieldDateValue",
+                      "date": "2024-02-18",
+                      "field": {
+                        "__typename": "ProjectV2Field",
+                        "id": "PVTF_lADOBCrGTM4ActQazgSmAsE",
+                        "name": "Next Action Date",
+                        "dataType": "DATE"
+                      }
+                    },
+                    {
                       "__typename": "ProjectV2ItemFieldSingleSelectValue",
                       "name": "🥵High",
                       "field": {
