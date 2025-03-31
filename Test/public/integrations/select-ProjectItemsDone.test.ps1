@@ -3,6 +3,7 @@ function Test_SelectProjectItemNotDone{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
+    . $(Get-Ps1FullPath -FolderName Include -Name "MyWrite.ps1")
     . $(Get-Ps1FullPath -FolderName Public -Name "integrations/select-ProjectItemsDone.ps1")
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12
