@@ -113,74 +113,78 @@ function Show-ProjectItemStaged{
     param(
         [Parameter(Position = 0)][string]$Owner,
         [Parameter(Position = 1)][string]$ProjectNumber,
-        [Parameter(Position = 2)][string]$Id
+        [Parameter(ValueFromPipelineByPropertyName, Position = 2)][string]$Id
     )
 
-    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
-
-    $db = Get-Project $Owner $ProjectNumber
-
-    if([string]::IsNullOrWhiteSpace($Id)){
-        
-        # list all staged items
-
-        $staged = $db.Staged
-
-        if($staged.keys.count -eq 0){
-            return
-        }
-
-        $ret = @()
-
-        foreach($itemKey in $staged.keys){
-            $stagedItem = Get-ItemStaged $db $itemKey
-            $item = Get-Item $db $itemKey
-
-            $itemToShow = @{}
-            $itemToShow.id = $itemKey
-            # $itemToShow.type = $item.type
-            $itemToShow.Title = $item.Title
-            # $itemToShow.FieldsCount = $stagedItem.Count
-            $itemToShow.FieldsName = $stagedItem.Keys
-            # $itemToShow.Fields = @{}
-            # foreach($field in $staged.Keys){
-            #     $itemToShow.Fields = [PSCustomObject]@{
-            #         Value = $staged.$field
-            #         Before = $item.$field
-            #     }
-            # }
-
-            $ret += [PSCustomObject] $itemToShow
-        }
-    } else{
-
-        # show a specific item
-
-        $ret = @()
-        
-        $item = $db.Staged.$Id
-        if($null -eq $item){
-            return
-        }
-
-        $staged = Get-ItemStaged $db $Id
-        $item = $db.items.$Id
-
-        $ret = @{}
-
-        foreach($key in $staged.Keys){
-            $field = Get-Field $db $key
-            $stagedFieldValue = ConvertFrom-FieldValue -Field $field -Value $staged.$key
-            $ret.$key = [PSCustomObject]@{
-                Value = $stagedFieldValue
-                Before = $item.$key
-            }
-        }
-
+    begin{
+        ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+        if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+    
+        $db = Get-Project $Owner $ProjectNumber
     }
 
-    return $ret
+    process {
 
+        if([string]::IsNullOrWhiteSpace($Id)){
+            
+            # list all staged items
+            
+            $staged = $db.Staged
+            
+            if($staged.keys.count -eq 0){
+                return
+            }
+            
+            $ret = @()
+            
+            foreach($itemKey in $staged.keys){
+                $stagedItem = Get-ItemStaged $db $itemKey
+                $item = Get-Item $db $itemKey
+                
+                $itemToShow = @{}
+                $itemToShow.Id = $itemKey
+                # $itemToShow.type = $item.type
+                $itemToShow.Title = $item.Title
+                # $itemToShow.FieldsCount = $stagedItem.Count
+                $itemToShow.FieldsName = $stagedItem.Keys
+                # $itemToShow.Fields = @{}
+                # foreach($field in $staged.Keys){
+                    #     $itemToShow.Fields = [PSCustomObject]@{
+                        #         Value = $staged.$field
+                        #         Before = $item.$field
+                        #     }
+                        # }
+                        
+                $ret += [PSCustomObject] $itemToShow
+            }
+        } else {
+                    
+            # show a specific item
+            
+            $ret = @()
+            
+            $item = $db.Staged.$Id
+            if($null -eq $item){
+                return
+            }
+            
+            $staged = Get-ItemStaged $db $Id
+            $item = $db.items.$Id
+            
+            $ret = @{}
+            
+            foreach($key in $staged.Keys){
+                $field = Get-Field $db $key
+                $stagedFieldValue = ConvertFrom-FieldValue -Field $field -Value $staged.$key
+                $ret.$key = [PSCustomObject]@{
+                    Value = $stagedFieldValue
+                    Before = $item.$key
+                }
+            }
+                    
+        }
+                
+        return $ret
+    }
  
 } Export-ModuleMember -Function Show-ProjectItemStaged
