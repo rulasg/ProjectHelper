@@ -1,3 +1,5 @@
+Set-MyInvokeCommandAlias -Alias GitHub_UpdateProjectV2ItemFieldValueAsync -Command 'Import-Module {projecthelper} ; Invoke-GitHubUpdateItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid} -Value "{value}" -Type {type}'
+
 function Sync-ProjectDatabaseAsync{
     [CmdletBinding(SupportsShouldProcess)]
     [OutputType([bool])]
@@ -75,6 +77,7 @@ function Sync-ProjectAsync{
             $type = ConvertTo-UpdateType $db.Staged.$itemId.$fieldId.Field.dataType
 
             $params = @{
+                projecthelper = $MODULE_PATH
                 projectid = $projectId
                 itemid = $itemId
                 fieldid = $fieldId
@@ -84,12 +87,15 @@ function Sync-ProjectAsync{
 
             "Calling to save  [$projectId/$itemId/$fieldId ($type) = $value ]" | Write-MyHost
 
-            $job = Start-MyJob -Command GitHub_UpdateProjectV2ItemFieldValue -Parameters $params
+            $job = Start-MyJob -Command GitHub_UpdateProjectV2ItemFieldValueAsync -Parameters $params
 
             $call = [PSCustomObject]@{
                 job = $job
+                projectId = $projectId
                 itemId = $itemId
                 value = $value
+                fieldId = $fieldId
+                type = $type
                 fieldName = $db.fields.$fieldId.name
             }
 
@@ -98,25 +104,30 @@ function Sync-ProjectAsync{
         }
     }
 
+    "Waiting for all calls to finish ..." | Write-MyHost
     $results = $calls.job | Wait-Job
 
     foreach($call in $calls){
-        "Saving to database [$project_id/$itemid/$fieldId ($type) = $value ]" | Write-MyHost
 
         $result = Receive-Job -Job $call.job
-        
+
+        $projectId = $call.projectId
+        $itemId = $call.itemId
+        $fieldId = $call.fieldId
+        $fieldName = $call.fieldName
+        $value = $call.value
+
         if ($null -eq $result.data.updateProjectV2ItemFieldValue.projectV2Item) {
-            "Updating Project Item Field [$itemid/$fieldId/$value]" | Write-MyError
+            # TODO: Maybe worth checking response values to confirm change was made correctly even without error
+            "Updating Project Item call Failed [$itemId/$fieldName/$value]" | Write-MyError
+            continue
         }
 
-        # TODO: Maybe worth cheking response values to confirm change was made correctly even without error
-        # $item = Convert-ItemFromResponse $result.data.updateProjectV2ItemFieldValue.projectV2Item
+        "Saving to database [$projectId/$itemId/$fieldName ($type) = $value ]" | Write-MyHost
 
-
-        if ($PSCmdlet.ShouldProcess($item.url, "Set-ProjectV2Item")) {
+        if ($PSCmdlet.ShouldProcess($itemId, "Set-ProjectV2Item")) {
             # update database with change
-            $fieldname = $call.fieldName
-            $db.items.$itemid.$fieldName = $call.value
+            $db.items.$itemId.$fieldName = $value
         }
     }
 

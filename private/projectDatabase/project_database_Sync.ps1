@@ -21,42 +21,10 @@ function Sync-ProjectDatabase{
 
     $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
-    foreach($idemId in $db.Staged.Keys){
-        foreach($fieldId in $db.Staged.$idemId.Keys){
-
-            $project_id = $db.ProjectId
-            $item_id = $idemId
-            $field_id = $fieldId
-            $value = $db.Staged.$idemId.$fieldId.Value
-            $type = ConvertTo-UpdateType $db.Staged.$idemId.$fieldId.Field.dataType
-
-            $params = @{
-                projectid = $project_id
-                itemid = $item_id
-                fieldid = $field_id
-                value = $value
-                type = $type
-            }
-
-            "Saving  [$project_id/$item_id/$field_id ($type) = $value ]" | Write-MyHost
-
-            $result = Invoke-MyCommand -Command GitHub_UpdateProjectV2ItemFieldValue -Parameters $params
-
-            if ($null -eq $result) {
-                "Updating Project Item Field [$item_id/$field_id/$value]" | Write-MyError
-                return $false
-            }
-
-            if ($PSCmdlet.ShouldProcess($item.url, "Set-ProjectV2Item")) {
-                # update database with change
-                $fieldName = $db.fields.$fieldId.name
-                $db.items.$item_id.$fieldName = $value
-
-                # $item = Convert-ItemFromResponse $projectV2Item
-                # Set-ProjectV2Item2Database $db $projectV2Item -Item $item
-                # $projectV2Item = $result.data.updateProjectV2ItemFieldValue.projectV2Item
-            }
-        }
+    # Send update to project
+    $result = Sync-Project -Database $db
+    if ($null -eq $result) {
+        return $false
     }
 
     # Check that all values are updated before cleanring staging
@@ -93,20 +61,56 @@ function Sync-ProjectDatabase{
 
 }
 
-# function Set-ProjectV2Item2Database {
-#     [CmdletBinding()]
-#     param(
-#         [Parameter(Position = 0)][object]$Database,
-#         [Parameter(Position = 1)][object]$projectV2Item,
-#         [Parameter(Position = 2)][Object]$Item
-#     )
+function Sync-Project{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][object]$Database
+    )
 
-#     $itemId = $Projectv2item.id
+    $db = $Database
 
-#     foreach($field in $item.keys){
-#         $Database.items.$itemId.$field = $item.$field
-#     }
-# }
+    foreach($idemId in $db.Staged.Keys){
+        foreach($fieldId in $db.Staged.$idemId.Keys){
+
+            $project_id = $db.ProjectId
+            $item_id = $idemId
+            $field_id = $fieldId
+            $value = $db.Staged.$idemId.$fieldId.Value
+            $type = ConvertTo-UpdateType $db.Staged.$idemId.$fieldId.Field.dataType
+
+            $params = @{
+                projectid = $project_id
+                itemid = $item_id
+                fieldid = $field_id
+                value = $value
+                type = $type
+            }
+
+            "Saving  [$project_id/$item_id/$field_id ($type) = $value ]" | Write-MyHost
+
+            $result = Invoke-MyCommand -Command GitHub_UpdateProjectV2ItemFieldValue -Parameters $params
+
+            if ($null -eq $result) {
+                "Updating Project Item Field [$item_id/$field_id/$value]" | Write-MyError
+                return $null
+            }
+
+            if ($PSCmdlet.ShouldProcess($item.url, "Set-ProjectV2Item")) {
+                # update database with change
+                $fieldName = $db.fields.$fieldId.name
+                $db.items.$item_id.$fieldName = $value
+
+                # $item = Convert-ItemFromResponse $projectV2Item
+                # Set-ProjectV2Item2Database $db $projectV2Item -Item $item
+                # $projectV2Item = $result.data.updateProjectV2ItemFieldValue.projectV2Item
+            }
+        }
+    }
+
+    return $db
+}
+
+
 
 function ConvertTo-UpdateType{
     [CmdletBinding()]

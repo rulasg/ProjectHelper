@@ -98,6 +98,7 @@ function Test_CommitProjectItemsStagedAsync_SUCCESS{
     $moduleRootFullName = $moduleRootPath | Convert-Path
     
     $Owner = "SomeOrg" ; $ProjectNumber = 164
+    $projectId ="PVT_kwDOBCrGTM4ActQa"
 
     # Item id 10
     # Name                           Value
@@ -140,15 +141,44 @@ function Test_CommitProjectItemsStagedAsync_SUCCESS{
     $fieldComment2 = "Comment" ; $fileCommentValue2 = "new value of the comment 11"
     $fieldTitle2 = "Title" ; $fileTitleValue2 = "new value of the title 11"
 
+    # Define an array of objects to de updated mocked
+    $mockItems = @(
+        @{
+            ItemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
+            FieldId = "PVTF_lADOBCrGTM4ActQazgSl5GU"
+            Value = "new value of the comment 10"
+        },
+        @{
+            ItemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
+            FieldId = "PVTF_lADOBCrGTM4ActQazgSkYm8"
+            Value = "new value of the title"
+        },
+        @{
+            ItemId = "PVTI_lADOBCrGTM4ActQazgMueM4"
+            FieldId = "PVTF_lADOBCrGTM4ActQazgSl5GU"
+            Value = "new value of the comment 11"
+        },
+        @{
+            ItemId = "PVTI_lADOBCrGTM4ActQazgMueM4"
+            FieldId = "PVTF_lADOBCrGTM4ActQazgSkYm8"
+            Value = "new value of the title 11"
+        }
+    )
+
+    # Loop through the array and set the mock commands
+    foreach ($item in $mockItems) {
+        $command = 'Import-Module {projecthelper} ; Invoke-GitHubUpdateItemValues -ProjectId {ProjectId} -ItemId {ItemId} -FieldId {FieldId} -Value "{Value}" -Type text'
+        $command = $command -replace '{ProjectId}', $projectId
+        $command = $command -replace '{ItemId}', $item.ItemId
+        $command = $command -replace '{FieldId}', $item.FieldId
+        $command = $command -replace '{Value}', $item.Value
+        $command = $command -replace '{projecthelper}', $MODULE_ROOT_PATH
+        
+        Set-InvokeCommandMock -Command "Import-Module $moduleRootFullName ; Get-MockFileContentJson -filename updateProjectV2ItemFieldValue.json" -Alias $command
+    }
+    
+    # Mock get-project
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
-    Set-InvokeCommandMock -Command "ipmo $moduleRootFullName ; Get-MockFileContentJson -filename updateProjectV2ItemFieldValue.json" -Alias 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc -FieldId PVTF_lADOBCrGTM4ActQazgSl5GU -Value "new value of the comment 10" -Type text'
-    Set-InvokeCommandMock -Command "ipmo $moduleRootFullName ; Get-MockFileContentJson -filename updateProjectV2ItemFieldValue.json" -Alias 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc -FieldId PVTF_lADOBCrGTM4ActQazgSkYm8 -Value "new value of the title" -Type text'
-    Set-InvokeCommandMock -Command "ipmo $moduleRootFullName ; Get-MockFileContentJson -filename updateProjectV2ItemFieldValue.json" -Alias 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMueM4 -FieldId PVTF_lADOBCrGTM4ActQazgSl5GU -Value "new value of the comment 11" -Type text'
-    Set-InvokeCommandMock -Command "ipmo $moduleRootFullName ; Get-MockFileContentJson -filename updateProjectV2ItemFieldValue.json" -Alias 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMueM4 -FieldId PVTF_lADOBCrGTM4ActQazgSkYm8 -Value "new value of the title 11" -Type text'
-    # MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc -FieldId PVTF_lADOBCrGTM4ActQazgSl5GU -Value "new value of the comment 10" -Type text'
-    # MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc -FieldId PVTF_lADOBCrGTM4ActQazgSkYm8 -Value "new value of the title" -Type text'
-    # MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMueM4 -FieldId PVTF_lADOBCrGTM4ActQazgSl5GU -Value "new value of the comment 11" -Type text'
-    # MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMueM4 -FieldId PVTF_lADOBCrGTM4ActQazgSkYm8 -Value "new value of the title 11" -Type text'
 
     Edit-ProjectItem $owner $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
     Edit-ProjectItem $owner $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
@@ -274,5 +304,29 @@ function Test_TestProjectItemStaged{
 
     $result = Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-IsTrue -Condition $result
+
+}
+
+function Test_CommitProjectItemsStagedAsync_debug{
+
+    Assert-SkipTest
+    Reset-InvokeCommandMock
+    Enable-InvokeCommandAliasModule
+
+$params = @{
+    SourceOwner = "github"
+    DestinationProjectNumber = "9279"
+    FieldSlug = "oa_"
+    DestinationOwner = "github"
+    SourceProjectNumber = "20521"
+}
+
+    # $result = Update-ProjectItemsBetweenProjects @params
+
+    Show-ProjectItemStaged
+
+    Sync-ProjectItemStagedAsync
+
+    Assert-NotImplemented
 
 }
