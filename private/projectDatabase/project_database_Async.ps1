@@ -1,7 +1,6 @@
+Set-MyInvokeCommandAlias -Alias GitHub_UpdateProjectV2ItemFieldValueAsync -Command 'Import-Module {projecthelper} ; Invoke-GitHubUpdateItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid} -Value "{value}" -Type {type}'
 
-Set-MyInvokeCommandAlias -Alias GitHub_UpdateProjectV2ItemFieldValue -Command 'Invoke-GitHubUpdateItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid} -Value "{value}" -Type {type}'
-
-function Sync-ProjectDatabase{
+function Sync-ProjectDatabaseAsync{
     [CmdletBinding(SupportsShouldProcess)]
     [OutputType([bool])]
     param(
@@ -22,7 +21,7 @@ function Sync-ProjectDatabase{
     $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
     # Send update to project
-    $result = Sync-Project -Database $db
+    $result = Sync-ProjectAsync -Database $db
     if ($null -eq $result) {
         return $false
     }
@@ -59,6 +58,80 @@ function Sync-ProjectDatabase{
         return $false
     }
 
+}
+
+function Sync-ProjectAsync{
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [Parameter(Position = 0)][object]$Database
+    )
+
+    $db = $Database
+    $calls = @()
+
+    foreach($itemId in $db.Staged.Keys){
+        foreach($fieldId in $db.Staged.$itemId.Keys){
+
+            $projectId = $db.ProjectId
+            $value = $db.Staged.$itemId.$fieldId.Value
+            $type = ConvertTo-UpdateType $db.Staged.$itemId.$fieldId.Field.dataType
+
+            $params = @{
+                projecthelper = $MODULE_PATH
+                projectid = $projectId
+                itemid = $itemId
+                fieldid = $fieldId
+                value = $value
+                type = $type
+            }
+
+            "Calling to save  [$projectId/$itemId/$fieldId ($type) = $value ]" | Write-MyHost
+
+            $job = Start-MyJob -Command GitHub_UpdateProjectV2ItemFieldValueAsync -Parameters $params
+
+            $call = [PSCustomObject]@{
+                job = $job
+                projectId = $projectId
+                itemId = $itemId
+                value = $value
+                fieldId = $fieldId
+                type = $type
+                fieldName = $db.fields.$fieldId.name
+            }
+
+            $calls += $call
+
+        }
+    }
+
+    "Waiting for all calls to finish ..." | Write-MyHost
+    $results = $calls.job | Wait-Job
+
+    foreach($call in $calls){
+
+        $result = Receive-Job -Job $call.job
+
+        $projectId = $call.projectId
+        $itemId = $call.itemId
+        $fieldId = $call.fieldId
+        $fieldName = $call.fieldName
+        $value = $call.value
+
+        if ($null -eq $result.data.updateProjectV2ItemFieldValue.projectV2Item) {
+            # TODO: Maybe worth checking response values to confirm change was made correctly even without error
+            "Updating Project Item call Failed [$itemId/$fieldName/$value]" | Write-MyError
+            continue
+        }
+
+        "Saving to database [$projectId/$itemId/$fieldName ($type) = $value ]" | Write-MyHost
+
+        if ($PSCmdlet.ShouldProcess($itemId, "Set-ProjectV2Item")) {
+            # update database with change
+            $db.items.$itemId.$fieldName = $value
+        }
+    }
+
+    return $db
 }
 
 function Sync-Project{
@@ -108,42 +181,4 @@ function Sync-Project{
     }
 
     return $db
-}
-
-
-
-function ConvertTo-UpdateType{
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory,ValueFromPipeline,Position=0)][string]$DataType
-    )
-
-            # [ValidateSet("singleSelectOptionId", "text", "number", "date", "iterationId")]
-
-    switch ($DataType) {
-        "TEXT"           { $ret = "text"                 ;Break }
-        "TITLE"          { $ret = "text"                 ;Break }
-        "NUMBER"         { $ret = "number"               ; Break}
-        "DATE"           { $ret = "date"                 ; Break}
-        "iterationId"    { $ret = "iterationId"          ; Break}
-        "SINGLE_SELECT"  { $ret = "singleSelectOptionId" ;Break }
-
-        default          { $ret = $null }
-    }
-
-    return $ret
-
-    # "SINGLE_SELECT"
-    # "TEXT" , "TITLE"
-    # "NUMBER"
-    # "DATE"
-
-    # "ASSIGNEES"
-    # "LABELS"
-    # "LINKED_PULL_REQUESTS"
-    # "TRACKS"
-    # "REVIEWERS"
-    # "REPOSITORY"
-    # "MILESTONE"
-    # "TRACKED_BY"
 }

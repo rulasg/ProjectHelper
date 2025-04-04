@@ -90,6 +90,119 @@ function Test_CommitProjectItemsStaged_SUCCESS{
     Assert-AreEqual -Expected $fileTitleValue2 -Presented $item2.$fieldTitle2
 }
 
+function Test_CommitProjectItemsStagedAsync_SUCCESS{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $moduleRootPath = $PSScriptRoot | Split-Path -Parent
+    $moduleRootFullName = $moduleRootPath | Convert-Path
+    
+    $Owner = "SomeOrg" ; $ProjectNumber = 164
+    $projectId ="PVT_kwDOBCrGTM4ActQa"
+
+    # Item id 10
+    # Name                           Value
+    # ----                           -----
+    # id                             PVTI_lADOBCrGTM4ActQazgMuXXc
+    # number                         
+    # Severity                       Nice⭐️
+    # Status                         Todo
+    # TimeTracker                    890
+    # Comment                        This
+    # body                           some content in body
+    # Assignees                      rulasg
+    # UserStories                    8
+    # Title                          A draft in the project
+    # Priority                       🥵High
+    # url                            
+    # type                           DraftIssue
+
+    $itemId1 = "PVTI_lADOBCrGTM4ActQazgMuXXc"
+    $fieldComment1 = "Comment" ; $fieldCommentValue1 = "new value of the comment 10"
+    $fieldTitle1 = "Title" ; $fieldTitleValue1 = "new value of the title"
+
+    # Name                           Value
+    # ----                           -----
+    # number                         6
+    # id                             PVTI_lADOBCrGTM4ActQazgMueM4
+    # body                           
+    # type                           PullRequest
+    # Start Date                     2024-02-23
+    # Repository                     https://github.com/SolidifyDemo/ProjectDemoTest-repo-front
+    # Title                          Update README.md
+    # Assignees                      rulasg
+    # TimeTracker                    888
+    # Status                         In Progress
+    # Next Action Date               2024-02-23
+    # url                            https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/pull/6
+    # $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
+
+    $itemId2 = "PVTI_lADOBCrGTM4ActQazgMueM4"
+    $fieldComment2 = "Comment" ; $fileCommentValue2 = "new value of the comment 11"
+    $fieldTitle2 = "Title" ; $fileTitleValue2 = "new value of the title 11"
+
+    # Define an array of objects to de updated mocked
+    $mockItems = @(
+        @{
+            ItemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
+            FieldId = "PVTF_lADOBCrGTM4ActQazgSl5GU"
+            Value = "new value of the comment 10"
+        },
+        @{
+            ItemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
+            FieldId = "PVTF_lADOBCrGTM4ActQazgSkYm8"
+            Value = "new value of the title"
+        },
+        @{
+            ItemId = "PVTI_lADOBCrGTM4ActQazgMueM4"
+            FieldId = "PVTF_lADOBCrGTM4ActQazgSl5GU"
+            Value = "new value of the comment 11"
+        },
+        @{
+            ItemId = "PVTI_lADOBCrGTM4ActQazgMueM4"
+            FieldId = "PVTF_lADOBCrGTM4ActQazgSkYm8"
+            Value = "new value of the title 11"
+        }
+    )
+
+    # Loop through the array and set the mock commands
+    foreach ($item in $mockItems) {
+        $command = 'Import-Module {projecthelper} ; Invoke-GitHubUpdateItemValues -ProjectId {ProjectId} -ItemId {ItemId} -FieldId {FieldId} -Value "{Value}" -Type text'
+        $command = $command -replace '{ProjectId}', $projectId
+        $command = $command -replace '{ItemId}', $item.ItemId
+        $command = $command -replace '{FieldId}', $item.FieldId
+        $command = $command -replace '{Value}', $item.Value
+        $command = $command -replace '{projecthelper}', $MODULE_ROOT_PATH
+        
+        Set-InvokeCommandMock -Command "Import-Module $moduleRootFullName ; Get-MockFileContentJson -filename updateProjectV2ItemFieldValue.json" -Alias $command
+    }
+    
+    # Mock get-project
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+
+    Edit-ProjectItem $owner $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
+    Edit-ProjectItem $owner $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
+    Edit-ProjectItem $owner $projectNumber $itemId2 $fieldComment2 $fileCommentValue2
+    Edit-ProjectItem $owner $projectNumber $itemId2 $fieldTitle2 $fileTitleValue2
+
+    $result = Sync-ProjectItemStagedAsync -Owner $Owner -ProjectNumber $ProjectNumber
+
+    # Return true
+    Assert-IsTrue -Condition $result
+
+    # Staged list is empty
+    $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    Assert-IsNull -Object $staged
+
+    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.$fieldComment1
+    Assert-AreEqual -Expected $fieldTitleValue1 -Presented $item1.$fieldTitle1
+
+    $item2 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId2
+    Assert-AreEqual -Expected $fileCommentValue2 -Presented $item2.$fieldComment2
+    Assert-AreEqual -Expected $fileTitleValue2 -Presented $item2.$fieldTitle2
+}
+
 
 function Test_ShowProjectItemsStaged{
 
@@ -191,5 +304,29 @@ function Test_TestProjectItemStaged{
 
     $result = Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-IsTrue -Condition $result
+
+}
+
+function Test_CommitProjectItemsStagedAsync_debug{
+
+    Assert-SkipTest
+    Reset-InvokeCommandMock
+    Enable-InvokeCommandAliasModule
+
+$params = @{
+    SourceOwner = "github"
+    DestinationProjectNumber = "9279"
+    FieldSlug = "oa_"
+    DestinationOwner = "github"
+    SourceProjectNumber = "20521"
+}
+
+    # $result = Update-ProjectItemsBetweenProjects @params
+
+    Show-ProjectItemStaged
+
+    Sync-ProjectItemStagedAsync
+
+    Assert-NotImplemented
 
 }

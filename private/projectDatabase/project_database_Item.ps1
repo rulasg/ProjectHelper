@@ -68,8 +68,7 @@ function Save-ItemFieldValue{
     )
 
     "Staging item [$ItemId] with field [$FieldName] and value [$Value] in Project [$($Database.ProjectId)]" | Write-MyHost
-    # TODO !! : Test that is a valid field based on field type
-    
+
     $field = Get-Field $Database $FieldName
     
     if($null -eq $field){
