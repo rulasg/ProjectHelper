@@ -134,9 +134,35 @@ function Sync-ProjectAsync{
         }
     }
 
-    "Waiting for all calls to finish ..." | Write-MyHost
-    $results = $calls.job | Wait-Job
+    # "Waiting for all calls to finish ..." | Write-MyHost
+    # $results = $calls.job | Wait-Job
+    
+    $isDone = $false
+    $all = $calls.job.Count
+    $waitingJobs = $calls.job
 
+    "Waiting for all calls to finish " | Write-MyHost -noNewline
+
+    while(!$isdone){
+
+        $waitings = $waitingJobs | Wait-Job -Any
+
+        "." | Write-MyHost -NoNewline
+
+        $done = ($calls.job | Where-Object{$_.State -eq "Completed"}).Count
+        $failed = ($calls.job | Where-Object{$_.State -eq "Failed"}).Count
+        $running = ($calls.job | Where-Object{$_.State -eq "Running"}).Count
+        
+        # Remove completed jobs from the waiting list
+        $waitingJobs = $waitingJobs | Where-Object { $_.Id -ne $waitings.Id }
+        
+        $isDone = ($done + $failed) -eq $all
+    }
+    "" | Write-MyHost
+    "Completed [$done] Failed [$failed] TOTAL [$all]" | Write-MyHost
+
+
+    # Process all the calls
     foreach($call in $calls){
 
         $result = Receive-Job -Job $call.job
