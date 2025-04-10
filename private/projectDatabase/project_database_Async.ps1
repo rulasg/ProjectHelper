@@ -26,37 +26,67 @@ function Sync-ProjectDatabaseAsync{
         return $false
     }
 
-    # Check that all values are updated before cleanring staging
+    # Clear the values that are the same
     $different = New-Object System.Collections.Hashtable
-    foreach($idemId in $db.Staged.Keys){
-        foreach($fieldId in $db.Staged.$idemId.Keys){
+    $equal = New-Object System.Collections.Hashtable
+    foreach($itemId in $db.Staged.Keys){
+        foreach($fieldId in $db.Staged.$itemId.Keys){
             $fieldName = $db.fields.$fieldId.name
 
-            $stagedV = $db.Staged.$idemId.$fieldId.Value
-            $actualV = $db.items.$idemId.$fieldName
+            $stagedV = $db.Staged.$itemId.$fieldId.Value
+            $actualV = $db.items.$itemId.$fieldName
 
             if(!($stagedV -eq $actualV)){
-                $diff = @{
-                    Id = $idemId
+                # Create refe to failing
+                $different."$($itemId)_$($Fieldid)" = @{
+                    Id = $itemId
                     Field = $fieldId
                     Staged = $stagedV
                     Actual = $actualV
                 }
-                $different.$itemId = $diff
+            } else {
+                # Create refe success
+                $equal."$($itemId)_$($Fieldid)" = @{
+                    Id = $itemId
+                    Field = $fieldId
+                }
             }
-
         }
     }
 
-    if($different.Count -eq 0){
+    $SyncedCount = $equal.Keys.Count
+    $NotSyncedCount = $different.Keys.Count
+
+    # removed equal staged values
+    foreach($key in $equal.Keys){
+        $itemId = $equal.$key.Id
+        $fieldId = $equal.$key.Field
+
+        # Remove staged field
+        $db.Staged.$itemId.Remove($fieldId)
+
+        # remove staged item if all are removed
+        if($db.Staged.$itemId.Keys.Count -eq 0){
+            $db.Staged.Remove($itemId)
+        }
+    }
+
+    #null Staged if empty
+    if($db.Staged.Keys.Count -eq 0){
         $db.Staged = $null
-        Save-Database -Key $dbkey -Database $db
-        return $true
-    } else {
-        "Error: Staged values are not equal to actual values" | Write-MyError
+    }
+    
+    Save-Database -Key $dbkey -Database $db
+
+    if($different.Count -ne 0){
+        "Not all Staged values are not equal to actual values" | Write-MyError
         $different | convertto-json | Write-MyError
         return $false
     }
+
+    "Synced $SyncedCount values (Failed: $NotSyncedCount)" | Write-MyHost
+
+    return $true
 
 }
 
