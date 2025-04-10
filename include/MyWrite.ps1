@@ -8,7 +8,7 @@ function Write-MyError{
         [Parameter(Mandatory,ValueFromPipeline)][string]$Message
     )
     # Write-Host "Error: $message" -ForegroundColor $ERROR_COLOR
-    Write-ToConsole $message -Color $ERROR_COLOR
+    Write-ToConsole "Error: $message" -Color $ERROR_COLOR
 }
 
 function Write-MyWarning{
