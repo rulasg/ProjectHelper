@@ -106,6 +106,11 @@ function Test_EditProejctItems_SameValue{
     Assert-Count -Expected 0 -Presented $result.Keys
 }
 
+function Test_EditProejctItems_NumberDecimals{
+
+
+}
+
 function Test_UpdateProjectDatabase_Fail_With_Staged{
     # When changes are staged list update should fail.
     # As Update-ProjectDatabase is a private function, we will test it through the public function Get-ProjectItemList with Force
