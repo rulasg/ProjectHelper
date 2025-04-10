@@ -28,16 +28,20 @@ function Write-MyVerbose{
 
 function Write-MyHost{
     param(
-        [Parameter(ValueFromPipeline)][string]$Message
+        [Parameter(ValueFromPipeline)][string]$Message,
+        #NoNewLine
+        [Parameter()][switch]$NoNewLine
     )
     # Write-Host $message -ForegroundColor $OUTPUT_COLOR
-    Write-ToConsole $message -Color $OUTPUT_COLOR
+    Write-ToConsole $message -Color $OUTPUT_COLOR -NoNewLine:$NoNewLine
 }
 
 function Write-ToConsole{
     param(
         [Parameter(ValueFromPipeline)][string]$Color,
-        [Parameter(ValueFromPipeline, Position=0)][string]$Message
+        [Parameter(ValueFromPipeline, Position=0)][string]$Message,
+        [Parameter()][switch]$NoNewLine
+
     )
-    Write-Host $message -ForegroundColor $Color
+    Write-Host $message -ForegroundColor $Color -NoNewLine:$NoNewLine
 }
