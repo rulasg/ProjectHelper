@@ -141,7 +141,7 @@ function Sync-ProjectAsync{
     $all = $calls.job.Count
     $waitingJobs = $calls.job
 
-    "Waiting for all calls to finish " | Write-MyHost -noNewline
+    "Waiting for all calls to finish [$($waitingJobs.Count)] " | Write-MyHost -noNewline
 
     while(!$isdone){
 
@@ -149,17 +149,19 @@ function Sync-ProjectAsync{
 
         "." | Write-MyHost -NoNewline
 
-        $done = ($calls.job | Where-Object{$_.State -eq "Completed"}).Count
+        $completed = ($calls.job | Where-Object{$_.State -eq "Completed"}).Count
         $failed = ($calls.job | Where-Object{$_.State -eq "Failed"}).Count
-        $running = ($calls.job | Where-Object{$_.State -eq "Running"}).Count
-        
+
+        # $running = ($calls.job | Where-Object{$_.State -eq "Running"}).Count
+        # "Running [$running] Completed [$completed] Failed [$failed] TOTAL [$all]" | Write-MyHost
+
         # Remove completed jobs from the waiting list
         $waitingJobs = $waitingJobs | Where-Object { $_.Id -ne $waitings.Id }
         
-        $isDone = ($done + $failed) -eq $all
+        $isDone = ($completed + $failed) -eq $all
     }
     "" | Write-MyHost
-    "Completed [$done] Failed [$failed] TOTAL [$all]" | Write-MyHost
+    "Completed [$completed] Failed [$failed] TOTAL [$all]" | Write-MyHost
 
 
     # Process all the calls
