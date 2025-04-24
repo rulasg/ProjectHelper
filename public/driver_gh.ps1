@@ -90,7 +90,7 @@ function Invoke-GitHubUpdateItemValues{
     # Ensure that if the $type is number the value is a number
     # API fails if when updaring a number the value type in the Input payload s not a number
     if($Type -eq "number"){
-        $Value = [int]$Value
+        $Value = [decimal]$Value
     }
 
     # Define the variables for the request

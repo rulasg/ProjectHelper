@@ -106,6 +106,57 @@ function Test_EditProejctItems_SameValue{
     Assert-Count -Expected 0 -Presented $result.Keys
 }
 
+function Test_EditProejctItems_NumberDecimals{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $Owner = "SomeOrg" ; $ProjectNumber = 164
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+
+    $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+
+    $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
+
+    # [DBG]:> $prj.fields.PVTF_lADOBCrGTM4ActQazgSkglc
+    # Name                           Value
+    # ----                           -----
+    # dataType                       NUMBER
+    # id                             PVTF_lADOBCrGTM4ActQazgSkglc
+    # type                           ProjectV2Field
+    # name                           TimeTracker
+
+    $fieldNumber = "TimeTracker"
+
+    "NotANumber","1.000.1","1,000,1" | ForEach-Object{
+
+        # Not a valid value
+        $hasThrow= $false
+        try {
+            Edit-ProjectItem $owner $projectNumber $itemId $fieldNumber "NotNumber"
+        }
+        catch {
+            $hasThrow = $true
+        }
+        Assert-IsTrue -Condition $hasThrow -Comment "Should throw as the value is not a number"
+    }
+
+    "10.1","10,1" | ForEach-Object {
+        Edit-ProjectItem $owner $projectNumber $itemId $fieldNumber $_
+        $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
+        Assert-Count -Expected 1 -Presented $result.Keys
+        Assert-AreEqual -Expected 10.1 -Presented $result.$itemId.PVTF_lADOBCrGTM4ActQazgSkglc.Value
+        Reset-ProjectItemStaged
+    }
+
+    "1,000.1","1.000,1" | ForEach-Object {
+        Edit-ProjectItem $owner $projectNumber $itemId $fieldNumber $_
+        $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
+        Assert-Count -Expected 1 -Presented $result.Keys
+        Assert-AreEqual -Expected 1000.1 -Presented $result.$itemId.PVTF_lADOBCrGTM4ActQazgSkglc.Value
+        Reset-ProjectItemStaged
+    }
+}
+
 function Test_UpdateProjectDatabase_Fail_With_Staged{
     # When changes are staged list update should fail.
     # As Update-ProjectDatabase is a private function, we will test it through the public function Get-ProjectItemList with Force
