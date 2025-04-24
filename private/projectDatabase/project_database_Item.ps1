@@ -77,13 +77,13 @@ function Save-ItemFieldValue{
     $fieldId = $field.id
 
     if( !(Test-FieldValue $field $Value) ){
-        throw "Invalid value [$Value] for field $FieldName"
+        throw "Failed testing value [$Value] for field $FieldName [$($field.dataType)]"
     }
 
     #Transform value if needed. Sample SingleSelect will change form String to option
     $value = ConvertTo-FieldValue $field $Value
     if($null -eq $value){
-         "Invalid value [$Value] for field $FieldName [$($field.dataType)]" | Write-MyError
+         "Failed convertig value [$Value] for field $FieldName [$($field.dataType)]" | Write-MyError
          return
     }
 
