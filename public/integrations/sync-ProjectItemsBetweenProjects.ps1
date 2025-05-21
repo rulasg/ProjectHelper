@@ -1,4 +1,3 @@
-
 <#
 .SYNOPSIS
     Syncs project items fields between two projects.
@@ -21,6 +20,14 @@
 .PARAMETER FieldSlug
     The slug to use for the fields in the destination project.
     Slug is the prefix of the field name in the destination project.
+.PARAMETER NoRefreshDestination
+    If specified, will not force a refresh of the destination project from the server.
+    Use this parameter when you know the destination project is already cached locally with the correct.
+.PARAMETER NoRefreshSource
+    If specified, will not force a refresh of the source project from the server.
+    Use this parameter when you know the source project is already cached locally.
+.PARAMETER IncludeDoneItems
+    If specified, will include items marked as done in the sync process.
 .EXAMPLE
     Sync-ProjectItemsbetweenProjects -SourceOwner github -DestinationOwner github -SourceProjectNumber $oaProject -DestinationProjectNumber $rlProject -FieldsList @("Focus","Country") -FieldSlug "oa_"
     #>
@@ -32,18 +39,22 @@ function Update-ProjectItemsBetweenProjects {
         [Parameter(Position = 2)][string]$DestinationOwner,
         [Parameter(Position = 3)][string]$DestinationProjectNumber,
         [Parameter()][string]$FieldSlug,
-        [Parameter()][switch]$IncludeDoneItems
+        [Parameter()][switch]$IncludeDoneItems,
+        [Parameter()][switch]$NoRefreshDestination,
+        [Parameter()][switch]$NoRefreshSource
     )
 
     # Get destination project for error handling and caching
     ($DestinationOwner,$DestinationProjectNumber) = Get-OwnerAndProjectNumber -Owner $DestinationOwner -ProjectNumber $DestinationProjectNumber
     if([string]::IsNullOrWhiteSpace($DestinationOwner) -or [string]::IsNullOrWhiteSpace($DestinationProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
-    $destinationProject = Get-Project -Owner $DestinationOwner -ProjectNumber $DestinationProjectNumber -Force
+    # Use Force parameter unless NoRefreshDestination is specified
+    $destinationProject = Get-Project -Owner $DestinationOwner -ProjectNumber $DestinationProjectNumber -Force:(-not $NoRefreshDestination)
 
     # Get source project for error handling and caching
     ($SourceOwner,$SourceProjectNumber) = Get-OwnerAndProjectNumber -Owner $SourceOwner -ProjectNumber $SourceProjectNumber
     if([string]::IsNullOrWhiteSpace($SourceOwner) -or [string]::IsNullOrWhiteSpace($SourceProjectNumber)){ "Source Owner and ProjectNumber are required" | Write-MyError; return $null}
-    $sourceProject = Get-Project -Owner $SourceOwner -ProjectNumber $SourceProjectNumber -Force
+    # Use Force parameter unless NoRefreshSource is specified
+    $sourceProject = Get-Project -Owner $SourceOwner -ProjectNumber $SourceProjectNumber -Force:(-not $NoRefreshSource)
 
     # check if any of the projects are null
     if($null -eq $sourceProject -or $null -eq $destinationProject){
