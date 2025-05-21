@@ -42,6 +42,46 @@ function Test_UpdateProjectItemsBetweenProjects{
 
 }
 
+function Test_UpdateProjectItemsBetweenProjects_NoRefresh_NoRefresh{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $owner = "octodemo"
+    $sourceProjectNumber = 625
+    $destinationProjectNumber = 626
+
+    # Mock project calls
+    $sourceProjectNumber, $destinationProjectNumber | ForEach-Object {
+        $projectNumber = $_
+        MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber.syncprj.json"
+    }
+
+    # Cache projects using mocks calls
+    $destinationProject = Get-Project -Owner $owner -ProjectNumber $destinationProjectNumber
+    $sourceProject = Get-Project -Owner $owner -ProjectNumber $sourceProjectNumber
+
+    # Reset mocks to fail if mocks are called again
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot -NotReset
+
+    # Act 
+
+    $params = @{
+        SourceOwner = $owner
+        SourceProjectNumber = $sourceProjectNumber
+        DestinationOwner = $owner
+        DestinationProjectNumber = $destinationProjectNumber
+    }
+    $result = Update-ProjectItemsBetweenProjects -IncludeDoneItems  -NoRefreshDestination -NoRefreshSource @params
+
+    Assert-IsNull -Object $result
+
+    $staged = Get-ProjectItemStaged -Owner $owner -ProjectNumber $destinationProjectNumber
+
+    Assert-Count -Expected 3 -Presented $staged.Keys
+
+}
+
 function Test_SyncProjectItemsBetweenProjects_SameValues{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
