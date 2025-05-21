@@ -1,7 +1,7 @@
 
 $DEFAULT_DISPLAY_FIELDS = @("id","title")
 
-function Get-ProjectEnvironment{
+function Get-ProjectHelperEnvironment{
     [CmdletBinding()]
     param()
 
@@ -14,7 +14,7 @@ function Get-ProjectEnvironment{
     
     return $ret
 
-} Export-ModuleMember -Function Get-ProjectEnvironment
+} Export-ModuleMember -Function Get-ProjectHelperEnvironment
 
 function Get-OwnerAndProjectNumber{
     [CmdletBinding()]
@@ -36,7 +36,7 @@ function Get-OwnerAndProjectNumber{
     }
 
     return ($owner, $ProjectNumber)
-} Export-ModuleMember -Function Get-OwnerAndProjectNumber
+} 
 
 function Get-EnvironmentDisplayFields{
     [CmdletBinding()]
