@@ -26,8 +26,9 @@ function Update-ProjectItemsStatusOnDueDate{
         [Parameter(Position = 1)][int]$ProjectNumber,
         [Parameter(Position = 2)][string]$DueDateFieldName,
         [Parameter(Position = 3)][string]$Status,
-        [Parameter()][switch]$Force,
-        [Parameter()][switch]$IncludeDoneItems
+        [Parameter()][switch]$IncludeDoneItems,
+        [Parameter()] [switch]$SkipProjectSync
+
     )
 
     "Updating project items status with due date for project $owner/$ProjectNumber" | Write-MyHost
@@ -35,13 +36,13 @@ function Update-ProjectItemsStatusOnDueDate{
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    if(Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber){
+    if((-not $SkipProjectSync) -AND (Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber)){
         "Project has staged items, please Sync-ProjectItemStaged or Reset-ProjectItemStaged and try again" | Write-Error
         return
     }
 
     # Get the project
-    $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+    $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:(-not $SkipProjectSync)
 
     # Filter items based on the NotDone parameter
     $items = $IncludeDoneItems ? $prj.items : $($prj.items | Select-ProjectItemsNotDone)

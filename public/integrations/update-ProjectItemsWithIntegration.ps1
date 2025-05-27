@@ -19,18 +19,20 @@ function Update-ProjectItemsWithIntegration{
         [Parameter(Mandatory)][string]$IntegrationField,
         [Parameter(Mandatory)][string]$IntegrationCommand,
         [Parameter()] [string]$Slug,
-        [Parameter()] [switch]$IncludeDoneItems
+        [Parameter()] [switch]$IncludeDoneItems,
+        [Parameter()] [switch]$SkipProjectSync
+
     )
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    if(Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber){
+    if((-not $SkipProjectSync) -AND (Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber)){
         "Project has staged items, please Sync-ProjectItemStaged or Reset-ProjectItemStaged and try again" | Write-Error
         return
     }
 
     # Get project
-    $project = Get-Project -Owner $owner -ProjectNumber $projectNumber -Force
+    $project = Get-Project -Owner $owner -ProjectNumber $projectNumber -Force:(-not $SkipProjectSync)
 
     # Filter items based on the NotDone parameter
     $items = $IncludeDoneItems ? $project.items : $($project.items | Select-ProjectItemsNotDone)
