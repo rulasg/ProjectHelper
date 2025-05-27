@@ -23,4 +23,4 @@ filter Select-ProjectItemsNotDone {
     end{
         "Filtered items that are done : $count" | Write-MyVerbose
     }
-} 
+} Export-ModuleMember -Function Select-ProjectItemsNotDone
