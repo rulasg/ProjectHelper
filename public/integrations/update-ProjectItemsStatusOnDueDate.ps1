@@ -44,6 +44,21 @@ function Update-ProjectItemsStatusOnDueDate{
     # Get the project
     $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:(-not $SkipProjectSync)
 
+    $ret = Invoke-ProjectInjectionOnDueDate -Project $prj -DueDateFieldName $DueDateFieldName -Status $Status -IncludeDoneItems:$IncludeDoneItems
+
+    return $ret
+
+} Export-ModuleMember -Function Update-ProjectItemsStatusOnDueDate
+
+function Invoke-ProjectInjectionOnDueDate {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)][Object]$Project,
+        [Parameter(Position = 2)][string]$DueDateFieldName,
+        [Parameter(Position = 3)][string]$Status,
+        [Parameter()][switch]$IncludeDoneItems
+    )
+
     # Filter items based on the NotDone parameter
     $items = $IncludeDoneItems ? $prj.items : $($prj.items | Select-ProjectItemsNotDone)
 
@@ -67,5 +82,4 @@ function Update-ProjectItemsStatusOnDueDate{
         }
         Edit-ProjectItem @params
     }
-
-} Export-ModuleMember -Function Update-ProjectItemsStatusOnDueDate
+} # Do not export this function to avoid conflicts with Update-ProjectItemsWithIntegration
