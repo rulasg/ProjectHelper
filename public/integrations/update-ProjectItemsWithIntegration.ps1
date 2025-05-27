@@ -34,7 +34,24 @@ function Update-ProjectItemsWithIntegration{
     # Get project
     $project = Get-Project -Owner $owner -ProjectNumber $projectNumber -Force:(-not $SkipProjectSync)
 
-    # Filter items based on the NotDone parameter
+    $result = Invoke-ProjectInjectionWithIntegration -Project $project -IntegrationField $IntegrationField -IntegrationCommand $IntegrationCommand -Slug $Slug -IncludeDoneItems:$IncludeDoneItems
+
+    return $result
+
+} Export-ModuleMember -Function Update-ProjectItemsWithIntegration
+
+function Invoke-ProjectInjectionWithIntegration{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][Object]$Project,
+        [Parameter(Mandatory)][string]$IntegrationField,
+        [Parameter(Mandatory)][string]$IntegrationCommand,
+        [Parameter()] [string]$Slug,
+        [Parameter()] [switch]$IncludeDoneItems
+
+    )
+
+       # Filter items based on the NotDone parameter
     $items = $IncludeDoneItems ? $project.items : $($project.items | Select-ProjectItemsNotDone)
 
     # Extract all items that have value on the integration field.
@@ -70,5 +87,4 @@ function Update-ProjectItemsWithIntegration{
 
         Edit-ProjectItemWithValues @param
     }
-
-} Export-ModuleMember -Function Update-ProjectItemsWithIntegration
+} # Do not export this function to avoid conflicts with Update-ProjectItemsWithIntegration
