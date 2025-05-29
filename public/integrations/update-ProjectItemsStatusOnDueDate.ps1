@@ -27,7 +27,7 @@ function Update-ProjectItemsStatusOnDueDate{
         [Parameter(Position = 2)][string]$DueDateFieldName,
         [Parameter(Position = 3)][string]$Status,
         [Parameter()][switch]$IncludeDoneItems,
-        [Parameter()] [switch]$SkipProjectSync
+        [Parameter()] [switch]$Force
 
     )
 
@@ -41,10 +41,11 @@ function Update-ProjectItemsStatusOnDueDate{
         return
     }
 
-    # Get the project
-    $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:(-not $SkipProjectSync)
+    # Sync project if needed
+    $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
-    $ret = Invoke-ProjectInjectionOnDueDate -Project $prj -DueDateFieldName $DueDateFieldName -Status $Status -IncludeDoneItems:$IncludeDoneItems
+    # Call the injection type function
+    $ret = Invoke-ProjectInjectionOnDueDate -Owner $Owner -ProjectNumber $ProjectNumber -DueDateFieldName $DueDateFieldName -Status $Status -IncludeDoneItems:$IncludeDoneItems
 
     return $ret
 
@@ -53,30 +54,48 @@ function Update-ProjectItemsStatusOnDueDate{
 function Invoke-ProjectInjectionOnDueDate {
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory)][Object]$Project,
+        [Parameter(Position = 0)][string]$Owner,
+        [Parameter(Position = 1)][int]$ProjectNumber,
         [Parameter(Position = 2)][string]$DueDateFieldName,
         [Parameter(Position = 3)][string]$Status,
         [Parameter()][switch]$IncludeDoneItems
     )
 
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+
+    $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+
     # Filter items based on the NotDone parameter
     $items = $IncludeDoneItems ? $Project.items : $($Project.items | Select-ProjectItemsNotDone)
+    
+    foreach($key in $items.Keys){
 
-    $itemKeys = $items.Keys
+        $item = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $key
 
-    # Select keys that have due date field
-    $itemKeys = $itemKeys | Where-Object { $null -ne $Project.items.$_.$DueDateFieldName }
+        # skip if $item is done
+        if(-not $IncludeDoneItems -and $item.Status -eq "Done"){
+            continue
+        }
 
-    # Select keys that have over due date
-    $today = Get-DateToday
-    $itemKeys = $itemKeys | Where-Object {$today -ge $Project.items.$_.$DueDateFieldName}
+        # Skip if the item does not have the due date field
+        if(-not $item.$DueDateFieldName){
+            continue
+        }
+        
+        # Skip if the item is not overdue
+        $today = Get-DateToday
+        if($today -lt $item.$DueDateFieldName){
+            continue
+        }
+        
+        # Change item
 
-    # Update status of the items
-    foreach($key in $itemKeys){
+        # Update status of the items
         $params = @{
-            ItemId = $key
             Owner = $Owner
             ProjectNumber = $ProjectNumber
+            ItemId = $item.id
             FieldName = "Status"
             Value = $Status
         }

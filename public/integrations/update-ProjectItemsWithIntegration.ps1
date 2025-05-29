@@ -31,36 +31,45 @@ function Update-ProjectItemsWithIntegration{
         return
     }
 
-    # Get project
-    $project = Get-Project -Owner $owner -ProjectNumber $projectNumber -Force:(-not $SkipProjectSync)
+    # Sync project if needed
+    $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
-    $result = Invoke-ProjectInjectionWithIntegration -Project $project -IntegrationField $IntegrationField -IntegrationCommand $IntegrationCommand -Slug $Slug -IncludeDoneItems:$IncludeDoneItems
+    # Call the injection type function
+    $ret = Invoke-ProjectInjectionWithIntegration -Owner $Owner -ProjectNumber $ProjectNumber -IntegrationField $IntegrationField -IntegrationCommand $IntegrationCommand -Slug $Slug -IncludeDoneItems:$IncludeDoneItems
 
-    return $result
+    return $ret
 
 } Export-ModuleMember -Function Update-ProjectItemsWithIntegration
 
 function Invoke-ProjectInjectionWithIntegration{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][Object]$Project,
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
         [Parameter(Mandatory)][string]$IntegrationField,
         [Parameter(Mandatory)][string]$IntegrationCommand,
         [Parameter()] [string]$Slug,
         [Parameter()] [switch]$IncludeDoneItems
-
     )
 
-       # Filter items based on the NotDone parameter
-    $items = $IncludeDoneItems ? $project.items : $($project.items | Select-ProjectItemsNotDone)
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    # Extract all items that have value on the integration field.
-    # This field is the value that will work as parameter to the integration command
-    $itemList = $items.Values | Where-Object { -Not [string]::IsNullOrWhiteSpace($_.$IntegrationField) }
-    "Items with $IntegrationField value to update: $($itemList.Count)" | Write-MyHost
+    $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
-    foreach($item in $itemList){
-        
+    # Filter items based on the NotDone parameter
+    $items = $IncludeDoneItems ? $Project.items : $($Project.items | Select-ProjectItemsNotDone)
+
+    foreach($item in $items.Keys){
+        # Get the item
+        $item = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $item
+
+        # Skip if the item does not have the integration field
+        if(-not $item.$IntegrationField){
+            "Item $($item.id) does not have the integration field $IntegrationField, skipping" | Write-MyVerbose
+            continue
+        }
+
         try {
             "Calling integration [ $IntegrationCommand $($item.$IntegrationField)]" | Write-MyHost
             $values = Invoke-MyCommand -Command "$IntegrationCommand $($item.$IntegrationField)"
