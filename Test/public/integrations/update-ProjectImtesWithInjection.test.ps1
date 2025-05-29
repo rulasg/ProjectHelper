@@ -17,16 +17,16 @@ function Test_UpdateProjectWithInjection{
     function global:Invoke-ProjectInjection_1 {
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)] [object]$Project
+        [Parameter()][string]$Owner,
+        [Parameter()][int]$ProjectNumber
     )
 
         "String from integration1" | Write-Host
-        "ProjectId: $($Project.ProjectId)" | Write-Host
 
         $params = @{
             ItemId = "PVTI_lADOAlIw4c4A0Lf4zgYNTxI"
-            Owner = $Project.owner
-            ProjectNumber = $Project.number
+            Owner = $Owner
+            ProjectNumber = $ProjectNumber
             FieldName = "sf_Text1"
             Value = "Value updated from integration1"
         }
@@ -36,15 +36,15 @@ function Test_UpdateProjectWithInjection{
 function global:Invoke-ProjectInjection_2 {
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)] [object]$Project
+        [Parameter()][string]$Owner,
+        [Parameter()][int]$ProjectNumber
     )
         "String from integration1" | Write-Host
-        "ProjectId: $($Project.ProjectId)" | Write-Host
 
         $params = @{
             ItemId = "PVTI_lADOAlIw4c4A0Lf4zgYNTc0"
-            Owner = $Project.owner
-            ProjectNumber = $Project.number
+            Owner = $Owner
+            ProjectNumber = $ProjectNumber
             FieldName = "sf_Text2"
             Value = "Value updated from integration2"
             }
@@ -52,8 +52,8 @@ function global:Invoke-ProjectInjection_2 {
     }
 
     $param = @{
-        Owner = $owner
-        ProjectNumber = $projectNumber
+        Owner = $Owner
+        ProjectNumber = $ProjectNumber
     }
 
    $result = Update-ProjectItemsWithInjection @param
@@ -93,16 +93,16 @@ function Test_UpdateProjectWithInjection_Failed_1{
     function global:Invoke-ProjectInjection_1 {
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)] [object]$Project
+        [Parameter()][string]$Owner,
+        [Parameter()][int]$ProjectNumber
     )
 
         "String from integration1" | Write-Host
-        "ProjectId: $($Project.ProjectId)" | Write-Host
 
         $params = @{
             ItemId = "PVTI_lADOAlIw4c4A0Lf4zgYNTxI"
-            Owner = $Project.owner
-            ProjectNumber = $Project.number
+            Owner = $Owner
+            ProjectNumber = $ProjectNumber
             FieldName = "sf_Text1"
             Value = "Value updated from integration1"
         }
@@ -112,17 +112,17 @@ function Test_UpdateProjectWithInjection_Failed_1{
     function global:Invoke-ProjectInjection_2 {
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)] [object]$Project
+        [Parameter()][string]$Owner,
+        [Parameter()][int]$ProjectNumber
     )
         "String from integration1" | Write-Host
-        "ProjectId: $($Project.ProjectId)" | Write-Host
 
         throw "Integration 2 failed"
     }
 
     $param = @{
-        Owner = $owner
-        ProjectNumber = $projectNumber
+        Owner = $Owner
+        ProjectNumber = $ProjectNumber
     }
 
    $result = Update-ProjectItemsWithInjection @param
@@ -164,16 +164,16 @@ function Test_InvokeProjectInjection{
     function global:Invoke-ProjectInjection_1 {
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)] [object]$Project
+        [Parameter()][string]$Owner,
+        [Parameter()][int]$ProjectNumber
     )
 
         "String from integration1" | Write-Host
-        "ProjectId: $($Project.ProjectId)" | Write-Host
 
         $params = @{
             ItemId = "PVTI_lADOAlIw4c4A0Lf4zgYNTxI"
-            Owner = $Project.owner
-            ProjectNumber = $Project.number
+            Owner = $Owner
+            ProjectNumber = $ProjectNumber
             FieldName = "sf_Text1"
             Value = "Value updated from integration1"
         }
@@ -207,11 +207,11 @@ function Test_InvokeProjectInjection_Fail{
     function global:Invoke-ProjectInjection_1 {
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)] [object]$Project
+        [Parameter()][string]$Owner,
+        [Parameter()][int]$ProjectNumber
     )
 
         "String from integration1" | Write-Host
-        "ProjectId: $($Project.ProjectId)" | Write-Host
 
         throw "Integration 1 failed"
 

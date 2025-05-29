@@ -71,7 +71,7 @@ function Update-ProjectItemsWithInjection{
     If this parameter is provided, the FunctionInfo parameter will be ignored.
 .PARAMETER Owner
     The owner of the project.
-.PARAMETER ProjectNumber    
+.PARAMETER ProjectNumber
     The project number.
 .PARAMETER ShowErrors
     If specified, shows errors encountered during the function invocation.
@@ -93,7 +93,6 @@ function Invoke-ProjectInjection {
 
     begin{
         ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-        $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
         $ret = @{
             FailedIntegration = @()
@@ -123,7 +122,7 @@ function Invoke-ProjectInjection {
 
         try {
             Write-Host "$FunctionName ... [" -ForegroundColor DarkCyan
-            $null = & $FunctionName -Project $Project -ErrorAction $ErrorShow
+            $null = & $FunctionName -Owner $Owner -ProjectNumber $ProjectNumber -ErrorAction $ErrorShow
             Write-Host "] "  -NoNewline -ForegroundColor DarkCyan
             Write-Host "PASS"  -ForegroundColor DarkYellow
             $ret.Pass++
