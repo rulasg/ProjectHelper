@@ -36,7 +36,7 @@ function Update-ProjectItemsWithInjection{
 
     # Get the injection functions list
 
-    $functions = Get-Command -Name "Invoke-ProjectInjection_*" -ErrorAction SilentlyContinue
+    $functions = Get-ProjectInjectionFunctions
 
     # Iterate through all the items in the project
     $start = Get-Date
@@ -56,6 +56,21 @@ function Update-ProjectItemsWithInjection{
     return $global:ResultUpdateProjectWithInjection
 
 } Export-ModuleMember -Function Update-ProjectItemsWithInjection
+
+function Get-ProjectInjectionFunctions {
+    [CmdletBinding()]
+    param()
+
+    # Get all functions that start with Invoke-ProjectInjection_
+    $functions = Get-Command -Name "Invoke-ProjectInjection_*" -ErrorAction SilentlyContinue
+
+    if ($functions) {
+        return $functions
+    } else {
+        Write-Host "No project injection functions found." -ForegroundColor Yellow
+        return $null
+    }
+} Export-ModuleMember -Function Get-ProjectInjectionFunctions
 
 
 <#.SYNOPSIS
