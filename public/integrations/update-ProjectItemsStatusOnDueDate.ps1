@@ -60,16 +60,16 @@ function Invoke-ProjectInjectionOnDueDate {
     )
 
     # Filter items based on the NotDone parameter
-    $items = $IncludeDoneItems ? $prj.items : $($prj.items | Select-ProjectItemsNotDone)
+    $items = $IncludeDoneItems ? $Project.items : $($Project.items | Select-ProjectItemsNotDone)
 
     $itemKeys = $items.Keys
 
     # Select keys that have due date field
-    $itemKeys = $itemKeys | Where-Object { $null -ne $prj.items.$_.$DueDateFieldName }
+    $itemKeys = $itemKeys | Where-Object { $null -ne $Project.items.$_.$DueDateFieldName }
 
     # Select keys that have over due date
     $today = Get-DateToday
-    $itemKeys = $itemKeys | Where-Object {$today -ge $prj.items.$_.$DueDateFieldName}
+    $itemKeys = $itemKeys | Where-Object {$today -ge $Project.items.$_.$DueDateFieldName}
 
     # Update status of the items
     foreach($key in $itemKeys){

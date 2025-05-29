@@ -122,10 +122,10 @@ function Invoke-ProjectInjection {
         Write-Verbose -Message "Running [ $FunctionName ]"
 
         try {
-            Write-Host "$FunctionName ... [" -NoNewline -ForegroundColor DarkCyan
+            Write-Host "$FunctionName ... [" -ForegroundColor DarkCyan
             $null = & $FunctionName -Project $Project -ErrorAction $ErrorShow
             Write-Host "] "  -NoNewline -ForegroundColor DarkCyan
-            Write-Host "PASS"  -ForegroundColor DarkYellow 
+            Write-Host "PASS"  -ForegroundColor DarkYellow
             $ret.Pass++
         }
         catch {

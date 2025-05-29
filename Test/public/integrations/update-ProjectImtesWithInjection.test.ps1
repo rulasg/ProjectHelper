@@ -161,8 +161,6 @@ function Test_InvokeProjectInjection{
 
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber.json"
 
-    New-ModuleV3 -Name IntegrationFunctions
-
     function global:Invoke-ProjectInjection_1 {
     [CmdletBinding()]
     param(
@@ -230,4 +228,3 @@ function Test_InvokeProjectInjection_Fail{
 
     Assert-Count -Expected 0 -Presented $result
 }
-
