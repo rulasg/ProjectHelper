@@ -1,4 +1,4 @@
-function Test_GetProjetItems_SUCCESS{
+function Test_GetProjetItemList_SUCCESS{
 
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
@@ -38,7 +38,7 @@ function Test_GetProjetItems_SUCCESS{
     Assert-Count -Expected $itemsCount -Presented $result
 }
 
-function Test_GetProjetItems_FAIL{
+function Test_GetProjetItemList_FAIL{
 
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
@@ -61,6 +61,22 @@ function Test_GetProjetItems_FAIL{
 
     Assert-IsNull -Object $result
     Assert-Contains -Expected $erroMessage1 -Presented $tt
+}
+
+function Test_ProjectItemList_ExcludeDone{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $itemsDone = 3
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+
+    $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
+
+    Assert-AreEqual -Expected $itemsCount -Presented $result.Keys.Count
+
+    $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -ExcludeDone
+
+    Assert-AreEqual -Expected ($itemsCount - $itemsDone) -Presented $result.Keys.Count
 }
 
 function Test_FindProjectItemByTitle_SUCCESS{
@@ -201,3 +217,5 @@ function Test_SearchProjectItem_SUCCESS{
     Assert-AreEqual -Expected "https://github.com/SomeOrg/ProjectDemoTest-repo-front/issues/3" -Presented $result[0].url
 
 }
+
+

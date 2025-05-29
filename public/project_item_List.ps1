@@ -6,6 +6,7 @@ function Get-ProjectItemList{
     param(
         [Parameter(Position = 0)] [string]$Owner,
         [Parameter(Position = 1)] [string]$ProjectNumber,
+        [Parameter()][switch]$ExcludeDone,
         [Parameter()][switch]$Force
     )
 
@@ -20,15 +21,35 @@ function Get-ProjectItemList{
                 "Project not found. Check owner and projectnumber" | Write-MyError
                 return $null
             }
-        
-            # if $db is null it rill return null
-            return $db.items
-    }
-    catch {
+
+            # Create a hashtable with ItemId as the key
+            $ret = New-HashTable
+            foreach ($key in $db.items.Keys) {
+
+                $item = Get-ProjectItem -ItemId $key -Owner $Owner -ProjectNumber $ProjectNumber
+
+                if($ExcludeDone -and (Test-ItemIsDone $item)){
+                    continue
+                }
+
+                if ($null -ne $item) {
+                    $ret[$key] = $item
+                }
+            }
+
+            return $ret
+    }  catch {
         "Can not get item list with Force [$Force]; $_" | Write-MyError
     }
 
 } Export-ModuleMember -Function Get-ProjectItemList
+
+function Test-ItemIsDone($Item){
+
+    $ret = $Item.Status -eq "Done" 
+
+    return $ret
+}
 
 function Find-ProjectItemByTitle{
     [CmdletBinding()]
@@ -85,6 +106,9 @@ function Search-ProjectItem{
         [Parameter()][string[]]$Fields,
         [Parameter()][switch]$Force
     )
+
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
     $Fields = Get-EnvironmentDisplayFields -Fields $Fields
 

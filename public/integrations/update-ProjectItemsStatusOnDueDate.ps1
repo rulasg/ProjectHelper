@@ -64,25 +64,15 @@ function Invoke-ProjectInjectionOnDueDate {
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+    $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -ExcludeDone:$(-Not $IncludeDoneItems)
 
-    # Filter items based on the NotDone parameter
-    $items = $IncludeDoneItems ? $Project.items : $($Project.items | Select-ProjectItemsNotDone)
-    
-    foreach($key in $items.Keys){
-
-        $item = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $key
-
-        # skip if $item is done
-        if(-not $IncludeDoneItems -and $item.Status -eq "Done"){
-            continue
-        }
+    foreach($item in $items.Values){
 
         # Skip if the item does not have the due date field
         if(-not $item.$DueDateFieldName){
             continue
         }
-        
+
         # Skip if the item is not overdue
         $today = Get-DateToday
         if($today -lt $item.$DueDateFieldName){
