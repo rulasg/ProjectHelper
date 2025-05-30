@@ -1,15 +1,19 @@
 <#
 .SYNOPSIS
-    Update all the items of a project with an integration command
+    Updates project items with injection functions.
 .DESCRIPTION
-    Update all the items of a project with an integration command
-    The function will update all the items of a project with the values returned by the integration command
-    The integration command will be called for each Item with the value of the integration field as parameter.
-    The integration command must return a hashtable with the values to be updated
-    The project fields to be updated will have the same name as the hash table keys with a slug as suffix
-    If an item has a field with the name `sf_Name` it will be updated with the value of the hashtable key Name if the slug defined is "sf_"
+    This function updates items in a project using defined injection functions.
+.PARAMETER Owner
+    The owner of the project.
+.PARAMETER ProjectNumber
+    The project number.
+.PARAMETER IncludeDoneItems
+    If specified, includes items that are marked as done.
+.PARAMETER SkipProjectSync
+    If specified, skips the project synchronization step.
 .EXAMPLE
-    Update-ProjectItemsWithIntegration -Owner "someOwner" -ProjectNumber 164 -IntegrationField "sfUrl" -IntegrationCommand "Get-SfAccount" -Slug "sf_"
+    Update-ProjectItemsWithInjection -Owner "octodemo" -ProjectNumber 164
+    This will call all commands available called Invoke-ProjectInjection_* to update items in the project owned by "octodemo" with the project number 164.
 #>
 function Update-ProjectItemsWithInjection{
     [CmdletBinding()]
@@ -32,7 +36,7 @@ function Update-ProjectItemsWithInjection{
 
     # Get the injection functions list
 
-    $functions = Get-Command -Name "Invoke-ProjectInjection_*" -ErrorAction SilentlyContinue
+    $functions = Get-ProjectInjectionFunctions
 
     # Iterate through all the items in the project
     $start = Get-Date
@@ -53,6 +57,45 @@ function Update-ProjectItemsWithInjection{
 
 } Export-ModuleMember -Function Update-ProjectItemsWithInjection
 
+function Get-ProjectInjectionFunctions {
+    [CmdletBinding()]
+    param()
+
+    # Get all functions that start with Invoke-ProjectInjection_
+    $functions = Get-Command -Name "Invoke-ProjectInjection_*" -ErrorAction SilentlyContinue
+
+    if ($functions) {
+        return $functions
+    } else {
+        Write-Host "No project injection functions found." -ForegroundColor Yellow
+        return $null
+    }
+} Export-ModuleMember -Function Get-ProjectInjectionFunctions
+
+
+<#.SYNOPSIS
+    Invokes a project injection function for a specific project.
+.DESCRIPTION
+    This function invokes a project injection function for a specific project, allowing for integration with various project management tasks.
+.PARAMETER FunctionInfo
+    The function information to be invoked.
+    We use this parameter to pipe the output of Get-Command to this function.
+.PARAMETER FunctionName
+    The name of the function to be invoked.
+    If this parameter is not provided, the FunctionInfo parameter must be provided.
+    If this parameter is provided, the FunctionInfo parameter will be ignored.
+.PARAMETER Owner
+    The owner of the project.
+.PARAMETER ProjectNumber
+    The project number.
+.PARAMETER ShowErrors
+    If specified, shows errors encountered during the function invocation.
+.EXAMPLE
+    Invoke-ProjectInjection -FunctionName "Invoke-ProjectInjection_UpdateItemsStatusOnDueDate" -Owner "octodemo" -ProjectNumber 164
+    This will invoke the function "Invoke-ProjectInjection_UpdateItemsStatusOnDueDate" for the project owned by "octodemo" with the project number 164.
+.NOTES
+    This function will allow to single pick the injection function to call under the development of integrations for later be called by Update-ProjectItemsWithInjection.
+#>
 function Invoke-ProjectInjection {
     [CmdletBinding()]
     param (
@@ -65,7 +108,6 @@ function Invoke-ProjectInjection {
 
     begin{
         ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-        $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
         $ret = @{
             FailedIntegration = @()
@@ -94,10 +136,10 @@ function Invoke-ProjectInjection {
         Write-Verbose -Message "Running [ $FunctionName ]"
 
         try {
-            Write-Host "$FunctionName ... [" -NoNewline -ForegroundColor DarkCyan
-            $null = & $FunctionName -Project $Project -ErrorAction $ErrorShow
+            Write-Host "$FunctionName ... [" -ForegroundColor DarkCyan
+            $null = & $FunctionName -Owner $Owner -ProjectNumber $ProjectNumber -ErrorAction $ErrorShow
             Write-Host "] "  -NoNewline -ForegroundColor DarkCyan
-            Write-Host "PASS"  -ForegroundColor DarkYellow 
+            Write-Host "PASS"  -ForegroundColor DarkYellow
             $ret.Pass++
         }
         catch {

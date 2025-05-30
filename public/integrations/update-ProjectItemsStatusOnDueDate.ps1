@@ -27,7 +27,7 @@ function Update-ProjectItemsStatusOnDueDate{
         [Parameter(Position = 2)][string]$DueDateFieldName,
         [Parameter(Position = 3)][string]$Status,
         [Parameter()][switch]$IncludeDoneItems,
-        [Parameter()] [switch]$SkipProjectSync
+        [Parameter()] [switch]$Force
 
     )
 
@@ -41,31 +41,54 @@ function Update-ProjectItemsStatusOnDueDate{
         return
     }
 
-    # Get the project
-    $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:(-not $SkipProjectSync)
+    # Sync project if needed
+    $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
-    # Filter items based on the NotDone parameter
-    $items = $IncludeDoneItems ? $prj.items : $($prj.items | Select-ProjectItemsNotDone)
+    # Call the injection type function
+    $ret = Invoke-ProjectInjectionOnDueDate -Owner $Owner -ProjectNumber $ProjectNumber -DueDateFieldName $DueDateFieldName -Status $Status -IncludeDoneItems:$IncludeDoneItems
 
-    $itemKeys = $items.Keys
+    return $ret
 
-    # Select keys that have due date field
-    $itemKeys = $itemKeys | Where-Object { $null -ne $prj.items.$_.$DueDateFieldName }
+} Export-ModuleMember -Function Update-ProjectItemsStatusOnDueDate
 
-    # Select keys that have over due date
-    $today = Get-DateToday
-    $itemKeys = $itemKeys | Where-Object {$today -ge $prj.items.$_.$DueDateFieldName}
+function Invoke-ProjectInjectionOnDueDate {
+    [CmdletBinding()]
+    param (
+        [Parameter(Position = 0)][string]$Owner,
+        [Parameter(Position = 1)][int]$ProjectNumber,
+        [Parameter(Position = 2)][string]$DueDateFieldName,
+        [Parameter(Position = 3)][string]$Status,
+        [Parameter()][switch]$IncludeDoneItems
+    )
 
-    # Update status of the items
-    foreach($key in $itemKeys){
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+
+    $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -ExcludeDone:$(-Not $IncludeDoneItems)
+
+    foreach($item in $items.Values){
+
+        # Skip if the item does not have the due date field
+        if(-not $item.$DueDateFieldName){
+            continue
+        }
+
+        # Skip if the item is not overdue
+        $today = Get-DateToday
+        if($today -lt $item.$DueDateFieldName){
+            continue
+        }
+        
+        # Change item
+
+        # Update status of the items
         $params = @{
-            ItemId = $key
             Owner = $Owner
             ProjectNumber = $ProjectNumber
+            ItemId = $item.id
             FieldName = "Status"
             Value = $Status
         }
         Edit-ProjectItem @params
     }
-
-} Export-ModuleMember -Function Update-ProjectItemsStatusOnDueDate
+} # Do not export this function to avoid conflicts with Update-ProjectItemsWithIntegration

@@ -103,7 +103,7 @@ function Convert-ItemsFromResponse{
         [Parameter(Position = 0)][object]$ProjectV2
     )
 
-    $items = new-object System.Collections.Hashtable
+    $items = New-HashTable
 
     $nodes = $ProjectV2.items.nodes
 

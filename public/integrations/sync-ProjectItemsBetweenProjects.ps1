@@ -66,8 +66,7 @@ function Update-ProjectItemsBetweenProjects {
     $FieldsList = $sourceProject.fields.Values.name
 
     # Get source project items
-    # Filter items based on the NotDone parameter
-    $sourceItems = $IncludeDoneItems ? $sourceProject.items : $($sourceProject.items | Select-ProjectItemsNotDone)
+    $sourceItems = Get-ProjectItemList -Owner $SourceOwner -ProjectNumber $SourceProjectNumber -ExcludeDone:$(-not $IncludeDoneItems)
 
     # Process each item in the source project
     foreach($sourceItem in $sourceItems.Values){
