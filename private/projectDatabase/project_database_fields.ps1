@@ -21,14 +21,18 @@ function Test-FieldValue{
     )
     $dataType = $Field.dataType
 
-    switch ($dataType) {
-        "TITLE"          { $ret = $true;Break }
-        "TEXT"           { $ret = $true                                  ;Break }
-        "NUMBER"         { $ret = $Value | Test-NumberFormat             ;Break }
-        "DATE"           { $ret = $Value | Test-DateFormat               ;Break }
-        "SINGLE_SELECT"  { $ret = $($null -ne $Field.options.$Value)     ;Break}
+    if([string]::IsNullOrEmpty($Value)){
+        # If the value is null or empty, we assume it is a valid value as a no value
+        return $true
+    }
 
-        default          { $ret = $null }
+    switch ($dataType) {
+        "NUMBER"         { $ret = $Value | Test-NumberFormat               ;Break }
+        "DATE"           { $ret = $Value | Test-DateFormat                 ;Break }
+        "SINGLE_SELECT"  { $ret = $Value | Test-SingleSelect -Field $Field ;Break }
+
+        # default to true as any string or null is valid
+        default          { $ret = $true }
     }
 
     if(-not $ret){
@@ -37,7 +41,6 @@ function Test-FieldValue{
 
     return $ret
 }
-
 
 function ConvertTo-FieldValue{
     [CmdletBinding()]
@@ -50,13 +53,11 @@ function ConvertTo-FieldValue{
     $dataType = $Field.dataType
 
     switch ($dataType) {
-        "TITLE"          { $ret = $value                                 ;Break}
-        "TEXT"           { $ret = $value                                 ;Break}
-        "NUMBER"         { $ret = $value | ConvertTo-Number              ;Break}
-        "DATE"           { $ret = $value                                 ;Break}
-        "SINGLE_SELECT"  { $ret = $Field.options.$Value                  ;Break}
+        "NUMBER"         { $ret = $value | ConvertTo-Number                 ;Break}
+        "SINGLE_SELECT"  { $ret = $value | ConvertTo-SingleSelect $Field    ;Break}
 
-        default          { $ret = $null }
+        # default no transformation needed
+        default          { $ret = $value }
     }
 
     return $ret
@@ -73,19 +74,83 @@ function ConvertFrom-FieldValue{
     $dataType = $Field.dataType
 
     switch ($dataType) {
-        "TITLE"          { $ret = $value                                                            ;Break }
-        "TEXT"           { $ret = $value                                                            ;Break }
-        "NUMBER"         { $ret = $value                                                            ;Break}
-        "DATE"           { $ret = $value                                                            ;Break}
-        "SINGLE_SELECT"  { $ret = $Field.options.Keys | Where-Object {$Field.options.$_ -eq $value} ;Break}
+        "SINGLE_SELECT"  { $ret = $value| ConvertFrom-SingleSelect -Field $Field ;Break}
 
-        default          { $ret = $null }
+        # Default no transformation needed
+        default          { $ret = $value }
     }
 
     return $ret
 }
 
-# funciton Test-DateFormat what will test strings with the date format YYYY-MM-DD
+<#.SYNOPSIS
+    Convert from OptionId to OptionName
+#>
+function ConvertFrom-SingleSelect{
+    [CmdletBinding()]
+    [OutputType([string])]
+    param(
+        [Parameter(Position = 0)][object]$Field,
+        [Parameter(ValueFromPipeline)][string]$Value
+    )
+    process{
+
+        if([string]::IsNullOrEmpty($Value)){
+            return $null
+        }
+
+        $ret = $Field.options.Keys | Where-Object {$Field.options.$_ -eq $value}
+
+        if($null -eq $ret){
+            throw "Invalid SingleSelect value [$Value] for field [$($Field.name)] with type [$($Field.dataType)]"
+        }
+
+        return $ret
+    }
+}
+
+<#.SYNOPSIS
+    Convert from OptionName to OptionId
+#>
+function ConvertTo-SingleSelect{
+    [CmdletBinding()]
+    [OutputType([string])]
+    param(
+        [Parameter(Position = 0)][object]$Field,
+        [Parameter(ValueFromPipeline)][string]$Value
+    )
+    process{
+        $ret = $Field.options.$Value
+        return $ret
+    }
+}
+
+function Test-SingleSelect{
+    [CmdletBinding()]
+    [OutputType([bool])]
+    param(
+        [Parameter(ValueFromPipeline,Position = 0)][string]$Value,
+        [Parameter(Position = 1)][object]$Field
+    )
+
+    process{
+
+        try{
+            $result = ConvertTo-SingleSelect -Field $Field -Value $Value
+
+            if($null -eq $result){
+                return $false
+            }
+
+            return $true
+        }
+        catch {
+            return $false
+        }
+    }
+}
+
+# function Test-DateFormat what will test strings with the date format YYYY-MM-DD
 function Test-DateFormat{
     [CmdletBinding()]
     [OutputType([bool])]
@@ -106,6 +171,19 @@ function Test-DateFormat{
     }
 }
 
+function Test-SingleSelectFormat{
+    [CmdletBinding()]
+    [OutputType([bool])]
+    param(
+        [Parameter(ValueFromPipeline,Position = 0)][string]$Value,
+        [Parameter(Position = 1)][object]$Field
+    )
+
+    process{
+        }
+
+}
+
 function Test-NumberFormat{
     [CmdletBinding()]
     [OutputType([bool])]
@@ -114,6 +192,11 @@ function Test-NumberFormat{
     )
 
     process{
+
+        if([string]::IsNullOrEmpty($Number)){
+            # If the number is null or empty, we assume it is a valid value
+            return $true
+        }
 
         return $null -ne $(Get-NumberFormatCulture $Number)
     }
@@ -153,30 +236,6 @@ function ConvertTo-Number {
         return $numberPart
     }
 }
-
-# function ConvertTo-Number2 {
-#     [CmdletBinding()]
-#     [OutputType([string])]
-#     param(
-#         [Parameter(ValueFromPipeline)][string]$Value
-#     )
-#     process {
-#         $culture = Get-NumberFormatCulture $Value
-#         if ($null -ne $culture) {
-
-#             try {
-#                 return  [decimal]::Parse($Value, [System.Globalization.NumberStyles]::Any, $culture)
-
-#             }
-#             catch {
-#                 throw "Error parsing number: $_"
-#             }
-#         }
-#         else {
-#             throw "Could not determine number format for: $Value"
-#         }
-#     }
-# }
 
 function Get-NumberFormatCulture{
     [CmdletBinding()]

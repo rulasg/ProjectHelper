@@ -14,10 +14,11 @@ function Get-Item{
 
         # Check if is staged
         if($database.Staged.$ItemId){
-            foreach($field in $database.Staged.$ItemId.keys){
-                $fieldname = $database.Staged.$ItemId.$field.Field.name
-                $fieldValue =$database.Staged.$ItemId.$field.Value
-                $ret.$fieldname = $fieldValue
+            # Update ret with all staged fields values
+            foreach($fieldKey in $database.Staged.$ItemId.keys){
+                $fieldname = $database.Staged.$ItemId.$fieldKey.Field.name
+                # Make type conversions to string
+                $ret.$fieldname = ConvertFrom-FieldValue -Value $database.Staged.$ItemId.$fieldKey.Value -Field $database.fields.$fieldKey
             }
         }
         
