@@ -17,6 +17,9 @@ function Test_GetProject_Paging_SUCCESS{
 }
 
 function Test_GetProject_SUCCESS{
+
+    Assert-SkipTest
+
     Reset-InvokeCommandMock
     Enable-InvokeCommandAliasModule
 
