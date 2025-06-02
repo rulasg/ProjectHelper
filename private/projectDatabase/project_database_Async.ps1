@@ -5,7 +5,8 @@ function Sync-ProjectDatabaseAsync{
     [OutputType([bool])]
     param(
         [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber
+        [Parameter(Position = 1)][int]$ProjectNumber,
+        [Parameter()][int]$SyncBatchSize = 30
     )
 
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
@@ -21,7 +22,7 @@ function Sync-ProjectDatabaseAsync{
     $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
     # Send update to project
-    $result = Sync-ProjectAsync -Database $db
+    $result = Sync-ProjectAsync -Database $db -SyncBatchSize $SyncBatchSize
     if ($null -eq $result) {
         return $false
     }
@@ -29,10 +30,20 @@ function Sync-ProjectDatabaseAsync{
     # Clear the values that are the same
     $different = New-Object System.Collections.Hashtable
     $equal = New-Object System.Collections.Hashtable
-    foreach($itemId in $db.Staged.Keys){
-        foreach($fieldId in $db.Staged.$itemId.Keys){
+
+    # Make a copy of the staged keys before processing
+    $stagedItemKeys = @($db.Staged.Keys)
+
+    foreach($itemId in $stagedItemKeys){
+
+        # Make a copy of the staged fields keys before processing
+        $stagedFieldsKeys = @($db.Staged.$itemId.Keys)
+
+        # Process each staged field for the item
+        foreach($fieldId in $stagedFieldsKeys){
             $fieldName = $db.fields.$fieldId.name
 
+            # Skip if actual and staged values are the same
             $stagedV = $db.Staged.$itemId.$fieldId.Value
             $actualV = $db.items.$itemId.$fieldName
 
@@ -50,26 +61,20 @@ function Sync-ProjectDatabaseAsync{
                     Id = $itemId
                     Field = $fieldId
                 }
+                # Remove staged field
+                $db.Staged.$itemId.Remove($fieldId)
             }
         }
+
+        # Remove staged item if all fields are removed
+        if($db.Staged.$itemId.Keys.Count -eq 0){
+            $db.Staged.Remove($itemId)
+        }
+
     }
 
     $SyncedCount = $equal.Keys.Count
     $NotSyncedCount = $different.Keys.Count
-
-    # removed equal staged values
-    foreach($key in $equal.Keys){
-        $itemId = $equal.$key.Id
-        $fieldId = $equal.$key.Field
-
-        # Remove staged field
-        $db.Staged.$itemId.Remove($fieldId)
-
-        # remove staged item if all are removed
-        if($db.Staged.$itemId.Keys.Count -eq 0){
-            $db.Staged.Remove($itemId)
-        }
-    }
 
     #null Staged if empty
     if($db.Staged.Keys.Count -eq 0){
@@ -93,14 +98,28 @@ function Sync-ProjectDatabaseAsync{
 function Sync-ProjectAsync{
     [CmdletBinding(SupportsShouldProcess)]
     param(
-        [Parameter(Position = 0)][object]$Database
+        [Parameter(Position = 0)][object]$Database,
+        [Parameter()][int]$SyncBatchSize = 30
     )
 
     $db = $Database
     $calls = @()
+    $callsBatch = @()
 
     foreach($itemId in $db.Staged.Keys){
         foreach($fieldId in $db.Staged.$itemId.Keys){
+
+            # Get actual value on the database
+            $fieldName = $db.fields.$fieldId
+
+            # Get actual value on the database
+            $actualValue = $db.items.$itemId.$fieldName
+
+            # Skip if database has already the same value
+            if($actualValue -eq $db.Staged.$itemId.$fieldId.Value){
+                "Skipping [$itemId/$fieldName] as actual value is the same as staged value [$actualValue]" | Write-MyHost
+                continue
+            }
 
             $projectId = $db.ProjectId
             $value = $db.Staged.$itemId.$fieldId.Value
@@ -130,39 +149,19 @@ function Sync-ProjectAsync{
             }
 
             $calls += $call
+            $callsBatch += $call
+
+            # Call batch size if we reached the maximum batch size
+            if($callsBatch.count -eq $SyncBatchSize){
+                Waiting -Calls $callsBatch
+                $callsBatch = @() # Reset the batch
+            }
 
         }
     }
 
-    # "Waiting for all calls to finish ..." | Write-MyHost
-    # $results = $calls.job | Wait-Job
-    
-    $isDone = $false
-    $all = $calls.job.Count
-    $waitingJobs = $calls.job
-
-    "Waiting for all calls to finish [$($waitingJobs.Count)] " | Write-MyHost -noNewline
-
-    while(!$isdone){
-
-        $waitings = $waitingJobs | Wait-Job -Any
-
-        "." | Write-MyHost -NoNewline
-
-        $completed = ($calls.job | Where-Object{$_.State -eq "Completed"}).Count
-        $failed = ($calls.job | Where-Object{$_.State -eq "Failed"}).Count
-
-        # $running = ($calls.job | Where-Object{$_.State -eq "Running"}).Count
-        # "Running [$running] Completed [$completed] Failed [$failed] TOTAL [$all]" | Write-MyHost
-
-        # Remove completed jobs from the waiting list
-        $waitingJobs = $waitingJobs | Where-Object { $_.Id -ne $waitings.Id }
-        
-        $isDone = ($completed + $failed) -eq $all
-    }
-    "" | Write-MyHost
-    "Completed [$completed] Failed [$failed] TOTAL [$all]" | Write-MyHost
-
+    #Remaining calls
+    Waiting -Calls $callsBatch
 
     # Process all the calls
     foreach($call in $calls){
@@ -182,14 +181,35 @@ function Sync-ProjectAsync{
         }
 
         "Saving to database [$projectId/$itemId/$fieldName ($type) = $value ]" | Write-MyHost
-
-        if ($PSCmdlet.ShouldProcess($itemId, "Set-ProjectV2Item")) {
-            # update database with change
-            $db.items.$itemId.$fieldName = $value
-        }
+        $db.items.$itemId.$fieldName = $value
     }
 
     return $db
+}
+
+function Waiting($Calls){
+    $waitingJobs = $Calls.job
+
+    $all = $Calls.Count
+    "Waiting for [$all] jobs to complete " | Write-MyHost -noNewline
+
+    while($waitingJobs.Count -ne 0){
+
+        $waitings = $waitingJobs | Wait-Job -Any
+
+        "." | Write-MyHost -NoNewline
+
+        # Remove completed jobs from the waiting list
+        $waitingJobs = $waitingJobs | Where-Object { $_.Id -ne $waitings.Id }
+
+    }
+
+    $completed = $Calls | Where-Object { $_.job.State -eq 'Completed' } | Measure-Object | Select-Object -ExpandProperty Count
+    $failed = $Calls | Where-Object { $_.job.State -eq 'Failed' } | Measure-Object | Select-Object -ExpandProperty Count
+    $all = $Calls.Count
+    
+    "" | Write-MyHost
+    "Completed [$completed] Failed [$failed]" | Write-MyHost
 }
 
 function Sync-Project{
@@ -202,6 +222,15 @@ function Sync-Project{
 
     foreach($idemId in $db.Staged.Keys){
         foreach($fieldId in $db.Staged.$idemId.Keys){
+
+            # Get actual value on the database
+            $fieldName = $db.fields.$fieldId.name
+
+            # Skip if database has already the same value as staged
+            if($db.items.$itemId.$fieldName -eq $db.Staged.$itemId.$fieldId.Value){
+                "Skipping [$itemId/$fieldName] as actual value is the same as staged value [$actualValue]" | Write-MyHost
+                continue
+            }
 
             $project_id = $db.ProjectId
             $item_id = $idemId
@@ -226,15 +255,9 @@ function Sync-Project{
                 return $null
             }
 
-            if ($PSCmdlet.ShouldProcess($item.url, "Set-ProjectV2Item")) {
-                # update database with change
-                $fieldName = $db.fields.$fieldId.name
-                $db.items.$item_id.$fieldName = $value
+            # update database with change
+            $db.items.$item_id.$fieldName = $value
 
-                # $item = Convert-ItemFromResponse $projectV2Item
-                # Set-ProjectV2Item2Database $db $projectV2Item -Item $item
-                # $projectV2Item = $result.data.updateProjectV2ItemFieldValue.projectV2Item
-            }
         }
     }
 

@@ -128,6 +128,9 @@ function Convert-ItemsFromResponse{
         $item.url = $nodeItem.content.url
         $item.state = $nodeItem.content.state
 
+        $item.createdAt = ([string]::IsNullOrEmpty($nodeItem.content.createdAt)) ? $null : [datetime]::Parse($nodeItem.content.createdAt) 
+        $item.updatedAt = ([string]::IsNullOrEmpty($nodeItem.content.updatedAt)) ? $null : [datetime]::Parse($nodeItem.content.updatedAt)
+
         #Fields
         foreach($nodefield in $nodeItem.fieldValues.nodes){
 

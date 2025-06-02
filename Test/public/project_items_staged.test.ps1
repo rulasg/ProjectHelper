@@ -3,7 +3,8 @@ function Test_CommitProjectItemsStaged_NoStaged{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
+    $Owner = "SomeOrg" ; $ProjectNumber = 164 ; 
+    # $itemsCount = 12 ; $fieldsCount = 18
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
 
     Start-MyTranscript
@@ -185,7 +186,7 @@ function Test_CommitProjectItemsStagedAsync_SUCCESS{
     Edit-ProjectItem $owner $projectNumber $itemId2 $fieldComment2 $fileCommentValue2
     Edit-ProjectItem $owner $projectNumber $itemId2 $fieldTitle2 $fileTitleValue2
 
-    $result = Sync-ProjectItemStagedAsync -Owner $Owner -ProjectNumber $ProjectNumber
+    $result = Sync-ProjectItemStagedAsync -Owner $Owner -ProjectNumber $ProjectNumber -SyncBatchSize 2
 
     # Return true
     Assert-IsTrue -Condition $result
@@ -313,15 +314,17 @@ function Test_CommitProjectItemsStagedAsync_debug{
     Reset-InvokeCommandMock
     Enable-InvokeCommandAliasModule
 
-$params = @{
-    SourceOwner = "github"
-    DestinationProjectNumber = "9279"
-    FieldSlug = "oa_"
-    DestinationOwner = "github"
-    SourceProjectNumber = "20521"
-}
+    $params = @{
+        SourceOwner = "github"
+        DestinationProjectNumber = "9279"
+        FieldSlug = "oa_"
+        DestinationOwner = "github"
+        SourceProjectNumber = "20521"
+    }
 
-    # $result = Update-ProjectItemsBetweenProjects @params
+    $result = Update-ProjectItemsBetweenProjects @params
+
+    Assert-NotNull -Presented $result
 
     Show-ProjectItemStaged
 

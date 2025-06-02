@@ -3,7 +3,8 @@ function Test_GetProjectItem_SUCCESS{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
+    $Owner = "SomeOrg" ; $ProjectNumber = 164 ; 
+    # $itemsCount = 12 ; $fieldsCount = 18
     $fieldComment = "Comment" ; $fieldTitle = "Title"
 
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
@@ -53,7 +54,7 @@ function Test_EditProjetItems_SUCCESS{
 
     # Act
     Edit-ProjectItem $owner $projectNumber $itemId $fieldComment $fieldCommentValue
-    $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+    # $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
     Edit-ProjectItem $owner $projectNumber $itemId $fieldTitle $fieldTitleValue
 
     # Assert
@@ -113,7 +114,7 @@ function Test_EditProejctItems_NumberDecimals{
     $Owner = "SomeOrg" ; $ProjectNumber = 164
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
 
-    $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+    # $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
     $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
 
