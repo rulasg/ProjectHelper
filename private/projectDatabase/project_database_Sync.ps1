@@ -72,6 +72,13 @@ function Sync-Project{
     foreach($idemId in $db.Staged.Keys){
         foreach($fieldId in $db.Staged.$idemId.Keys){
 
+            $fieldName = $db.fields.$fieldId.name
+
+            if($db.items.$idemId.$fieldName -eq $db.Staged.$idemId.$fieldId.Value){
+                "Skipping [$idemId/$fieldId] as value is the same" | Write-MyHost
+                continue
+            }
+
             $project_id = $db.ProjectId
             $item_id = $idemId
             $field_id = $fieldId
@@ -86,24 +93,18 @@ function Sync-Project{
                 type = $type
             }
 
-            "Saving  [$project_id/$item_id/$field_id ($type) = $value ]" | Write-MyHost
+            "Saving  [$project_id/$item_id/$field_id ($type) = $value ] ..." | Write-MyHost -NoNewLine
 
             $result = Invoke-MyCommand -Command GitHub_UpdateProjectV2ItemFieldValue -Parameters $params
 
             if ($null -eq $result) {
-                "Updating Project Item Field [$item_id/$field_id/$value]" | Write-MyError
-                return $null
+                "FAILED !!" | Write-MyHost
+                continue
             }
 
-            if ($PSCmdlet.ShouldProcess($item.url, "Set-ProjectV2Item")) {
-                # update database with change
-                $fieldName = $db.fields.$fieldId.name
-                $db.items.$item_id.$fieldName = $value
-
-                # $item = Convert-ItemFromResponse $projectV2Item
-                # Set-ProjectV2Item2Database $db $projectV2Item -Item $item
-                # $projectV2Item = $result.data.updateProjectV2ItemFieldValue.projectV2Item
-            }
+            # update database with change
+            $db.items.$item_id.$fieldName = $value
+            "Done" | Write-MyHost
         }
     }
 
