@@ -188,22 +188,20 @@ function Sync-ProjectAsync{
 }
 
 function Waiting($Calls){
-    $isDone = $false
     $waitingJobs = $Calls.job
 
     $all = $Calls.Count
     "Waiting for [$all] jobs to complete " | Write-MyHost -noNewline
-    
-    while(!$isDone){
-        
+
+    while($waitingJobs.Count -ne 0){
+
         $waitings = $waitingJobs | Wait-Job -Any
 
         "." | Write-MyHost -NoNewline
-        
+
         # Remove completed jobs from the waiting list
         $waitingJobs = $waitingJobs | Where-Object { $_.Id -ne $waitings.Id }
 
-        $isDone = $waitingJobs.Count -eq 0
     }
 
     $completed = $Calls | Where-Object { $_.job.State -eq 'Completed' } | Measure-Object | Select-Object -ExpandProperty Count
