@@ -185,7 +185,7 @@ function Test_CommitProjectItemsStagedAsync_SUCCESS{
     Edit-ProjectItem $owner $projectNumber $itemId2 $fieldComment2 $fileCommentValue2
     Edit-ProjectItem $owner $projectNumber $itemId2 $fieldTitle2 $fileTitleValue2
 
-    $result = Sync-ProjectItemStagedAsync -Owner $Owner -ProjectNumber $ProjectNumber
+    $result = Sync-ProjectItemStagedAsync -Owner $Owner -ProjectNumber $ProjectNumber -SyncBatchSize 2
 
     # Return true
     Assert-IsTrue -Condition $result

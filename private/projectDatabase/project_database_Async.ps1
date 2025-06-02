@@ -5,7 +5,8 @@ function Sync-ProjectDatabaseAsync{
     [OutputType([bool])]
     param(
         [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber
+        [Parameter(Position = 1)][int]$ProjectNumber,
+        [Parameter()][int]$SyncBatchSize = 30
     )
 
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
@@ -21,7 +22,7 @@ function Sync-ProjectDatabaseAsync{
     $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
     # Send update to project
-    $result = Sync-ProjectAsync -Database $db
+    $result = Sync-ProjectAsync -Database $db -SyncBatchSize $SyncBatchSize
     if ($null -eq $result) {
         return $false
     }
@@ -97,11 +98,13 @@ function Sync-ProjectDatabaseAsync{
 function Sync-ProjectAsync{
     [CmdletBinding(SupportsShouldProcess)]
     param(
-        [Parameter(Position = 0)][object]$Database
+        [Parameter(Position = 0)][object]$Database,
+        [Parameter()][int]$SyncBatchSize = 30
     )
 
     $db = $Database
     $calls = @()
+    $callsBatch = @()
 
     foreach($itemId in $db.Staged.Keys){
         foreach($fieldId in $db.Staged.$itemId.Keys){
@@ -146,39 +149,19 @@ function Sync-ProjectAsync{
             }
 
             $calls += $call
+            $callsBatch += $call
+
+            # Call batch size if we reached the maximum batch size
+            if($callsBatch.count -eq $SyncBatchSize){
+                Waiting -Calls $callsBatch
+                $callsBatch = @() # Reset the batch
+            }
 
         }
     }
 
-    # "Waiting for all calls to finish ..." | Write-MyHost
-    # $results = $calls.job | Wait-Job
-    
-    $isDone = $false
-    $all = $calls.job.Count
-    $waitingJobs = $calls.job
-
-    "Waiting for all calls to finish [$($waitingJobs.Count)] " | Write-MyHost -noNewline
-
-    while(!$isdone){
-
-        $waitings = $waitingJobs | Wait-Job -Any
-
-        "." | Write-MyHost -NoNewline
-
-        $completed = ($calls.job | Where-Object{$_.State -eq "Completed"}).Count
-        $failed = ($calls.job | Where-Object{$_.State -eq "Failed"}).Count
-
-        # $running = ($calls.job | Where-Object{$_.State -eq "Running"}).Count
-        # "Running [$running] Completed [$completed] Failed [$failed] TOTAL [$all]" | Write-MyHost
-
-        # Remove completed jobs from the waiting list
-        $waitingJobs = $waitingJobs | Where-Object { $_.Id -ne $waitings.Id }
-        
-        $isDone = ($completed + $failed) -eq $all
-    }
-    "" | Write-MyHost
-    "Completed [$completed] Failed [$failed] TOTAL [$all]" | Write-MyHost
-
+    #Remaining calls
+    Waiting -Calls $callsBatch
 
     # Process all the calls
     foreach($call in $calls){
@@ -198,14 +181,37 @@ function Sync-ProjectAsync{
         }
 
         "Saving to database [$projectId/$itemId/$fieldName ($type) = $value ]" | Write-MyHost
-
-        if ($PSCmdlet.ShouldProcess($itemId, "Set-ProjectV2Item")) {
-            # update database with change
-            $db.items.$itemId.$fieldName = $value
-        }
+        $db.items.$itemId.$fieldName = $value
     }
 
     return $db
+}
+
+function Waiting($Calls){
+    $isDone = $false
+    $waitingJobs = $Calls.job
+
+    $all = $Calls.Count
+    "Waiting for [$all] jobs to complete " | Write-MyHost -noNewline
+    
+    while(!$isDone){
+        
+        $waitings = $waitingJobs | Wait-Job -Any
+
+        "." | Write-MyHost -NoNewline
+        
+        # Remove completed jobs from the waiting list
+        $waitingJobs = $waitingJobs | Where-Object { $_.Id -ne $waitings.Id }
+
+        $isDone = $waitingJobs.Count -eq 0
+    }
+
+    $completed = $Calls | Where-Object { $_.job.State -eq 'Completed' } | Measure-Object | Select-Object -ExpandProperty Count
+    $failed = $Calls | Where-Object { $_.job.State -eq 'Failed' } | Measure-Object | Select-Object -ExpandProperty Count
+    $all = $Calls.Count
+    
+    "" | Write-MyHost
+    "Completed [$completed] Failed [$failed]" | Write-MyHost
 }
 
 function Sync-Project{

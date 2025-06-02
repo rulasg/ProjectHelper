@@ -64,12 +64,16 @@ function Sync-ProjectItemStaged{
 
 } Export-ModuleMember -Function Sync-ProjectItemStaged
 
+<#.SYNOPSIS
+    Commits SAved changes in the DB to the project asynchronously
+#>
 function Sync-ProjectItemStagedAsync{
     [CmdletBinding()]
     [OutputType([hashtable])]
     param(
         [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][string]$ProjectNumber
+        [Parameter(Position = 1)][string]$ProjectNumber,
+        [Parameter()][int]$SyncBatchSize = 30
     )
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
@@ -79,7 +83,7 @@ function Sync-ProjectItemStagedAsync{
         return
     }
 
-   $result = Sync-ProjectDatabaseAsync -Owner $Owner -ProjectNumber $ProjectNumber
+   $result = Sync-ProjectDatabaseAsync -Owner $Owner -ProjectNumber $ProjectNumber -SyncBatchSize $SyncBatchSize
 
    return $result
 
