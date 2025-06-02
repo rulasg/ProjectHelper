@@ -29,10 +29,20 @@ function Sync-ProjectDatabaseAsync{
     # Clear the values that are the same
     $different = New-Object System.Collections.Hashtable
     $equal = New-Object System.Collections.Hashtable
-    foreach($itemId in $db.Staged.Keys){
-        foreach($fieldId in $db.Staged.$itemId.Keys){
+
+    # Make a copy of the staged keys before processing
+    $stagedItemKeys = @($db.Staged.Keys)
+
+    foreach($itemId in $stagedItemKeys){
+
+        # Make a copy of the staged fields keys before processing
+        $stagedFieldsKeys = @($db.Staged.$itemId.Keys)
+
+        # Process each staged field for the item
+        foreach($fieldId in $stagedFieldsKeys){
             $fieldName = $db.fields.$fieldId.name
 
+            # Skip if actual and staged values are the same
             $stagedV = $db.Staged.$itemId.$fieldId.Value
             $actualV = $db.items.$itemId.$fieldName
 
@@ -50,26 +60,20 @@ function Sync-ProjectDatabaseAsync{
                     Id = $itemId
                     Field = $fieldId
                 }
+                # Remove staged field
+                $db.Staged.$itemId.Remove($fieldId)
             }
         }
+
+        # Remove staged item if all fields are removed
+        if($db.Staged.$itemId.Keys.Count -eq 0){
+            $db.Staged.Remove($itemId)
+        }
+
     }
 
     $SyncedCount = $equal.Keys.Count
     $NotSyncedCount = $different.Keys.Count
-
-    # removed equal staged values
-    foreach($key in $equal.Keys){
-        $itemId = $equal.$key.Id
-        $fieldId = $equal.$key.Field
-
-        # Remove staged field
-        $db.Staged.$itemId.Remove($fieldId)
-
-        # remove staged item if all are removed
-        if($db.Staged.$itemId.Keys.Count -eq 0){
-            $db.Staged.Remove($itemId)
-        }
-    }
 
     #null Staged if empty
     if($db.Staged.Keys.Count -eq 0){
@@ -101,6 +105,18 @@ function Sync-ProjectAsync{
 
     foreach($itemId in $db.Staged.Keys){
         foreach($fieldId in $db.Staged.$itemId.Keys){
+
+            # Get actual value on the database
+            $fieldName = $db.fields.$fieldId
+
+            # Get actual value on the database
+            $actualValue = $db.items.$itemId.$fieldName
+
+            # Skip if database has already the same value
+            if($actualValue -eq $db.Staged.$itemId.$fieldId.Value){
+                "Skipping [$itemId/$fieldName] as actual value is the same as staged value [$actualValue]" | Write-MyHost
+                continue
+            }
 
             $projectId = $db.ProjectId
             $value = $db.Staged.$itemId.$fieldId.Value
@@ -203,6 +219,15 @@ function Sync-Project{
     foreach($idemId in $db.Staged.Keys){
         foreach($fieldId in $db.Staged.$idemId.Keys){
 
+            # Get actual value on the database
+            $fieldName = $db.fields.$fieldId.name
+
+            # Skip if database has already the same value as staged
+            if($db.items.$itemId.$fieldName -eq $db.Staged.$itemId.$fieldId.Value){
+                "Skipping [$itemId/$fieldName] as actual value is the same as staged value [$actualValue]" | Write-MyHost
+                continue
+            }
+
             $project_id = $db.ProjectId
             $item_id = $idemId
             $field_id = $fieldId
@@ -226,15 +251,9 @@ function Sync-Project{
                 return $null
             }
 
-            if ($PSCmdlet.ShouldProcess($item.url, "Set-ProjectV2Item")) {
-                # update database with change
-                $fieldName = $db.fields.$fieldId.name
-                $db.items.$item_id.$fieldName = $value
+            # update database with change
+            $db.items.$item_id.$fieldName = $value
 
-                # $item = Convert-ItemFromResponse $projectV2Item
-                # Set-ProjectV2Item2Database $db $projectV2Item -Item $item
-                # $projectV2Item = $result.data.updateProjectV2ItemFieldValue.projectV2Item
-            }
         }
     }
 
