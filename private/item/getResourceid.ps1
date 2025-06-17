@@ -3,7 +3,7 @@
 Set-MyInvokeCommandAlias -Alias GetIssueOrPullRequest -Command 'Invoke-GetIssueOrPullRequest -Url {url}'
 
 
-function Get-ResourceIdFromUrl{
+function Get-ContentIdFromUrl{
     [CmdletBinding()]
     param(
         [Parameter(Mandatory,Position = 0)][string]$Url
@@ -23,4 +23,4 @@ function Get-ResourceIdFromUrl{
     }
 
     return $ret
-} Export-ModuleMember -Function Get-ResourceIdFromUrl
+} Export-ModuleMember -Function Get-ContentIdFromUrl

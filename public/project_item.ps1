@@ -81,17 +81,17 @@ function Add-ProjectItem{
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    # Get item id
-    $contentId = Get-ResourceIdFromUrl -Url $Url
-    if(-not $contentId){
-        "Content ID not found for URL [$Url]" | Write-MyError
-        return $null
-    }
-
     # Get project id
     $projectId = Get-ProjectId -Owner $Owner -ProjectNumber $ProjectNumber
     if(-not $projectId){
         "Project ID not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError
+        return $null
+    }
+
+    # Get item id
+    $contentId = Get-ContentIdFromUrl -Url $Url
+    if(-not $contentId){
+        "Content ID not found for URL [$Url]" | Write-MyError
         return $null
     }
 
