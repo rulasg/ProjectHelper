@@ -126,6 +126,51 @@ function Invoke-GitHubUpdateItemValues{
     return $response
 } Export-ModuleMember -Function Invoke-GitHubUpdateItemValues
 
+function Invoke-GetIssueOrPullRequest {
+    param(
+        [Parameter(Mandatory)] [string] $Url
+    )
+
+    # Use the environmentraviable 
+    $token = Get-GithubToken
+    if(-not $token){
+        throw "GH Cli Auth Token not available. Run 'gh auth login' in your terminal."
+    }
+
+    # Define the GraphQL query with variables
+    $qlPath =  $PSScriptRoot | Join-Path -ChildPath "graphql" -AdditionalChildPath "getIssueOrPullRequest.query"
+    $query = get-content -path $qlPath | Out-String
+
+    # Define the headers for the request
+    $headers = @{
+        "Authorization" = "Bearer $token"
+        "Content-Type" = "application/json"
+    }
+
+    # Define the variables for the request
+    $variables = @{
+        url = $Url
+    }
+
+    # Define the body for the request
+    $body = @{
+        query = $query
+        variables = $variables
+    } | ConvertTo-Json
+
+    # Send the request
+    $response = Invoke-RestMethod -Uri 'https://api.github.com/graphql' -Method Post -Body $body -Headers $headers
+
+    # Check if here are errors
+    if($response.errors){
+        "[$($response.errors[0].type)] $($response.errors[0].message)" | Write-MyError
+        return
+    }
+
+    # Return the field names
+    return $response
+} Export-ModuleMember -Function Invoke-GetIssueOrPullRequest
+
 function Get-GithubToken{
     [CmdletBinding()]
     param()
