@@ -1,3 +1,4 @@
+Set-MyInvokeCommandAlias -Alias AddItemToProject -Command 'Invoke-AddItemToProject -ProjectId {projectid} -ContentId {contentid}'
 
 <#
 .SYNOPSIS
@@ -69,6 +70,49 @@ function Edit-ProjectItem{
     Save-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
 
 } Export-ModuleMember -Function Edit-ProjectItem
+
+function Add-ProjectItem{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][string]$Owner,
+        [Parameter(Position = 1)][string]$ProjectNumber,
+        [Parameter(Position = 2)][string]$Url
+    )
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+
+    # Get item id
+    $contentId = Get-ResourceIdFromUrl -Url $Url
+    if(-not $contentId){
+        "Content ID not found for URL [$Url]" | Write-MyError
+        return $null
+    }
+
+    # Get project id
+    $projectId = Get-ProjectId -Owner $Owner -ProjectNumber $ProjectNumber
+    if(-not $projectId){
+        "Project ID not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError
+        return $null
+    }
+
+    # Add item to project
+    $response = Invoke-MyCommand -Command AddItemToProject -Parameters @{ projectid = $projectId ; contentid = $contentId }
+
+    # check if the response is null
+    if($response.errors){
+        "[$($response.errors[0].type)] $($response.errors[0].message)" | Write-MyError
+        return $null
+    }
+
+    if($response.data.addProjectV2ItemById.item.id)
+    {
+        return $response.data.addProjectV2ItemById.item.id
+    } else {
+        "Item not added to project" | Write-MyError
+        return $null
+    }
+
+} Export-ModuleMember -Function Add-ProjectItem
 
 function IsAreEqual{
     param(
