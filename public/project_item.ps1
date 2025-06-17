@@ -1,4 +1,5 @@
 Set-MyInvokeCommandAlias -Alias AddItemToProject -Command 'Invoke-AddItemToProject -ProjectId {projectid} -ContentId {contentid}'
+Set-MyInvokeCommandAlias -Alias RemoveItemFromProject -Command 'Invoke-RemoveItemFromProject -ProjectId {projectid} -ItemId {itemid}'
 
 <#
 .SYNOPSIS
@@ -113,6 +114,41 @@ function Add-ProjectItem{
     }
 
 } Export-ModuleMember -Function Add-ProjectItem
+
+function Remove-ProjectItem{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][string]$Owner,
+        [Parameter(Position = 1)][string]$ProjectNumber,
+        [Parameter(Position = 2)][string]$ItemId
+    )
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+
+    # Get project id
+    $projectId = Get-ProjectId -Owner $Owner -ProjectNumber $ProjectNumber
+    if(-not $projectId){
+        "Project ID not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError
+        return $null
+    }
+
+    # Remove item from project
+    $response = Invoke-MyCommand -Command RemoveItemFromProject -Parameters @{ projectid = $projectId ; itemid = $ItemId }
+
+    # check if the response is null
+    if($response.errors){
+        "[$($response.errors[0].type)] $($response.errors[0].message)" | Write-MyError
+        return $null
+    }
+
+    if($response.data.deleteProjectV2Item.deletedItemId -ne $ItemId){
+        "Some issue removing [$ItemId]from project" | Write-MyError
+        return $null
+    }
+
+    return $response.data.deleteProjectV2Item.deletedItemId
+
+} Export-ModuleMember -Function Remove-ProjectItem
 
 function IsAreEqual{
     param(
