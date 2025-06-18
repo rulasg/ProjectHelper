@@ -23,7 +23,7 @@ function Invoke-GitHubOrgProjectWithFields {
     }
 
     # Define the GraphQL query with variables
-    $qlPath =  $PSScriptRoot | Join-Path -ChildPath "graphql" -AdditionalChildPath "orgprojectwithfields.query"
+    $qlPath =  $PSScriptRoot | Join-Path -ChildPath "graphql" -AdditionalChildPath "orgprojectwithfieldsAndItems.query"
     $query = get-content -path $qlPath | Out-String
 
     # Define the headers for the request
