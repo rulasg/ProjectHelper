@@ -17,7 +17,7 @@ function Sync-ProjectDatabase{
         return
     }
 
-    $dbkey = GetDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
+    $dbkey = Get-DatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
 
     $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
