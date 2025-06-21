@@ -7,7 +7,7 @@ function Get-ProjectHelperEnvironment{
 
     $ret = @{
 
-        Owner = Get-EnvItem -Name EnvironmentCache_Owner
+        Owner         = Get-EnvItem -Name "EnvironmentCache_Owner"
         ProjectNumber = Get-EnvItem -Name "EnvironmentCache_ProjectNumber"
         DisplayFields = Get-EnvItem -Name "EnvironmentCache_Display_Fields"
     }
@@ -16,12 +16,26 @@ function Get-ProjectHelperEnvironment{
 
 } Export-ModuleMember -Function Get-ProjectHelperEnvironment
 
+function Reset-ProjectHelperEnvironment{
+    [CmdletBinding()]
+    param()
+
+    Set-EnvItem -Name "EnvironmentCache_Owner" -Value $null
+    Set-EnvItem -Name "EnvironmentCache_ProjectNumber" -Value $null
+    Set-EnvItem -Name "EnvironmentCache_Display_Fields" -Value $null
+
+} Export-ModuleMember -Function Reset-ProjectHelperEnvironment
+
 function Get-OwnerAndProjectNumber{
     [CmdletBinding()]
     param(
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber
     )
+
+    if($ProjectNumber -eq "0"){
+        $ProjectNumber = [string]::Empty
+    }
 
     if([string]::IsNullOrWhiteSpace($Owner)){
         $owner = Get-EnvItem -Name "EnvironmentCache_Owner"
