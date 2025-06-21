@@ -104,7 +104,7 @@ function Reset-ProjectItemStaged{
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    $dbkey = GetDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
+    $dbkey = Get-DatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
     $db = Get-Project $Owner $ProjectNumber
 
     $db.Staged = $null

@@ -17,7 +17,7 @@ function Sync-ProjectDatabase{
         return
     }
 
-    $dbkey = GetDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
+    $dbkey = Get-DatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
 
     $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
@@ -27,9 +27,16 @@ function Sync-ProjectDatabase{
         return $false
     }
 
-    # Check that all values are updated before cleanring staging
+    # Check that all values are updated before clearing staging
     $different = New-Object System.Collections.Hashtable
     foreach($idemId in $db.Staged.Keys){
+
+        # skip if $itemid is not in items. 
+        # This happenon direct item edit. Edit without full project sync
+        if(-not $db.items.$idemId){
+            continue
+        }
+
         foreach($fieldId in $db.Staged.$idemId.Keys){
             $fieldName = $db.fields.$fieldId.name
 
@@ -74,10 +81,10 @@ function Sync-Project{
 
             $fieldName = $db.fields.$fieldId.name
 
-            if($db.items.$idemId.$fieldName -eq $db.Staged.$idemId.$fieldId.Value){
-                "Skipping [$idemId/$fieldId] as value is the same" | Write-MyHost
-                continue
-            }
+            # if($db.items.$idemId.$fieldName -eq $db.Staged.$idemId.$fieldId.Value){
+            #     "Skipping [$idemId/$fieldId] as value is the same" | Write-MyHost
+            #     continue
+            # }
 
             $project_id = $db.ProjectId
             $item_id = $idemId
@@ -102,8 +109,11 @@ function Sync-Project{
                 continue
             }
 
-            # update database with change
-            $db.items.$item_id.$fieldName = $value
+            # update database with change if exists
+            if($db.items.$item_id ){
+                $db.items.$item_id.$fieldName = $value
+            }
+
             "Done" | Write-MyHost
         }
     }

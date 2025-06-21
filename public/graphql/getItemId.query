@@ -1,0 +1,51 @@
+query GetItemId($owner: String!, $name: String!, $number: Int!) {
+    repository(owner: $owner, name: $name) {
+      issueOrPullRequest(number: $number) {
+        __typename
+        ... on Issue {
+          id
+          projectItems(first: 100) {
+            nodes {
+              id
+              project { 
+                id
+                title
+                number
+                owner {
+                    __typename
+                    ... on User {
+                        login
+                                }
+                    ... on Organization {
+                        login
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ... on PullRequest {
+          id
+          projectItems(first: 100) {
+            nodes {
+              id
+              project { 
+                id
+                title
+                number
+                owner {
+                    __typename
+                    ... on User {
+                        login
+                                }
+                    ... on Organization {
+                        login
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

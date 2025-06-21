@@ -38,7 +38,7 @@ function Get-Database{
         [Parameter(Position = 0)][string]$Key
     )
 
-    $path =  GetDatabaseFile $Key
+    $path =  Get-DatabaseFile $Key
     
     if(-Not (Test-Path $path)){
         return $null
@@ -54,7 +54,7 @@ function Reset-Database{
     param(
         [Parameter(Position = 0)][string]$Key
     )
-    $path =  GetDatabaseFile -Key $Key
+    $path =  Get-DatabaseFile -Key $Key
     Remove-Item -Path $path -Force -ErrorAction SilentlyContinue
     return
 }
@@ -66,12 +66,12 @@ function Save-Database{
         [Parameter(Position = 2)][Object]$Database
     )
 
-    $path = GetDatabaseFile -Key $Key
+    $path = Get-DatabaseFile -Key $Key
 
     $Database | ConvertTo-Json -Depth 10 | Set-Content $path
 }
 
-function GetDatabaseFile{
+function Get-DatabaseFile{
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$Key

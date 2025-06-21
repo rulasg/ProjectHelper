@@ -62,16 +62,21 @@ function Test_CommitProjectItemsStaged_SUCCESS{
     $fieldComment2 = "Comment" ; $fileCommentValue2 = "new value of the comment 11"
     $fieldTitle2 = "Title" ; $fileTitleValue2 = "new value of the title 11"
 
+    # Edit-ProjectItem will call Get-Project with SkipItems
+    # This test is to confirm the sync works with the project and items
+    # Cache the project with items
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+
     MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc -FieldId PVTF_lADOBCrGTM4ActQazgSl5GU -Value "new value of the comment 10" -Type text'
     MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc -FieldId PVTF_lADOBCrGTM4ActQazgSkYm8 -Value "new value of the title" -Type text'
     MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMueM4 -FieldId PVTF_lADOBCrGTM4ActQazgSl5GU -Value "new value of the comment 11" -Type text'
     MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMueM4 -FieldId PVTF_lADOBCrGTM4ActQazgSkYm8 -Value "new value of the title 11" -Type text'
 
-    Edit-ProjectItem $owner $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
-    Edit-ProjectItem $owner $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
-    Edit-ProjectItem $owner $projectNumber $itemId2 $fieldComment2 $fileCommentValue2
-    Edit-ProjectItem $owner $projectNumber $itemId2 $fieldTitle2 $fileTitleValue2
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId2 $fieldComment2 $fileCommentValue2
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId2 $fieldTitle2 $fileTitleValue2
 
     $result = Sync-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
 
@@ -180,11 +185,13 @@ function Test_CommitProjectItemsStagedAsync_SUCCESS{
     
     # Mock get-project
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    # Cache the project with items as Edit-Project will call Get-Project with SkipItems
+    $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
-    Edit-ProjectItem $owner $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
-    Edit-ProjectItem $owner $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
-    Edit-ProjectItem $owner $projectNumber $itemId2 $fieldComment2 $fileCommentValue2
-    Edit-ProjectItem $owner $projectNumber $itemId2 $fieldTitle2 $fileTitleValue2
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId2 $fieldComment2 $fileCommentValue2
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId2 $fieldTitle2 $fileTitleValue2
 
     $result = Sync-ProjectItemStagedAsync -Owner $Owner -ProjectNumber $ProjectNumber -SyncBatchSize 2
 
@@ -233,18 +240,18 @@ function Test_ShowProjectItemsStaged{
     $fieldDate = "Next Action Date" ; $fieldDateValue1 = "2024-03-31"
     $fieldDateValue1_Before = $projectBefore.items.$itemId1.$fieldDate
     
-    Edit-ProjectItem $owner $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
-    Edit-ProjectItem $owner $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
-    Edit-ProjectItem $owner $projectNumber $itemId1 $fieldStatus $fieldStatusValue1
-    Edit-ProjectItem $owner $projectNumber $itemId1 $fieldDate $fieldDateValue1
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldStatus $fieldStatusValue1
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldDate $fieldDateValue1
     
     # Item 2
     $itemId2 = "PVTI_lADOBCrGTM4ActQazgMueM4"
     $fieldComment2 = "Comment" ; $fileCommentValue2 = "new value of the comment 11"
     $fieldTitle2 = "Title" ; $fileTitleValue2 = "new value of the title 11"
 
-    Edit-ProjectItem $owner $projectNumber $itemId2 $fieldComment2 $fileCommentValue2
-    Edit-ProjectItem $owner $projectNumber $itemId2 $fieldTitle2 $fileTitleValue2
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId2 $fieldComment2 $fileCommentValue2
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId2 $fieldTitle2 $fileTitleValue2
 
     # Act all staged items
     $result = Show-ProjectItemStaged -Owner $owner -ProjectNumber $ProjectNumber
@@ -301,7 +308,7 @@ function Test_TestProjectItemStaged{
 
     # Edit some thing
     MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc -FieldId PVTF_lADOBCrGTM4ActQazgSl5GU -Value "new value of the comment 10" -Type text'
-    Edit-ProjectItem $owner $projectNumber PVTI_lADOBCrGTM4ActQazgMuXXc "Comment" "new value of the comment 10"
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber PVTI_lADOBCrGTM4ActQazgMuXXc "Comment" "new value of the comment 10"
 
     $result = Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-IsTrue -Condition $result

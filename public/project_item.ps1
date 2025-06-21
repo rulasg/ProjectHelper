@@ -21,7 +21,7 @@ function Get-ProjectItem{
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems:$(-not $Force)
 
     $item = Get-Item $db $ItemId
 
@@ -38,25 +38,27 @@ function Get-ProjectItem{
 function Edit-ProjectItem{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)] [string]$Owner,
-        [Parameter(Position = 1)] [string]$ProjectNumber,
-        [Parameter(Position = 2)] [string]$ItemId,
-        [Parameter(Position = 3)] [string]$FieldName,
-        [Parameter(Position = 4)] [string]$Value,
-        [Parameter()][switch]$Force
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter(Position = 1)][string]$ItemId,
+        [Parameter(Position = 2)][string]$FieldName,
+        [Parameter(Position = 3)][string]$Value,
+        [Parameter()][switch]$Force,
+        [Parameter()][switch]$Commit
     )
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    # get the database
-    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
-
+    # Force cache update
+    # Full sync if force. Skip items if not force
+    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems:$(-not $Force)
+    
     # Find the actual value of the item. Item+Staged
     $item = Get-Item $db $ItemId
     # $itemStaged = Get-ItemStaged $db $ItemId
 
     # if the item is not found
-    if($null -eq $item){ "Item [$ItemId] not found" | Write-MyError; return $null}
+    # if($null -eq $item){ "Item [$ItemId] not found" | Write-MyError; return $null}
 
     # Check if the actual value is the same as the target value and we avoid update
     if( IsAreEqual -Object1:$item.$FieldName -Object2:$Value){
@@ -67,7 +69,7 @@ function Edit-ProjectItem{
     # save the new value
     Save-ItemFieldValue $db $itemId $FieldName $Value
 
-    # Commit change changes to the database
+    # Commit changes to the database
     Save-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
 
 } Export-ModuleMember -Function Edit-ProjectItem
@@ -75,9 +77,9 @@ function Edit-ProjectItem{
 function Add-ProjectItem{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][string]$ProjectNumber,
-        [Parameter(Position = 2)][string]$Url
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter(Position = 0)][string]$Url
     )
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
@@ -118,9 +120,9 @@ function Add-ProjectItem{
 function Remove-ProjectItem{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][string]$ProjectNumber,
-        [Parameter(Position = 2)][string]$ItemId
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter(Position = 0)][string]$ItemId
     )
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}

@@ -7,7 +7,7 @@ function Test-ProjectDatabase{
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    $key = GetDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
+    $key = Get-DatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
     $prj = Get-Database -Key $key
 
     $ret = $null -ne $prj
@@ -22,7 +22,7 @@ function Test-ProjectDatabaseStaged{
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    $key = GetDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
+    $key = Get-DatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
     $prj = Get-Database -Key $key
 
     if($null -eq $prj){
@@ -47,7 +47,7 @@ function Get-ProjectFromDatabase{
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    $key = GetDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
+    $key = Get-DatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
     $prj = Get-Database -Key $key
 
     return $prj
@@ -60,7 +60,7 @@ function Reset-ProjectDatabase{
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    $dbKey = GetDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
+    $dbKey = Get-DatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
     Reset-Database -Key $dbKey
 }
 
@@ -75,7 +75,7 @@ function Set-ProjectDatabaseV2{
     $owner = $ProjectV2.owner.login
     $projectnumber = $ProjectV2.number
 
-    $dbkey = GetDatabaseKey -Owner $owner -ProjectNumber $projectnumber
+    $dbkey = Get-DatabaseKey -Owner $owner -ProjectNumber $projectnumber
 
     $db = New-Object System.Collections.Hashtable
     
@@ -104,11 +104,11 @@ function Save-ProjectDatabase{
         [Parameter(Position = 0)][hashtable]$Database
     )
 
-    $dbkey = GetDatabaseKey -Owner $owner -ProjectNumber $projectnumber
+    $dbkey = Get-DatabaseKey -Owner $owner -ProjectNumber $projectnumber
     Save-Database -Key $dbkey -Database $Database
 }
 
-function GetDatabaseKey{
+function Get-DatabaseKey{
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$Owner,

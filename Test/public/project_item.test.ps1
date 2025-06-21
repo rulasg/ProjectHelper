@@ -7,13 +7,21 @@ function Test_GetProjectItem_SUCCESS{
     # $itemsCount = 12 ; $fieldsCount = 18
     $fieldComment = "Comment" ; $fieldTitle = "Title"
 
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
-
+    
     $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
     $fieldTitleValue = "A draft in the project"
     $fieldCommentValue = "This"
-
+    
+    # allos get project with skipitems
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2-skipitems.json' -skipitems
+    
+    # Getting an item not cached is null
     $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
+    Assert-IsNull -Object $result
+    
+    # Allow to get project with items for the FORCE
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId -Force
 
     Assert-AreEqual -Expected $itemId -Presented $result.id
     Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$fieldComment
@@ -22,8 +30,8 @@ function Test_GetProjectItem_SUCCESS{
     # Edit to see the staged references
     $fieldCommentValue = "new value of the comment 10.1"
     $fieldTitleValue = "new value of the title 10.1"
-    Edit-ProjectItem $owner $projectNumber $itemId $fieldComment $fieldCommentValue
-    Edit-ProjectItem $owner $projectNumber $itemId $fieldTitle $fieldTitleValue
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldComment $fieldCommentValue
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldTitle $fieldTitleValue
 
     $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
 
@@ -53,9 +61,9 @@ function Test_EditProjetItems_SUCCESS{
     $fieldTitle = "Title" ; $fieldTitleValue = "new value of the title 10.1" ; $fieldTitleValue_Before = $before.items.$itemId.$fieldTitle
 
     # Act
-    Edit-ProjectItem $owner $projectNumber $itemId $fieldComment $fieldCommentValue
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldComment $fieldCommentValue
     # $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
-    Edit-ProjectItem $owner $projectNumber $itemId $fieldTitle $fieldTitleValue
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldTitle $fieldTitleValue
 
     # Assert
 
@@ -99,8 +107,8 @@ function Test_EditProejctItems_SameValue{
     $fieldComment = "Comment" ; $fieldCommentValue = $prj.items.$itemId."Comment"
     $fieldTitle = "Title" ; $fieldTitleValue = $prj.items.$itemId."Title"
 
-    Edit-ProjectItem $owner $projectNumber $itemId $fieldComment $fieldCommentValue
-    Edit-ProjectItem $owner $projectNumber $itemId $fieldTitle $fieldTitleValue
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldComment $fieldCommentValue
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldTitle $fieldTitleValue
 
     $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
 
@@ -112,7 +120,7 @@ function Test_EditProejctItems_NumberDecimals{
     Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2-skipitems.json' -SkipItems
 
     # $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
@@ -133,7 +141,7 @@ function Test_EditProejctItems_NumberDecimals{
         # Not a valid value
         $hasThrow= $false
         try {
-            Edit-ProjectItem $owner $projectNumber $itemId $fieldNumber "NotNumber"
+            Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldNumber "NotNumber"
         }
         catch {
             $hasThrow = $true
@@ -142,7 +150,7 @@ function Test_EditProejctItems_NumberDecimals{
     }
 
     "10.1","10,1" | ForEach-Object {
-        Edit-ProjectItem $owner $projectNumber $itemId $fieldNumber $_
+        Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldNumber $_
         $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
         Assert-Count -Expected 1 -Presented $result.Keys
         Assert-AreEqual -Expected 10.1 -Presented $result.$itemId.PVTF_lADOBCrGTM4ActQazgSkglc.Value
@@ -150,12 +158,46 @@ function Test_EditProejctItems_NumberDecimals{
     }
 
     "1,000.1","1.000,1" | ForEach-Object {
-        Edit-ProjectItem $owner $projectNumber $itemId $fieldNumber $_
+        Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldNumber $_
         $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
         Assert-Count -Expected 1 -Presented $result.Keys
         Assert-AreEqual -Expected 1000.1 -Presented $result.$itemId.PVTF_lADOBCrGTM4ActQazgSkglc.Value
         Reset-ProjectItemStaged
     }
+}
+
+function Test_EditProejctItems_Direct{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $Owner = "SomeOrg" ; $ProjectNumber = 164
+    
+    # No sync of project with items allowed just with skipitems
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2-skipitems.json' -skipitems
+
+    $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
+    $fieldComment = "Comment" ; $fieldCommentValue = "new value of the comment 10.1"
+    
+    # Get an item with no changes staged from a not cached project
+    $result = Get-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId
+    Assert-IsNull -Object $result
+
+    # Direct edit of the item
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId -FieldName $fieldComment -Value $fieldCommentValue
+
+    # Get the staged item
+    $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
+
+    Assert-Count -Expected 1 -Presented $result.Keys
+    Assert-AreEqual -Expected $itemId -Presented $result.Keys[0]
+    Assert-AreEqual -Expected "Comment" -Presented $result.$itemId.PVTF_lADOBCrGTM4ActQazgSl5GU.Field.name
+    Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$itemId.PVTF_lADOBCrGTM4ActQazgSl5GU.Value
+
+    $result = Get-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId
+    Assert-AreEqual -Expected $itemId -Presented $result.id
+    Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$fieldComment
+    Assert-Count -Expected 2 -Presented $result
+
 }
 
 function Test_UpdateProjectDatabase_Fail_With_Staged{
@@ -176,7 +218,7 @@ function Test_UpdateProjectDatabase_Fail_With_Staged{
     $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force
     Assert-Count -Expected $itemsCount -Presented $result
 
-    $result = Edit-ProjectItem $owner $projectNumber $itemId $fieldComment $fieldCommentValue
+    $result = Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldComment $fieldCommentValue
     Assert-IsNull -Object $result
 
     $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber

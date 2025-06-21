@@ -8,9 +8,9 @@ function Get-Item{
 
     process {
 
-        $item = $Database.items.$ItemId
+        $item = $Database.items.$ItemId | Copy-MyHashTable
 
-        $ret = $item | Copy-MyHashTable
+        $ret = $item ?? $(New-HashTable)
 
         # Check if is staged
         if($database.Staged.$ItemId){
@@ -22,6 +22,14 @@ function Get-Item{
             }
         }
         
+        #if ret is empty, return null
+        if($ret.Count -eq 0){
+            return $null
+        }
+
+        # Add the item id if not present
+        $ret.id = $ret.id ?? $ItemId
+
         return $ret
     }
 }
