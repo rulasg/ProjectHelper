@@ -1,5 +1,6 @@
 # We need to invoke a call back to allow the mock of this call on testing
-Set-MyInvokeCommandAlias -Alias GitHubOrgProjectWithFields -Command 'Invoke-GitHubOrgProjectWithFields -Owner {owner} -ProjectNumber {projectnumber} -afterFields "{afterFields}" -afterItems "{afterItems}"'
+Set-MyInvokeCommandAlias -Alias GitHubOrgProjectWithFields          -Command 'Invoke-GitHubOrgProjectWithFields -Owner {owner} -ProjectNumber {projectnumber} -afterFields "{afterFields}" -afterItems "{afterItems}"'
+Set-MyInvokeCommandAlias -Alias GitHubOrgProjectWithFieldsSkipItems -Command 'Invoke-GitHubOrgProjectWithFields -Owner {owner} -ProjectNumber {projectnumber} -afterFields "{afterFields}" -afterItems "{afterItems}" -firstItems 0'
 
 function Update-ProjectDatabase {
     [CmdletBinding()]
@@ -7,10 +8,16 @@ function Update-ProjectDatabase {
     param(
         [Parameter(Position = 0)][string]$Owner,
         [Parameter(Position = 1)][int]$ProjectNumber,
+        [Parameter()][switch]$SkipItems,
         [Parameter()][switch]$Force
     )
 
     $params = @{ owner = $Owner ; projectnumber = $ProjectNumber ; afterFields = "" ; afterItems = "" }
+
+    # This means that the ProjectNumber has a empty string value
+    if($ProjectNumber -eq 0){
+        throw "ProjectNumber invalid. Please specify a valid ProjectNumber"
+    }
     
     # check if there are unsaved changes
     $saved = Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber
@@ -22,7 +29,12 @@ function Update-ProjectDatabase {
     $fields = New-Object System.Collections.Hashtable
 
     do {
-        $result  = Invoke-MyCommand -Command GitHubOrgProjectWithFields -Parameters $params
+
+        if($SkipItems){
+            $result  = Invoke-MyCommand -Command GitHubOrgProjectWithFieldsSkipItems -Parameters $params
+        } else {
+            $result  = Invoke-MyCommand -Command GitHubOrgProjectWithFields -Parameters $params
+        }
 
         # check if the result is empty
         if($null -eq $result){
@@ -32,27 +44,33 @@ function Update-ProjectDatabase {
 
         $projectV2 = $result.data.organization.ProjectV2
 
-        # Check if we have already processed all the items
-        if($result.data.organization.projectv2.items.totalCount -ne $items.Count){
-            $items = Convert-ItemsFromResponse $projectV2 | Add2HashTable $items
+        if($SkipItems){
+            $hasNextPageItems = $false
+        } else {
+            # Check if we have already processed all the items
+            if($result.data.organization.projectv2.items.totalCount -ne $items.Count){
+                $items = Convert-ItemsFromResponse $projectV2 | Add2HashTable $items
+            }
+            $params.afterItems = $result.data.organization.projectv2.items.pageInfo.endCursor
+            $hasNextPageItems = $result.data.organization.projectv2.items.pageInfo.hasNextPage 
         }
 
         # Check if we have already processed all the fields
         if($result.data.organization.projectv2.fields.totalCount -ne $fields.Count){
             $fields = Convert-FieldsFromReponse $projectV2 | Add2HashTable $fields
         }
-
-        $params.afterItems = $result.data.organization.projectv2.items.pageInfo.endCursor
         $params.afterFields = $result.data.organization.projectv2.fields.pageInfo.endCursor
+        $hasNextPageFields = $result.data.organization.projectv2.fields.pageInfo.hasNextPage
 
+        # Write the progress
         "GithubOrgProjectWithFields - Items [$($items.count)/$($result.data.organization.ProjectV2.Items.totalCount)] Fields [$($fields.count)/$($result.data.organization.ProjectV2.fields.totalCount)]" | Write-MyHost
 
     } while (
-        $result.data.organization.projectv2.items.pageInfo.hasNextPage -or $result.data.organization.projectv2.fields.pageInfo.hasNextPage
+        $hasNextPageItems -or $hasNextPageFields
     )
 
     # Check that we have retreived all the items
-    if($result.data.organization.projectv2.items.totalCount -ne $items.Count){
+    if(!$SkipItems -and $result.data.organization.projectv2.items.totalCount -ne $items.Count){
         "Items count mismatch. Expected [$($result.data.organization.projectv2.items.totalCount)] Found [$($items.count)]" | Write-MyWarning
         return $false
     }

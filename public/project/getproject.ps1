@@ -1,10 +1,9 @@
-Set-MyInvokeCommandAlias -Alias GitHubOrgProject -Command 'Invoke-GitHubOrgProjectWithFields -Owner {owner} -ProjectNumber {projectnumber} '
-
 function Get-Project {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$Owner,
         [Parameter(Position = 1)][int]$ProjectNumber,
+        [Parameter()][switch]$SkipItems,
         [Parameter()][switch]$Force
     )
 
@@ -13,12 +12,16 @@ function Get-Project {
         throw "Owner and ProjectNumber are required on Get-Project"
     }
 
-    if ($force -or -Not (Test-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber)) {
-        $result = Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
+    if ($Force -or -Not (Test-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber)) {
+        $result = Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems
         if ( ! $result) { return }
     }
 
     $prj = Get-ProjectFromDatabase -Owner $Owner -ProjectNumber $ProjectNumber
+
+    if($SkipItems){
+        $prj.Items = @()
+    }
 
     return $prj
 } Export-ModuleMember -Function Get-Project
@@ -27,8 +30,7 @@ function Get-ProjectId {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber,
-        [Parameter()][switch]$Force
+        [Parameter(Position = 1)][int]$ProjectNumber
     )
 
     ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
@@ -36,16 +38,10 @@ function Get-ProjectId {
         throw "Owner and ProjectNumber are required on Get-ProjectId"
     }
 
-    if ($force -or -Not (Test-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber)) {
-        $params = @{ owner = $Owner ; projectnumber = $ProjectNumber }
-        $response = Invoke-MyCommand -Command GitHubOrgProject -Parameters $params
+    # Get project id
+    $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems
 
-        $id = $response.data.organization.projectV2.id
-
-    } else {
-        $response = Get-ProjectFromDatabase -Owner $Owner -ProjectNumber $ProjectNumber
-        $id = $response.ProjectId
-    }
+    $id = $project.ProjectId
 
     return $id
 } Export-ModuleMember -Function Get-ProjectId
