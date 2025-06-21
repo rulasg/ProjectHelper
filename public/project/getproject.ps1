@@ -45,3 +45,38 @@ function Get-ProjectId {
 
     return $id
 } Export-ModuleMember -Function Get-ProjectId
+
+function Open-Project{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][string]$Owner,
+        [Parameter(Position = 1)][int]$ProjectNumber
+    )
+
+    ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { 
+        throw "Owner and ProjectNumber are required on Open-Project"
+    }
+
+    $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -skipItems
+    if (-not $project) {
+        throw "Project not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]"
+    }
+    $projectUrl = $project.url
+
+    # Open the URL based on the operating system
+    if ($IsWindows -or $env:OS -match "Windows") {
+        Start-Process $projectUrl
+    }
+    elseif ($IsMacOS) {
+        Start-Process "open" -ArgumentList $projectUrl
+    }
+    elseif ($IsLinux) {
+        Start-Process "xdg-open" -ArgumentList $projectUrl
+    }
+    else {
+        Write-Warning "Unknown operating system. Cannot open URL automatically."
+        Write-Host "URL: $projectUrl"
+    }
+
+} Export-ModuleMember -Function Open-Project
