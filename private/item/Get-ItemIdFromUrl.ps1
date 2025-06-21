@@ -12,7 +12,7 @@ function Get-ItemIdFromUrl{
 
     # figure out the projectID from environment
     if([string]::IsNullOrWhiteSpace($ProjectId)){
-        $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -ErrorAction SilentlyContinue
+        $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems
         if(-not $project){
             "Project not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError
             return $null
