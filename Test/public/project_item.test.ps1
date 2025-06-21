@@ -30,8 +30,8 @@ function Test_GetProjectItem_SUCCESS{
     # Edit to see the staged references
     $fieldCommentValue = "new value of the comment 10.1"
     $fieldTitleValue = "new value of the title 10.1"
-    Edit-ProjectItem $owner $projectNumber $itemId $fieldComment $fieldCommentValue
-    Edit-ProjectItem $owner $projectNumber $itemId $fieldTitle $fieldTitleValue
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldComment $fieldCommentValue
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldTitle $fieldTitleValue
 
     $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
 
@@ -61,9 +61,9 @@ function Test_EditProjetItems_SUCCESS{
     $fieldTitle = "Title" ; $fieldTitleValue = "new value of the title 10.1" ; $fieldTitleValue_Before = $before.items.$itemId.$fieldTitle
 
     # Act
-    Edit-ProjectItem $owner $projectNumber $itemId $fieldComment $fieldCommentValue
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldComment $fieldCommentValue
     # $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
-    Edit-ProjectItem $owner $projectNumber $itemId $fieldTitle $fieldTitleValue
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldTitle $fieldTitleValue
 
     # Assert
 
@@ -107,8 +107,8 @@ function Test_EditProejctItems_SameValue{
     $fieldComment = "Comment" ; $fieldCommentValue = $prj.items.$itemId."Comment"
     $fieldTitle = "Title" ; $fieldTitleValue = $prj.items.$itemId."Title"
 
-    Edit-ProjectItem $owner $projectNumber $itemId $fieldComment $fieldCommentValue
-    Edit-ProjectItem $owner $projectNumber $itemId $fieldTitle $fieldTitleValue
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldComment $fieldCommentValue
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldTitle $fieldTitleValue
 
     $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
 
@@ -141,7 +141,7 @@ function Test_EditProejctItems_NumberDecimals{
         # Not a valid value
         $hasThrow= $false
         try {
-            Edit-ProjectItem $owner $projectNumber $itemId $fieldNumber "NotNumber"
+            Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldNumber "NotNumber"
         }
         catch {
             $hasThrow = $true
@@ -150,7 +150,7 @@ function Test_EditProejctItems_NumberDecimals{
     }
 
     "10.1","10,1" | ForEach-Object {
-        Edit-ProjectItem $owner $projectNumber $itemId $fieldNumber $_
+        Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldNumber $_
         $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
         Assert-Count -Expected 1 -Presented $result.Keys
         Assert-AreEqual -Expected 10.1 -Presented $result.$itemId.PVTF_lADOBCrGTM4ActQazgSkglc.Value
@@ -158,7 +158,7 @@ function Test_EditProejctItems_NumberDecimals{
     }
 
     "1,000.1","1.000,1" | ForEach-Object {
-        Edit-ProjectItem $owner $projectNumber $itemId $fieldNumber $_
+        Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldNumber $_
         $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
         Assert-Count -Expected 1 -Presented $result.Keys
         Assert-AreEqual -Expected 1000.1 -Presented $result.$itemId.PVTF_lADOBCrGTM4ActQazgSkglc.Value
@@ -218,7 +218,7 @@ function Test_UpdateProjectDatabase_Fail_With_Staged{
     $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force
     Assert-Count -Expected $itemsCount -Presented $result
 
-    $result = Edit-ProjectItem $owner $projectNumber $itemId $fieldComment $fieldCommentValue
+    $result = Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldComment $fieldCommentValue
     Assert-IsNull -Object $result
 
     $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber

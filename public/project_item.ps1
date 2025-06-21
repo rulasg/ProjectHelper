@@ -38,12 +38,13 @@ function Get-ProjectItem{
 function Edit-ProjectItem{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)] [string]$Owner,
-        [Parameter(Position = 1)] [string]$ProjectNumber,
-        [Parameter(Position = 2)] [string]$ItemId,
-        [Parameter(Position = 3)] [string]$FieldName,
-        [Parameter(Position = 4)] [string]$Value,
-        [Parameter()][switch]$Force
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter(Position = 1)][string]$ItemId,
+        [Parameter(Position = 2)][string]$FieldName,
+        [Parameter(Position = 3)][string]$Value,
+        [Parameter()][switch]$Force,
+        [Parameter()][switch]$Commit
     )
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
@@ -119,9 +120,9 @@ function Add-ProjectItem{
 function Remove-ProjectItem{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][string]$ProjectNumber,
-        [Parameter(Position = 2)][string]$ItemId
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter(Position = 0)][string]$ItemId
     )
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
