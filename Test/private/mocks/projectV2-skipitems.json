@@ -1,0 +1,195 @@
+{
+    "data": {
+      "organization": {
+       "projectV2": {
+          "number": 164,
+          "url": "https://github.com/orgs/SomeOrg/projects/164",
+          "shortDescription": "Created with [ProjectDemo] by [@rulasg]",
+          "public": true,
+          "closed": false,
+          "title": "ProjectDemoTest",
+          "id": "PVT_kwDOBCrGTM4ActQa",
+          "readme": "README Demostrate how to use projects",
+          "items": {
+            "pageInfo": {
+              "endCursor": "MTI",
+              "hasNextPage": false
+            },
+            "totalCount": 12,
+            "nodes": []
+          },
+          "fields": {
+            "totalCount": 18,
+            "nodes": [
+              {
+                "__typename": "ProjectV2Field",
+                "id": "PVTF_lADOBCrGTM4ActQazgSkYm8",
+                "name": "Title",
+                "dataType": "TITLE"
+              },
+              {
+                "__typename": "ProjectV2Field",
+                "id": "PVTF_lADOBCrGTM4ActQazgSkYnA",
+                "name": "Assignees",
+                "dataType": "ASSIGNEES"
+              },
+              {
+                "__typename": "ProjectV2SingleSelectField",
+                "id": "PVTSSF_lADOBCrGTM4ActQazgSkYnE",
+                "name": "Status",
+                "dataType": "SINGLE_SELECT",
+                "options": [
+                  {
+                    "id": "f75ad846",
+                    "name": "Todo"
+                  },
+                  {
+                    "id": "47fc9ee4",
+                    "name": "In Progress"
+                  },
+                  {
+                    "id": "98236657",
+                    "name": "Done"
+                  }
+                ]
+              },
+              {
+                "__typename": "ProjectV2Field",
+                "id": "PVTF_lADOBCrGTM4ActQazgSkYnI",
+                "name": "Labels",
+                "dataType": "LABELS"
+              },
+              {
+                "__typename": "ProjectV2Field",
+                "id": "PVTF_lADOBCrGTM4ActQazgSkYnM",
+                "name": "Linked pull requests",
+                "dataType": "LINKED_PULL_REQUESTS"
+              },
+              {
+                "__typename": "ProjectV2Field",
+                "id": "PVTF_lADOBCrGTM4ActQazgSkYnQ",
+                "name": "Tracks",
+                "dataType": "TRACKS"
+              },
+              {
+                "__typename": "ProjectV2Field",
+                "id": "PVTF_lADOBCrGTM4ActQazgSkYnU",
+                "name": "Reviewers",
+                "dataType": "REVIEWERS"
+              },
+              {
+                "__typename": "ProjectV2Field",
+                "id": "PVTF_lADOBCrGTM4ActQazgSkYnY",
+                "name": "Repository",
+                "dataType": "REPOSITORY"
+              },
+              {
+                "__typename": "ProjectV2Field",
+                "id": "PVTF_lADOBCrGTM4ActQazgSkYnc",
+                "name": "Milestone",
+                "dataType": "MILESTONE"
+              },
+              {
+                "__typename": "ProjectV2Field",
+                "id": "PVTF_lADOBCrGTM4ActQazgSkYng",
+                "name": "Tracked by",
+                "dataType": "TRACKED_BY"
+              },
+              {
+                "__typename": "ProjectV2Field",
+                "id": "PVTF_lADOBCrGTM4ActQazgSkglc",
+                "name": "TimeTracker",
+                "dataType": "NUMBER"
+              },
+              {
+                "__typename": "ProjectV2Field",
+                "id": "PVTF_lADOBCrGTM4ActQazgSl5GU",
+                "name": "Comment",
+                "dataType": "TEXT"
+              },
+              {
+                "__typename": "ProjectV2SingleSelectField",
+                "id": "PVTSSF_lADOBCrGTM4ActQazgSl5LY",
+                "name": "Priority",
+                "dataType": "SINGLE_SELECT",
+                "options": [
+                  {
+                    "id": "68c3924b",
+                    "name": "🔥Critical"
+                  },
+                  {
+                    "id": "52dc7b6d",
+                    "name": "🥵High"
+                  },
+                  {
+                    "id": "d99c38e6",
+                    "name": "😊Normal"
+                  },
+                  {
+                    "id": "ab2e6f64",
+                    "name": "🥶Low"
+                  }
+                ]
+              },
+              {
+                "__typename": "ProjectV2SingleSelectField",
+                "id": "PVTSSF_lADOBCrGTM4ActQazgSl5ME",
+                "name": "Severity",
+                "dataType": "SINGLE_SELECT",
+                "options": [
+                  {
+                    "id": "2d190e20",
+                    "name": "Critical⭐️⭐️⭐️⭐️"
+                  },
+                  {
+                    "id": "94d0bf94",
+                    "name": "Important⭐️⭐️⭐️"
+                  },
+                  {
+                    "id": "ea848251",
+                    "name": "Needed⭐️⭐️"
+                  },
+                  {
+                    "id": "c99f6d55",
+                    "name": "Nice⭐️"
+                  }
+                ]
+              },
+              {
+                "__typename": "ProjectV2Field",
+                "id": "PVTF_lADOBCrGTM4ActQazgSl5WM",
+                "name": "UserStories",
+                "dataType": "NUMBER"
+              },
+              {
+                "__typename": "ProjectV2Field",
+                "id": "PVTF_lADOBCrGTM4ActQazgSmAsE",
+                "name": "Next Action Date",
+                "dataType": "DATE"
+              },
+              {
+                "__typename": "ProjectV2Field",
+                "id": "PVTF_lADOBCrGTM4ActQazgSmBHk",
+                "name": "Start Date",
+                "dataType": "DATE"
+              },
+              {
+                "__typename": "ProjectV2Field",
+                "id": "PVTF_lADOBCrGTM4ActQazgSmBAg",
+                "name": "End Date",
+                "dataType": "DATE"
+              }
+            ],
+            "pageInfo": {
+              "endCursor": "MTg",
+              "hasNextPage": false
+            }
+          },
+          "owner": {
+            "__typename": "Organization",
+            "login": "SomeOrg"
+          }
+        }
+      }
+    }
+  }

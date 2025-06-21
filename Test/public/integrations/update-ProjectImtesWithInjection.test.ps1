@@ -159,7 +159,7 @@ function Test_InvokeProjectInjection{
         $owner = "octodemo"
     $projectNumber = "625"
 
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber.json"
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber-skipitems.json" -skipitems
 
     function global:Invoke-ProjectInjection_1 {
     [CmdletBinding()]

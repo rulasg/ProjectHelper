@@ -7,13 +7,21 @@ function Test_GetProjectItem_SUCCESS{
     # $itemsCount = 12 ; $fieldsCount = 18
     $fieldComment = "Comment" ; $fieldTitle = "Title"
 
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
-
+    
     $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
     $fieldTitleValue = "A draft in the project"
     $fieldCommentValue = "This"
-
+    
+    # allos get project with skipitems
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2-skipitems.json' -skipitems
+    
+    # Getting an item not cached is null
     $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
+    Assert-IsNull -Object $result
+    
+    # Allow to get project with items for the FORCE
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId -Force
 
     Assert-AreEqual -Expected $itemId -Presented $result.id
     Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$fieldComment
@@ -112,7 +120,7 @@ function Test_EditProejctItems_NumberDecimals{
     Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2-skipitems.json' -SkipItems
 
     # $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
@@ -156,6 +164,40 @@ function Test_EditProejctItems_NumberDecimals{
         Assert-AreEqual -Expected 1000.1 -Presented $result.$itemId.PVTF_lADOBCrGTM4ActQazgSkglc.Value
         Reset-ProjectItemStaged
     }
+}
+
+function Test_EditProejctItems_Direct{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $Owner = "SomeOrg" ; $ProjectNumber = 164
+    
+    # No sync of project with items allowed just with skipitems
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2-skipitems.json' -skipitems
+
+    $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
+    $fieldComment = "Comment" ; $fieldCommentValue = "new value of the comment 10.1"
+    
+    # Get an item with no changes staged from a not cached project
+    $result = Get-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId
+    Assert-IsNull -Object $result
+
+    # Direct edit of the item
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId -FieldName $fieldComment -Value $fieldCommentValue
+
+    # Get the staged item
+    $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
+
+    Assert-Count -Expected 1 -Presented $result.Keys
+    Assert-AreEqual -Expected $itemId -Presented $result.Keys[0]
+    Assert-AreEqual -Expected "Comment" -Presented $result.$itemId.PVTF_lADOBCrGTM4ActQazgSl5GU.Field.name
+    Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$itemId.PVTF_lADOBCrGTM4ActQazgSl5GU.Value
+
+    $result = Get-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId
+    Assert-AreEqual -Expected $itemId -Presented $result.id
+    Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$fieldComment
+    Assert-Count -Expected 2 -Presented $result
+
 }
 
 function Test_UpdateProjectDatabase_Fail_With_Staged{

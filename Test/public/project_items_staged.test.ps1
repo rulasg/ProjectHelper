@@ -62,7 +62,12 @@ function Test_CommitProjectItemsStaged_SUCCESS{
     $fieldComment2 = "Comment" ; $fileCommentValue2 = "new value of the comment 11"
     $fieldTitle2 = "Title" ; $fileTitleValue2 = "new value of the title 11"
 
+    # Edit-ProjectItem will call Get-Project with SkipItems
+    # This test is to confirm the sync works with the project and items
+    # Cache the project with items
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+
     MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc -FieldId PVTF_lADOBCrGTM4ActQazgSl5GU -Value "new value of the comment 10" -Type text'
     MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc -FieldId PVTF_lADOBCrGTM4ActQazgSkYm8 -Value "new value of the title" -Type text'
     MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMueM4 -FieldId PVTF_lADOBCrGTM4ActQazgSl5GU -Value "new value of the comment 11" -Type text'
@@ -180,6 +185,8 @@ function Test_CommitProjectItemsStagedAsync_SUCCESS{
     
     # Mock get-project
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    # Cache the project with items as Edit-Project will call Get-Project with SkipItems
+    $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
     Edit-ProjectItem $owner $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
     Edit-ProjectItem $owner $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1

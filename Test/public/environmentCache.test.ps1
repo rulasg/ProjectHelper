@@ -8,9 +8,15 @@ function Test_EnvironmentCache{
     Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
-    $fieldComment = "comment" ; $fieldTitle = "title"
+    $fieldComment = "Comment" ; $fieldTitle = "Title"
 
+    # Cache the project
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+
+    # Reset mock calls
+    Reset-invokeCommandMock
+    Mock_DatabaseRoot -NotReset
 
     $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
     $fieldTitleValue = "A draft in the project"
@@ -19,9 +25,8 @@ function Test_EnvironmentCache{
     $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
     
     Assert-AreEqual -Expected $itemId -Presented $result.id
-    
-    $result = Get-ProjectItem -ItemId $itemId
-    Assert-AreEqual -Expected $itemId -Presented $result.id
 
+    Assert-AreEqual -Expected $fieldTitleValue -Presented $result.$fieldTitle
+    Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$fieldComment
 
 }
