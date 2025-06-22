@@ -9,7 +9,7 @@ function Test_EditProjectItemWithValues_Integration{
     $itemId = "PVTI_lADOAlIw4c4A0Lf4zgYNTc0"
     $fieldSlug = "sf_"
 
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$Owner-$ProjectNumber.2.json" 
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$Owner-$ProjectNumber.2-skipitems.json" -SkipItems
 
     $data = @{
         "Text1" = "value1"
