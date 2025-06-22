@@ -8,7 +8,7 @@ function Test_GetProjectFields_SUCCESS{
     # title refrence with differnt case and spaces
     $filter = "epic"
 
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2-skipitems.json' -SkipItems
 
     $result = Get-ProjectFields -Owner $owner -ProjectNumber $projectNumber
 
@@ -34,4 +34,41 @@ function Test_GetProjectFields_SUCCESS{
     Assert-AreEqual -Presented $result[15].Name -Expected "Tracked by"          ; Assert-AreEqual -Presented $result[15].dataType -Expected "TRACKED_BY"
     Assert-AreEqual -Presented $result[16].Name -Expected "Tracks"              ; Assert-AreEqual -Presented $result[16].dataType -Expected "TRACKS"
     Assert-AreEqual -Presented $result[17].Name -Expected "UserStories"         ; Assert-AreEqual -Presented $result[17].dataType -Expected "NUMBER"
+}
+
+function Test_GetProjectFields_SUCCESS_FilterByName{
+
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $Owner = "SomeOrg" ; $ProjectNumber = 164 
+
+    # title refrence with differnt case and spaces
+    $filter = "Title"
+
+        MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2-skipitems.json' -SkipItems
+
+    $result = Get-ProjectFields -Owner $owner -ProjectNumber $projectNumber -Name $filter
+
+    Assert-Count -Expected 1 -Presented $result
+
+    Assert-AreEqual -Presented $result[0].Name -Expected "Title" ; Assert-AreEqual -Presented $result[0].dataType -Expected "TITLE"
+}
+
+function Test_GetProjectFields_SUCCESS_MoreInfo{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+    $Owner = "SomeOrg" ; $ProjectNumber = 164
+
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2-skipitems.json' -SkipItems
+
+    $result = Get-ProjectFields -Owner $owner -ProjectNumber $projectNumber -Name "Status"
+
+    Assert-Count -Expected 1 -Presented $result
+
+    Assert-AreEqual -Presented $result[0].Name -Expected "Status" ; Assert-AreEqual -Presented $result[0].dataType -Expected "SINGLE_SELECT"
+    Assert-Count -Expected 3 -Presented $result[0].MoreInfo
+    Assert-Contains -Presented $result[0].MoreInfo -Expected "Todo"
+    Assert-Contains -Presented $result[0].MoreInfo -Expected "In Progress"
+    Assert-Contains -Presented $result[0].MoreInfo -Expected "Done"
 }
