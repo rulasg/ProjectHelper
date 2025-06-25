@@ -239,55 +239,55 @@ function Invoke-GetIssueOrPullRequest {
     return $response
 } Export-ModuleMember -Function Invoke-GetIssueOrPullRequest
 
-function Invoke-GetItemId {
-    param(
-        [Parameter(Mandatory)] [string] $Url
-    )
+# function Invoke-GetIContentId {
+#     param(
+#         [Parameter(Mandatory)] [string] $Url
+#     )
 
-    # Use the environmentraviable 
-    $token = Get-GithubToken
-    if(-not $token){
-        throw "GH Cli Auth Token not available. Run 'gh auth login' in your terminal."
-    }
+#     # Use the environmentraviable 
+#     $token = Get-GithubToken
+#     if(-not $token){
+#         throw "GH Cli Auth Token not available. Run 'gh auth login' in your terminal."
+#     }
 
-    # Define the GraphQL query with variables
-    $qlPath =  $PSScriptRoot | Join-Path -ChildPath "graphql" -AdditionalChildPath "getItemId.query"
-    $query = get-content -path $qlPath | Out-String
+#     # Define the GraphQL query with variables
+#     $qlPath =  $PSScriptRoot | Join-Path -ChildPath "graphql" -AdditionalChildPath "getContentId.query"
+#     $query = get-content -path $qlPath | Out-String
 
-    # Define the headers for the request
-    $headers = @{
-        "Authorization" = "Bearer $token"
-        "Content-Type" = "application/json"
-    }
+#     # Define the headers for the request
+#     $headers = @{
+#         "Authorization" = "Bearer $token"
+#         "Content-Type" = "application/json"
+#     }
 
-    # get owner, reponame and issue number from the URL
-    $repoOwner, $repoName, [int] $issueNumber = Get-RepoOwnerNumberFromUrl -Url $Url
+#     # get owner, reponame and issue number from the URL
+#     $repoOwner, $repoName, [int] $issueNumber = Get-RepoOwnerNameNumberFromUrl -Url $Url
 
-    # Define the variables for the request
-    $variables = @{
-        owner = $repoOwner
-        name = $repoName
-        number = $issueNumber
-    }
+#     # Define the variables for the request
+#     $variables = @{
+#         owner = $repoOwner
+#         name = $repoName
+#         number = $issueNumber
+#     }
 
-    # Define the body for the request
-    $body = @{
-        query = $query
-        variables = $variables
-    } | ConvertTo-Json
+#     # Define the body for the request
+#     $body = @{
+#         query = $query
+#         variables = $variables
+#     } | ConvertTo-Json
 
-    # Send the request
-    $response = Invoke-RestMethod -Uri 'https://api.github.com/graphql' -Method Post -Body $body -Headers $headers
+#     # Send the request
+#     $response = Invoke-RestMethod -Uri 'https://api.github.com/graphql' -Method Post -Body $body -Headers $headers
 
-    # Check if here are errors
-    if($response.errors){
-        "[$($response.errors[0].type)] $($response.errors[0].message)" | Write-MyError
-        return
-    }
+#     # Check if here are errors
+#     if($response.errors){
+#         "[$($response.errors[0].type)] $($response.errors[0].message)" | Write-MyError
+#         return
+#     }
 
-    # Return the field names
-    return $response
-} Export-ModuleMember -Function Invoke-GetItemId
+#     # Return the field names
+#     return $response
+# } Export-ModuleMember -Function Invoke-GetIContentId
 
 function Invoke-AddItemToProject {
     param(
@@ -397,6 +397,10 @@ function Get-GithubToken{
     param()
 
     $token = Invoke-MyCommand -Command GetToken
+
+    if(-not $token){
+        throw "Token not available. Check `gh auth token` output."
+    }
 
     return $token
 }

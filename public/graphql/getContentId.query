@@ -1,4 +1,4 @@
-query GetItemId($owner: String!, $name: String!, $number: Int!) {
+query GetContentId($owner: String!, $name: String!, $number: Int!) {
     repository(owner: $owner, name: $name) {
       issueOrPullRequest(number: $number) {
         __typename
