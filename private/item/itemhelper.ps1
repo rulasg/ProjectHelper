@@ -1,4 +1,4 @@
-function Get-RepoOwnerNumberFromUrl {
+function Get-RepoOwnerNameNumberFromUrl{
     [CmdletBinding()]
     param(
         [Parameter(Mandatory, ValueFromPipeline)][string]$Url
@@ -8,7 +8,11 @@ function Get-RepoOwnerNumberFromUrl {
 
     $owner = $uri.Segments[1].TrimEnd('/')
     $repoName = $uri.Segments[2].TrimEnd('/')
-    $number = $uri.Segments[4].TrimEnd('/')
+
+    #if segments[4] is present get the number
+    if($uri.Segments[4]){
+        $number = $uri.Segments[4].TrimEnd('/')
+    }
 
     return $owner, $repoName, $number
-} Export-ModuleMember -Function Get-RepoOwnerNumberFromUrl
+} Export-ModuleMember -function Get-RepoOwnerNameNumberFromUrl

@@ -1,4 +1,4 @@
-function Reset-ProjectCache{
+function Remove-ProjectCache{
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$Owner,
@@ -10,14 +10,12 @@ function Reset-ProjectCache{
         throw "Owner and ProjectNumber are required on Get-Project"
     }
 
-
-    $staged = Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber
-    if(-not (Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber)){
-        throw "Project $Owner/$ProjectNumber is not staged in the database"
+    if(Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber){
+        throw "Project $Owner/$ProjectNumber has pending changes. Please commit changes with Sync-ProjectItemStaged or discard them with Reset-ProjectItemStaged before resetting the ProjectCache."
     }
 
     Reset-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
-} Export-ModuleMember -Function Reset-ProjectCache
+} Export-ModuleMember -Function Remove-ProjectCache
 
 function Get-ProjectCacheFile{
     [CmdletBinding()]
