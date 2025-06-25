@@ -43,8 +43,7 @@ function Edit-ProjectItem{
         [Parameter(Position = 1)][string]$ItemId,
         [Parameter(Position = 2)][string]$FieldName,
         [Parameter(Position = 3)][string]$Value,
-        [Parameter()][switch]$Force,
-        [Parameter()][switch]$Commit
+        [Parameter()][switch]$Force
     )
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
@@ -60,10 +59,14 @@ function Edit-ProjectItem{
     # if the item is not found
     # if($null -eq $item){ "Item [$ItemId] not found" | Write-MyError; return $null}
 
-    # Check if the actual value is the same as the target value and we avoid update
-    if( IsAreEqual -Object1:$item.$FieldName -Object2:$Value){
-        "The value is the same, no need to stage it" | Write-Verbose
-        return
+    # Check if item exists in cache and if so if the value is the same as the target value and we avoid update
+    if($item){
+        if( IsAreEqual -Object1:$item.$FieldName -Object2:$Value){
+            "The value is the same, no need to stage it" | Write-Verbose
+            return
+        }
+    } else {
+        "Staging - Item [$ItemId] not found in project [$Owner/$ProjectNumber] " | Write-Verbose
     }
 
     # save the new value
