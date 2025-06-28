@@ -40,40 +40,44 @@ function Edit-ProjectItem{
     param(
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
-        [Parameter(Position = 1)][string]$ItemId,
+        [Parameter(ValueFromPipeline,Position = 1)][string]$ItemId,
         [Parameter(Position = 2)][string]$FieldName,
         [Parameter(Position = 3)][string]$Value,
         [Parameter()][switch]$Force
     )
-    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    # Force cache update
-    # Full sync if force. Skip items if not force
-    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems:$(-not $Force)
-    
-    # Find the actual value of the item. Item+Staged
-    $item = Get-Item $db $ItemId
-    # $itemStaged = Get-ItemStaged $db $ItemId
+    process{
 
-    # if the item is not found
-    # if($null -eq $item){ "Item [$ItemId] not found" | Write-MyError; return $null}
-
-    # Check if item exists in cache and if so if the value is the same as the target value and we avoid update
-    if($item){
-        if( IsAreEqual -Object1:$item.$FieldName -Object2:$Value){
-            "The value is the same, no need to stage it" | Write-Verbose
-            return
+        ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+        if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+        
+        # Force cache update
+        # Full sync if force. Skip items if not force
+        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems:$(-not $Force)
+        
+        # Find the actual value of the item. Item+Staged
+        $item = Get-Item $db $ItemId
+        # $itemStaged = Get-ItemStaged $db $ItemId
+        
+        # if the item is not found
+        # if($null -eq $item){ "Item [$ItemId] not found" | Write-MyError; return $null}
+        
+        # Check if item exists in cache and if so if the value is the same as the target value and we avoid update
+        if($item){
+            if( IsAreEqual -Object1:$item.$FieldName -Object2:$Value){
+                "The value is the same, no need to stage it" | Write-Verbose
+                return
+            }
+        } else {
+            "Staging - Item [$ItemId] not found in project [$Owner/$ProjectNumber] " | Write-Verbose
         }
-    } else {
-        "Staging - Item [$ItemId] not found in project [$Owner/$ProjectNumber] " | Write-Verbose
+        
+        # save the new value
+        Save-ItemFieldValue $db $itemId $FieldName $Value
+        
+        # Commit changes to the database
+        Save-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
     }
-
-    # save the new value
-    Save-ItemFieldValue $db $itemId $FieldName $Value
-
-    # Commit changes to the database
-    Save-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
 
 } Export-ModuleMember -Function Edit-ProjectItem
 
@@ -82,40 +86,46 @@ function Add-ProjectItem{
     param(
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
-        [Parameter(Position = 0)][string]$Url
+        [Parameter(Mandatory,ValueFromPipeline, Position = 0)][string]$Url
     )
-    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    # Get project id
-    $projectId = Get-ProjectId -Owner $Owner -ProjectNumber $ProjectNumber
-    if(-not $projectId){
-        "Project ID not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError
-        return $null
+    begin{
+        ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+        if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+
+        # Get project id
+        $projectId = Get-ProjectId -Owner $Owner -ProjectNumber $ProjectNumber
+        if(-not $projectId){
+            "Project ID not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError
+            return $null
+        }
     }
 
-    # Get item id
-    $contentId = Get-ContentIdFromUrl -Url $Url
-    if(-not $contentId){
-        "Content ID not found for URL [$Url]" | Write-MyError
-        return $null
-    }
+    process{
 
-    # Add item to project
-    $response = Invoke-MyCommand -Command AddItemToProject -Parameters @{ projectid = $projectId ; contentid = $contentId }
-
-    # check if the response is null
-    if($response.errors){
-        "[$($response.errors[0].type)] $($response.errors[0].message)" | Write-MyError
-        return $null
-    }
-
-    if($response.data.addProjectV2ItemById.item.id)
-    {
-        return $response.data.addProjectV2ItemById.item.id
-    } else {
-        "Item not added to project" | Write-MyError
-        return $null
+        # Get item id
+        $contentId = Get-ContentIdFromUrl -Url $Url
+        if(-not $contentId){
+            "Content ID not found for URL [$Url]" | Write-MyError
+            return $null
+        }
+        
+        # Add item to project
+        $response = Invoke-MyCommand -Command AddItemToProject -Parameters @{ projectid = $projectId ; contentid = $contentId }
+        
+        # check if the response is null
+        if($response.errors){
+            "[$($response.errors[0].type)] $($response.errors[0].message)" | Write-MyError
+            return $null
+        }
+        
+        if($response.data.addProjectV2ItemById.item.id)
+        {
+            return $response.data.addProjectV2ItemById.item.id
+        } else {
+            "Item not added to project" | Write-MyError
+            return $null
+        }
     }
 
 } Export-ModuleMember -Function Add-ProjectItem
