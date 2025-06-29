@@ -7,8 +7,12 @@ function Get-ProjectHelperEnvironment{
 
     $ret = @{
 
+        # Last Known Good Owner
         Owner         = Get-EnvItem -Name "EnvironmentCache_Owner"
+        # Last Known Good Project Number
         ProjectNumber = Get-EnvItem -Name "EnvironmentCache_ProjectNumber"
+        # List of fields to display on Items display commands. Useful with ConvertToItemDisplay
+        # TODO : Consider if its worth keeping this setting
         DisplayFields = Get-EnvItem -Name "EnvironmentCache_Display_Fields"
     }
 
@@ -73,22 +77,11 @@ function Get-EnvironmentDisplayFields{
     )
 
     $displayFields = Get-EnvItem -Name "EnvironmentCache_Display_Fields"
-    $defaultDisplayFields = Get-DefaultDisplayFields
-    $fields_Options = ($Fields , $displayFields , $defaultDisplayFields)
+    # Use this order
+    $fields_Options = ($DEFAULT_DISPLAY_FIELDS, $Fields , $displayFields )
 
-    # chos ethe first that is not empty
-    foreach($option in $fields_Options){
-        if ( -Not $option.Count -eq 0) {
-            Set-EnvItem -Name "EnvironmentCache_Display_Fields" -Value $option
-            $ret = $option
-            break
-        }
-    }
-
-    $ret = $defaultDisplayFields + $ret
-
-    # remove duplicates
-    $ret = $ret | Select-Object -Unique
+    # Remove nulls empty and duplicates
+    $ret = $fields_Options | Select-Object -Unique | Where-Object {[string]::IsNullOrWhiteSpace($_)}
 
     return $ret
 }
