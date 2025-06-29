@@ -1,9 +1,10 @@
-query OrgProject($login:String!$number:Int!){organization(login: $login){projectV2(number: $number){number,url,shortDescription,public,closed,title,id,readme,
-items{totalCount
+query OrgProject($login:String!$number:Int!){organization(login: $login){projectV2(number: $number)
+        {number,url,shortDescription,public,closed,title,id,readme,
+    items{totalCount
             },
-fields{totalCount
+    fields{totalCount
             },
-owner{__typename,... on User{login
+    owner{__typename,... on User{login
                 },... on Organization{login
                 }
             }
