@@ -1,0 +1,19 @@
+query($itemId: ID!) {
+  node(id: $itemId) {
+    ... on ProjectV2Item {
+      id,
+      type
+      content {
+        ... on Issue {
+          id
+          url
+          
+        }
+        ... on PullRequest {
+          id
+          url
+        }
+      }
+    }
+  }
+}
