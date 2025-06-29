@@ -139,6 +139,7 @@ function Convert-ItemsFromResponse{
         # Content
         $item.type = $nodeItem.content.__typename
         $item.body = $nodeItem.content.body
+        $item.contentId = $nodeItem.content.id
         # Title is stored in two places. in the content and as a field.
         # We will use the field value
         # $item.title = $nodeItem.content.title
