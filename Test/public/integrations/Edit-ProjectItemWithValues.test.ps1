@@ -1,4 +1,4 @@
-function Test_EditProjectItemWithValues_Integration{
+function Test_EditProjectItemWithValues_Integration {
 
     # Assert-SkipTest
     Reset-InvokeCommandMock
@@ -12,27 +12,24 @@ function Test_EditProjectItemWithValues_Integration{
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$Owner-$ProjectNumber.2-skipitems.json" -SkipItems
 
     $data = @{
-        "Text1" = "value1"
-        "Text2" = "value2"
-        "Text3" = "value3"
+        "Text1"   = "value1"
+        "Text2"   = "value2"
+        "Text3"   = "value3" # not presented on project. This field will not be added
         "Number1" = "66"
     }
 
+    # Act
     $result = Edit-ProjectItemWithValues -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId -Values $data -FieldSlug $FieldSlug
 
-    # Assert - Confirm update
-    # Assert-IsNull -Object $result
+    # Assert
+    $result = get-projectitemstaged -Owner $owner -ProjectNumber $projectNumber
 
-    $result = Get-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId
+    $itemStaged = $result.$itemId
+    Assert-Count -Expected 3 -Presented $itemStaged.Values
 
-    Assert-AreEqual -expected $data.Text1 -Presented $result.$($FieldSlug + "Text1")
-    Assert-AreEqual -expected $data.Text2 -Presented $result.$($FieldSlug + "Text2")
-    # Assert-AreEqual -expected $data.Text3 -Presented $result.$($FieldSlug + "Text3")
-    Assert-AreEqual -expected $data.Number1 -Presented $result.$($FieldSlug + "Number1")
-
-    # Confirm that the changes are staged
-    $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
-
-    Assert-Count -Expected 3 -Presented $result.$itemId
+    foreach ($fieldName in  @("Text1", "Text2", "Number1")) {
+        $value = ($itemStaged.Values | Where-Object { $_.Field.name -eq $($fieldSlug + $fieldName) }).Value
+        Assert-AreEqual -Expected $data.$fieldName -Presented $value
+    }
 
 }
