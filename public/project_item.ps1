@@ -28,6 +28,36 @@ function Get-ProjectItem{
     return $item
 } Export-ModuleMember -Function Get-ProjectItem
 
+
+function Find-ProjectItem{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][string]$Owner,
+        [Parameter(Position = 1)][string]$ProjectNumber,
+        [Parameter(Mandatory,Position = 2)][string]$Title,
+        [Parameter()][switch]$Match,
+        [Parameter()][switch]$Force
+    )
+
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+
+    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+
+    # Find item in the database
+    if($Match){
+        $items = $db.items.Values | Where-Object { $_.Title -eq $Title }
+    } else {
+        $items = $db.items.Values | Where-Object { $_.Title -like "$Title" }
+    }
+
+    $ret = $items | ForEach-Object { 
+        [PSCustomObject]$_
+    } 
+
+    return $ret
+} Export-ModuleMember -Function Find-ProjectItem
+
 <#
 .SYNOPSIS
     Edit a project item

@@ -243,3 +243,33 @@ function Test_UpdateProjectDatabase_Fail_With_Staged{
 
 }
 
+function Test_FindProjectItem_SUCCESS{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $Owner = "SomeOrg" ; $ProjectNumber = 164 ; 
+    #$itemsCount = 12 ; $fieldsCount = 18
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+
+    $title = "Issue 455d29e3"
+    $itemId1 = "PVTI_lADNJr_OALnx2s4Fqq8f"
+    $itemId2 = "PVTI_lADNJr_OALnx2s4Fqq8p"
+    $subtitle = $title.Substring(4,4)
+
+
+    # Several items with similar title
+    $result = Find-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Title "*$subtitle*"
+    Assert-Count -Expected 2 -Presented $result
+    Assert-Contains -Expected $itemId1 -Presented $result.id
+    Assert-Contains -Expected $itemId2 -Presented $result.id
+
+    # Not Match
+    $result = Find-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Title $title -Match
+    Assert-IsNull -Object $result
+
+    # Match
+    $result = Find-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Title "$title 1" -Match
+    Assert-Count -Expected 1 -Presented $result
+    Assert-Contains -Expected $itemId1 -Presented $result.id
+
+}
