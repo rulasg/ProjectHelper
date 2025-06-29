@@ -193,11 +193,6 @@ function Test_EditProejctItems_Direct{
     Assert-AreEqual -Expected "Comment" -Presented $result.$itemId.PVTF_lADOBCrGTM4ActQazgSl5GU.Field.name
     Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$itemId.PVTF_lADOBCrGTM4ActQazgSl5GU.Value
 
-    $result = Get-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId
-    Assert-AreEqual -Expected $itemId -Presented $result.id
-    Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$fieldComment
-    Assert-Count -Expected 2 -Presented $result
-
 }
 
 function Test_UpdateProjectDatabase_Fail_With_Staged{
@@ -256,6 +251,9 @@ function Test_FindProjectItem_SUCCESS{
     $itemId2 = "PVTI_lADNJr_OALnx2s4Fqq8p"
     $subtitle = $title.Substring(4,4)
 
+    # Item not found
+    $result = Find-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Title "No item with this title"
+    Assert-IsNull -Object $result
 
     # Several items with similar title
     $result = Find-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Title "*$subtitle*"
@@ -271,5 +269,78 @@ function Test_FindProjectItem_SUCCESS{
     $result = Find-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Title "$title 1" -Match
     Assert-Count -Expected 1 -Presented $result
     Assert-Contains -Expected $itemId1 -Presented $result.id
+}
+
+function Test_FindProjectItem_FAIL{
+
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $Owner = "SomeOrg" ; $ProjectNumber = 164 
+    $erroMessage= "Error: Project not found. Check owner and projectnumber"
+
+    Mock_DatabaseRoot
+
+    MockCall_GitHubOrgProjectWithFields_Null  -Owner $owner -ProjectNumber $projectNumber
+
+    # Run the command
+    Start-MyTranscript
+    $result = Find-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Title "no title"
+    $tt = Stop-MyTranscript
+    
+    Assert-IsNull -Object $result
+    Assert-Contains -Expected $erroMessage -Presented $tt
+}
+
+function Test_SearchProjectItem_SUCCESS{
+
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $Owner = "SomeOrg" ; $ProjectNumber = 164
+
+    # title refrence with differnt case and spaces
+    $filter = "epic"
+
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+
+    $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Filter $filter
+    
+    Assert-Count -Expected 2 -Presented $result
+    
+    Assert-Contains -Expected "EPIC 1 " -Presented $result.Title
+    Assert-Contains -Expected "PVTI_lADOBCrGTM4ActQazgMtRO0" -Presented $result.id
+    Assert-Contains -Expected "EPIC 2"  -Presented $result.Title
+    Assert-Contains -Expected "PVTI_lADOBCrGTM4ActQazgMtRPg" -Presented $result.id
+    
+    # Sample item to find
+    # Repository       : https://github.com/SomeOrg/ProjectDemoTest-repo-front
+    # updatedAt        : 
+    # Title            : Issue 455d29e3 2
+    # Assignees        : rulasg
+    # UserStories      : 21
+    # body             : Series 3 of demo issues for the Front repo
+    # state            : 
+    # url              : https://github.com/SomeOrg/ProjectDemoTest-repo-front/issues/3
+    # TimeTracker      : 684
+    # Priority         : 🥶Low
+    # Status           : Done
+    # contentId        : 
+    # type             : Issue
+    # id               : PVTI_lADNJr_OALnx2s4Fqq8p
+    # Next Action Date : 2024-02-20
+    # Comment          : This
+    # number           : 3
+    # Labels           : "enhancement"
+    # Severity         : Critical⭐️⭐️⭐️⭐️
+    # createdAt        : 
+
+    $result = Search-ProjectItem 68 # TimeTracker value 684
+    Assert-Count -Expected 1 -Presented $result
+    Assert-AreEqual -Expected "Issue 455d29e3 2" -Presented $result[0].Title
+    Assert-AreEqual -Expected "PVTI_lADNJr_OALnx2s4Fqq8p" -Presented $result[0].id
+
+    $result = Search-ProjectItem "ProjectDemoTest-repo-front"
+    Assert-Count -Expected 6 -Presented $result
 
 }

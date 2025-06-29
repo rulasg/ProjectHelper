@@ -217,5 +217,3 @@ function Test_SearchProjectItem_SUCCESS{
     Assert-AreEqual -Expected "https://github.com/SomeOrg/ProjectDemoTest-repo-front/issues/3" -Presented $result[0].url
 
 }
-
-

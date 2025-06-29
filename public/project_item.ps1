@@ -12,18 +12,18 @@ Set-MyInvokeCommandAlias -Alias RemoveItemFromProject -Command 'Invoke-RemoveIte
 function Get-ProjectItem{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][string]$ProjectNumber,
-        [Parameter(Mandatory,Position = 2)][string]$ItemId,
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter(Mandatory,ValueFromPipeline,Position = 0)][string]$ItemId,
         [Parameter()][switch]$Force
     )
 
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems:$(-not $Force)
+    $itemlist = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
-    $item = Get-Item $db $ItemId
+    $item = $itemlist.$ItemId
 
     return $item
 } Export-ModuleMember -Function Get-ProjectItem
@@ -33,7 +33,7 @@ function Find-ProjectItem{
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][string]$ProjectNumber,
+        [Parameter()][string]$ProjectNumber,
         [Parameter(Mandatory,Position = 2)][string]$Title,
         [Parameter()][switch]$Match,
         [Parameter()][switch]$Force
@@ -42,21 +42,51 @@ function Find-ProjectItem{
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+    $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+
+    # return if #items is null
+    if($null -eq $items){ return $null}
 
     # Find item in the database
     if($Match){
-        $items = $db.items.Values | Where-Object { $_.Title -eq $Title }
+        $found = $items.Values | Where-Object { $_.Title -eq $Title }
     } else {
-        $items = $db.items.Values | Where-Object { $_.Title -like "$Title" }
+        $found = $items.Values | Where-Object { $_.Title -like "$Title" }
     }
 
-    $ret = $items | ForEach-Object { 
+    $ret = $found | ForEach-Object { 
         [PSCustomObject]$_
     } 
 
     return $ret
 } Export-ModuleMember -Function Find-ProjectItem
+
+function Search-ProjectItem{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)] [string]$Filter,
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter()][switch]$Force
+    )
+
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+    
+    $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+
+    # return if #items is null
+    if($null -eq $items){ return $null}
+
+    $found = $items.Values | Where-Object { Test-ProjectItemIsLikeAnyField -Item $_ -Value $Filter }
+
+    $ret = @($found | ForEach-Object { 
+        [PSCustomObject]$_
+    })
+
+    return $ret
+
+} Export-ModuleMember -Function Search-ProjectItem
 
 <#
 .SYNOPSIS
@@ -184,6 +214,44 @@ function Remove-ProjectItem{
     return $response.data.deleteProjectV2Item.deletedItemId
 
 } Export-ModuleMember -Function Remove-ProjectItem
+
+function Show-ProjectItem{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][string]$Owner,
+        [Parameter(Position = 1)][string]$ProjectNumber,
+        [Parameter(ValueFromPipeline)][object]$ItemId,
+        [Parameter()][string[]]$AdditionalFields
+    )
+
+    begin{
+        $fields = Get-EnvironmentDisplayFields -Fields $AdditionalFields
+    } 
+
+    process{
+        $ret = $item | Select-Object -Property $Fields
+
+        return $ret
+    }
+} Export-ModuleMember -Function Show-ProjectItem
+
+
+function Test-ProjectItemIsLikeAnyField{
+    param(
+        [Parameter(Mandatory,ValueFromPipeline)] [object]$Item,
+        [Parameter(Mandatory,Position = 0)][string]$Value
+    )
+    foreach($key in $item.Keys){
+        if($item.$key -Like "*$Value*"){
+            return $true
+        }
+    }
+
+    return $false
+
+}
+
+
 
 function IsAreEqual{
     param(

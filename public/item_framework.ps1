@@ -1,6 +1,5 @@
 
-
-function ConvertToItemDisplay{
+function Test-IsLikeAnyField{
     param(
         [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
         [object]$Item,
@@ -48,8 +47,8 @@ function Test-IsLike{
 
 function Test-IsLikeAny{
     param(
-        [Parameter(Mandatory)] [object]$Item,
-        [Parameter()][string]$Value
+        [Parameter(Mandatory,ValueFromPipeline)] [object]$Item,
+        [Parameter(Mandatory,Position = 0)][string]$Value
     )
     foreach($key in $item.Keys){
         if($item.$key -Like "*$Value*"){
