@@ -6,8 +6,8 @@ function Update-ProjectDatabase {
     [CmdletBinding()]
     [OutputType([bool])]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber,
+        [Parameter()][string]$Owner,
+        [Parameter()][int]$ProjectNumber,
         [Parameter()][switch]$SkipItems,
         [Parameter()][switch]$Force
     )

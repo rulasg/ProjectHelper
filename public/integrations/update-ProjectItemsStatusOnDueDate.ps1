@@ -22,10 +22,10 @@
 function Update-ProjectItemsStatusOnDueDate{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber,
-        [Parameter(Position = 2)][string]$DueDateFieldName,
-        [Parameter(Position = 3)][string]$Status,
+        [Parameter()][string]$Owner,
+        [Parameter()][int]$ProjectNumber,
+        [Parameter()][string]$DueDateFieldName,
+        [Parameter()][string]$Status,
         [Parameter()][switch]$IncludeDoneItems,
         [Parameter()] [switch]$Force
 
@@ -54,10 +54,10 @@ function Update-ProjectItemsStatusOnDueDate{
 function Invoke-ProjectInjectionOnDueDate {
     [CmdletBinding()]
     param (
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber,
-        [Parameter(Position = 2)][string]$DueDateFieldName,
-        [Parameter(Position = 3)][string]$Status,
+        [Parameter()][string]$Owner,
+        [Parameter()][int]$ProjectNumber,
+        [Parameter()][string]$DueDateFieldName,
+        [Parameter()][string]$Status,
         [Parameter()][switch]$IncludeDoneItems
     )
 

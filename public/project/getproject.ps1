@@ -1,8 +1,8 @@
 function Get-Project {
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber,
+        [Parameter()][string]$Owner,
+        [Parameter()][int]$ProjectNumber,
         [Parameter()][switch]$SkipItems,
         [Parameter()][switch]$Force
     )
@@ -29,8 +29,8 @@ function Get-Project {
 function Get-ProjectId {
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber
+        [Parameter()][string]$Owner,
+        [Parameter()][int]$ProjectNumber
     )
 
     ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
@@ -49,8 +49,8 @@ function Get-ProjectId {
 function Open-Project{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber
+        [Parameter()][string]$Owner,
+        [Parameter()][int]$ProjectNumber
     )
 
     ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber

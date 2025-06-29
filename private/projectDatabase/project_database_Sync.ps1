@@ -5,8 +5,8 @@ function Sync-ProjectDatabase{
     [CmdletBinding(SupportsShouldProcess)]
     [OutputType([bool])]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber
+        [Parameter()][string]$Owner,
+        [Parameter()][int]$ProjectNumber
     )
 
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber

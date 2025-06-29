@@ -7,7 +7,7 @@
 function Get-ProjectItemStaged{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][string]$Owner,
+        [Parameter()][string]$Owner,
         [Parameter(Position = 1)][string]$ProjectNumber
     )
 
@@ -29,8 +29,8 @@ function Test-ProjectItemStaged{
     [CmdletBinding()]
     [OutputType([hashtable])]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][string]$ProjectNumber
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber
     )
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
@@ -47,8 +47,8 @@ function Sync-ProjectItemStaged{
     [CmdletBinding()]
     [OutputType([hashtable])]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][string]$ProjectNumber
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber
     )
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
@@ -71,8 +71,8 @@ function Sync-ProjectItemStagedAsync{
     [CmdletBinding()]
     [OutputType([hashtable])]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][string]$ProjectNumber,
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
         [Parameter()][int]$SyncBatchSize = 30
     )
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
@@ -97,8 +97,8 @@ function Sync-ProjectItemStagedAsync{
 function Reset-ProjectItemStaged{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][string]$ProjectNumber
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber
     )
 
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
@@ -115,9 +115,9 @@ function Reset-ProjectItemStaged{
 function Show-ProjectItemStaged{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][string]$ProjectNumber,
-        [Parameter(ValueFromPipelineByPropertyName, Position = 2)][string]$Id
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter(ValueFromPipelineByPropertyName, Position = 0)][string]$Id
     )
 
     begin{

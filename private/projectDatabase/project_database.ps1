@@ -101,7 +101,7 @@ function Save-ProjectDatabase{
     param(
         [Parameter(Position = 0)][string]$Owner,
         [Parameter(Position = 1)][int]$ProjectNumber,
-        [Parameter(Position = 0)][hashtable]$Database
+        [Parameter(Position = 2)][hashtable]$Database
     )
 
     $dbkey = Get-DatabaseKey -Owner $owner -ProjectNumber $projectnumber
