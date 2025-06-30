@@ -137,7 +137,7 @@ function Edit-ProjectItem{
 
 } Export-ModuleMember -Function Edit-ProjectItem
 
-function Add-ProjectItem{
+function Add-ProjectItemDirect{
     [CmdletBinding()]
     param(
         [Parameter()][string]$Owner,
@@ -178,9 +178,9 @@ function Add-ProjectItem{
         return $null
     }
 
-} Export-ModuleMember -Function Add-ProjectItem
+} Export-ModuleMember -Function Add-ProjectItemDirect
 
-function Remove-ProjectItem{
+function Remove-ProjectItemDirect{
     [CmdletBinding()]
     param(
         [Parameter()][string]$Owner,
@@ -213,7 +213,7 @@ function Remove-ProjectItem{
 
     return $response.data.deleteProjectV2Item.deletedItemId
 
-} Export-ModuleMember -Function Remove-ProjectItem
+} Export-ModuleMember -Function Remove-ProjectItemDirect
 
 function Show-ProjectItem{
     [CmdletBinding()]
@@ -231,7 +231,7 @@ function Show-ProjectItem{
     process{
         $ret = $item | Select-Object -Property $Fields
 
-        return $ret
+        throw "NotImplemented"
     }
 } Export-ModuleMember -Function Show-ProjectItem
 
@@ -250,7 +250,6 @@ function Test-ProjectItemIsLikeAnyField{
     return $false
 
 }
-
 
 
 function IsAreEqual{
