@@ -362,3 +362,62 @@ function Test_GetItemDirect_SUCCESS{
     Assert-AreEqual -Expected $contentId -Presented $result.contentId
 
 }
+
+function Test_ShowProjectItem_SUCCESS{
+
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $Owner = "SomeOrg" ; $ProjectNumber = 164
+    $id = "PVTI_lADOBCrGTM4ActQazgMtRO0"
+    $title = "EPIC 1 "
+    $status = "Todo"
+
+    # title refrence with differnt case and spaces
+
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    
+    $item = Find-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Title $title -Match
+
+    $result = $item | Show-ProjectItem -AdditionalFields "Status"
+    
+    Assert-Count -Expected 1 -Presented $result
+
+    Assert-AreEqual -Expected $id -Presented $result[0].id
+    Assert-AreEqual -Expected $title -Presented $result[0].Title
+    Assert-AreEqual -Expected $status -Presented $result[0].Status
+    
+}
+
+function Test_ShowProjectItem_SUCCESS_Multiple{
+
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $Owner = "SomeOrg" ; $ProjectNumber = 164
+
+
+    # title refrence with differnt case and spaces
+
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    
+    $items = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Filter "Issue*"
+
+    $result = $items | Show-ProjectItem -AdditionalFields "Status"
+    
+    Assert-Count -Expected 8 -Presented $Items
+    Assert-Count -Expected 8 -Presented $result
+
+    # Get properties of the first item to verify
+    $properties = $result[0].PSObject.Properties.Name
+    $expectedProperties = @("id", "Title", "Status")
+
+    # Verify all items have the same structure
+    for ($i = 1; $i -lt $result.Count; $i++) {
+        $itemProps = $result[$i].PSObject.Properties.Name
+        Assert-Count -Expected 3 -Presented $itemProps -Comment "Item $i should only have 3 properties"
+        foreach ($prop in $expectedProperties) {
+            Assert-Contains -Expected $prop -Presented $itemProps -Comment "Item $i should contain $prop property"
+        }
+    }
+}

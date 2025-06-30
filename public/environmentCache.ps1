@@ -78,10 +78,13 @@ function Get-EnvironmentDisplayFields{
 
     $displayFields = Get-EnvItem -Name "EnvironmentCache_Display_Fields"
     # Use this order
-    $fields_Options = ($DEFAULT_DISPLAY_FIELDS, $Fields , $displayFields )
+    $fields_Options = @()
+    if ($DEFAULT_DISPLAY_FIELDS) { $fields_Options += $DEFAULT_DISPLAY_FIELDS }
+    if ($Fields) { $fields_Options += $Fields }
+    if ($displayFields) { $fields_Options += $displayFields }
 
     # Remove nulls empty and duplicates
-    $ret = $fields_Options | Select-Object -Unique | Where-Object {[string]::IsNullOrWhiteSpace($_)}
+    $ret = $fields_Options | Select-Object -Unique | Where-Object {-Not [string]::IsNullOrWhiteSpace($_)}
 
     return $ret
 }

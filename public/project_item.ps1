@@ -13,9 +13,9 @@ Set-MyInvokeCommandAlias -Alias GetItem -Command 'Invoke-GetItem -ItemId {itemid
 function Get-ProjectItem{
     [CmdletBinding()]
     param(
+        [Parameter(Mandatory,ValueFromPipeline,Position = 0)][string]$ItemId,
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
-        [Parameter(Mandatory,ValueFromPipeline,Position = 0)][string]$ItemId,
         [Parameter()][switch]$Force
     )
 
@@ -33,9 +33,10 @@ function Get-ProjectItem{
 function Find-ProjectItem{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][string]$Owner,
+        [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
-        [Parameter(Mandatory,Position = 2)][string]$Title,
+        [Parameter(Mandatory,Position = 0)][string]$Title,
+        [Parameter()][switch]$IncludeDone,
         [Parameter()][switch]$Match,
         [Parameter()][switch]$Force
     )
@@ -43,7 +44,7 @@ function Find-ProjectItem{
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+    $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -ExcludeDone:$(-not $IncludeDone)
 
     # return if #items is null
     if($null -eq $items){ return $null}
@@ -65,16 +66,17 @@ function Find-ProjectItem{
 function Search-ProjectItem{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)] [string]$Filter,
+        [Parameter(Mandatory,Position = 0)] [string]$Filter,
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
+        [Parameter()][switch]$IncludeDone,
         [Parameter()][switch]$Force
     )
 
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
     
-    $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+    $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -ExcludeDone:$(-not $IncludeDone)
 
     # return if #items is null
     if($null -eq $items){ return $null}
@@ -249,7 +251,7 @@ function Show-ProjectItem{
     param(
         [Parameter(Position = 0)][string]$Owner,
         [Parameter(Position = 1)][string]$ProjectNumber,
-        [Parameter(ValueFromPipeline)][object]$ItemId,
+        [Parameter(ValueFromPipeline)][object]$Item,
         [Parameter()][string[]]$AdditionalFields
     )
 
@@ -260,7 +262,7 @@ function Show-ProjectItem{
     process{
         $ret = $item | Select-Object -Property $Fields
 
-        throw "NotImplemented"
+        return $ret
     }
 } Export-ModuleMember -Function Show-ProjectItem
 
