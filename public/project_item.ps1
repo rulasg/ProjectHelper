@@ -1,5 +1,6 @@
 Set-MyInvokeCommandAlias -Alias AddItemToProject -Command 'Invoke-AddItemToProject -ProjectId {projectid} -ContentId {contentid}'
 Set-MyInvokeCommandAlias -Alias RemoveItemFromProject -Command 'Invoke-RemoveItemFromProject -ProjectId {projectid} -ItemId {itemid}'
+Set-MyInvokeCommandAlias -Alias GetItem -Command 'Invoke-GetItem -ItemId {itemid}'
 
 <#
 .SYNOPSIS
@@ -214,6 +215,34 @@ function Remove-ProjectItemDirect{
     return $response.data.deleteProjectV2Item.deletedItemId
 
 } Export-ModuleMember -Function Remove-ProjectItemDirect
+
+function Get-ProjectItemDirect{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory,ValueFromPipeline,Position = 0)][string]$ItemId
+    )
+
+    $response = Invoke-MyCommand -Command GetItem -Parameters @{
+        owner = $Owner
+        projectnumber = $ProjectNumber
+        itemid = $ItemId
+    }
+
+    # check if the response is null
+    if($response.errors){
+        "[$($response.errors[0].type)] $($response.errors[0].message)" | Write-MyError
+        return $null
+    }
+
+    if($response.data.node.id -ne $ItemId){
+        "Item [$ItemId] not found" | Write-MyError
+        return $null
+    }
+
+    $item = $response.data.node | Convert-NodeItemToHash
+
+    return $item
+} Export-ModuleMember -Function Get-ProjectItemDirect
 
 function Show-ProjectItem{
     [CmdletBinding()]

@@ -344,3 +344,21 @@ function Test_SearchProjectItem_SUCCESS{
     Assert-Count -Expected 6 -Presented $result
 
 }
+
+function Test_GetItemDirect_SUCCESS{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+    
+    $itemId = "PVTI_lADNJr_OADU3Ys4GAgVO"
+    $itemUrl = "https://github.com/github/sales/issues/11742"
+    $contentId ="I_kwDOAFbrpM6s_fNK"
+
+    MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName 'getitemdirect_1.json'
+
+    $result = Get-ProjectItemDirect -ItemId $itemId
+
+    Assert-AreEqual -Expected $itemId -Presented $result.id
+    Assert-AreEqual -Expected $itemUrl -Presented $result.url
+    Assert-AreEqual -Expected $contentId -Presented $result.contentId
+
+}
