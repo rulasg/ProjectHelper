@@ -15,13 +15,13 @@ function Update-ProjectDatabase {
     $params = @{ owner = $Owner ; projectnumber = $ProjectNumber ; afterFields = "" ; afterItems = "" }
 
     # This means that the ProjectNumber has a empty string value
-    if($ProjectNumber -eq 0){
+    if ($ProjectNumber -eq 0) {
         throw "ProjectNumber invalid. Please specify a valid ProjectNumber"
     }
 
     # check if there are unsaved changes
     $saved = Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber
-    if($saved -and -Not $Force){
+    if ($saved -and -Not $Force) {
         throw "There are unsaved changes. Restore changes with Reset-ProjectItemStaged or sync projects with Sync-ProjectItemStaged first and try again"
     }
 
@@ -30,25 +30,27 @@ function Update-ProjectDatabase {
 
     do {
 
-        if($SkipItems){
-            $result  = Invoke-MyCommand -Command GitHubOrgProjectWithFieldsSkipItems -Parameters $params
-        } else {
-            $result  = Invoke-MyCommand -Command GitHubOrgProjectWithFields -Parameters $params
+        if ($SkipItems) {
+            $result = Invoke-MyCommand -Command GitHubOrgProjectWithFieldsSkipItems -Parameters $params
+        }
+        else {
+            $result = Invoke-MyCommand -Command GitHubOrgProjectWithFields -Parameters $params
         }
 
         # check if the result is empty
-        if($null -eq $result){
+        if ($null -eq $result) {
             "Updating ProjectDatabase for project [$Owner/$ProjectNumber]" | Write-MyError
             return $false
         }
 
         $projectV2 = $result.data.organization.ProjectV2
 
-        if($SkipItems){
+        if ($SkipItems) {
             $hasNextPageItems = $false
-        } else {
+        }
+        else {
             # Check if we have already processed all the items
-            if($result.data.organization.projectv2.items.totalCount -ne $items.Count){
+            if ($result.data.organization.projectv2.items.totalCount -ne $items.Count) {
                 $items = Convert-ItemsFromResponse $projectV2 | Add2HashTable $items
             }
             $params.afterItems = $result.data.organization.projectv2.items.pageInfo.endCursor
@@ -56,7 +58,7 @@ function Update-ProjectDatabase {
         }
 
         # Check if we have already processed all the fields
-        if($result.data.organization.projectv2.fields.totalCount -ne $fields.Count){
+        if ($result.data.organization.projectv2.fields.totalCount -ne $fields.Count) {
             $fields = Convert-FieldsFromReponse $projectV2 | Add2HashTable $fields
         }
         $params.afterFields = $result.data.organization.projectv2.fields.pageInfo.endCursor
@@ -70,15 +72,18 @@ function Update-ProjectDatabase {
     )
 
     # Check that we have retreived all the items
-    if(!$SkipItems -and $result.data.organization.projectv2.items.totalCount -ne $items.Count){
+    if (!$SkipItems -and $result.data.organization.projectv2.items.totalCount -ne $items.Count) {
         "Items count mismatch. Expected [$($result.data.organization.projectv2.items.totalCount)] Found [$($items.count)]" | Write-MyWarning
         return $false
     }
     # Check that we have retreived all the fields
-    if($result.data.organization.projectv2.fields.totalCount -ne $fields.Count){
+    if ($result.data.organization.projectv2.fields.totalCount -ne $fields.Count) {
         "Fields count mismatch. Expected [$($result.data.organization.projectv2.fields.totalCount)] Found [$($fields.count)]" | Write-MyWarning
         return $false
     }
+
+    # Add content fields
+    $fields = $fields | Set-ContentFields
 
     # Set-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Items $items -Fields $fields
     Set-ProjectDatabaseV2 $projectV2 -Items $items -Fields $fields
@@ -96,12 +101,12 @@ function Update-ProjectDatabase {
     # This way it does not fail when adding the same key with different case
     # $items += $ut
 #>
-function Add2HashTable{
+function Add2HashTable {
     [CmdletBinding()]
     [OutputType([hashtable])]
     param(
         [Parameter(Position = 0)][hashtable]$HTA,
-        [Parameter(ValueFromPipeline,Position = 1)][hashtable]$HTB
+        [Parameter(ValueFromPipeline, Position = 1)][hashtable]$HTB
     )
 
     process {
@@ -110,12 +115,12 @@ function Add2HashTable{
         }
     }
 
-    end{
+    end {
         return $HTA
     }
 }
 
-function Convert-ItemsFromResponse{
+function Convert-ItemsFromResponse {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][object]$ProjectV2
@@ -125,7 +130,7 @@ function Convert-ItemsFromResponse{
 
     $nodes = $ProjectV2.items.nodes
 
-    foreach($nodeItem in $nodes){
+    foreach ($nodeItem in $nodes) {
 
         "Processing Item $($nodeItem.id) - $($nodeItem.content.title)" | Write-Verbose
 
@@ -151,11 +156,11 @@ function Convert-ItemsFromResponse{
         $item.updatedAt = GetDateTime -DateTimeString $nodeItem.content.updatedAt
 
         #Fields
-        foreach($nodefield in $nodeItem.fieldValues.nodes){
+        foreach ($nodefield in $nodeItem.fieldValues.nodes) {
 
             "      Procesing $($nodefield.field.name)" | Write-Verbose
 
-            switch($nodefield.__typename){
+            switch ($nodefield.__typename) {
                 "ProjectV2ItemFieldTextValue" {
                     $value = $nodefield.text
                 }
@@ -194,34 +199,35 @@ function Convert-ItemsFromResponse{
 
         try {
             $items.$itemId += $item
-        } catch {
+        }
+        catch {
             "Failed to add item $itemId to items collection" | Write-Error
         }
     }
     return $Items
 }
 
-function Convert-FieldsFromReponse{
+function Convert-FieldsFromReponse {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][object]$ProjectV2
     )
     $fields = New-Object System.Collections.Hashtable
 
-    $nodes = $ProjectV2.fields.nodes
-
-    foreach($node in $nodes){
+    # Custom properties comming from project
+    foreach ($node in $ProjectV2.fields.nodes) {
         $fieldId = $node.id
 
-        $field = New-Object System.Collections.Hashtable
-        $field.id = $node.id
-        $field.name = $node.name
-        $field.type = $node.__typename
-        $field.dataType = $node.dataType
+        $field = @{
+            id = $node.id
+            dataType = $node.dataType
+            type = $node.__typename
+            name = $node.name
+        }
 
-        if($field.type -eq "ProjectV2SingleSelectField"){
+        if ($field.dataType -eq "SINGLE_SELECT") {
             $field.options = New-Object System.Collections.Hashtable
-            foreach($option in $node.options){
+            foreach ($option in $node.options) {
                 $field.options.$($option.name) = $option.id
             }
         }
@@ -231,32 +237,62 @@ function Convert-FieldsFromReponse{
     return $fields
 }
 
-function GetDateTime{
+function Set-ContentFields {
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline)][hashtable]$Fields
+    )
+    
+    # Replace content ID TITLE
+    $fieldTitleId = $fields.Keys | Where-Object {$fields.$_.dataType -eq "TITLE"}
+    
+    $fields.title = @{
+        id       = "title"
+        dataType = "TITLE"
+        type     = "ContentField"
+        name     = "Title"
+    }
+
+    $fields.Remove($fieldTitleId)
+
+    # Add BODY
+    $fields.body = @{
+        id       = "body"
+        dataType = "BODY"
+        type     = "ContentField"
+        name     = "body"
+    }
+
+    return $Fields
+}
+
+function GetDateTime {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$DateTimeString
     )
-    if([string]::IsNullOrEmpty($DateTimeString)){
+    if ([string]::IsNullOrEmpty($DateTimeString)) {
         return $null
     }
     try {
         # Parse date string as UTC format to ensure consistency across different locales
         $date = [datetime]::Parse($DateTimeString, [System.Globalization.CultureInfo]::InvariantCulture, [System.Globalization.DateTimeStyles]::AdjustToUniversal)
-    } catch {
+    }
+    catch {
         "Failed to parse date [$DateTimeString]" | Write-Error
         return $null
     }
     return $date
 }
 
-function GetUsers{
+function GetUsers {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][object]$FieldNode
     )
 
     # sanity check
-    if($FieldNode.__typename -ne "ProjectV2ItemFieldUserValue"){
+    if ($FieldNode.__typename -ne "ProjectV2ItemFieldUserValue") {
         throw "GetUsers: FieldNode is not a ProjectV2ItemFieldUserValue"
     }
     $ret = $FieldNode.users.nodes.login
@@ -265,18 +301,18 @@ function GetUsers{
     return $ret
 }
 
-function GetLabels{
+function GetLabels {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][object]$FieldNode
     )
 
     # sanity check
-    if($FieldNode.__typename -ne "ProjectV2ItemFieldLabelValue"){
+    if ($FieldNode.__typename -ne "ProjectV2ItemFieldLabelValue") {
         throw "GetLabels: FieldNode is not a ProjectV2ItemFieldLabelValue"
     }
     $ret = @()
-    foreach($node in $FieldNode.labels.nodes){
+    foreach ($node in $FieldNode.labels.nodes) {
         $ret += $node.name
     }
 
@@ -285,18 +321,18 @@ function GetLabels{
     return $ret
 }
 
-function GetPullRequests{
+function GetPullRequests {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][object]$FieldNode
     )
 
     # sanity check
-    if($FieldNode.__typename -ne "ProjectV2ItemFieldPullRequestValue"){
+    if ($FieldNode.__typename -ne "ProjectV2ItemFieldPullRequestValue") {
         throw "GetPullRequests: FieldNode is not a ProjectV2ItemFieldPullRequestValue"
     }
     $ret = @()
-    foreach($node in $FieldNode.pullRequests.nodes){
+    foreach ($node in $FieldNode.pullRequests.nodes) {
         $ret += $node.url
     }
 

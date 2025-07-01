@@ -184,15 +184,165 @@ function Test_CommitProjectItemsStagedAsync_SUCCESS{
     }
 
     # Mock get-project
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2-skipitems.json' -skipItems
+
+    # Cache the project with items as Edit-Project will call Get-Project with SkipItems
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId2 $fieldTitle2 $fileTitleValue2
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId2 $fieldComment2 $fileCommentValue2
+
+    $result = Sync-ProjectItemStagedAsync -Owner $Owner -ProjectNumber $ProjectNumber -SyncBatchSize 2
+
+    # Return true
+    Assert-IsTrue -Condition $result
+
+    # Staged list is empty
+    $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    Assert-IsNull -Object $staged
+
+    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.$fieldComment1
+    Assert-AreEqual -Expected $fieldTitleValue1 -Presented $item1.$fieldTitle1
+
+    $item2 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId2
+    Assert-AreEqual -Expected $fileCommentValue2 -Presented $item2.$fieldComment2
+    Assert-AreEqual -Expected $fileTitleValue2 -Presented $item2.$fieldTitle2
+}
+
+function Test_CommitProjectItemsStagedAsync_SUCCESS_Issue_PR_Title_Body{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $moduleRootPath = $PSScriptRoot | Split-Path -Parent
+    $moduleRootFullName = $moduleRootPath | Convert-Path
+    
+    $Owner = "SomeOrg" ; $ProjectNumber = 164
+    $projectId ="PVT_kwDOBCrGTM4ActQa"
+
+
+    # Define an array of objects to de updated mocked
+    $mockItems = @{
+        # Draft
+        draftComment = @{
+            $FieldName = "Comment"
+            Id = "DI_lADOBCrGTM4ActQazgFYY01"
+            ItemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
+            FieldId = "PVTF_lADOBCrGTM4ActQazgSl5GU"
+            Value = "new value of the comment 10"
+        }
+        draftTitle = @{
+            $FieldName = "Title"
+            Id = "DI_lADOBCrGTM4ActQazgFYY01"
+            ItemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
+            FieldId = "PVTF_lADOBCrGTM4ActQazgSkYm8"
+            Value = "new value of the title"
+        }
+        draftBody = @{
+            $FieldName = "Body"
+            Id = "DI_lADOBCrGTM4ActQazgFYY01"
+            ItemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
+            FieldId = ""
+            Value = "new value of the body 10"
+        }
+        # PR
+        prComment = @{
+            $FieldName = "Comment"
+            Id = "PR_lADOBCrGTM4ActQazgFYY02"
+            ItemId = "PVTI_lADOBCrGTM4ActQazgMueM4"
+            FieldId = "PVTF_lADOBCrGTM4ActQazgSl5GU"
+            Value = "new value of the comment 11"
+        }
+        prTitle = @{
+            $FieldName = "Title"
+            Id = "PR_lADOBCrGTM4ActQazgFYY02"
+            ItemId = "PVTI_lADOBCrGTM4ActQazgMueM4"
+            FieldId = ""
+            Value = "new value of the title 11"
+        }
+        prBody = @{
+            $FieldName = "Body"
+            Id = "PR_lADOBCrGTM4ActQazgFYY02"
+            ItemId = "PVTI_lADOBCrGTM4ActQazgMueM4"
+            FieldId = ""
+            Value = "new value of the body 11"
+        }
+        # Issue
+        issueComment = @{
+            $FieldName = "Comment"
+            Id = "I_lADOBCrGTM4ActQazgFYY03"
+            ItemId = "PVTI_lADNJr_OALnx2s4Fqq8F"
+            FieldId = "PVTF_lADOBCrGTM4ActQazgSl5GU"
+            Value = "new value of the comment 12"
+        }
+        issueTitle = @{
+            $FieldName = "Title"
+            Id = "I_lADOBCrGTM4ActQazgFYY03"
+            ItemId = "PVTI_lADNJr_OALnx2s4Fqq8F"
+            FieldId = ""
+            Value = "new value of the title 12"
+        }
+        issueBody = @{
+            $FieldName = "Body"
+            Id = "I_lADOBCrGTM4ActQazgFYY03"
+            ItemId = "PVTI_lADNJr_OALnx2s4Fqq8F"
+            FieldId = ""
+            Value = "new value of the body 12"
+        }
+    }
+    
+    $mockItemsUpdateItemValues = @(
+        $mockItems.draftComment,
+        $mockItems.draftTitle,
+        $mockItems.prComment,
+        # $mockItems.prTitle,
+        $mockItems.issueComment
+        # $mockItems.issueTitle
+    )
+
+    # Loop through the array and set the mock commands
+    foreach ($item in $mockItemsUpdateItemValues) {
+        $command = 'Import-Module {projecthelper} ; Invoke-GitHubUpdateItemValues -ProjectId {ProjectId} -ItemId {ItemId} -FieldId {FieldId} -Value "{Value}" -Type text'
+        $command = $command -replace '{ProjectId}', $projectId
+        $command = $command -replace '{ItemId}', $item.ItemId
+        $command = $command -replace '{FieldId}', $item.FieldId
+        $command = $command -replace '{Value}', $item.Value
+        $command = $command -replace '{projecthelper}', $MODULE_ROOT_PATH
+        
+        Set-InvokeCommandMock -Command "Import-Module $moduleRootFullName ; Get-MockFileContentJson -filename updateProjectV2ItemFieldValue.json" -Alias $command
+    }
+
+    # Mock Issue edit Title
+    $command = 'Import-Module $moduleRootFullName ; Invoke-UpdateIssue -Id {issueid} -Title "{title}" -Body "{body}"'
+    $command = $command -replace '{issueid}', $mockItems.issueTitle.Id
+    $command = $command -replace '{title}', $mockItems.issueTitle.Value
+    $command = $command -replace '{body}', $mockItems.issueBody.Value
+    Set-InvokeCommandMock -Command "Import-Module $moduleRootFullName ; Get-MockFileContentJson -filename updateIssue.json" -Alias $command
+
+    # Mock PR edit Title
+    $command = 'Import-Module $moduleRootFullName ; Invoke-UpdatePullRequest -Id {prid} -Title "{title}" -Body "{body}"'
+    $command = $command -replace '{prid}', $mockItems.prTitle.Id
+    $command = $command -replace '{title}', $mockItems.prTitle.Value
+    $command = $command -replace '{body}', $mockItems.prBody.Value
+    
+
+    # Mock get-project
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
     # Cache the project with items as Edit-Project will call Get-Project with SkipItems
     $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
-    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
-    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
-    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId2 $fieldComment2 $fileCommentValue2
-    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId2 $fieldTitle2 $fileTitleValue2
+    # Make all the changes
+    foreach ($item in $mockItemsUpdateItemValues) {
+        $fieldName = $item.FieldName
+        $fieldValue = $item.Value
+        $itemId = $item.ItemId
+        Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldName $fieldValue
+    }
 
+    # Act all staged items
     $result = Sync-ProjectItemStagedAsync -Owner $Owner -ProjectNumber $ProjectNumber -SyncBatchSize 2
 
     # Return true
