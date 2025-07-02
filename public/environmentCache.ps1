@@ -26,6 +26,20 @@ function Reset-ProjectHelperEnvironment{
 
 } Export-ModuleMember -Function Reset-ProjectHelperEnvironment
 
+function Set-ProjectHelperEnvironment{
+    [CmdletBinding()]
+    param(
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter()][string[]]$DisplayFields
+    )
+
+    Set-EnvItem -Name "EnvironmentCache_Owner" -Value $owner
+    Set-EnvItem -Name "EnvironmentCache_ProjectNumber" -Value $projectNumber
+    Set-EnvItem -Name "EnvironmentCache_Display_Fields" -Value $displayFields
+
+} Export-ModuleMember -Function Set-ProjectHelperEnvironment
+
 function Get-OwnerAndProjectNumber{
     [CmdletBinding()]
     param(
