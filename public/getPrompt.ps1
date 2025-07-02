@@ -30,18 +30,30 @@ function Get-ProjecthelperPrompt{
 
 function Set-ProjecthelperPrompt{
     [CmdletBinding()]
-    param()
+    param(
+        [switch]$WithNewLine
+    )
 
     if($GitPromptSettings){
         "Setting Prompt with posh-git integration" | Write-Host
-        $GitPromptSettings.DefaultPromptBeforeSuffix.Text ='$(Get-ProjecthelperPrompt -WithNewLine)' + $GitPromptSettings.DefaultPromptBeforeSuffix.Text
-        $GitPromptSettings.DefaultPromptBeforeSuffix.ForegroundColor = 'Red'
+        if($WithNewLine){
+            $GitPromptSettings.DefaultPromptBeforeSuffix.Text ='$(Get-ProjecthelperPrompt -WithNewLine)' + $GitPromptSettings.DefaultPromptBeforeSuffix.Text
+        } else {
+            $GitPromptSettings.DefaultPromptBeforeSuffix.Text ='$(Get-ProjecthelperPrompt)' + $GitPromptSettings.DefaultPromptBeforeSuffix.Text
+        }
+
+        $GitPromptSettings.DefaultPromptBeforeSuffix.ForegroundColor = 'DarkYellow'
+
         return
     }
 
     # Default prompt setup
-    "Setting Default Prompt" | Write-Host
-    $function:prompt = { "$(Get-ProjecthelperPrompt) $($ExecutionContext.SessionState.Path.CurrentLocation)> " }
+    "Setting Projecthelper Default Prompt" | Write-Host
+    if($WithNewLine){
+        $function:prompt = { "$(Get-ProjecthelperPrompt -WithNewLine) $($ExecutionContext.SessionState.Path.CurrentLocation)> " }
+    } else {
+        $function:prompt = { "$(Get-ProjecthelperPrompt) $($ExecutionContext.SessionState.Path.CurrentLocation)> " }
+    }
 
 } Export-ModuleMember -Function Set-ProjecthelperPrompt
 
