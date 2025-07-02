@@ -19,6 +19,6 @@ function Test_GetProjecthelperPrompt{
 
     # With environment and new line return "[TestOwner/12345/0]`n"
     $result = Get-ProjecthelperPrompt -WithNewLine
-    Assert-AreEqual $result "[TestOwner/12345/0]`n"
+    Assert-AreEqual $result "`n[TestOwner/12345/0]"
 
 }
