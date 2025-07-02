@@ -1,0 +1,16 @@
+query FindProject($afterProject:String $firstProject:Int! $login:String! $pattern:String!){
+  organization(login: $login) {
+    projectsV2(query: $pattern, first: $firstProject, after: $afterProject) {
+      nodes {
+        id
+        title
+        number
+        url
+        createdAt
+        updatedAt
+        closedAt
+        
+      }
+    }
+  }
+}

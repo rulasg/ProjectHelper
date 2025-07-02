@@ -1,0 +1,37 @@
+{
+    "data": {
+        "organization": {
+            "projectsV2": {
+                "nodes": [
+                    {
+                        "id": "PVT_kwDNJr_OANFnVw",
+                        "title": "title for project 21406",
+                        "number": 21406,
+                        "url": "https://github.com/orgs/testorg/projects/21406",
+                        "createdAt": "2025-03-14T11:28:04Z",
+                        "updatedAt": "2025-03-28T13:23:18Z",
+                        "closedAt": null
+                    },
+                    {
+                        "id": "PVT_kwDNJr_OANANzQ",
+                        "title": "title for project 21323",
+                        "number": 21323,
+                        "url": "https://github.com/orgs/testorg/projects/21323",
+                        "createdAt": "2025-03-10T13:43:16Z",
+                        "updatedAt": "2025-03-21T12:59:34Z",
+                        "closedAt": null
+                    },
+                    {
+                        "id": "PVT_kwDNJr_OAMgDWg",
+                        "title": "title for project 21034",
+                        "number": 21034,
+                        "url": "https://github.com/orgs/testorg/projects/21034",
+                        "createdAt": "2025-02-11T15:00:09Z",
+                        "updatedAt": "2025-06-09T00:27:36Z",
+                        "closedAt": null
+                    }
+                ]
+            }
+        }
+    }
+}
