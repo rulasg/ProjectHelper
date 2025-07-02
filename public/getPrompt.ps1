@@ -21,7 +21,7 @@ function Get-ProjecthelperPrompt{
     $prompt = "[$owner/$projectNumber/$count]"
 
     if($WithNewLine){
-        $prompt = "$prompt`n"
+        $prompt = "`n$prompt"
     }
 
     return $prompt
@@ -34,7 +34,7 @@ function Set-ProjecthelperPrompt{
 
     if($GitPromptSettings){
         "Setting Prompt with posh-git integration" | Write-Host
-        $GitPromptSettings.DefaultPromptBeforeSuffix.Text ='`n$(Get-ProjecthelperPrompt -WithNewLine)'
+        $GitPromptSettings.DefaultPromptBeforeSuffix.Text ='$(Get-ProjecthelperPrompt -WithNewLine)' + $GitPromptSettings.DefaultPromptBeforeSuffix.Text
         $GitPromptSettings.DefaultPromptBeforeSuffix.ForegroundColor = 'Red'
         return
     }
