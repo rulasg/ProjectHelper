@@ -1,4 +1,3 @@
-
 Set-MyInvokeCommandAlias -Alias FindProject -Command 'Invoke-FindProject -Owner {owner} -Pattern "{pattern}" -firstProject {firstProject} -afterProject "{afterProject}"'
 
 function Find-Project{
@@ -27,6 +26,5 @@ function Find-Project{
     "Verbose found [$($projects.Count)] projects for owner [$Owner] with pattern [$Pattern]" | Write-MyVerbose
 
     return $projects
-
 
 } Export-ModuleMember -Function Find-Project
