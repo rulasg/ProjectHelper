@@ -3,10 +3,14 @@ Set-MyinvokeCommandAlias -Alias GetToken -Command "gh auth token"
 
 <#
     .SYNOPSIS
-    This function retrieves a GitHub organization project with fields.
+    Retrieves a GitHub organization project with fields.
+
+    .DESCRIPTION
+    This is an integration function that is not intended to be used directly by the user.
+    It fetches project details including fields and items from a GitHub organization project.
 
     .EXAMPLE
-    Invoke-GitHubOrgProjectWithFields -Owner "someOwner" -Project 164
+    Invoke-GitHubOrgProjectWithFields -Owner "someOwner" -ProjectNumber 164
 #>
 function Invoke-GitHubOrgProjectWithFields {
     param(
@@ -64,6 +68,14 @@ function Invoke-GitHubOrgProjectWithFields {
     return $response
 } Export-ModuleMember -Function Invoke-GitHubOrgProjectWithFields
 
+<#
+.SYNOPSIS
+Invokes a GitHub organization project query
+
+.DESCRIPTION
+This is an integration function that is not intended to be used directly by the user.
+Retrieves information about a GitHub organization project using GraphQL.
+#>
 function Invoke-GitHubOrgProject{
     [CmdletBinding()]
     param(
@@ -129,6 +141,14 @@ function InvokeGitHubOrgProject {
     return $response
 }
 
+<#
+.SYNOPSIS
+Updates item values in a GitHub project
+
+.DESCRIPTION
+This is an integration function that is not intended to be used directly by the user.
+Updates the values of specific fields for an item in a GitHub project.
+#>
 function Invoke-GitHubUpdateItemValues{
     param(
         [Parameter(Mandatory=$true)] [string]$ProjectId,
@@ -184,7 +204,7 @@ function Invoke-GitHubUpdateItemValues{
 
     # Check if here are errors
     if($response.errors){
-        $response.errors | foreach {
+        $response.errors | ForEach-Object {
             "RESPONSE Type[$($_.type)] $($_.message)" | Write-MyError
         }
         return $null
@@ -194,7 +214,15 @@ function Invoke-GitHubUpdateItemValues{
     return $response
 } Export-ModuleMember -Function Invoke-GitHubUpdateItemValues
 
-function Invoke-GetIssueOrPullRequest {
+<#
+.SYNOPSIS
+Gets issue or pull request information
+
+.DESCRIPTION
+This is an integration function that is not intended to be used directly by the user.
+Retrieves detailed information about an issue or pull request from GitHub.
+#>
+function Invoke-GetIssueOrPullRequest{
     param(
         [Parameter(Mandatory)] [string] $Url
     )
@@ -289,7 +317,15 @@ function Invoke-GetIssueOrPullRequest {
 #     return $response
 # } Export-ModuleMember -Function Invoke-GetIContentId
 
-function Invoke-AddItemToProject {
+<#
+.SYNOPSIS
+Adds an item to a GitHub project
+
+.DESCRIPTION
+This is an integration function that is not intended to be used directly by the user.
+Adds a GitHub issue or pull request to a project board.
+#>
+function Invoke-AddItemToProject{
     param(
         [Parameter(Mandatory=$true)] [string]$ProjectId,
         [Parameter(Mandatory=$true)] [string]$ContentId
@@ -330,7 +366,7 @@ function Invoke-AddItemToProject {
 
     # Check if here are errors
     if($response.errors){
-        $response.errors | foreach {
+        $response.errors | ForEach-Object {
             "RESPONSE Type[$($_.type)] $($_.message)" | Write-MyError
         }
         return $null
@@ -340,7 +376,15 @@ function Invoke-AddItemToProject {
     return $response
 } Export-ModuleMember -Function Invoke-AddItemToProject
 
-function Invoke-RemoveItemFromProject {
+<#
+.SYNOPSIS
+Removes an item from a GitHub project
+
+.DESCRIPTION
+This is an integration function that is not intended to be used directly by the user.
+Removes a GitHub issue or pull request from a project board.
+#>
+function Invoke-RemoveItemFromProject{
     param(
         [Parameter(Mandatory=$true)] [string]$ProjectId,
         [Parameter(Mandatory=$true)] [string]$ItemId
@@ -381,7 +425,7 @@ function Invoke-RemoveItemFromProject {
 
     # Check if here are errors
     if($response.errors){
-        $response.errors | foreach {
+        $response.errors | ForEach-Object {
             "RESPONSE Type[$($_.type)] $($_.message)" | Write-MyError
         }
         return $null
@@ -392,6 +436,13 @@ function Invoke-RemoveItemFromProject {
 } Export-ModuleMember -Function Invoke-RemoveItemFromProject
 
 
+<#
+.SYNOPSIS
+Gets a GitHub authentication token
+
+.DESCRIPTION
+Retrieves a GitHub authentication token using the GitHub CLI.
+#>
 function Get-GithubToken{
     [CmdletBinding()]
     param()
