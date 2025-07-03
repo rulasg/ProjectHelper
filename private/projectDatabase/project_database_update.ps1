@@ -18,7 +18,7 @@ function Update-ProjectDatabase {
     if($ProjectNumber -eq 0){
         throw "ProjectNumber invalid. Please specify a valid ProjectNumber"
     }
-    
+
     # check if there are unsaved changes
     $saved = Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber
     if($saved -and -Not $Force){
@@ -52,7 +52,7 @@ function Update-ProjectDatabase {
                 $items = Convert-ItemsFromResponse $projectV2 | Add2HashTable $items
             }
             $params.afterItems = $result.data.organization.projectv2.items.pageInfo.endCursor
-            $hasNextPageItems = $result.data.organization.projectv2.items.pageInfo.hasNextPage 
+            $hasNextPageItems = $result.data.organization.projectv2.items.pageInfo.hasNextPage
         }
 
         # Check if we have already processed all the fields
@@ -278,7 +278,7 @@ function GetLabels{
     foreach($node in $FieldNode.labels.nodes){
         $ret += $node.name
     }
-    
+
     $ret = $ret | ConvertTo-Json
 
     return $ret
@@ -298,7 +298,7 @@ function GetPullRequests{
     foreach($node in $FieldNode.pullRequests.nodes){
         $ret += $node.url
     }
-    
+
     $ret = $ret | ConvertTo-Json
 
     return $ret

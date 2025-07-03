@@ -78,7 +78,7 @@ function Invoke-ProjectInjectionOnDueDate {
         if($today -lt $item.$DueDateFieldName){
             continue
         }
-        
+
         # Change item
 
         # Update status of the items

@@ -21,7 +21,7 @@ function Get-Item{
                 $ret.$fieldname = ConvertFrom-FieldValue -Value $database.Staged.$ItemId.$fieldKey.Value -Field $database.fields.$fieldKey
             }
         }
-        
+
         #if ret is empty, return null
         if($ret.Count -eq 0){
             return $null
@@ -79,7 +79,7 @@ function Save-ItemFieldValue{
     "Staging item [$ItemId] with field [$FieldName] and value [$Value] in Project [$($Database.ProjectId)]" | Write-MyHost
 
     $field = Get-Field $Database $FieldName
-    
+
     if($null -eq $field){
         throw "Field $FieldName not found"
     }
@@ -112,9 +112,9 @@ function Save-ItemFieldValue{
     The following sampel will create if not exist the path of the value in a tree of hash tables
     $node = $Database | AddHashLink "Staged" | AddHashLink $level1 | AddHashLink $level2 | AddHashLink $level3
 
-    For later to set value to 
+    For later to set value to
     $Database.Staged.$level1.$level2.$level3.FieldName = "value"
-    
+
 #>
 function AddHashLink{
     [CmdletBinding()]
@@ -129,7 +129,7 @@ function AddHashLink{
         if ($null -eq $parent.$Name){
             $parent[$Name] = New-Object System.Collections.Hashtable
         }
-        
+
         #element present but not a hash table
         if(-Not ($parent[$Name] -is [hashtable])){
             throw "Element $Name is not a hash table"
@@ -155,7 +155,7 @@ function Copy-MyHashTable{
         if(-not( $object -is [Hashtable])){
             throw "Object is not a hashtable"
         }
-        
+
         $ret = $Object | ConvertTo-Json | ConvertFrom-Json -AsHashtable
 
         return $ret

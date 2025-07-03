@@ -8,7 +8,7 @@ function Test_Get_Project_ItemId_Equal_Case_Sensitive{
     $item2 ="PVTI_lADNJr_OALnx2s4Fqq8f"
     $item3 = "PVTI_lADNJr_OALnx2s4Fqq8p"
     $item4 = "PVTI_lADNJr_OALnx2s4Fqq8P"
-    # Testing that we can load this 
+    # Testing that we can load this
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164
 
@@ -33,19 +33,19 @@ function Test_Get_Project_ItemId_Equal_Case_Sensitive{
     Assert-IsNotNull -Object $result4
     Assert-AreEqual -Expected $result4.id -Presented $result.items.$item4.id
 
-    
+
 }
 
 function Test_Get_Project_ItemId_Equal_Case_Sensitive_2{
 
-    # Allthough this test pass this is not the case when 
+    # Allthough this test pass this is not the case when
     # adding Items to a @{}
 
     $item1 ="PVTI_lADNJr_OALnx2s4Fqq8F"
     $item2 ="PVTI_lADNJr_OALnx2s4Fqq8f"
     $item3 = "PVTI_lADNJr_OALnx2s4Fqq8p"
     $item4 = "PVTI_lADNJr_OALnx2s4Fqq8P"
-    # Testing that we can load this 
+    # Testing that we can load this
 
     # By default hashTables are case insensitive in the name of the keys
 

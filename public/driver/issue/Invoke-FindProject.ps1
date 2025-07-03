@@ -9,7 +9,7 @@ function Invoke-FindProject{
         [Parameter()][string]$afterProject = $null
     )
 
-    # Use the environmentraviable 
+    # Use the environmentraviable
     $token = Get-GithubToken
     if(-not $token){
         throw "GH Cli Auth Token not available. Run 'gh auth login' in your terminal."

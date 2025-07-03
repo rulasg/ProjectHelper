@@ -22,7 +22,7 @@ function Set-InvokeCommandMock{
     )
 
     InvokeHelper\Set-InvokeCommandAlias -Alias $Alias -Command $Command -Tag $MODULE_INVOKATION_TAG_MOCK
-} 
+}
 
 function Reset-InvokeCommandMock{
     [CmdletBinding()]
@@ -180,8 +180,8 @@ function Save-InvokeAsMockFile{
 
     $result = Invoke-Expression -Command $Command
 
-    $json = $result | ConvertTo-Json -Depth 100 
-    
+    $json = $result | ConvertTo-Json -Depth 100
+
     $json | Out-File -FilePath $filePath
 
     Write-Host $FileName

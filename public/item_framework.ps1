@@ -42,7 +42,7 @@ function Test-IsLike{
     )
 
     $ret = $item.$Attribute -Like $Value
-    
+
     return $ret
 }
 

@@ -1,4 +1,4 @@
-# Variables used to the written output of the cmdlets 
+# Variables used to the written output of the cmdlets
 
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments','',Scope='function')]
 $VerboseParameters =@{
@@ -8,7 +8,7 @@ $VerboseParameters =@{
 
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments','',Scope='function')]
 $WarningParameters = @{
-    WarningAction = 'SilentlyContinue' 
+    WarningAction = 'SilentlyContinue'
     WarningVariable = 'warningVar'
 }
 

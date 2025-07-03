@@ -12,7 +12,7 @@ function Get-ProjecthelperPrompt{
     if(-not $owner -and -not $projectNumber){
         return [string]::Empty
     }
-    
+
     # Get Staged items
     $db = Get-ProjectFromDatabase -Owner $Owner -ProjectNumber $ProjectNumber
     $count = $db.Staged.Values.Values.Count
@@ -49,7 +49,7 @@ $( #PROJECTHELPER
 '@
 
     if($GitPromptSettings){
-        
+
         # Check if the prompt is already part of the DefaultPromptBeforeSuffix.Text
         if (-not $GitPromptSettings.DefaultPromptBeforeSuffix.Text.Contains('#PROJECTHELPER')) {
             "Setting Prompt with posh-git integration" | Write-Host

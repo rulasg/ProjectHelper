@@ -16,7 +16,7 @@ function Get-ProjectItemList{
         if(-not $Project){
             ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
             if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
-        
+
             $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
         }
 
@@ -56,7 +56,7 @@ function Get-ProjectItemList{
 
 function Test-ItemIsDone($Item){
 
-    $ret = $Item.Status -eq "Done" 
+    $ret = $Item.Status -eq "Done"
 
     return $ret
 }
@@ -100,9 +100,9 @@ function Search-ProjectItemByTitle{
 
     # return if #db is null
     if($null -eq $items){ return $null}
-    
+
     $ret = $items.Values | Where-Object { $_.Title -like "*$Title*" }
-    
+
     return $ret
 
 } Export-ModuleMember -Function Search-ProjectItemByTitle

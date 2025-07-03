@@ -3,7 +3,7 @@ function Test_CommitProjectItemsStaged_NoStaged{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164 ; 
+    $Owner = "SomeOrg" ; $ProjectNumber = 164 ;
     # $itemsCount = 12 ; $fieldsCount = 18
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
 
@@ -18,14 +18,14 @@ function Test_CommitProjectItemsStaged_NoStaged{
 function Test_CommitProjectItemsStaged_SUCCESS{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
-    
+
     $Owner = "SomeOrg" ; $ProjectNumber = 164
 
     # Item id 10
     # Name                           Value
     # ----                           -----
     # id                             PVTI_lADOBCrGTM4ActQazgMuXXc
-    # number                         
+    # number
     # Severity                       Nice⭐️
     # Status                         Todo
     # TimeTracker                    890
@@ -35,7 +35,7 @@ function Test_CommitProjectItemsStaged_SUCCESS{
     # UserStories                    8
     # Title                          A draft in the project
     # Priority                       🥵High
-    # url                            
+    # url
     # type                           DraftIssue
 
     $itemId1 = "PVTI_lADOBCrGTM4ActQazgMuXXc"
@@ -46,7 +46,7 @@ function Test_CommitProjectItemsStaged_SUCCESS{
     # ----                           -----
     # number                         6
     # id                             PVTI_lADOBCrGTM4ActQazgMueM4
-    # body                           
+    # body
     # type                           PullRequest
     # Start Date                     2024-02-23
     # Repository                     https://github.com/SolidifyDemo/ProjectDemoTest-repo-front
@@ -102,7 +102,7 @@ function Test_CommitProjectItemsStagedAsync_SUCCESS{
 
     $moduleRootPath = $PSScriptRoot | Split-Path -Parent
     $moduleRootFullName = $moduleRootPath | Convert-Path
-    
+
     $Owner = "SomeOrg" ; $ProjectNumber = 164
     $projectId ="PVT_kwDOBCrGTM4ActQa"
 
@@ -110,7 +110,7 @@ function Test_CommitProjectItemsStagedAsync_SUCCESS{
     # Name                           Value
     # ----                           -----
     # id                             PVTI_lADOBCrGTM4ActQazgMuXXc
-    # number                         
+    # number
     # Severity                       Nice⭐️
     # Status                         Todo
     # TimeTracker                    890
@@ -120,7 +120,7 @@ function Test_CommitProjectItemsStagedAsync_SUCCESS{
     # UserStories                    8
     # Title                          A draft in the project
     # Priority                       🥵High
-    # url                            
+    # url
     # type                           DraftIssue
 
     $itemId1 = "PVTI_lADOBCrGTM4ActQazgMuXXc"
@@ -131,7 +131,7 @@ function Test_CommitProjectItemsStagedAsync_SUCCESS{
     # ----                           -----
     # number                         6
     # id                             PVTI_lADOBCrGTM4ActQazgMueM4
-    # body                           
+    # body
     # type                           PullRequest
     # Start Date                     2024-02-23
     # Repository                     https://github.com/SolidifyDemo/ProjectDemoTest-repo-front
@@ -179,10 +179,10 @@ function Test_CommitProjectItemsStagedAsync_SUCCESS{
         $command = $command -replace '{FieldId}', $item.FieldId
         $command = $command -replace '{Value}', $item.Value
         $command = $command -replace '{projecthelper}', $MODULE_ROOT_PATH
-        
+
         Set-InvokeCommandMock -Command "Import-Module $moduleRootFullName ; Get-MockFileContentJson -filename updateProjectV2ItemFieldValue.json" -Alias $command
     }
-    
+
     # Mock get-project
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
     # Cache the project with items as Edit-Project will call Get-Project with SkipItems
@@ -227,11 +227,11 @@ function Test_ShowProjectItemsStaged{
 
     # Item 1
     $itemId1 = "PVTI_lADOBCrGTM4ActQazgMuXXc"
-    
-    $fieldComment1 = "Comment" ; $fieldCommentValue1 = "new value of the comment 10" 
+
+    $fieldComment1 = "Comment" ; $fieldCommentValue1 = "new value of the comment 10"
     $fieldCommentValue1_Before = $projectBefore.items.$itemId1.$fieldComment1
-    
-    $fieldTitle1 = "Title" ; $fieldTitleValue1 = "new value of the title" 
+
+    $fieldTitle1 = "Title" ; $fieldTitleValue1 = "new value of the title"
     $fieldTitleValue1_Before = $projectBefore.items.$itemId1.$fieldTitle1
 
     $fieldStatus = "Status" ; $fieldStatusValue1 = "Done"
@@ -239,12 +239,12 @@ function Test_ShowProjectItemsStaged{
 
     $fieldDate = "Next Action Date" ; $fieldDateValue1 = "2024-03-31"
     $fieldDateValue1_Before = $projectBefore.items.$itemId1.$fieldDate
-    
+
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldStatus $fieldStatusValue1
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldDate $fieldDateValue1
-    
+
     # Item 2
     $itemId2 = "PVTI_lADOBCrGTM4ActQazgMueM4"
     $fieldComment2 = "Comment" ; $fileCommentValue2 = "new value of the comment 11"
@@ -263,7 +263,7 @@ function Test_ShowProjectItemsStaged{
     Assert-Contains -Expected $fieldComment1 -Presented $result1.FieldsName
     Assert-Contains -Expected $fieldTitle1 -Presented $result1.FieldsName
     Assert-Contains -Expected $fieldStatus -Presented $result1.FieldsName
-    
+
     $result2 = $result | Where-Object { $_.id -eq $itemId2 }
     # Assert-AreEqual -Expected "PullRequest" -Presented $result2.type
     Assert-Contains -Expected $fieldComment2 -Presented $result2.FieldsName
@@ -293,7 +293,7 @@ function Test_TestProjectItemStaged{
 
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
-    
+
     $Owner = "SomeOrg" ; $ProjectNumber = 164
 
     # no project information available

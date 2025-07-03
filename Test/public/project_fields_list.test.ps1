@@ -3,7 +3,7 @@ function Test_GetProjectFields_SUCCESS{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164 
+    $Owner = "SomeOrg" ; $ProjectNumber = 164
 
     # title refrence with differnt case and spaces
     $filter = "epic"
@@ -41,7 +41,7 @@ function Test_GetProjectFields_SUCCESS_FilterByName{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164 
+    $Owner = "SomeOrg" ; $ProjectNumber = 164
 
     # title refrence with differnt case and spaces
     $filter = "Title"

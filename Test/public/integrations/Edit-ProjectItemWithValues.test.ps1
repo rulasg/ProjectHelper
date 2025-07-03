@@ -27,7 +27,7 @@ function Test_EditProjectItemWithValues_Integration{
 
     Assert-AreEqual -expected $data.Text1 -Presented $result.$($FieldSlug + "Text1")
     Assert-AreEqual -expected $data.Text2 -Presented $result.$($FieldSlug + "Text2")
-    # Assert-AreEqual -expected $data.Text3 -Presented $result.$($FieldSlug + "Text3") 
+    # Assert-AreEqual -expected $data.Text3 -Presented $result.$($FieldSlug + "Text3")
     Assert-AreEqual -expected $data.Number1 -Presented $result.$($FieldSlug + "Number1")
 
     # Confirm that the changes are staged

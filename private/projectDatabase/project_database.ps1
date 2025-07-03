@@ -12,7 +12,7 @@ function Test-ProjectDatabase{
 
     $ret = $null -ne $prj
 
-    return $ret 
+    return $ret
 }
 
 function Test-ProjectDatabaseStaged{
@@ -78,7 +78,7 @@ function Set-ProjectDatabaseV2{
     $dbkey = Get-DatabaseKey -Owner $owner -ProjectNumber $projectnumber
 
     $db = New-Object System.Collections.Hashtable
-    
+
     $db.url              = $ProjectV2.url
     $db.shortDescription = $ProjectV2.shortDescription
     $db.public           = $ProjectV2.public
@@ -92,7 +92,7 @@ function Set-ProjectDatabaseV2{
 
     $db.items = $items
     $db.fields = $fields
-    
+
     Save-Database -Key $dbkey -Database $db
 }
 

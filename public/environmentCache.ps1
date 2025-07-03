@@ -11,7 +11,7 @@ function Get-ProjectHelperEnvironment{
         ProjectNumber = Get-EnvItem -Name "EnvironmentCache_ProjectNumber"
         DisplayFields = Get-EnvItem -Name "EnvironmentCache_Display_Fields"
     }
-    
+
     return $ret
 
 } Export-ModuleMember -Function Get-ProjectHelperEnvironment
@@ -64,7 +64,7 @@ function Get-OwnerAndProjectNumber{
     }
 
     return ($owner, $ProjectNumber)
-} 
+}
 
 function Get-EnvironmentDisplayFields{
     [CmdletBinding()]
@@ -127,4 +127,4 @@ function Get-DefaultDisplayFields{
 
     # return Get-EnvItem -Name "EnvironmentCache_Display_Fields"
     return $DEFAULT_DISPLAY_FIELDS
-} 
+}

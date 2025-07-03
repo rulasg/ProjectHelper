@@ -18,7 +18,7 @@ function Invoke-GitHubOrgProjectWithFields {
         [Parameter(Mandatory=$false)] [int]$firstItems = 100
     )
 
-    # Use the environmentraviable 
+    # Use the environmentraviable
     $token = Get-GithubToken
     if(-not $token){
         throw "GH Cli Auth Token not available. Run 'gh auth login' in your terminal."
@@ -83,7 +83,7 @@ function InvokeGitHubOrgProject {
         [Parameter(Mandatory=$false)] [string]$afterItems = $null
     )
 
-    # Use the environmentraviable 
+    # Use the environmentraviable
     $token = Get-GithubToken
     if(-not $token){
         throw "GH Cli Auth Token not available. Run 'gh auth login' in your terminal."
@@ -127,7 +127,7 @@ function InvokeGitHubOrgProject {
 
     # Return the field names
     return $response
-} 
+}
 
 function Invoke-GitHubUpdateItemValues{
     param(
@@ -139,7 +139,7 @@ function Invoke-GitHubUpdateItemValues{
         [string]$Type
     )
 
-    # Use the environmentraviable 
+    # Use the environmentraviable
     $token = Get-GithubToken
     if(-not $token){
         throw "GH Cli Auth Token not available. Run 'gh auth login' in your terminal."
@@ -199,7 +199,7 @@ function Invoke-GetIssueOrPullRequest {
         [Parameter(Mandatory)] [string] $Url
     )
 
-    # Use the environmentraviable 
+    # Use the environmentraviable
     $token = Get-GithubToken
     if(-not $token){
         throw "GH Cli Auth Token not available. Run 'gh auth login' in your terminal."
@@ -244,7 +244,7 @@ function Invoke-GetIssueOrPullRequest {
 #         [Parameter(Mandatory)] [string] $Url
 #     )
 
-#     # Use the environmentraviable 
+#     # Use the environmentraviable
 #     $token = Get-GithubToken
 #     if(-not $token){
 #         throw "GH Cli Auth Token not available. Run 'gh auth login' in your terminal."
@@ -295,7 +295,7 @@ function Invoke-AddItemToProject {
         [Parameter(Mandatory=$true)] [string]$ContentId
     )
 
-    # Use the environmentraviable 
+    # Use the environmentraviable
     $token = Get-GithubToken
     if(-not $token){
         throw "GH Cli Auth Token not available. Run 'gh auth login' in your terminal."
@@ -346,7 +346,7 @@ function Invoke-RemoveItemFromProject {
         [Parameter(Mandatory=$true)] [string]$ItemId
     )
 
-    # Use the environmentraviable 
+    # Use the environmentraviable
     $token = Get-GithubToken
     if(-not $token){
         throw "GH Cli Auth Token not available. Run 'gh auth login' in your terminal."
@@ -390,7 +390,7 @@ function Invoke-RemoveItemFromProject {
     # Return the field names
     return $response
 } Export-ModuleMember -Function Invoke-RemoveItemFromProject
-    
+
 
 function Get-GithubToken{
     [CmdletBinding()]

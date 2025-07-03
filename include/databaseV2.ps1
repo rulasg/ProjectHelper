@@ -15,7 +15,7 @@ function Reset-DatabaseStore{
     param()
 
         $databaseRoot = Invoke-MyCommand -Command GetDatabaseStorePath
-    
+
         Remove-Item -Path $databaseRoot -Recurse -Force -ErrorAction SilentlyContinue
 
         New-Item -Path $databaseRoot -ItemType Directory
@@ -27,7 +27,7 @@ function Get-DatabaseStore{
     param()
 
         $databaseRoot = Invoke-MyCommand -Command GetDatabaseStorePath
-    
+
         return $databaseRoot
 
 } Export-ModuleMember -Function Get-DatabaseStore
@@ -39,7 +39,7 @@ function Get-Database{
     )
 
     $path =  Get-DatabaseFile $Key
-    
+
     if(-Not (Test-Path $path)){
         return $null
     }

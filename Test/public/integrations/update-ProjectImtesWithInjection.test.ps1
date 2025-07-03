@@ -31,7 +31,7 @@ function Test_UpdateProjectWithInjection{
             Value = "Value updated from integration1"
         }
         Edit-ProjectItem @params
-        
+
     }
 function global:Invoke-ProjectInjection_2 {
     [CmdletBinding()]
@@ -107,7 +107,7 @@ function Test_UpdateProjectWithInjection_Failed_1{
             Value = "Value updated from integration1"
         }
         Edit-ProjectItem @params
-        
+
     }
     function global:Invoke-ProjectInjection_2 {
     [CmdletBinding()]
@@ -132,7 +132,7 @@ function Test_UpdateProjectWithInjection_Failed_1{
    Assert-Contains -Expected "Invoke-ProjectInjection_2" -Presented $result.IntegrationsName
 
    Assert-AreEqual -Expected 1                           -Presented $result.Pass
-   
+
    Assert-AreEqual -Expected 1                           -Presented $result.Failed
    Assert-Contains -Expected "Invoke-ProjectInjection_2" -Presented $result.FailedIntegration
    Assert-AreEqual -Expected "Integration 2 failed" -Presented $result.FailedIntegrationErrors."Invoke-ProjectInjection_2".Exception.Message
@@ -152,7 +152,7 @@ function Test_UpdateProjectWithInjection_Failed_1{
 }
 
 function Test_InvokeProjectInjection{
-    
+
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
@@ -178,7 +178,7 @@ function Test_InvokeProjectInjection{
             Value = "Value updated from integration1"
         }
         Edit-ProjectItem @params
-        
+
     }
 
     $result = Invoke-ProjectInjection -FunctionName "Invoke-ProjectInjection_1" -Owner $owner -ProjectNumber $projectNumber
@@ -193,7 +193,7 @@ function Test_InvokeProjectInjection{
 }
 
 function Test_InvokeProjectInjection_Fail{
-    
+
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
