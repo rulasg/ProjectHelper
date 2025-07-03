@@ -74,7 +74,7 @@ function Invoke-UpdateIssue{
 
     # Check if here are errors
     if($response.errors){
-        $response.errors | foreach {
+        $response.errors | ForEach-Object {
             "RESPONSE Type[$($_.type)] $($_.message)" | Write-MyError
         }
         return $null
