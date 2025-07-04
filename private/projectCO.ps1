@@ -17,7 +17,7 @@ function New-ProjectCO {
             URL = $URL
         }
     }
-} 
+}
 
 function Test-ProjectCO {
     param (

@@ -22,7 +22,7 @@ function Invoke-UpdateIssue{
         [Parameter()][string]$Body
     )
 
-    # Use the environmentraviable 
+    # Use the environmentraviable
     $token = Get-GithubToken
     if(-not $token){
         throw "GH Cli Auth Token not available. Run 'gh auth login' in your terminal."
@@ -74,7 +74,7 @@ function Invoke-UpdateIssue{
 
     # Check if here are errors
     if($response.errors){
-        $response.errors | foreach {
+        $response.errors | ForEach-Object {
             "RESPONSE Type[$($_.type)] $($_.message)" | Write-MyError
         }
         return $null

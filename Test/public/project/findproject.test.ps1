@@ -4,7 +4,7 @@ function Test_FindProject_SUCCESS {
     Enable-InvokeCommandAliasModule
 
     $owner = "github"
-    
+
     # Empty list
     $pattern = "emptylistpattern"
     $mockfilename = "findprojectempty.json"

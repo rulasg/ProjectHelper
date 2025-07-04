@@ -162,7 +162,7 @@ function Test-DateFormat{
 
         try {
             $null = [datetime]::ParseExact($Date, 'yyyy-MM-dd', $null)
-            
+
             return $true
         }
         catch {
@@ -230,9 +230,9 @@ function ConvertTo-Number {
 
         # Replace decimal separator with the one from InvariantCulture
         # This makes sure the decimal parses successfully using InvariantCulture
-        $numberPart = $numberPart.Replace($decimalChar, 
+        $numberPart = $numberPart.Replace($decimalChar,
             [System.Globalization.CultureInfo]::InvariantCulture.NumberFormat.CurrencyDecimalSeparator)
-            
+
         return $numberPart
     }
 }

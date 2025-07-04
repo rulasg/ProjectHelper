@@ -143,29 +143,29 @@ function Invoke-ProjectInjection {
             $ret.Pass++
         }
         catch {
-    
-            Write-Host "x"  -NoNewline -ForegroundColor Red 
-            Write-Host "] "  -NoNewline -ForegroundColor DarkCyan 
+
+            Write-Host "x"  -NoNewline -ForegroundColor Red
+            Write-Host "] "  -NoNewline -ForegroundColor DarkCyan
 
             if ($_.Exception.Message -eq "SKIP_INTEGRATION") {
                 Write-Host "Skip"  -ForegroundColor Magenta
                 $ret.SkippedIntegration += $FunctionName
-                
+
             }elseif ($_.Exception.Message -eq "NOT_IMPLEMENTED") {
                 Write-Host "NotImplemented"  -ForegroundColor Red
                 $ret.NotImplementedIntegration += $FunctionName
-                
+
             } else {
-                Write-Host "Failed"  -ForegroundColor Red 
+                Write-Host "Failed"  -ForegroundColor Red
                 $ret.FailedIntegration += $FunctionName
-                
+
                 $ret.FailedIntegrationErrors.$functionName = $_
-                
+
                 if ($ShowErrors) {
-                    
+
                     $functionName | Write-Host -ForegroundColor Red
                     $_ | Write-Host -ForegroundColor Red
-                } 
+                }
             }
         }
     }

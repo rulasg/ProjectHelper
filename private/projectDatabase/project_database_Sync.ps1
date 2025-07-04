@@ -31,7 +31,7 @@ function Sync-ProjectDatabase{
     $different = New-Object System.Collections.Hashtable
     foreach($idemId in $db.Staged.Keys){
 
-        # skip if $itemid is not in items. 
+        # skip if $itemid is not in items.
         # This happenon direct item edit. Edit without full project sync
         if(-not $db.items.$idemId){
             continue

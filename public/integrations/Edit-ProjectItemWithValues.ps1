@@ -20,7 +20,7 @@ function Edit-ProjectItemWithValues {
     # forech key in data do
     foreach ($key in $Values.Keys) {
         $fieldName = $FieldSlug + $key
-        
+
         # Check if field exists
         $field = $fields | Where-Object { $_.name -eq $fieldName }
         if ($null -eq $field) {

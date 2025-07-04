@@ -27,7 +27,7 @@ function Test_UpdateProjectItemsBetweenProjects{
     $staged = Get-ProjectItemStaged -Owner $owner -ProjectNumber $destinationProjectNumber
 
     Assert-Count -Expected 3 -Presented $staged.Keys
-    
+
     Assert-Count -Expected 2 -Presented $staged.PVTI_lADOAlIw4c4A0QAozgYQpRY.Keys
     Assert-AreEqual -Presented $staged.PVTI_lADOAlIw4c4A0QAozgYQpP0.PVTF_lADOAlIw4c4A0QAozgp6aGw.Value -Expected "Value issue 1"
     Assert-AreEqual -Presented $staged.PVTI_lADOAlIw4c4A0QAozgYQpP0.PVTF_lADOAlIw4c4A0QAozgp6aK4.Value -Expected "11"
@@ -64,7 +64,7 @@ function Test_UpdateProjectItemsBetweenProjects_NoRefresh_NoRefresh{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot -NotReset
 
-    # Act 
+    # Act
 
     $params = @{
         SourceOwner = $owner

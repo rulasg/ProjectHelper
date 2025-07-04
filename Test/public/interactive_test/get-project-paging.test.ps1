@@ -1,7 +1,7 @@
 function Test_GetProject_Paging_SUCCESS{
 
     Assert-SkipTest
-    
+
     Reset-InvokeCommandMock
     Enable-InvokeCommandAliasModule
 

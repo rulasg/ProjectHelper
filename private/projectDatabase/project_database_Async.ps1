@@ -80,7 +80,7 @@ function Sync-ProjectDatabaseAsync{
     if($db.Staged.Keys.Count -eq 0){
         $db.Staged = $null
     }
-    
+
     Save-Database -Key $dbkey -Database $db
 
     if($different.Count -ne 0){
@@ -207,7 +207,7 @@ function Waiting($Calls){
     $completed = $Calls | Where-Object { $_.job.State -eq 'Completed' } | Measure-Object | Select-Object -ExpandProperty Count
     $failed = $Calls | Where-Object { $_.job.State -eq 'Failed' } | Measure-Object | Select-Object -ExpandProperty Count
     $all = $Calls.Count
-    
+
     "" | Write-MyHost
     "Completed [$completed] Failed [$failed]" | Write-MyHost
 }

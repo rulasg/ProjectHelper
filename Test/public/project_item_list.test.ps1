@@ -50,12 +50,12 @@ function Test_GetProjetItemList_FAIL{
     Mock_DatabaseRoot
 
     # Start the transcript
-    
+
     # Run the command
     Start-MyTranscript
     $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
     $tt = Stop-MyTranscript
-    
+
     # Capture the standard output
     $erroMessage1= "Error: Project not found. Check owner and projectnumber"
 
@@ -103,7 +103,7 @@ function Test_FindProjectItemByTitle_SUCCESS_MultipleResults{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164  ; 
+    $Owner = "SomeOrg" ; $ProjectNumber = 164  ;
     $id1 = "PVTI_lADNJr_OALnx2s4Fqq8P"
     $id2 = "PVTI_lADOBCrGTM4ActQazgMtRPA"
 
@@ -128,7 +128,7 @@ function Test_FindProjectItemByTitle_FAIL{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164 
+    $Owner = "SomeOrg" ; $ProjectNumber = 164
 
     MockCall_GitHubOrgProjectWithFields_Null  -Owner $owner -ProjectNumber $projectNumber
 
@@ -136,7 +136,7 @@ function Test_FindProjectItemByTitle_FAIL{
     Start-MyTranscript
     $result = Find-ProjectItemByTitle -Owner $Owner -ProjectNumber $ProjectNumber
     $tt = Stop-MyTranscript
-    
+
     # Capture the standard output
     $erroMessage1= "Error: Project not found. Check owner and projectnumber"
 
@@ -173,7 +173,7 @@ function Test_SearchProjectItemByTitle_FAIL{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164 
+    $Owner = "SomeOrg" ; $ProjectNumber = 164
     $erroMessage= "Error: Project not found. Check owner and projectnumber"
 
     Mock_DatabaseRoot
@@ -184,7 +184,7 @@ function Test_SearchProjectItemByTitle_FAIL{
     Start-MyTranscript
     $result = Search-ProjectItemByTitle -Owner $Owner -ProjectNumber $ProjectNumber
     $tt = Stop-MyTranscript
-    
+
     Assert-IsNull -Object $result
     Assert-Contains -Expected $erroMessage -Presented $tt
 }
@@ -202,15 +202,15 @@ function Test_SearchProjectItem_SUCCESS{
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
 
     $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Filter $filter -Fields ("id","title","url","id")
-    
+
     Assert-Count -Expected 2 -Presented $result
-    
+
     Assert-Contains -Expected "EPIC 1 " -Presented $result.title
     Assert-Contains -Expected "PVTI_lADOBCrGTM4ActQazgMtRO0" -Presented $result.id
     Assert-Contains -Expected "EPIC 2"  -Presented $result.title
     Assert-Contains -Expected "PVTI_lADOBCrGTM4ActQazgMtRPg" -Presented $result.id
-    
-    
+
+
     $result = Search-ProjectItem 684
     Assert-AreEqual -Expected "Issue 455d29e3" -Presented $result[0].title
     Assert-AreEqual -Expected "PVTI_lADNJr_OALnx2s4Fqq8p" -Presented $result[0].id

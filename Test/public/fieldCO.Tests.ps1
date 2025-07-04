@@ -2,7 +2,7 @@ function Test_NewFieldCO {
     . "$PSScriptRoot/../../private/fieldCO.ps1"
 
     $field = New-FieldCO -Id "1" -Name "Test Field" -DataType "TEXT" -Value "Test Value" -SingleSelectOptions "Option1,Option2" -IterationsConfiguration "Iteration1,Iteration2"
-    
+
     Assert-AreEqual -Expected "1" -Presented $field.Id
     Assert-AreEqual -Expected "Test Field" -Presented $field.Name
     Assert-AreEqual -Expected "TEXT" -Presented $field.DataType
@@ -13,7 +13,7 @@ function Test_NewFieldCO {
 
 function Test_TestFieldCO {
     . "$PSScriptRoot/../../private/fieldCO.ps1"
-    
+
     $validField = @{
         Id = "1"
         Name = "Test Field"
@@ -22,14 +22,14 @@ function Test_TestFieldCO {
         SingleSelectOptions = ""
         IterationsConfiguration = ""
     }
-    
+
     $invalidField = @{
         Id = ""
         Name = ""
         DataType = ""
         Value = ""
     }
-    
+
     $validSingleSelectField = @{
         Id = "1"
         Name = "Test Field"
@@ -38,7 +38,7 @@ function Test_TestFieldCO {
         SingleSelectOptions = "Option1,Option2"
         IterationsConfiguration = ""
     }
-    
+
     $invalidSingleSelectField = @{
         Id = "1"
         Name = "Test Field"
@@ -47,7 +47,7 @@ function Test_TestFieldCO {
         SingleSelectOptions = ""
         IterationsConfiguration = ""
     }
-    
+
     $validIterationField = @{
         Id = "1"
         Name = "Test Field"
@@ -56,7 +56,7 @@ function Test_TestFieldCO {
         SingleSelectOptions = ""
         IterationsConfiguration = "Iteration1,Iteration2"
     }
-    
+
     $invalidIterationField = @{
         Id = "1"
         Name = "Test Field"
@@ -65,7 +65,7 @@ function Test_TestFieldCO {
         SingleSelectOptions = ""
         IterationsConfiguration = ""
     }
-    
+
     $invalidDataTypeField = @{
         Id = "1"
         Name = "Test Field"
@@ -74,7 +74,7 @@ function Test_TestFieldCO {
         SingleSelectOptions = ""
         IterationsConfiguration = ""
     }
-    
+
     $nonSingleSelectField = @{
         Id = "1"
         Name = "Test Field"
@@ -83,7 +83,7 @@ function Test_TestFieldCO {
         SingleSelectOptions = "Option1,Option2"
         IterationsConfiguration = ""
     }
-    
+
     $nonIterationField = @{
         Id = "1"
         Name = "Test Field"
@@ -92,7 +92,7 @@ function Test_TestFieldCO {
         SingleSelectOptions = ""
         IterationsConfiguration = "Iteration1,Iteration2"
     }
-    
+
     Assert-IsTrue -Condition (Test-FieldCO -Field $validField)
     Assert-IsFalse -Condition (Test-FieldCO -Field $invalidField)
     Assert-IsTrue -Condition (Test-FieldCO -Field $validSingleSelectField)
@@ -118,7 +118,7 @@ function Test_ConvertToFieldCO {
     }
 '@
     $field = ConvertTo-FieldCO -Json $jsonText
-    
+
     Assert-AreEqual -Expected "1" -Presented $field.Id
     Assert-AreEqual -Expected "Test Field" -Presented $field.Name
     Assert-AreEqual -Expected "TEXT" -Presented $field.DataType
@@ -139,7 +139,7 @@ function Test_ConvertToFieldCO {
     }
 '@
     $fieldSingleSelect = ConvertTo-FieldCO -Json $jsonSingleSelect
-    
+
     Assert-AreEqual -Expected "2" -Presented $fieldSingleSelect.Id
     Assert-AreEqual -Expected "Single Select Field" -Presented $fieldSingleSelect.Name
     Assert-AreEqual -Expected "SINGLE_SELECT" -Presented $fieldSingleSelect.DataType
@@ -160,7 +160,7 @@ function Test_ConvertToFieldCO {
     }
 '@
     $fieldIteration = ConvertTo-FieldCO -Json $jsonIteration
-    
+
     Assert-AreEqual -Expected "3" -Presented $fieldIteration.Id
     Assert-AreEqual -Expected "Iteration Field" -Presented $fieldIteration.Name
     Assert-AreEqual -Expected "ITERATION" -Presented $fieldIteration.DataType

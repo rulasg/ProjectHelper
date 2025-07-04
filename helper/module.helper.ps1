@@ -19,7 +19,7 @@ function Find-ModuleRootPath{
                 $path = $path | Split-Path -Parent
                 continue
             }
-            
+
             # foudn module
             return $path
         }

@@ -1,6 +1,50 @@
+<#
+.SYNOPSIS
+Finds projects in a GitHub organization
 
+.DESCRIPTION
+This is an integration function that is not intended to be used directly by the user.
+Searches for projects in a GitHub organization based on a pattern.
 
+.PARAMETER Owner
+The GitHub organization that owns the projects
+
+.PARAMETER Pattern
+The search pattern to filter projects
+
+.PARAMETER firstProject
+The number of projects to return (default: 100)
+
+.PARAMETER afterProject
+The cursor to start retrieving projects from (for pagination)
+#>
 function Invoke-FindProject{
+    <#
+    .SYNOPSIS
+        Finds GitHub projects for a specified organization owner.
+    
+    .DESCRIPTION
+        Uses the GitHub GraphQL API to search for projects matching a given pattern within an organization.
+        This is an integration function not intended for direct user use.
+    
+    .PARAMETER Owner
+        The GitHub organization name to search within.
+    
+    .PARAMETER Pattern
+        Optional pattern to filter projects by name.
+    
+    .PARAMETER firstProject
+        Number of projects to return in a single request. Default is 100.
+    
+    .PARAMETER afterProject
+        Pagination cursor for subsequent requests. Default is null.
+    
+    .OUTPUTS
+        Returns the GraphQL response object containing project information or null if an error occurs.
+    
+    .NOTES
+        This function requires GitHub authentication via the gh CLI.
+    #>
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)][string]$Owner,
@@ -9,7 +53,7 @@ function Invoke-FindProject{
         [Parameter()][string]$afterProject = $null
     )
 
-    # Use the environmentraviable 
+    # Use the environmentraviable
     $token = Get-GithubToken
     if(-not $token){
         throw "GH Cli Auth Token not available. Run 'gh auth login' in your terminal."
@@ -45,7 +89,7 @@ function Invoke-FindProject{
 
     # Check if here are errors
     if($response.errors){
-        $response.errors | foreach {
+        $response.errors | ForEach-Object {
             "RESPONSE Type[$($_.type)] $($_.message)" | Write-MyError
         }
         return $null

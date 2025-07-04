@@ -23,7 +23,7 @@ function Test_EnvironmentCache{
     $fieldCommentValue = "This"
 
     $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
-    
+
     Assert-AreEqual -Expected $itemId -Presented $result.id
 
     Assert-AreEqual -Expected $fieldTitleValue -Presented $result.$fieldTitle

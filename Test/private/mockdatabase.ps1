@@ -7,7 +7,7 @@ function Mock_DatabaseRoot([switch]$NotReset){
     }
 
     $fullpath = $folderName | Convert-path
-    
+
     MockCallToString "Invoke-ProjectHelperGetDatabaseStorePath" -OutString $fullpath
 
     #check $NotReset

@@ -51,7 +51,7 @@ function Edit-ProjectItem{
     # Force cache update
     # Full sync if force. Skip items if not force
     $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems:$(-not $Force)
-    
+
     # Find the actual value of the item. Item+Staged
     $item = Get-Item $db $ItemId
     # $itemStaged = Get-ItemStaged $db $ItemId
