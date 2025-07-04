@@ -1,76 +1,182 @@
-function Get-ProjecthelperPrompt{
+
+$global:ProjecthelperPromoptSettings = $global:ProjecthelperPromoptSettings ?? @{
+    Guid                  = (New-Guid).ToString()
+    Verbose               = $false
+    PreviousPromptGit     = '`n'
+    ProjecthelperPrompt   = '$( $null -ne $(Get-Command -name "Write-ProjecthelperPrompt" -ErrorAction SilentlyContinue)? $(Write-ProjecthelperPrompt -WithNewLine:${withnewline}) : $null)'
+    DEFAULT_PROMPT        = '$($ExecutionContext.SessionState.Path.CurrentLocation.Path)'
+    DEFAULT_PROMPT_SUFFIX = '$(">" * ($nestedPromptLevel + 1))'
+    BeforeStatus          = [PSCustomObject] @{ PreText = '['    ; ForegroundColor = 'Yellow'      ; BackgroundColor = 'Black' }
+    DelimStatus1          = [PSCustomObject] @{ PreText = '/'    ; ForegroundColor = 'Yellow'      ; BackgroundColor = 'Black' }
+    DelimStatus2          = [PSCustomObject] @{ PreText = ':'    ; ForegroundColor = 'Yellow'      ; BackgroundColor = 'Black' }
+    AfterStatus           = [PSCustomObject] @{ PreText = ']'    ; ForegroundColor = 'Yellow'      ; BackgroundColor = 'Black' }
+    OwnerStatus           = [PSCustomObject] @{ PreText = ''     ; ForegroundColor = 'DarkCyan'    ; BackgroundColor = 'Black' }
+    NumberStatus          = [PSCustomObject] @{ PreText = '#'    ; ForegroundColor = 'DarkMagenta' ; BackgroundColor = 'Black' }
+    SpaceStatus           = [PSCustomObject] @{ PreText = ' '    ; ForegroundColor = 'Black'       ; BackgroundColor = 'Black' }
+    OKStatus              = [PSCustomObject] @{ PreText = '≡'    ; ForegroundColor = 'Green'       ; BackgroundColor = 'Black' }
+    KOStatus              = [PSCustomObject] @{ PreText = '!'    ; ForegroundColor = 'white'       ; BackgroundColor = 'Red'   }
+    NewlineStatus         = [PSCustomObject] @{ PreText = '`n'   ; ForegroundColor = 'Black'       ; BackgroundColor = 'Black' }
+}
+
+
+function Write-ProjecthelperPrompt {
     [CmdletBinding()]
     param(
         [switch]$WithNewLine
     )
+
+    $s = $ProjecthelperPromoptSettings
+
+    $VerbosePreference = $s.Verbose ? 'Continue' : 'SilentlyContinue'
+
+    "hola" | Write-Verbose
 
     $env = Get-ProjectHelperEnvironment
 
     $owner = $env.Owner
     $projectNumber = $env.ProjectNumber
 
-    if(-not $owner -and -not $projectNumber){
-        return [string]::Empty
+    "Owner : $owner" | Write-Verbose
+    "ProjectNumber : $projectNumber" | Write-Verbose
+
+    if (-not $owner -and -not $projectNumber) {
+        return  $null
     }
 
     # Get Staged items
-    $db = Get-ProjectFromDatabase -Owner $Owner -ProjectNumber $ProjectNumber
-    $count = $db.Staged.Values.Values.Count
+    $stagedItems = Get-ProjectItemStaged
+    $count = $stagedItems.Values.Values.Count
 
     # Build prompt text
-    $prompt = "[$owner/$projectNumber/$count]"
+
+    $countColor = $count -eq 0 ? $s.OKStatus : $s.KOStatus
+    $countText  = $count -eq 0 ? '' : $count
+
+    $s.BeforeStatus       | Write-HostPrompt
+    $s.OwnerStatus        | Write-HostPrompt $owner
+    $s.DelimStatus1       | Write-HostPrompt
+    $s.NumberStatus       | Write-HostPrompt $projectNumber
+    $s.DelimStatus2       | Write-HostPrompt
+    $countColor           | Write-HostPrompt $countText
+    $s.AfterStatus        | Write-HostPrompt
+    $s.SpaceStatus        | Write-HostPrompt
 
     if($WithNewLine){
-        $prompt = "`n$prompt"
+        $s.NewlineStatus    | Write-HostPrompt
     }
 
-    return $prompt
+    # Write-Host $prompt -ForegroundColor $color -NoNewline:$(-Not $WithNewLine)
 
-} Export-ModuleMember -Function Get-ProjecthelperPrompt
+} Export-ModuleMember -Function Write-ProjecthelperPrompt
 
-function Set-ProjecthelperPrompt{
+function Write-HostPrompt {
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][string]$Text,
+        [Parameter(ValueFromPipelineByPropertyName)][string]$PreText,
+        [Parameter(ValueFromPipelineByPropertyName)][string]$ForegroundColor = 'White',
+        [Parameter(ValueFromPipelineByPropertyName)][string]$BackgroundColor = 'Black',
+        [switch]$WithNewLine
+
+
+    )
+    process {
+        $finalText = $PreText + $Text
+
+        "P: $PreText" | Write-Verbose
+        "T: $Text" | Write-Verbose
+        "F: $ForegroundColor" | Write-Verbose
+        "B: $BackgroundColor" | Write-Verbose
+        "F: $finalText" | Write-Verbose
+
+        $params = @{
+            Message           = $finalText
+            ForegroundColor   = $ForegroundColor
+            BackgroundColor   = $BackgroundColor
+            NoNewline         = $(-Not $WithNewLine)
+        }
+
+        # Default color to White if not specified
+        Write-Host @params
+
+    }
+} Export-ModuleMember -Function Write-HostPrompt
+
+function Set-ProjecthelperPrompt {
     [CmdletBinding()]
     param(
         [switch]$WithNewLine
     )
 
+    $s = $ProjecthelperPromoptSettings
 
-    $prompt = @'
-$( #PROJECTHELPER
-    $testcmd = (Get-Command -name 'Get-ProjecthelperPrompt' -ErrorAction SilentlyContinue) -eq $null
-    if(-not $testcmd){
-        $prompt = Get-ProjecthelperPrompt -WithNewLine:${withnewline}
-    } else {
-        $prompt = [string]::Empty
-    }
-    $prompt
-#PROJECTHELPER_END
-)
-'@
+    $ProjecthelperPrompt = $($s.ProjecthelperPrompt) -replace '{withnewline}', $WithNewLine.ToString()
 
-    if($GitPromptSettings){
+    if ($GitPromptSettings) {
 
-        # Check if the prompt is already part of the DefaultPromptBeforeSuffix.Text
-        if (-not $GitPromptSettings.DefaultPromptBeforeSuffix.Text.Contains('#PROJECTHELPER')) {
-            "Setting Prompt with posh-git integration" | Write-Host
-            $GitPromptSettings.DefaultPromptBeforeSuffix.ForegroundColor = 'DarkYellow'
-            $prompt = $prompt -replace '{withnewline}', $WithNewLine.ToString()
-            $prompt | Write-Verbose
-            # Only add our prompt if it's not already there
-            $GitPromptSettings.DefaultPromptBeforeSuffix.Text = $prompt + $GitPromptSettings.DefaultPromptBeforeSuffix.Text
+        # posh-gitintegration
+        "GitPromptSettings found, setting up posh-git integration" | Write-Verbose
+
+        # Save the previous prompt if not preent
+        if ([string]::IsNullOrWhiteSpace($s.PreviousPromptGit)) {
+            $s.PreviousPromptGit = $GitPromptSettings.DefaultPromptBeforeSuffix.Text
+            "Previouse prompt git variable not found, created it with value: $($s.PreviousPromptGit)" | Write-Verbose
         }
         else {
-            "ProjectHelper prompt already configured in posh-git" | Write-Host
+            $s.PreviousPromptGit = $s.PreviousPromptGit
+            "Previouse prompt git variable found with value $($s.PreviousPromptGit)" | Write-Verbose
         }
 
-        return
+        "Setting Prompt with posh-git integration" | Write-Host
+        "ProjecthelperPrompt   : $ProjecthelperPrompt" | Write-Verbose
+        "PreviousPromptGit     : $($s.PreviousPromptGit)" | Write-Verbose
+        # Only add our prompt if it's not already there
+        $GitPromptSettings.DefaultPromptBeforeSuffix.Text = $ProjecthelperPrompt + $s.PreviousPromptGit
+    }
+    else {
+
+        # Default prompt setup
+        "Setting Projecthelper Default Prompt" | Write-Host
+        $fullDefaultPrompt = $DEFAULT_PROMPT + $prompt + $DEFAULT_PROMPT_SUFFIX
+        "FUll default prompt: $fullDefaultPrompt" | Write-Verbose
+
+        $prompt = $s.ProjecthelperPrompt -replace '{withnewline}', $WithNewLine.ToString()
+        "Prompt : $prompt" | Write-Verbose
+        $function:prompt = [scriptblock]::Create($prompt)
     }
 
-    # Default prompt setup
-    "Setting Projecthelper Default Prompt" | Write-Host
-    $prompt = '$($ExecutionContext.SessionState.Path.CurrentLocation.Path) + " " + $(Get-ProjecthelperPrompt -WithNewLine:${withnewline})'
-    $prompt = $prompt -replace '{withnewline}', $WithNewLine.ToString()
-    $prompt | Write-Verbose
-    $function:prompt = [scriptblock]::Create($prompt)
 
 } Export-ModuleMember -Function Set-ProjecthelperPrompt
+
+function Reset-ProjecthelperPrompt {
+    [CmdletBinding()]
+    param()
+
+    $s = $ProjecthelperPromoptSettings
+
+    if ($GitPromptSettings) {
+
+        if ($s.PreviousPromptGit) {
+            "Resetting posh-git integration prompt" | Write-Host
+            $GitPromptSettings.DefaultPromptBeforeSuffix.Text = $s.PreviousPromptGit
+        }
+        else {
+            Write-Error "No previous git prompt found in environment variable ProjecthelperPromptPrevious"
+        }
+
+    }
+    else {
+
+
+        if (-Not [string]::IsNullOrWhiteSpace($s.DEFAULT_PROMPT)) {
+            "Reset the default prompt to the original" | Write-verbose
+            $newPrompt = $s.DEFAULT_PROMPT + ";" + $s.DEFAULT_PROMPT_SUFFIX
+            "New Prompt: $newPrompt" | Write-Verbose
+            $function:prompt = [scriptblock]::Create($newPrompt)
+        }
+        else {
+            Write-Error "No previous default prompt found in environment variables DEFAULT_PROMPT and DEFAULT_PROMPT_SUFFIX"
+        }
+
+    }
+} Export-ModuleMember -Function Reset-ProjecthelperPrompt
