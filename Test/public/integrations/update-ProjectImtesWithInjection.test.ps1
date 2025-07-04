@@ -200,7 +200,7 @@ function Test_InvokeProjectInjection_Fail{
         $owner = "octodemo"
     $projectNumber = "625"
 
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber.json"
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber-skipitems.json" -SkipItems
 
     New-ModuleV3 -Name IntegrationFunctions
 

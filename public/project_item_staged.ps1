@@ -14,7 +14,7 @@ function Get-ProjectItemStaged{
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    $db = Get-Project $Owner $ProjectNumber
+    $db = Get-Project $Owner $ProjectNumber -SkipItems
 
     $ret = $db.Staged
 
