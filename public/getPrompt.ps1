@@ -1,24 +1,52 @@
 
-$global:ProjecthelperPromoptSettings = $global:ProjecthelperPromoptSettings ?? @{
-    Guid                  = (New-Guid).ToString()
-    HidePrompt            = $false
-    Verbose               = $false
-    PreviousPromptGit     = '`n'
-    ProjecthelperPrompt   = '$( $null -ne $(Get-Command -name "Write-ProjecthelperPrompt" -ErrorAction SilentlyContinue)? $(Write-ProjecthelperPrompt -WithNewLine:${withnewline}) : $null)'
-    DEFAULT_PROMPT        = '$($ExecutionContext.SessionState.Path.CurrentLocation.Path)'
-    DEFAULT_PROMPT_SUFFIX = '$(">" * ($nestedPromptLevel + 1))'
-    BeforeStatus          = [PSCustomObject] @{ PreText = '['    ; ForegroundColor = 'Yellow'      ; BackgroundColor = 'Black' }
-    DelimStatus1          = [PSCustomObject] @{ PreText = ''     ; ForegroundColor = 'Yellow'      ; BackgroundColor = 'Black' }
-    DelimStatus2          = [PSCustomObject] @{ PreText = ' '    ; ForegroundColor = 'Yellow'      ; BackgroundColor = 'Black' }
-    AfterStatus           = [PSCustomObject] @{ PreText = ']'    ; ForegroundColor = 'Yellow'      ; BackgroundColor = 'Black' }
-    OwnerStatus           = [PSCustomObject] @{ PreText = ''     ; ForegroundColor = 'DarkCyan'    ; BackgroundColor = 'Black' }
-    NumberStatus          = [PSCustomObject] @{ PreText = '#'    ; ForegroundColor = 'DarkMagenta' ; BackgroundColor = 'Black' }
-    SpaceStatus           = [PSCustomObject] @{ PreText = ' '    ; ForegroundColor = 'Black'       ; BackgroundColor = 'Black' }
-    OKStatus              = [PSCustomObject] @{ PreText = '≡'    ; ForegroundColor = 'Green'       ; BackgroundColor = 'Black' }
-    KOStatus              = [PSCustomObject] @{ PreText = '!'    ; ForegroundColor = 'white'       ; BackgroundColor = 'Red'   }
-    NewlineStatus         = [PSCustomObject] @{ PreText = '`n'   ; ForegroundColor = 'Black'       ; BackgroundColor = 'Black' }
-}
+<#
+.DESCRIPTION
+This file contains functions to control ProjectHelper prompt.
+#>
 
+function Initialize-ProjectHelperPromptSettings {
+    [CmdletBinding()]
+    param( 
+        [switch]$Force
+    )
+
+    if($global:ProjecthelperPromoptSettings -and -not $Force) {
+        Write-Verbose "ProjecthelperPromoptSettings already initialized, skipping initialization."
+        return
+    }
+
+    $global:ProjecthelperPromoptSettings = @{
+        Guid                  = (New-Guid).ToString()
+        HidePrompt            = $false
+        Verbose               = $false
+        PreviousPromptGit     = '`n'
+        ProjecthelperPrompt   = '$( $null -ne $(Get-Command -name "Write-ProjecthelperPrompt" -ErrorAction SilentlyContinue)? $(Write-ProjecthelperPrompt -WithNewLine:${withnewline}) : $null)'
+        DEFAULT_PROMPT        = '$($ExecutionContext.SessionState.Path.CurrentLocation.Path)'
+        DEFAULT_PROMPT_SUFFIX = '$(">" * ($nestedPromptLevel + 1))'
+        BeforeStatus          = [PSCustomObject] @{ PreText = '['    ; ForegroundColor = 'Yellow'      ; BackgroundColor = 'Black' }
+        DelimStatus1          = [PSCustomObject] @{ PreText = ''     ; ForegroundColor = 'Yellow'      ; BackgroundColor = 'Black' }
+        DelimStatus2          = [PSCustomObject] @{ PreText = ' '    ; ForegroundColor = 'Yellow'      ; BackgroundColor = 'Black' }
+        AfterStatus           = [PSCustomObject] @{ PreText = ']'    ; ForegroundColor = 'Yellow'      ; BackgroundColor = 'Black' }
+        OwnerStatus           = [PSCustomObject] @{ PreText = ''     ; ForegroundColor = 'DarkCyan'    ; BackgroundColor = 'Black' }
+        NumberStatus          = [PSCustomObject] @{ PreText = '#'    ; ForegroundColor = 'DarkMagenta' ; BackgroundColor = 'Black' }
+        SpaceStatus           = [PSCustomObject] @{ PreText = ' '    ; ForegroundColor = 'Black'       ; BackgroundColor = 'Black' }
+        OKStatus              = [PSCustomObject] @{ PreText = '≡'    ; ForegroundColor = 'Green'       ; BackgroundColor = 'Black' }
+        KOStatus              = [PSCustomObject] @{ PreText = '!'    ; ForegroundColor = 'white'       ; BackgroundColor = 'Red'   }
+        NewlineStatus         = [PSCustomObject] @{ PreText = '`n'   ; ForegroundColor = 'Black'       ; BackgroundColor = 'Black' }
+    }
+} Export-ModuleMember -Function Reset-ProjectHelperPromptSettings
+
+function Get-ProjecthelperPromptSettings {
+    [CmdletBinding()]
+    param()
+
+    if (-not $global:ProjecthelperPromoptSettings) {
+        Write-Verbose "ProjecthelperPromoptSettings not initialized, initializing now."
+        Initialize-ProjectHelperPromptSettings
+    }
+
+    return $global:ProjecthelperPromoptSettings
+}
 
 function Write-ProjecthelperPrompt {
     [CmdletBinding()]
@@ -28,7 +56,7 @@ function Write-ProjecthelperPrompt {
 
     $VerbosePreference = $s.Verbose ? 'Continue' : 'SilentlyContinue'
 
-    $s = $ProjecthelperPromoptSettings
+    $s = Get-ProjecthelperPromptSettings
 
     if ($s.HidePrompt) {
         "Prompt is hidden, returning null" | Write-Verbose
@@ -114,7 +142,7 @@ function Set-ProjecthelperPrompt {
         [switch]$WithNewLine
     )
 
-    $s = $ProjecthelperPromoptSettings
+    $s = Get-ProjecthelperPromptSettings
 
     $ProjecthelperPrompt = $($s.ProjecthelperPrompt) -replace '{withnewline}', $WithNewLine.ToString()
 
@@ -158,7 +186,7 @@ function Reset-ProjecthelperPrompt {
     [CmdletBinding()]
     param()
 
-    $s = $ProjecthelperPromoptSettings
+    $s = Get-ProjecthelperPromptSettings
 
     if ($GitPromptSettings) {
 
@@ -199,6 +227,9 @@ function Hide-ProjecthelperPrompt{
     [CmdletBinding()]
     param()
 
-    $s = $ProjecthelperPromoptSettings
+    $s = Get-ProjecthelperPromptSettings
     $s.HidePrompt = $true
 } Export-ModuleMember -Function Hide-ProjecthelperPrompt
+
+# Initialize the global variable ProjecthelperPromoptSettings if it does not exist
+Initialize-ProjectHelperPromptSettings
