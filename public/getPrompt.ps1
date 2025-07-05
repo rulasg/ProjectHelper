@@ -1,14 +1,15 @@
 
 $global:ProjecthelperPromoptSettings = $global:ProjecthelperPromoptSettings ?? @{
     Guid                  = (New-Guid).ToString()
+    HidePrompt            = $false
     Verbose               = $false
     PreviousPromptGit     = '`n'
     ProjecthelperPrompt   = '$( $null -ne $(Get-Command -name "Write-ProjecthelperPrompt" -ErrorAction SilentlyContinue)? $(Write-ProjecthelperPrompt -WithNewLine:${withnewline}) : $null)'
     DEFAULT_PROMPT        = '$($ExecutionContext.SessionState.Path.CurrentLocation.Path)'
     DEFAULT_PROMPT_SUFFIX = '$(">" * ($nestedPromptLevel + 1))'
     BeforeStatus          = [PSCustomObject] @{ PreText = '['    ; ForegroundColor = 'Yellow'      ; BackgroundColor = 'Black' }
-    DelimStatus1          = [PSCustomObject] @{ PreText = '/'    ; ForegroundColor = 'Yellow'      ; BackgroundColor = 'Black' }
-    DelimStatus2          = [PSCustomObject] @{ PreText = ':'    ; ForegroundColor = 'Yellow'      ; BackgroundColor = 'Black' }
+    DelimStatus1          = [PSCustomObject] @{ PreText = ''     ; ForegroundColor = 'Yellow'      ; BackgroundColor = 'Black' }
+    DelimStatus2          = [PSCustomObject] @{ PreText = ' '    ; ForegroundColor = 'Yellow'      ; BackgroundColor = 'Black' }
     AfterStatus           = [PSCustomObject] @{ PreText = ']'    ; ForegroundColor = 'Yellow'      ; BackgroundColor = 'Black' }
     OwnerStatus           = [PSCustomObject] @{ PreText = ''     ; ForegroundColor = 'DarkCyan'    ; BackgroundColor = 'Black' }
     NumberStatus          = [PSCustomObject] @{ PreText = '#'    ; ForegroundColor = 'DarkMagenta' ; BackgroundColor = 'Black' }
@@ -25,9 +26,14 @@ function Write-ProjecthelperPrompt {
         [switch]$WithNewLine
     )
 
+    $VerbosePreference = $s.Verbose ? 'Continue' : 'SilentlyContinue'
+
     $s = $ProjecthelperPromoptSettings
 
-    $VerbosePreference = $s.Verbose ? 'Continue' : 'SilentlyContinue'
+    if ($s.HidePrompt) {
+        "Prompt is hidden, returning null" | Write-Verbose
+        return $null
+    }
 
     "hola" | Write-Verbose
 
@@ -180,3 +186,19 @@ function Reset-ProjecthelperPrompt {
 
     }
 } Export-ModuleMember -Function Reset-ProjecthelperPrompt
+
+function Show-ProjecthelperPrompt{
+    [CmdletBinding()]
+    param()
+
+    $s = $ProjecthelperPromoptSettings
+    $s.HidePrompt = $false
+} Export-ModuleMember -Function Show-ProjecthelperPrompt
+
+function Hide-ProjecthelperPrompt{
+    [CmdletBinding()]
+    param()
+
+    $s = $ProjecthelperPromoptSettings
+    $s.HidePrompt = $true
+} Export-ModuleMember -Function Hide-ProjecthelperPrompt
