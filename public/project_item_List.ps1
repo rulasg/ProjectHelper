@@ -64,10 +64,10 @@ function Test-ItemIsDone($Item){
 function Find-ProjectItemByTitle{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)] [string]$Owner,
-        [Parameter(Position = 1)] [string]$ProjectNumber,
-        [Parameter(Position = 2)] [string]$Title,
-        [Parameter()][switch]$Force
+        [Parameter(Position = 0)] [string]$Title,
+        [Parameter()] [string]$Owner,
+        [Parameter()] [string]$ProjectNumber,
+        [Parameter()] [switch]$Force
     )
 
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
