@@ -80,42 +80,46 @@ function Edit-ProjectItem{
 function Add-ProjectItem{
     [CmdletBinding()]
     param(
+        [Parameter(ValueFromPipeline,Position = 0)][string]$Url,
         [Parameter()][string]$Owner,
-        [Parameter()][string]$ProjectNumber,
-        [Parameter(Position = 0)][string]$Url
+        [Parameter()][string]$ProjectNumber
     )
-    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    # Get project id
-    $projectId = Get-ProjectId -Owner $Owner -ProjectNumber $ProjectNumber
-    if(-not $projectId){
-        "Project ID not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError
-        return $null
-    }
+    process{
 
-    # Get item id
-    $contentId = Get-ContentIdFromUrl -Url $Url
-    if(-not $contentId){
-        "Content ID not found for URL [$Url]" | Write-MyError
-        return $null
-    }
-
-    # Add item to project
-    $response = Invoke-MyCommand -Command AddItemToProject -Parameters @{ projectid = $projectId ; contentid = $contentId }
-
-    # check if the response is null
-    if($response.errors){
-        "[$($response.errors[0].type)] $($response.errors[0].message)" | Write-MyError
-        return $null
-    }
-
-    if($response.data.addProjectV2ItemById.item.id)
-    {
-        return $response.data.addProjectV2ItemById.item.id
-    } else {
-        "Item not added to project" | Write-MyError
-        return $null
+        ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+        if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+        
+        # Get project id
+        $projectId = Get-ProjectId -Owner $Owner -ProjectNumber $ProjectNumber
+        if(-not $projectId){
+            "Project ID not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError
+            return $null
+        }
+        
+        # Get item id
+        $contentId = Get-ContentIdFromUrl -Url $Url
+        if(-not $contentId){
+            "Content ID not found for URL [$Url]" | Write-MyError
+            return $null
+        }
+        
+        # Add item to project
+        $response = Invoke-MyCommand -Command AddItemToProject -Parameters @{ projectid = $projectId ; contentid = $contentId }
+        
+        # check if the response is null
+        if($response.errors){
+            "[$($response.errors[0].type)] $($response.errors[0].message)" | Write-MyError
+            return $null
+        }
+        
+        if($response.data.addProjectV2ItemById.item.id)
+        {
+            return $response.data.addProjectV2ItemById.item.id
+        } else {
+            "Item not added to project" | Write-MyError
+            return $null
+        }
     }
 
 } Export-ModuleMember -Function Add-ProjectItem
