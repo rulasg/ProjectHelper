@@ -1,5 +1,6 @@
 
 Set-MyInvokeCommandAlias -Alias GitHub_UpdateProjectV2ItemFieldValue -Command 'Invoke-GitHubUpdateItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid} -Value "{value}" -Type {type}'
+Set-MyInvokeCommandAlias -Alias GitHub_ClearProjectV2ItemFieldValue -Command 'Invoke-GitHubClearItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid} -Type {type}'
 
 function Sync-ProjectDatabase{
     [CmdletBinding(SupportsShouldProcess)]
