@@ -57,6 +57,19 @@ function MockCall{
     Set-InvokeCommandMock -Alias $command -Command "Get-MockFileContent -filename $filename"
 }
 
+function MockCallAsync{
+    param(
+        [Parameter(Position=0)][string] $command,
+        [Parameter(Position=1)][string] $filename
+    )
+
+    Assert-MockFileNotfound $fileName
+
+    $moduleTest = $PSScriptRoot | Split-Path -Parent | Convert-Path
+
+    Set-InvokeCommandMock -Alias $command -Command "Import-Module $moduleTest ; Get-MockFileContent -filename $filename"
+}
+
 function MockCallJson{
     param(
         [Parameter(Position=0)][string] $command,
@@ -67,6 +80,20 @@ function MockCallJson{
     Assert-MockFileNotfound $fileName
 
     Set-InvokeCommandMock -Alias $command -Command "Get-MockFileContentJson -filename $filename"
+}
+
+function MockCallJsonAsync{
+    param(
+        [Parameter(Position=0)][string] $command,
+        [Parameter(Position=1)][string] $filename
+
+    )
+
+    Assert-MockFileNotfound $fileName
+
+    $moduleTest = $PSScriptRoot | Split-Path -Parent | Convert-Path
+
+    Set-InvokeCommandMock -Alias $command -Command "Import-Module $moduleTest ; Get-MockFileContentJson -filename $filename"
 }
 
 function Get-MockFileFullPath{
@@ -130,7 +157,6 @@ function MockCallToObject{
     Set-Variable -Name $varName -Value $OutObject -Scope Global
 
     Set-InvokeCommandMock -Alias $command -Command "(Get-Variable -Name $varName -Scope Global).Value"
-
 }
 
 function MockCallToNull{
