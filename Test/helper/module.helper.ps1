@@ -54,7 +54,7 @@ function Get-Ps1FullPath{
     )
 
    # If folderName is not empty
-    if($FolderName -ne $null){
+    if($null -ne $FolderName){
         $folder = Get-ModuleFolder -FolderName $FolderName -ModuleRootPath $ModuleRootPath
         $path = $folder | Join-Path -ChildPath $Name
     } else {
