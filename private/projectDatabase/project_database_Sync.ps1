@@ -1,6 +1,6 @@
 
 Set-MyInvokeCommandAlias -Alias GitHub_UpdateProjectV2ItemFieldValue -Command 'Invoke-GitHubUpdateItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid} -Value "{value}" -Type {type}'
-Set-MyInvokeCommandAlias -Alias GitHub_ClearProjectV2ItemFieldValue -Command 'Invoke-GitHubClearItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid} -Type {type}'
+Set-MyInvokeCommandAlias -Alias GitHub_ClearProjectV2ItemFieldValue  -Command 'Invoke-GitHubClearItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid}'
 
 function Sync-ProjectDatabase{
     [CmdletBinding(SupportsShouldProcess)]
@@ -103,7 +103,11 @@ function Sync-Project{
 
             "Saving  [$project_id/$item_id/$field_id ($type) = $value ] ..." | Write-MyHost -NoNewLine
 
-            $result = Invoke-MyCommand -Command GitHub_UpdateProjectV2ItemFieldValue -Parameters $params
+            if([string]::IsNullOrWhiteSpace($value)){
+                $result = Invoke-MyCommand -Command GitHub_ClearProjectV2ItemFieldValue -Parameters $params
+            } else {
+                $result = Invoke-MyCommand -Command GitHub_UpdateProjectV2ItemFieldValue -Parameters $params
+            }
 
             if ($null -eq $result) {
                 "FAILED !!" | Write-MyHost
