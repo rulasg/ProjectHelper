@@ -1,4 +1,5 @@
 Set-MyInvokeCommandAlias -Alias GitHub_UpdateProjectV2ItemFieldValueAsync -Command 'Import-Module {projecthelper} ; Invoke-GitHubUpdateItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid} -Value "{value}" -Type {type}'
+Set-MyInvokeCommandAlias -Alias GitHub_ClearProjectV2ItemFieldValueAsync -Command 'Import-Module {projecthelper} ; Invoke-GitHubClearItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid}'
 
 function Sync-ProjectDatabaseAsync{
     [CmdletBinding(SupportsShouldProcess)]
@@ -136,7 +137,11 @@ function Sync-ProjectAsync{
 
             "Calling to save  [$projectId/$itemId/$fieldId ($type) = $value ]" | Write-MyHost
 
-            $job = Start-MyJob -Command GitHub_UpdateProjectV2ItemFieldValueAsync -Parameters $params
+            if([string]::IsNullOrWhiteSpace($value)){
+                $job = Start-MyJob -Command GitHub_ClearProjectV2ItemFieldValueAsync -Parameters $params
+            } else {
+                $job = Start-MyJob -Command GitHub_UpdateProjectV2ItemFieldValueAsync -Parameters $params
+            }
 
             $call = [PSCustomObject]@{
                 job = $job
