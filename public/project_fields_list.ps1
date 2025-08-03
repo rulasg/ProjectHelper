@@ -1,3 +1,35 @@
+<#
+.SYNOPSIS
+Gets the list of fields available in a GitHub project.
+
+.DESCRIPTION
+Retrieves all custom fields defined in a GitHub project and returns them formatted for display.
+Can optionally filter fields by name using wildcard matching.
+
+.PARAMETER Owner
+The owner of the GitHub repository containing the project.
+
+.PARAMETER ProjectNumber
+The project number in the repository.
+
+.PARAMETER Name
+Optional filter to search for fields containing the specified text in their name.
+
+.PARAMETER Force
+Forces a refresh of the project data from GitHub.
+
+.OUTPUTS
+System.Object[]
+Returns an array of project field objects with name, dataType, and additional information.
+
+.EXAMPLE
+Get-ProjectFields -Owner "octocat" -ProjectNumber "1"
+Gets all fields from project 1 in the octocat repository.
+
+.EXAMPLE
+Get-ProjectFields -Owner "octocat" -ProjectNumber "1" -Name "status"
+Gets all fields from project 1 that contain "status" in their name.
+#>
 function Get-ProjectFields{
     [CmdletBinding()]
     [OutputType([string[]])]

@@ -147,6 +147,34 @@ function Find-ProjectItemByTitle{
 
 } Export-ModuleMember -Function Find-ProjectItemByTitle
 
+<#
+.SYNOPSIS
+Searches for project items by title using wildcard matching.
+
+.DESCRIPTION
+Searches for project items where the title contains the specified text using wildcard matching.
+This is different from Find-ProjectItemByTitle which requires an exact match.
+
+.PARAMETER Owner
+The owner of the GitHub repository containing the project.
+
+.PARAMETER ProjectNumber
+The project number in the repository.
+
+.PARAMETER Title
+The text to search for within item titles. Uses wildcard matching (*Title*).
+
+.PARAMETER Force
+Forces a refresh of the project data from GitHub.
+
+.OUTPUTS
+System.Object[]
+Returns an array of project item objects that contain the specified title text.
+
+.EXAMPLE
+Search-ProjectItemByTitle -Owner "octocat" -ProjectNumber "1" -Title "bug"
+Searches for all items in project 1 that contain "bug" in their title.
+#>
 function Search-ProjectItemByTitle{
     [CmdletBinding()]
     param(
@@ -170,6 +198,41 @@ function Search-ProjectItemByTitle{
 
 } Export-ModuleMember -Function Search-ProjectItemByTitle
 
+<#
+.SYNOPSIS
+Searches for project items using a filter across multiple fields.
+
+.DESCRIPTION
+Searches for project items using a filter that can match across multiple fields including title, 
+comments, and other project item properties. Returns items formatted for display.
+
+.PARAMETER filter
+The search filter to apply across project item fields.
+
+.PARAMETER Owner
+The owner of the GitHub repository containing the project.
+
+.PARAMETER ProjectNumber
+The project number in the repository.
+
+.PARAMETER Fields
+An array of field names to display in the results. If not specified, uses environment default display fields.
+
+.PARAMETER Force
+Forces a refresh of the project data from GitHub.
+
+.OUTPUTS
+System.Object[]
+Returns an array of formatted project item objects that match the filter.
+
+.EXAMPLE
+Search-ProjectItem -filter "bug" -Owner "octocat" -ProjectNumber "1"
+Searches for all items in project 1 that contain "bug" in any field.
+
+.EXAMPLE
+Search-ProjectItem -filter "urgent" -Owner "octocat" -ProjectNumber "1" -Fields @("Title", "Status")
+Searches for items containing "urgent" and displays only Title and Status fields.
+#>
 function Search-ProjectItem{
     [CmdletBinding()]
     param(
