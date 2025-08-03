@@ -6,7 +6,7 @@ This file contains functions to control ProjectHelper prompt.
 
 function Initialize-ProjectHelperPromptSettings {
     [CmdletBinding()]
-    param( 
+    param(
         [switch]$Force
     )
 

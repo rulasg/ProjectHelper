@@ -22,26 +22,26 @@ function Invoke-FindProject{
     <#
     .SYNOPSIS
         Finds GitHub projects for a specified organization owner.
-    
+
     .DESCRIPTION
         Uses the GitHub GraphQL API to search for projects matching a given pattern within an organization.
         This is an integration function not intended for direct user use.
-    
+
     .PARAMETER Owner
         The GitHub organization name to search within.
-    
+
     .PARAMETER Pattern
         Optional pattern to filter projects by name.
-    
+
     .PARAMETER firstProject
         Number of projects to return in a single request. Default is 100.
-    
+
     .PARAMETER afterProject
         Pagination cursor for subsequent requests. Default is null.
-    
+
     .OUTPUTS
         Returns the GraphQL response object containing project information or null if an error occurs.
-    
+
     .NOTES
         This function requires GitHub authentication via the gh CLI.
     #>

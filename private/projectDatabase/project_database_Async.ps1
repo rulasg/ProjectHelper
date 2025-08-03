@@ -1,4 +1,5 @@
 Set-MyInvokeCommandAlias -Alias GitHub_UpdateProjectV2ItemFieldValueAsync -Command 'Import-Module {projecthelper} ; Invoke-GitHubUpdateItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid} -Value "{value}" -Type {type}'
+Set-MyInvokeCommandAlias -Alias GitHub_ClearProjectV2ItemFieldValueAsync -Command 'Import-Module {projecthelper} ; Invoke-GitHubClearItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid}'
 
 function Sync-ProjectDatabaseAsync{
     [CmdletBinding(SupportsShouldProcess)]
@@ -136,7 +137,11 @@ function Sync-ProjectAsync{
 
             "Calling to save  [$projectId/$itemId/$fieldId ($type) = $value ]" | Write-MyHost
 
-            $job = Start-MyJob -Command GitHub_UpdateProjectV2ItemFieldValueAsync -Parameters $params
+            if([string]::IsNullOrWhiteSpace($value)){
+                $job = Start-MyJob -Command GitHub_ClearProjectV2ItemFieldValueAsync -Parameters $params
+            } else {
+                $job = Start-MyJob -Command GitHub_UpdateProjectV2ItemFieldValueAsync -Parameters $params
+            }
 
             $call = [PSCustomObject]@{
                 job = $job
@@ -210,56 +215,4 @@ function Waiting($Calls){
 
     "" | Write-MyHost
     "Completed [$completed] Failed [$failed]" | Write-MyHost
-}
-
-function Sync-Project{
-    [CmdletBinding()]
-    param(
-        [Parameter(Position = 0)][object]$Database
-    )
-
-    $db = $Database
-
-    foreach($idemId in $db.Staged.Keys){
-        foreach($fieldId in $db.Staged.$idemId.Keys){
-
-            # Get actual value on the database
-            $fieldName = $db.fields.$fieldId.name
-
-            # Skip if database has already the same value as staged
-            if($db.items.$itemId.$fieldName -eq $db.Staged.$itemId.$fieldId.Value){
-                "Skipping [$itemId/$fieldName] as actual value is the same as staged value [$actualValue]" | Write-MyHost
-                continue
-            }
-
-            $project_id = $db.ProjectId
-            $item_id = $idemId
-            $field_id = $fieldId
-            $value = $db.Staged.$idemId.$fieldId.Value
-            $type = ConvertTo-UpdateType $db.Staged.$idemId.$fieldId.Field.dataType
-
-            $params = @{
-                projectid = $project_id
-                itemid = $item_id
-                fieldid = $field_id
-                value = $value
-                type = $type
-            }
-
-            "Saving  [$project_id/$item_id/$field_id ($type) = $value ]" | Write-MyHost
-
-            $result = Invoke-MyCommand -Command GitHub_UpdateProjectV2ItemFieldValue -Parameters $params
-
-            if ($null -eq $result) {
-                "Updating Project Item Field [$item_id/$field_id/$value]" | Write-MyError
-                return $null
-            }
-
-            # update database with change
-            $db.items.$item_id.$fieldName = $value
-
-        }
-    }
-
-    return $db
 }

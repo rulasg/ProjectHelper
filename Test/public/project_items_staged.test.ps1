@@ -96,6 +96,59 @@ function Test_CommitProjectItemsStaged_SUCCESS{
     Assert-AreEqual -Expected $fileTitleValue2 -Presented $item2.$fieldTitle2
 }
 
+function Test_CommitProjectItemsStaged_SUCCESS_Emptyfield{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $Owner = "SomeOrg" ; $ProjectNumber = 164
+
+    # Item id 10
+    # Name                           Value
+    # ----                           -----
+    # id                             PVTI_lADOBCrGTM4ActQazgMuXXc
+    # number
+    # Severity                       Nice⭐️
+    # Status                         Todo
+    # TimeTracker                    890
+    # Comment                        This
+    # body                           some content in body
+    # Assignees                      rulasg
+    # UserStories                    8
+    # Title                          A draft in the project
+    # Priority                       🥵High
+    # url
+    # type                           DraftIssue
+
+    $itemId1 = "PVTI_lADOBCrGTM4ActQazgMuXXc"
+    $fieldComment1 = "Comment"
+    $fieldPriority1 = "Priority"
+
+    # Edit-ProjectItem will call Get-Project with SkipItems
+    # This test is to confirm the sync works with the project and items
+    # Cache the project with items
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+
+    MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubClearItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc -FieldId PVTF_lADOBCrGTM4ActQazgSl5GU'
+    MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubClearItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc -FieldId PVTSSF_lADOBCrGTM4ActQazgSl5LY'
+
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 ""
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldPriority1 ""
+
+    $result = Sync-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+
+    # Return true
+    Assert-IsTrue -Condition $result
+
+    # Staged list is empty
+    $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    Assert-IsNull -Object $staged
+
+    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    Assert-StringIsNullOrEmpty -Presented $item1.$fieldComment1
+    Assert-StringIsNullOrEmpty -Presented $item1.$fieldPriority1
+}
+
 function Test_CommitProjectItemsStagedAsync_SUCCESS{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
@@ -338,5 +391,65 @@ function Test_CommitProjectItemsStagedAsync_debug{
     Sync-ProjectItemStagedAsync
 
     Assert-NotImplemented
+
+}
+
+function Test_Sync_ProjectDatabaseAsync_ClearValues{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $Owner = "SomeOrg" ; $ProjectNumber = 164
+
+    $moduleRootPath = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent | Convert-Path
+
+    $projectId = "PVT_kwDOBCrGTM4ActQa"
+    $itemId1 = "PVTI_lADOBCrGTM4ActQazgMuXXc"
+    $fieldComment1 = "Comment"  ; $fieldComment1Id = "PVTF_lADOBCrGTM4ActQazgSl5GU"
+    $fieldPriority1 = "Priority" ; $fieldPriority1Id ="PVTSSF_lADOBCrGTM4ActQazgSl5LY"
+
+    # Edit-ProjectItem will call Get-Project with SkipItems
+    # This test is to confirm the sync works with the project and items
+    # Cache the project with items
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+
+    # Mock clear command for empty comment field (using async alias)
+    $clearCommand = 'Import-Module {projecthelper} ; Invoke-GitHubClearItemValues -ProjectId {ProjectId} -ItemId {ItemId} -FieldId {FieldId}'
+    $clearCommand = $clearCommand -replace '{projecthelper}', $moduleRootPath
+    $clearCommand = $clearCommand -replace '{ProjectId}', $projectId
+    $clearCommand = $clearCommand -replace '{ItemId}', $itemId1
+    $clearCommand = $clearCommand -replace '{FieldId}', $fieldComment1Id
+    MockCallJsonAsync -Command $clearCommand -FileName "clearProjectV2ItemFieldValue.json"
+
+    # Mock clear command for empty priority field (using async alias)
+    $clearCommand = 'Import-Module {projecthelper} ; Invoke-GitHubClearItemValues -ProjectId {ProjectId} -ItemId {ItemId} -FieldId {FieldId}'
+    $clearCommand = $clearCommand -replace '{projecthelper}', $moduleRootPath
+    $clearCommand = $clearCommand -replace '{ProjectId}', $projectId
+    $clearCommand = $clearCommand -replace '{ItemId}', $itemId1
+    $clearCommand = $clearCommand -replace '{FieldId}', $fieldPriority1Id
+    MockCallJsonAsync -Command $clearCommand -FileName "clearProjectV2ItemFieldValue.json"
+
+    # Stage the values - clear comment (empty string) and update title
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 ""
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldPriority1 ""
+
+    Start-MyTranscript
+    $result = Sync-ProjectItemStagedAsync -Owner $Owner -ProjectNumber $ProjectNumber -SyncBatchSize 2
+    $transcript = Stop-MyTranscript
+
+    # Return true
+    Assert-IsTrue -Condition $result
+
+    # Verify clear and update commands were called by checking mock invocations
+    # The transcript should show both operations
+
+    # Staged list should be empty after successful sync
+    $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    Assert-IsNull -Object $staged
+
+    # Verify the values in the database
+    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    Assert-StringIsNullOrEmpty -Presented $item1.$fieldComment1
+    Assert-StringIsNullOrEmpty -Presented $item1.$fieldPriority1
 
 }
