@@ -120,8 +120,8 @@ function Test_CommitProjectItemsStaged_SUCCESS_Emptyfield{
     # type                           DraftIssue
 
     $itemId1 = "PVTI_lADOBCrGTM4ActQazgMuXXc"
-    $fieldComment1 = "Comment" 
-    $fieldPriority1 = "Priority" 
+    $fieldComment1 = "Comment"
+    $fieldPriority1 = "Priority"
 
     # Edit-ProjectItem will call Get-Project with SkipItems
     # This test is to confirm the sync works with the project and items
