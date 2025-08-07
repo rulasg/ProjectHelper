@@ -115,7 +115,11 @@ function Add-ProjectItem{
 
         if($response.data.addProjectV2ItemById.item.id)
         {
-            return $response.data.addProjectV2ItemById.item.id
+            $ret = $response.data.addProjectV2ItemById.item.id
+            $global:ItemId = $ret
+
+            return $ret
+            
         } else {
             "Item not added to project" | Write-MyError
             return $null
