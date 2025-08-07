@@ -46,7 +46,7 @@ function Get-ProjecthelperPromptSettings {
     }
 
     return $global:ProjecthelperPromoptSettings
-}
+} 
 
 function Write-ProjecthelperPrompt {
     [CmdletBinding()]
@@ -79,7 +79,7 @@ function Write-ProjecthelperPrompt {
 
     # Get Staged items
     $stagedItems = Get-ProjectItemStaged
-    $count = $stagedItems.Values.Values.Count
+    $count = $stagedItems.values.Keys.Count
 
     # Build prompt text
 
@@ -157,7 +157,6 @@ function Set-ProjecthelperPrompt {
             "Previouse prompt git variable not found, created it with value: $($s.PreviousPromptGit)" | Write-Verbose
         }
         else {
-            $s.PreviousPromptGit = $s.PreviousPromptGit
             "Previouse prompt git variable found with value $($s.PreviousPromptGit)" | Write-Verbose
         }
 

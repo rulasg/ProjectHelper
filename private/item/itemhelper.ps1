@@ -15,4 +15,4 @@ function Get-RepoOwnerNameNumberFromUrl{
     }
 
     return $owner, $repoName, $number
-} Export-ModuleMember -function Get-RepoOwnerNameNumberFromUrl
+}
