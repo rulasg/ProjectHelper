@@ -28,8 +28,8 @@ function Test_UpdateProjectWithIntegration{
         "Number1" = 22
     }
 
-    MockCallToObject -Command "Get-SfAccount https://some.com/1234/viuew" -OutObject $data1
-    MockCallToObject -Command "Get-SfAccount https://some.com/4321/viuew" -OutObject $data2
+    MockCallToObject -Command 'Get-SfAccount "https://some.com/1234/viuew"' -OutObject $data1
+    MockCallToObject -Command 'Get-SfAccount "https://some.com/4321/viuew"' -OutObject $data2
 
     $param = @{
         Owner = $owner

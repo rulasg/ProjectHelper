@@ -67,7 +67,9 @@ function Invoke-ProjectInjectionWithIntegration{
 
         try {
             "Calling integration [ $IntegrationCommand $($item.$IntegrationField)]" | Write-MyHost
-            $values = Invoke-MyCommand -Command "$IntegrationCommand $($item.$IntegrationField)"
+            $command = $IntegrationCommand + " " + '"{key}"'
+            $command = $command -replace '{key}', $item.$IntegrationField
+            $values = Invoke-MyCommand -Command $command
         }
         catch {
             "Something went wrong with the integration command for $($item.id)" | Write-Error
