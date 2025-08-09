@@ -8,12 +8,18 @@
 #>
 function Edit-ProjectItemWithValues {
     param (
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][string]$ProjectNumber,
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
         [Parameter(Mandatory)][string]$ItemId,
         [Parameter(Mandatory)][hashtable]$Values,
-        [Parameter()][string]$FieldSlug
+        [Parameter()][string]$FieldSlug,
+        [Parameter()][switch]$Force
     )
+
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+
+    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems:$(-not $Force)
 
     $fields = Get-ProjectFields -Owner $owner -ProjectNumber $projectNumber
 
@@ -28,9 +34,11 @@ function Edit-ProjectItemWithValues {
             continue
         }
 
-        Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $ItemId -FieldName $fieldName -Value $Values[$key]
-
+        # Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $ItemId -FieldName $fieldName -Value $Values[$key]
+        Edit-Item -Database $db -ItemId $ItemId -FieldName $fieldName -Value $Values[$key]
     }
+
+    Save-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
 
 } Export-ModuleMember -Function Edit-ProjectItemWithValues
 
