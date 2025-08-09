@@ -39,8 +39,8 @@ function Get-ProjectItemList{
     [CmdletBinding()]
     [OutputType([string[]])]
     param(
-        [Parameter(Position = 0)] [string]$Owner,
-        [Parameter(Position = 1)] [string]$ProjectNumber,
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
         [Parameter()][object]$Project,
         [Parameter()][switch]$ExcludeDone,
         [Parameter()][switch]$Force
@@ -53,6 +53,8 @@ function Get-ProjectItemList{
             if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
             $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+        } else {
+            $db = $Project
         }
 
 
