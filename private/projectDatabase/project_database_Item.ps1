@@ -62,6 +62,61 @@ function Get-ItemStaged{
     }
 }
 
+function Edit-Item{
+    [CmdletBinding()]
+    [OutputType([object])]
+    param(
+        [Parameter(Mandatory,Position = 0)][object]$Database,
+        [Parameter(Mandatory,Position = 1)][string]$ItemId,
+        [Parameter(Mandatory,Position = 2)][string]$FieldName,
+        [Parameter(Position = 3)][string]$Value
+    )
+
+    # Find the actual value of the item. Item+Staged
+    $item = Get-Item $Database $ItemId
+
+    # Check if item exists in cache and if so if the value is the same as the target value and we avoid update
+    if($item){
+        if( IsAreEqual -Object1:$item.$FieldName -Object2:$Value){
+            "The value is the same, no need to stage it" | Write-Verbose
+            return
+        }
+    } else {
+        "Staging - Item [$ItemId] not found in project [$Owner/$ProjectNumber] " | Write-Verbose
+    }
+
+    # save the new value
+    Save-ItemFieldValue $Database $itemId $FieldName $Value
+
+}
+
+function Edit-ItemWithValues {
+    param (
+        [Parameter()][object]$Database,
+        [Parameter(Mandatory)][string]$ItemId,
+        [Parameter(Mandatory)][hashtable]$Values,
+        [Parameter()][string]$FieldSlug
+    )
+
+    $fields = $Database.fields.Values
+
+    # forech key in data do
+    foreach ($key in $Values.Keys) {
+        $fieldName = $FieldSlug + $key
+
+        # Check if field exists
+        $field = $fields | Where-Object { $_.name -eq $fieldName }
+        if ($null -eq $field) {
+            "Field $fieldName not found" | Write-MyVerbose
+            continue
+        }
+
+        # Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $ItemId -FieldName $fieldName -Value $Values[$key]
+        Edit-Item -Database $Database -ItemId $ItemId -FieldName $fieldName -Value $Values[$key]
+    }
+
+}
+
 <#
 .SYNOPSIS
     Stage a change to the database
