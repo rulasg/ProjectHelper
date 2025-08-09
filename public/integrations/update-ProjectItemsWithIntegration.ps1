@@ -49,13 +49,16 @@ function Invoke-ProjectInjectionWithIntegration{
         [Parameter(Mandatory)][string]$IntegrationField,
         [Parameter(Mandatory)][string]$IntegrationCommand,
         [Parameter()] [string]$Slug,
-        [Parameter()] [switch]$IncludeDoneItems
+        [Parameter()] [switch]$IncludeDoneItems,
+        [Parameter()] [switch]$Force
     )
 
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -ExcludeDone:$(-not $IncludeDoneItems)
+    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+
+    $items = Get-ProjectItemList -Project $db -ExcludeDone:$(-not $IncludeDoneItems)
 
     foreach($item in $items.Values){
 
@@ -72,7 +75,7 @@ function Invoke-ProjectInjectionWithIntegration{
             $values = Invoke-MyCommand -Command $command
         }
         catch {
-            "Something went wrong with the integration command for $($item.id)" | Write-Error
+            "Something went wrong with the integration command for $($item.id). $_" | Write-Error
         }
         # Call the ingetration Command with the integration field value as parameter
 
@@ -84,13 +87,15 @@ function Invoke-ProjectInjectionWithIntegration{
 
         # Edit item with the value
         $param = @{
-            Owner = $owner
-            ProjectNumber = $projectNumber
+            Database = $db
             ItemId = $item.id
             Values = $values
             FieldSlug = $Slug
         }
 
-        Edit-ProjectItemWithValues @param
+        Edit-ItemWithValues @param
     }
+
+    Save-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
+
 } # Do not export this function to avoid conflicts with Update-ProjectItemsWithIntegration
