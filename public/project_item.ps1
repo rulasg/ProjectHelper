@@ -48,29 +48,11 @@ function Edit-ProjectItem{
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    # Force cache update
-    # Full sync if force. Skip items if not force
+    # Get database
     $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems:$(-not $Force)
 
-    # Find the actual value of the item. Item+Staged
-    $item = Get-Item $db $ItemId
-    # $itemStaged = Get-ItemStaged $db $ItemId
-
-    # if the item is not found
-    # if($null -eq $item){ "Item [$ItemId] not found" | Write-MyError; return $null}
-
-    # Check if item exists in cache and if so if the value is the same as the target value and we avoid update
-    if($item){
-        if( IsAreEqual -Object1:$item.$FieldName -Object2:$Value){
-            "The value is the same, no need to stage it" | Write-Verbose
-            return
-        }
-    } else {
-        "Staging - Item [$ItemId] not found in project [$Owner/$ProjectNumber] " | Write-Verbose
-    }
-
-    # save the new value
-    Save-ItemFieldValue $db $itemId $FieldName $Value
+    # update the database with the new value
+    Edit-Item $db $ItemId $FieldName $Value
 
     # Commit changes to the database
     Save-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
