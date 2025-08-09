@@ -103,7 +103,7 @@ function Save-ProjectDatabase{
         [Parameter(Position = 1)][int]$ProjectNumber,
         [Parameter(Position = 0)][hashtable]$Database
     )
-
+    Write-Host "Saving project database for $Owner/$ProjectNumber"  -ForegroundColor DarkMagenta
     $dbkey = Get-DatabaseKey -Owner $owner -ProjectNumber $projectnumber
     Save-Database -Key $dbkey -Database $Database
 }
