@@ -106,6 +106,8 @@ function Sync-ProjectAsync{
     $db = $Database
     $calls = @()
     $callsBatch = @()
+    $callsCount = 0
+    $totalCounts = $Database.Staged.values.values
 
     foreach($itemId in $db.Staged.Keys){
         foreach($fieldId in $db.Staged.$itemId.Keys){
@@ -134,8 +136,8 @@ function Sync-ProjectAsync{
                 value = $value
                 type = $type
             }
-
-            "Calling to save  [$projectId/$itemId/$fieldId ($type) = $value ]" | Write-MyHost
+            $callsCount++
+            "Calling to save [$callsCount/$totalCounts] [$projectId/$itemId/$fieldId ($type) = $value ]" | Write-MyHost
 
             if([string]::IsNullOrWhiteSpace($value)){
                 $job = Start-MyJob -Command GitHub_ClearProjectV2ItemFieldValueAsync -Parameters $params
