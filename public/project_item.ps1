@@ -26,6 +26,11 @@ function Get-ProjectItem{
 
     $item = $itemlist.$ItemId
 
+    # If item not found on cache get it directly
+    if($null -eq $item){
+        $item = Get-ProjectItemDirect -ItemId $ItemId
+    }
+
     return $item
 } Export-ModuleMember -Function Get-ProjectItem
 
@@ -142,10 +147,11 @@ function Edit-ProjectItem{
 
 function Add-ProjectItemDirect{
     [CmdletBinding()]
+    [alias("Add-ProjectItem")]
     param(
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
-        [Parameter(Position = 0)][string]$Url
+        [Parameter(ValueFromPipeline,Position = 0)][string]$Url
     )
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
@@ -181,40 +187,50 @@ function Add-ProjectItemDirect{
         return $null
     }
 
-} Export-ModuleMember -Function Add-ProjectItemDirect
+} Export-ModuleMember -Function Add-ProjectItemDirect -Alias Add-ProjectItem
 
 function Remove-ProjectItemDirect{
     [CmdletBinding()]
     param(
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
-        [Parameter(Position = 0)][string]$ItemId
+        [Parameter(Mandatory, ValueFromPipeline, Position = 0)][string]$ItemId
     )
-    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    # Get project id
-    $projectId = Get-ProjectId -Owner $Owner -ProjectNumber $ProjectNumber
-    if(-not $projectId){
-        "Project ID not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError
-        return $null
+    begin{
+        ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+        if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+        
+        # Get project id
+        $projectId = Get-ProjectId -Owner $Owner -ProjectNumber $ProjectNumber
+        if(-not $projectId){
+            "Project ID not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError
+        }
     }
 
-    # Remove item from project
-    $response = Invoke-MyCommand -Command RemoveItemFromProject -Parameters @{ projectid = $projectId ; itemid = $ItemId }
+    process{
 
-    # check if the response is null
-    if($response.errors){
-        "[$($response.errors[0].type)] $($response.errors[0].message)" | Write-MyError
-        return $null
+        if (-not $projectId){
+            "Project ID not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError
+            return
+        }
+
+        # Remove item from project
+        $response = Invoke-MyCommand -Command RemoveItemFromProject -Parameters @{ projectid = $projectId ; itemid = $ItemId }
+        
+        # check if the response is null
+        if($response.errors){
+            "[$($response.errors[0].type)] $($response.errors[0].message)" | Write-MyError
+            return $null
+        }
+        
+        if($response.data.deleteProjectV2Item.deletedItemId -ne $ItemId){
+            "Some issue removing [$ItemId]from project" | Write-MyError
+            return $null
+        }
+        
+        return $response.data.deleteProjectV2Item.deletedItemId
     }
-
-    if($response.data.deleteProjectV2Item.deletedItemId -ne $ItemId){
-        "Some issue removing [$ItemId]from project" | Write-MyError
-        return $null
-    }
-
-    return $response.data.deleteProjectV2Item.deletedItemId
 
 } Export-ModuleMember -Function Remove-ProjectItemDirect
 
@@ -225,8 +241,6 @@ function Get-ProjectItemDirect{
     )
 
     $response = Invoke-MyCommand -Command GetItem -Parameters @{
-        owner = $Owner
-        projectnumber = $ProjectNumber
         itemid = $ItemId
     }
 

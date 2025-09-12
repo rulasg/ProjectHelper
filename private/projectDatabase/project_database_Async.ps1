@@ -1,18 +1,19 @@
 Set-MyInvokeCommandAlias -Alias GitHub_UpdateProjectV2ItemFieldValueAsync -Command 'Import-Module {projecthelper} ; Invoke-GitHubUpdateItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid} -Value "{value}" -Type {type}'
+Set-MyInvokeCommandAlias -Alias UpdateIssueAsync                          -Command 'Import-Module {projecthelper} ; Invoke-UpdateIssue -IssueId {id} -Title "{title}" -Body "{body}"'
 
-function Sync-ProjectDatabaseAsync{
+function Sync-ProjectDatabaseAsync {
     [CmdletBinding(SupportsShouldProcess)]
     [OutputType([bool])]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber,
+        [Parameter()][string]$Owner,
+        [Parameter()][int]$ProjectNumber,
         [Parameter()][int]$SyncBatchSize = 30
     )
 
-    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+    ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
 
-    if(! $(Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber)){
+    if (! $(Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber)) {
         "Nothing to commit" | Write-MyHost
         return
     }
@@ -34,31 +35,32 @@ function Sync-ProjectDatabaseAsync{
     # Make a copy of the staged keys before processing
     $stagedItemKeys = @($db.Staged.Keys)
 
-    foreach($itemId in $stagedItemKeys){
+    foreach ($itemId in $stagedItemKeys) {
 
         # Make a copy of the staged fields keys before processing
         $stagedFieldsKeys = @($db.Staged.$itemId.Keys)
 
         # Process each staged field for the item
-        foreach($fieldId in $stagedFieldsKeys){
+        foreach ($fieldId in $stagedFieldsKeys) {
             $fieldName = $db.fields.$fieldId.name
 
             # Skip if actual and staged values are the same
             $stagedV = $db.Staged.$itemId.$fieldId.Value
             $actualV = $db.items.$itemId.$fieldName
 
-            if(!($stagedV -eq $actualV)){
+            if (!($stagedV -eq $actualV)) {
                 # Create refe to failing
                 $different."$($itemId)_$($Fieldid)" = @{
-                    Id = $itemId
-                    Field = $fieldId
+                    Id     = $itemId
+                    Field  = $fieldId
                     Staged = $stagedV
                     Actual = $actualV
                 }
-            } else {
+            }
+            else {
                 # Create refe success
                 $equal."$($itemId)_$($Fieldid)" = @{
-                    Id = $itemId
+                    Id    = $itemId
                     Field = $fieldId
                 }
                 # Remove staged field
@@ -67,7 +69,7 @@ function Sync-ProjectDatabaseAsync{
         }
 
         # Remove staged item if all fields are removed
-        if($db.Staged.$itemId.Keys.Count -eq 0){
+        if ($db.Staged.$itemId.Keys.Count -eq 0) {
             $db.Staged.Remove($itemId)
         }
 
@@ -77,13 +79,13 @@ function Sync-ProjectDatabaseAsync{
     $NotSyncedCount = $different.Keys.Count
 
     #null Staged if empty
-    if($db.Staged.Keys.Count -eq 0){
+    if ($db.Staged.Keys.Count -eq 0) {
         $db.Staged = $null
     }
 
     Save-Database -Key $dbkey -Database $db
 
-    if($different.Count -ne 0){
+    if ($different.Count -ne 0) {
         "Not all Staged values are not equal to actual values" | Write-MyError
         $different | convertto-json | Write-MyError
         return $false
@@ -95,7 +97,7 @@ function Sync-ProjectDatabaseAsync{
 
 }
 
-function Sync-ProjectAsync{
+function Sync-ProjectAsync {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Position = 0)][object]$Database,
@@ -106,8 +108,8 @@ function Sync-ProjectAsync{
     $calls = @()
     $callsBatch = @()
 
-    foreach($itemId in $db.Staged.Keys){
-        foreach($fieldId in $db.Staged.$itemId.Keys){
+    foreach ($itemId in $db.Staged.Keys) {
+        foreach ($fieldId in $db.Staged.$itemId.Keys) {
 
             # Get actual value on the database
             $fieldName = $db.fields.$fieldId
@@ -116,43 +118,64 @@ function Sync-ProjectAsync{
             $actualValue = $db.items.$itemId.$fieldName
 
             # Skip if database has already the same value
-            if($actualValue -eq $db.Staged.$itemId.$fieldId.Value){
+            if ($actualValue -eq $db.Staged.$itemId.$fieldId.Value) {
                 "Skipping [$itemId/$fieldName] as actual value is the same as staged value [$actualValue]" | Write-MyHost
                 continue
             }
 
             $projectId = $db.ProjectId
+            $dataType = $db.Staged.$itemId.$fieldId.Field.dataType
+            $fieldName = $db.fields.$fieldId.name
             $value = $db.Staged.$itemId.$fieldId.Value
             $type = ConvertTo-UpdateType $db.Staged.$itemId.$fieldId.Field.dataType
+            $fieldType = $db.Staged.$itemId.$fieldId.Field.type
 
-            $params = @{
-                projecthelper = $MODULE_PATH
-                projectid = $projectId
-                itemid = $itemId
-                fieldid = $fieldId
-                value = $value
-                type = $type
+            
+            switch ($fieldType) {
+                { $_ -in "title", "body" } {
+                    "Calling to save Content [$itemId/$fieldId ($type) = $value ]" | Write-MyHost
+                    $params = @{
+                        projecthelper = $MODULE_PATH
+                        id            = $itemId
+                        title         = if ($fieldId -eq "title") { $value } else { "" }
+                        body          = if ($fieldId -eq "body") { $value } else { "" }
+                    }
+                    # Invoke-UpdateIssue -IssueId {id} -Title "{title}" -Body "{body}"
+                    $job = Start-MyJob -Command UpdateIssueAsync -Parameters $params
+                    Break
+                }
+
+                default {
+                    "Calling to save CustomField $dataType [$projectId/$itemId/$fieldId ($type) = $value ]" | Write-MyHost
+                    $params = @{
+                        projecthelper = $MODULE_PATH
+                        projectid     = $projectId
+                        itemid        = $itemId
+                        fieldid       = $fieldId
+                        value         = $value
+                        type          = $type
+                    }
+                    # Invoke-GitHubUpdateItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid} -Value "{value}" -Type {type}
+                    $job = Start-MyJob -Command GitHub_UpdateProjectV2ItemFieldValueAsync -Parameters $params
+                }
             }
 
-            "Calling to save  [$projectId/$itemId/$fieldId ($type) = $value ]" | Write-MyHost
-
-            $job = Start-MyJob -Command GitHub_UpdateProjectV2ItemFieldValueAsync -Parameters $params
-
             $call = [PSCustomObject]@{
-                job = $job
+                job       = $job
                 projectId = $projectId
-                itemId = $itemId
-                value = $value
-                fieldId = $fieldId
-                type = $type
-                fieldName = $db.fields.$fieldId.name
+                itemId    = $itemId
+                value     = $value
+                fieldId   = $fieldId
+                type      = $type
+                fieldName = $fieldName
+                dataType  = $dataType
             }
 
             $calls += $call
             $callsBatch += $call
 
             # Call batch size if we reached the maximum batch size
-            if($callsBatch.count -eq $SyncBatchSize){
+            if ($callsBatch.count -eq $SyncBatchSize) {
                 Waiting -Calls $callsBatch
                 $callsBatch = @() # Reset the batch
             }
@@ -164,7 +187,7 @@ function Sync-ProjectAsync{
     Waiting -Calls $callsBatch
 
     # Process all the calls
-    foreach($call in $calls){
+    foreach ($call in $calls) {
 
         $result = Receive-Job -Job $call.job
 
@@ -174,7 +197,13 @@ function Sync-ProjectAsync{
         $fieldName = $call.fieldName
         $value = $call.value
 
-        if ($null -eq $result.data.updateProjectV2ItemFieldValue.projectV2Item) {
+        # TODO: We need to extend this to support PR too
+        switch ($fieldId) {
+            { $_ -in "title", "body" } { $checkValue = $result.data.updateIssue }
+            default { $checkValue = $result.data.updateProjectV2ItemFieldValue.projectV2Item }
+        }
+
+        if ($null -eq $checkValue) {
             # TODO: Maybe worth checking response values to confirm change was made correctly even without error
             "Updating Project Item call Failed [$itemId/$fieldName/$value]" | Write-MyError
             continue
@@ -182,18 +211,19 @@ function Sync-ProjectAsync{
 
         "Saving to database [$projectId/$itemId/$fieldName ($type) = $value ]" | Write-MyHost
         $db.items.$itemId.$fieldName = $value
+        $db = Remove-ItemStaged -Database $db -ItemId $item_id -FieldName $fieldName
     }
 
     return $db
 }
 
-function Waiting($Calls){
+function Waiting($Calls) {
     $waitingJobs = $Calls.job
 
     $all = $Calls.Count
     "Waiting for [$all] jobs to complete " | Write-MyHost -noNewline
 
-    while($waitingJobs.Count -ne 0){
+    while ($waitingJobs.Count -ne 0) {
 
         $waitings = $waitingJobs | Wait-Job -Any
 
@@ -212,54 +242,54 @@ function Waiting($Calls){
     "Completed [$completed] Failed [$failed]" | Write-MyHost
 }
 
-function Sync-Project{
-    [CmdletBinding()]
-    param(
-        [Parameter(Position = 0)][object]$Database
-    )
+# function Sync-Project {
+#     [CmdletBinding()]
+#     param(
+#         [Parameter(Position = 0)][object]$Database
+#     )
 
-    $db = $Database
+#     $db = $Database
 
-    foreach($idemId in $db.Staged.Keys){
-        foreach($fieldId in $db.Staged.$idemId.Keys){
+#     foreach ($idemId in $db.Staged.Keys) {
+#         foreach ($fieldId in $db.Staged.$idemId.Keys) {
 
-            # Get actual value on the database
-            $fieldName = $db.fields.$fieldId.name
+#             # Get actual value on the database
+#             $fieldName = $db.fields.$fieldId.name
 
-            # Skip if database has already the same value as staged
-            if($db.items.$itemId.$fieldName -eq $db.Staged.$itemId.$fieldId.Value){
-                "Skipping [$itemId/$fieldName] as actual value is the same as staged value [$actualValue]" | Write-MyHost
-                continue
-            }
+#             # Skip if database has already the same value as staged
+#             if ($db.items.$itemId.$fieldName -eq $db.Staged.$itemId.$fieldId.Value) {
+#                 "Skipping [$itemId/$fieldName] as actual value is the same as staged value [$actualValue]" | Write-MyHost
+#                 continue
+#             }
 
-            $project_id = $db.ProjectId
-            $item_id = $idemId
-            $field_id = $fieldId
-            $value = $db.Staged.$idemId.$fieldId.Value
-            $type = ConvertTo-UpdateType $db.Staged.$idemId.$fieldId.Field.dataType
+#             $project_id = $db.ProjectId
+#             $item_id = $idemId
+#             $field_id = $fieldId
+#             $value = $db.Staged.$idemId.$fieldId.Value
+#             $type = ConvertTo-UpdateType $db.Staged.$idemId.$fieldId.Field.dataType
 
-            $params = @{
-                projectid = $project_id
-                itemid = $item_id
-                fieldid = $field_id
-                value = $value
-                type = $type
-            }
+#             $params = @{
+#                 projectid = $project_id
+#                 itemid    = $item_id
+#                 fieldid   = $field_id
+#                 value     = $value
+#                 type      = $type
+#             }
 
-            "Saving  [$project_id/$item_id/$field_id ($type) = $value ]" | Write-MyHost
+#             "Saving  [$project_id/$item_id/$field_id ($type) = $value ]" | Write-MyHost
 
-            $result = Invoke-MyCommand -Command GitHub_UpdateProjectV2ItemFieldValue -Parameters $params
+#             $result = Invoke-MyCommand -Command GitHub_UpdateProjectV2ItemFieldValue -Parameters $params
 
-            if ($null -eq $result) {
-                "Updating Project Item Field [$item_id/$field_id/$value]" | Write-MyError
-                return $null
-            }
+#             if ($null -eq $result) {
+#                 "Updating Project Item Field [$item_id/$field_id/$value]" | Write-MyError
+#                 return $null
+#             }
 
-            # update database with change
-            $db.items.$item_id.$fieldName = $value
+#             # update database with change
+#             $db.items.$item_id.$fieldName = $value
 
-        }
-    }
+#         }
+#     }
 
-    return $db
-}
+#     return $db
+# }

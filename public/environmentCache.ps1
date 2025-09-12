@@ -55,16 +55,20 @@ function Get-OwnerAndProjectNumber{
         $ProjectNumber = [string]::Empty
     }
 
-    if([string]::IsNullOrWhiteSpace($Owner)){
-        $owner = Get-EnvItem -Name "EnvironmentCache_Owner"
-    } else {
+    $ownerCache = Get-EnvItem -Name "EnvironmentCache_Owner"
+    if($owner -ne $ownerCache){
         Set-EnvItem -Name "EnvironmentCache_Owner" -Value $Owner
     }
+    if([string]::IsNullOrWhiteSpace($Owner)){
+        $owner = $ownerCache
+    }
 
-    if([string]::IsNullOrWhiteSpace($ProjectNumber)){
-        $ProjectNumber = Get-EnvItem -Name "EnvironmentCache_ProjectNumber"
-    } else {
+    $projectNumberCache = Get-EnvItem -Name "EnvironmentCache_ProjectNumber"
+    if($ProjectNumber -ne $projectNumberCache){
         Set-EnvItem -Name "EnvironmentCache_ProjectNumber" -Value $ProjectNumber
+    }
+    if([string]::IsNullOrWhiteSpace($ProjectNumber)){
+        $ProjectNumber = $projectNumberCache
     }
 
     return ($owner, $ProjectNumber)

@@ -75,44 +75,48 @@ function Sync-Project{
     )
 
     $db = $Database
+    $project_id = $db.ProjectId
 
-    foreach($idemId in $db.Staged.Keys){
-        foreach($fieldId in $db.Staged.$idemId.Keys){
+    $ItemsStagedId = $db.Staged.Keys
+    foreach($itemId in $ItemsStagedId){
+        
+        $itemStaged = $db.Staged.$itemId
+        $FieldStagedId = $db.Staged.$itemId.Keys
+        foreach($fieldId in $FieldStagedId){
 
-            $fieldName = $db.fields.$fieldId.name
+            $fieldStagedValue = $itemStaged.$fieldId.Value
+            $field = $itemStaged.$fieldId.Field
+            $fieldName = $field.name
 
-            # if($db.items.$idemId.$fieldName -eq $db.Staged.$idemId.$fieldId.Value){
-            #     "Skipping [$idemId/$fieldId] as value is the same" | Write-MyHost
+            # if($db.items.$itemId.$fieldName -eq $db.Staged.$itemId.$fieldId.Value){
+            #     "Skipping [$itemId/$fieldId] as value is the same" | Write-MyHost
             #     continue
             # }
 
-            $project_id = $db.ProjectId
-            $item_id = $idemId
-            $field_id = $fieldId
-            $value = $db.Staged.$idemId.$fieldId.Value
-            $type = ConvertTo-UpdateType $db.Staged.$idemId.$fieldId.Field.dataType
-
             $params = @{
-                projectid = $project_id
-                itemid = $item_id
-                fieldid = $field_id
-                value = $value
-                type = $type
+                Database = $db
+                ItemId = $itemId
+                FieldId = $fieldId
+                Value = $fieldStagedValue
+                FieldType = $field.type
+                FieldDataType = $field.dataType
             }
 
-            "Saving  [$project_id/$item_id/$field_id ($type) = $value ] ..." | Write-MyHost -NoNewLine
+            "Saving  [$($params.Database.ProjectId)/$($params.ItemId)/$($params.FieldId) ($($params.FieldType)) = $($params.Value) ] ..." | Write-MyHost -NoNewLine
 
-            $result = Invoke-MyCommand -Command GitHub_UpdateProjectV2ItemFieldValue -Parameters $params
+            $call = Update-ProjectItem @params
 
-            if ($null -eq $result) {
+            if ($null -eq $call.Result) {
                 "FAILED !!" | Write-MyHost
                 continue
             }
 
             # update database with change if exists
-            if($db.items.$item_id ){
-                $db.items.$item_id.$fieldName = $value
-            }
+            $db.items | AddHashLink $itemId
+            $db.items.$itemId.$fieldName = $fieldStagedValue
+
+            # remove staged item field
+            $db = Remove-ItemStaged -Database $db -ItemId $itemId -FieldId $fieldId
 
             "Done" | Write-MyHost
         }
@@ -121,40 +125,24 @@ function Sync-Project{
     return $db
 }
 
-
-
-function ConvertTo-UpdateType{
+function Remove-ItemStaged{
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory,ValueFromPipeline,Position=0)][string]$DataType
+        [Parameter(Position = 0)][object]$Database,
+        [Parameter(Position = 1)][string]$ItemId,
+        [Parameter(Position = 2)][string]$FieldId
     )
 
-            # [ValidateSet("singleSelectOptionId", "text", "number", "date", "iterationId")]
+    $db = $Database
 
-    switch ($DataType) {
-        "TEXT"           { $ret = "text"                 ;Break }
-        "TITLE"          { $ret = "text"                 ;Break }
-        "NUMBER"         { $ret = "number"               ; Break}
-        "DATE"           { $ret = "date"                 ; Break}
-        "iterationId"    { $ret = "iterationId"          ; Break}
-        "SINGLE_SELECT"  { $ret = "singleSelectOptionId" ;Break }
-
-        default          { $ret = $null }
+    if ($db.Staged.$ItemId.$FieldName) {
+        $db.Staged.$ItemId.Remove($FieldName)
     }
 
-    return $ret
+    # If no more fields in item remove item
+    if ($db.Staged.$ItemId.Count -eq 0) {
+        $db.Staged.Remove($ItemId)
+    }
 
-    # "SINGLE_SELECT"
-    # "TEXT" , "TITLE"
-    # "NUMBER"
-    # "DATE"
-
-    # "ASSIGNEES"
-    # "LABELS"
-    # "LINKED_PULL_REQUESTS"
-    # "TRACKS"
-    # "REVIEWERS"
-    # "REPOSITORY"
-    # "MILESTONE"
-    # "TRACKED_BY"
+    return $db
 }

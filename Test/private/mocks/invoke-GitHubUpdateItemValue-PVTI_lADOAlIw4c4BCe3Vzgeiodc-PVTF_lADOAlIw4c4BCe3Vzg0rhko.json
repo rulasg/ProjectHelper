@@ -1,0 +1,109 @@
+{
+  "data": {
+    "updateProjectV2ItemFieldValue": {
+      "projectV2Item": {
+        "content": {
+          "__typename": "DraftIssue",
+          "id": "DI_lADOAlIw4c4BCe3VzgJwmkk",
+          "body": "",
+          "title": "DraftIssue for development"
+        },
+        "id": "PVTI_lADOAlIw4c4BCe3Vzgeiodc",
+        "fieldValues": {
+          "nodes": [
+            {
+              "__typename": "ProjectV2ItemFieldTextValue",
+              "text": "DraftIssue for development",
+              "field": {
+                "__typename": "ProjectV2Field",
+                "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-M",
+                "name": "Title",
+                "dataType": "TITLE"
+              }
+            },
+            {
+              "__typename": "ProjectV2ItemFieldSingleSelectValue",
+              "name": "In Progress",
+              "field": {
+                "__typename": "ProjectV2SingleSelectField",
+                "id": "PVTSSF_lADOAlIw4c4BCe3Vzg0rg-U",
+                "name": "Status",
+                "dataType": "SINGLE_SELECT",
+                "options": [
+                  {
+                    "id": "f75ad846",
+                    "name": "Todo"
+                  },
+                  {
+                    "id": "47fc9ee4",
+                    "name": "In Progress"
+                  },
+                  {
+                    "id": "98236657",
+                    "name": "Done"
+                  }
+                ]
+              }
+            },
+            {
+              "__typename": "ProjectV2ItemFieldNumberValue",
+              "number": 222.0,
+              "field": {
+                "__typename": "ProjectV2Field",
+                "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhjU",
+                "name": "field-number",
+                "dataType": "NUMBER"
+              }
+            },
+            {
+              "__typename": "ProjectV2ItemFieldTextValue",
+              "text": "new value of the comment 10",
+              "field": {
+                "__typename": "ProjectV2Field",
+                "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhko",
+                "name": "field-text",
+                "dataType": "TEXT"
+              }
+            },
+            {
+              "__typename": "ProjectV2ItemFieldSingleSelectValue",
+              "name": "option-2",
+              "field": {
+                "__typename": "ProjectV2SingleSelectField",
+                "id": "PVTSSF_lADOAlIw4c4BCe3Vzg0rhno",
+                "name": "field-singleselect",
+                "dataType": "SINGLE_SELECT",
+                "options": [
+                  {
+                    "id": "7d96a925",
+                    "name": "option-1"
+                  },
+                  {
+                    "id": "cd02c585",
+                    "name": "option-2"
+                  },
+                  {
+                    "id": "6b66c93a",
+                    "name": "option-3"
+                  }
+                ]
+              }
+            },
+            {
+              "__typename": "ProjectV2ItemFieldIterationValue",
+              "title": "field-iteration 2",
+              "startDate": "2025-09-21",
+              "duration": 14,
+              "field": {
+                "__typename": "ProjectV2IterationField",
+                "id": "PVTIF_lADOAlIw4c4BCe3Vzg0rhqQ",
+                "name": "field-iteration",
+                "dataType": "ITERATION"
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

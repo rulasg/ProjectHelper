@@ -12,12 +12,8 @@ function Test_GetProjectItem_SUCCESS{
     $fieldTitleValue = "A draft in the project"
     $fieldCommentValue = "This"
 
-    # allos get project with skipitems
+    # allow get project with skipitems
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2-skipitems.json' -skipitems
-
-    # Getting an item not cached is null
-    $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
-    Assert-IsNull -Object $result
 
     # Allow to get project with items for the FORCE
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
@@ -54,7 +50,9 @@ function Test_EditProjetItems_SUCCESS{
     # $title = "A draft in the project"
 
     $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
-    $title_fieldid= "PVTF_lADOBCrGTM4ActQazgSkYm8"
+    # $title_fieldid= "PVTF_lADOBCrGTM4ActQazgSkYm8"
+    $title_fieldid= "title"
+
     $comment_fieldid = "PVTF_lADOBCrGTM4ActQazgSl5GU"
 
     $fieldComment = "Comment" ; $fieldCommentValue = "new value of the comment 10.1" ; $fieldCommentValue_Before = $before.items.$itemId.$fieldComment
@@ -178,10 +176,6 @@ function Test_EditProejctItems_Direct{
     $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
     $fieldComment = "Comment" ; $fieldCommentValue = "new value of the comment 10.1"
 
-    # Get an item with no changes staged from a not cached project
-    $result = Get-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId
-    Assert-IsNull -Object $result
-
     # Direct edit of the item
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId -FieldName $fieldComment -Value $fieldCommentValue
 
@@ -250,13 +244,14 @@ function Test_FindProjectItem_SUCCESS{
     $itemId1 = "PVTI_lADNJr_OALnx2s4Fqq8f"
     $itemId2 = "PVTI_lADNJr_OALnx2s4Fqq8p"
     $subtitle = $title.Substring(4,4)
+    $subtitle
 
     # Item not found
     $result = Find-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Title "No item with this title"
     Assert-IsNull -Object $result
 
     # Several items with similar title
-    $result = Find-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Title "*$subtitle*"
+    $result = Find-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Title "*$subtitle*" -IncludeDone
     Assert-Count -Expected 2 -Presented $result
     Assert-Contains -Expected $itemId1 -Presented $result.id
     Assert-Contains -Expected $itemId2 -Presented $result.id
@@ -304,44 +299,26 @@ function Test_SearchProjectItem_SUCCESS{
 
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
 
-    $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Filter $filter
-    
+    # Act 1
+    $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Filter $filter -IncludeDone
+
     Assert-Count -Expected 2 -Presented $result
     
     Assert-Contains -Expected "EPIC 1 " -Presented $result.Title
     Assert-Contains -Expected "PVTI_lADOBCrGTM4ActQazgMtRO0" -Presented $result.id
     Assert-Contains -Expected "EPIC 2"  -Presented $result.Title
     Assert-Contains -Expected "PVTI_lADOBCrGTM4ActQazgMtRPg" -Presented $result.id
-    
-    # Sample item to find
-    # Repository       : https://github.com/SomeOrg/ProjectDemoTest-repo-front
-    # updatedAt        : 
-    # Title            : Issue 455d29e3 2
-    # Assignees        : rulasg
-    # UserStories      : 21
-    # body             : Series 3 of demo issues for the Front repo
-    # state            : 
-    # url              : https://github.com/SomeOrg/ProjectDemoTest-repo-front/issues/3
-    # TimeTracker      : 684
-    # Priority         : 🥶Low
-    # Status           : Done
-    # contentId        : 
-    # type             : Issue
-    # id               : PVTI_lADNJr_OALnx2s4Fqq8p
-    # Next Action Date : 2024-02-20
-    # Comment          : This
-    # number           : 3
-    # Labels           : "enhancement"
-    # Severity         : Critical⭐️⭐️⭐️⭐️
-    # createdAt        : 
 
-    $result = Search-ProjectItem 68 # TimeTracker value 684
+    # Act 2
+    $result = Search-ProjectItem 68 -IncludeDone # TimeTracker value 684
+
     Assert-Count -Expected 1 -Presented $result
     Assert-AreEqual -Expected "Issue 455d29e3 2" -Presented $result[0].Title
     Assert-AreEqual -Expected "PVTI_lADNJr_OALnx2s4Fqq8p" -Presented $result[0].id
 
-    $result = Search-ProjectItem "ProjectDemoTest-repo-front"
-    Assert-Count -Expected 6 -Presented $result
+    # Act 3
+    $result = Search-ProjectItem "ProjectDemoTest-repo-front" 
+    Assert-Count -Expected 5 -Presented $result
 
 }
 
@@ -409,7 +386,6 @@ function Test_ShowProjectItem_SUCCESS_Multiple{
     Assert-Count -Expected 8 -Presented $result
 
     # Get properties of the first item to verify
-    $properties = $result[0].PSObject.Properties.Name
     $expectedProperties = @("id", "Title", "Status")
 
     # Verify all items have the same structure

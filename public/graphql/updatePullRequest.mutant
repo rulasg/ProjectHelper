@@ -1,0 +1,8 @@
+mutation PullRequestUpdate($input:UpdatePullRequestInput!){
+    updatePullRequest(input: $input){
+        __typename
+        pullRequest {
+            id, url, title
+        }
+    }
+}

@@ -1,5 +1,5 @@
 
-function Test_CommitProjectItemsStaged_NoStaged{
+function Test_CommitProjectItemsStaged_NoStaged {
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
@@ -15,69 +15,84 @@ function Test_CommitProjectItemsStaged_NoStaged{
     Assert-IsNull -Object $result
 }
 
-function Test_CommitProjectItemsStaged_SUCCESS{
-    Reset-InvokeCommandMock
+function Test_CommitProjectItemsStaged_SUCCESS_Content_Issue_NotCached {
+   Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164
+    $Owner = "octodemo" ; $ProjectNumber = 700
+    $projectId = "PVT_kwDOAlIw4c4BCe3V"
 
-    # Item id 10
-    # Name                           Value
-    # ----                           -----
-    # id                             PVTI_lADOBCrGTM4ActQazgMuXXc
-    # number
-    # Severity                       Nice⭐️
-    # Status                         Todo
-    # TimeTracker                    890
-    # Comment                        This
-    # body                           some content in body
-    # Assignees                      rulasg
-    # UserStories                    8
-    # Title                          A draft in the project
-    # Priority                       🥵High
-    # url
-    # type                           DraftIssue
+    # project item issue
+    $itemId1 = "PVTI_lADOAlIw4c4BCe3Vzgeio4o"
+    $contentId1 = "I_kwDOPrRnkc7KkwSq"
 
-    $itemId1 = "PVTI_lADOBCrGTM4ActQazgMuXXc"
-    $fieldComment1 = "Comment" ; $fieldCommentValue1 = "new value of the comment 10"
+    $fieldComment1 = "field-text" ; $fieldCommentValue1 = "new value of the comment 10"
     $fieldTitle1 = "Title" ; $fieldTitleValue1 = "new value of the title"
+    $fieldBody = "Body" ; $fieldBodyValue1 = "new value of the body"
 
-    # Name                           Value
-    # ----                           -----
-    # number                         6
-    # id                             PVTI_lADOBCrGTM4ActQazgMueM4
-    # body
-    # type                           PullRequest
-    # Start Date                     2024-02-23
-    # Repository                     https://github.com/SolidifyDemo/ProjectDemoTest-repo-front
-    # Title                          Update README.md
-    # Assignees                      rulasg
-    # TimeTracker                    888
-    # Status                         In Progress
-    # Next Action Date               2024-02-23
-    # url                            https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/pull/6
-    # $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
+    # Define an array of objects to de updated mocked
+    $mockItemsComments = @(
+        @{
+            ItemId     = $itemId1
+            FieldId    = "PVTF_lADOAlIw4c4BCe3Vzg0rhko"
+            Value      = "new value of the comment 10"
+            ResultFile = "invoke-GitHubUpdateItemValue-PVTI_lADOAlIw4c4BCe3Vzgeiodc-PVTF_lADOAlIw4c4BCe3Vzg0rhko.json"
+        }
+    )
 
-    $itemId2 = "PVTI_lADOBCrGTM4ActQazgMueM4"
-    $fieldComment2 = "Comment" ; $fileCommentValue2 = "new value of the comment 11"
-    $fieldTitle2 = "Title" ; $fileTitleValue2 = "new value of the title 11"
+    # Loop through the array and set the mock commands
+    foreach ($item in $mockItemsComments) {
+        $command = 'Invoke-GitHubUpdateItemValues -ProjectId {ProjectId} -ItemId {ItemId} -FieldId {FieldId} -Value "{Value}" -Type text'
+        $command = $command -replace '{ProjectId}', $projectId
+        $command = $command -replace '{ItemId}', $item.ItemId
+        $command = $command -replace '{FieldId}', $item.FieldId
+        $command = $command -replace '{Value}', $item.Value
 
-    # Edit-ProjectItem will call Get-Project with SkipItems
-    # This test is to confirm the sync works with the project and items
-    # Cache the project with items
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
-    $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+        Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename $($item.ResultFile)" -Alias $command
+    }
 
-    MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc -FieldId PVTF_lADOBCrGTM4ActQazgSl5GU -Value "new value of the comment 10" -Type text'
-    MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc -FieldId PVTF_lADOBCrGTM4ActQazgSkYm8 -Value "new value of the title" -Type text'
-    MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMueM4 -FieldId PVTF_lADOBCrGTM4ActQazgSl5GU -Value "new value of the comment 11" -Type text'
-    MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMueM4 -FieldId PVTF_lADOBCrGTM4ActQazgSkYm8 -Value "new value of the title 11" -Type text'
+    # Mock Content updates
+    $mockItemsTitles = @(
+        @{
+            ItemId     = $itemId1
+            ContentId  = $contentId1
+            FieldId    = "title"
+            TitleValue = "new value of the title"
+            BodyValue  = ""
+            ResultFile = "invoke-UpdateIssue-$contentId1.json"
+        },
+        @{
+            ItemId     = $itemId1
+            ContentId  = $contentId1
+            FieldId    = "body"
+            TitleValue = ""
+            BodyValue  = "new value of the body"
+            ResultFile = "invoke-UpdateIssue-$contentId1.json"
+        }
+    )
 
+    # Loop through the array and set the mock commands
+    foreach ($item in $mockItemsTitles) {
+        $command = 'Invoke-UpdateIssue -Id {id} -Title "{title}" -Body "{body}"'
+        $command = $command -replace '{id}', $item.ContentId
+        $command = $command -replace '{title}', $item.TitleValue
+        $command = $command -replace '{body}', $item.BodyValue
+
+        Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename $($item.ResultFile)" -Alias $command
+    }
+
+    # Mock Get-Item direct
+    Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename invoke-getitem-$itemId1.json" -Alias "Invoke-GetItem -ItemId $itemId1"
+
+    # Mock get-project
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json' -skipItems
+
+    # Edit fields
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
-    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId2 $fieldComment2 $fileCommentValue2
-    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId2 $fieldTitle2 $fileTitleValue2
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldBody $fieldBodyValue1
 
+    # Act - Sync
     $result = Sync-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
 
     # Return true
@@ -90,110 +105,88 @@ function Test_CommitProjectItemsStaged_SUCCESS{
     $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
     Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.$fieldComment1
     Assert-AreEqual -Expected $fieldTitleValue1 -Presented $item1.$fieldTitle1
-
-    $item2 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId2
-    Assert-AreEqual -Expected $fileCommentValue2 -Presented $item2.$fieldComment2
-    Assert-AreEqual -Expected $fileTitleValue2 -Presented $item2.$fieldTitle2
+    Assert-AreEqual -Expected $fieldBodyValue1 -Presented $item1.$fieldBody
 }
 
-function Test_CommitProjectItemsStagedAsync_SUCCESS{
+function Test_CommitProjectItemsStaged_SUCCESS_Content_PullRequest_NotCached {
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $moduleRootPath = $PSScriptRoot | Split-Path -Parent
-    $moduleRootFullName = $moduleRootPath | Convert-Path
+    $Owner = "octodemo" ; $ProjectNumber = 700
+    $projectId = "PVT_kwDOAlIw4c4BCe3V"
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164
-    $projectId ="PVT_kwDOBCrGTM4ActQa"
+    # project item issue
+    $itemId1 = "PVTI_lADOAlIw4c4BCe3VzgeioBY"
+    $contentId1 = "PR_kwDOPrRnkc6nndcE"
 
-    # Item id 10
-    # Name                           Value
-    # ----                           -----
-    # id                             PVTI_lADOBCrGTM4ActQazgMuXXc
-    # number
-    # Severity                       Nice⭐️
-    # Status                         Todo
-    # TimeTracker                    890
-    # Comment                        This
-    # body                           some content in body
-    # Assignees                      rulasg
-    # UserStories                    8
-    # Title                          A draft in the project
-    # Priority                       🥵High
-    # url
-    # type                           DraftIssue
-
-    $itemId1 = "PVTI_lADOBCrGTM4ActQazgMuXXc"
-    $fieldComment1 = "Comment" ; $fieldCommentValue1 = "new value of the comment 10"
+    $fieldComment1 = "field-text" ; $fieldCommentValue1 = "new value of the comment 10"
     $fieldTitle1 = "Title" ; $fieldTitleValue1 = "new value of the title"
-
-    # Name                           Value
-    # ----                           -----
-    # number                         6
-    # id                             PVTI_lADOBCrGTM4ActQazgMueM4
-    # body
-    # type                           PullRequest
-    # Start Date                     2024-02-23
-    # Repository                     https://github.com/SolidifyDemo/ProjectDemoTest-repo-front
-    # Title                          Update README.md
-    # Assignees                      rulasg
-    # TimeTracker                    888
-    # Status                         In Progress
-    # Next Action Date               2024-02-23
-    # url                            https://github.com/SolidifyDemo/ProjectDemoTest-repo-front/pull/6
-    # $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
-
-    $itemId2 = "PVTI_lADOBCrGTM4ActQazgMueM4"
-    $fieldComment2 = "Comment" ; $fileCommentValue2 = "new value of the comment 11"
-    $fieldTitle2 = "Title" ; $fileTitleValue2 = "new value of the title 11"
+    $fieldBody = "Body" ; $fieldBodyValue1 = "new value of the body"
 
     # Define an array of objects to de updated mocked
-    $mockItems = @(
+    $mockItemsComments = @(
         @{
-            ItemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
-            FieldId = "PVTF_lADOBCrGTM4ActQazgSl5GU"
-            Value = "new value of the comment 10"
-        },
-        @{
-            ItemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
-            FieldId = "PVTF_lADOBCrGTM4ActQazgSkYm8"
-            Value = "new value of the title"
-        },
-        @{
-            ItemId = "PVTI_lADOBCrGTM4ActQazgMueM4"
-            FieldId = "PVTF_lADOBCrGTM4ActQazgSl5GU"
-            Value = "new value of the comment 11"
-        },
-        @{
-            ItemId = "PVTI_lADOBCrGTM4ActQazgMueM4"
-            FieldId = "PVTF_lADOBCrGTM4ActQazgSkYm8"
-            Value = "new value of the title 11"
+            ItemId     = $itemId1
+            FieldId    = "PVTF_lADOAlIw4c4BCe3Vzg0rhko"
+            Value      = "new value of the comment 10"
+            ResultFile = "invoke-GitHubUpdateItemValue-PVTI_lADOAlIw4c4BCe3Vzgeiodc-PVTF_lADOAlIw4c4BCe3Vzg0rhko.json"
         }
     )
 
     # Loop through the array and set the mock commands
-    foreach ($item in $mockItems) {
-        $command = 'Import-Module {projecthelper} ; Invoke-GitHubUpdateItemValues -ProjectId {ProjectId} -ItemId {ItemId} -FieldId {FieldId} -Value "{Value}" -Type text'
+    foreach ($item in $mockItemsComments) {
+        $command = 'Invoke-GitHubUpdateItemValues -ProjectId {ProjectId} -ItemId {ItemId} -FieldId {FieldId} -Value "{Value}" -Type text'
         $command = $command -replace '{ProjectId}', $projectId
         $command = $command -replace '{ItemId}', $item.ItemId
         $command = $command -replace '{FieldId}', $item.FieldId
         $command = $command -replace '{Value}', $item.Value
-        $command = $command -replace '{projecthelper}', $MODULE_ROOT_PATH
 
-        Set-InvokeCommandMock -Command "Import-Module $moduleRootFullName ; Get-MockFileContentJson -filename updateProjectV2ItemFieldValue.json" -Alias $command
+        Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename $($item.ResultFile)" -Alias $command
     }
 
-    # Mock get-project
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
-    # Cache the project with items as Edit-Project will call Get-Project with SkipItems
-    $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+    # Mock Content updates
+    $mockItemsTitles = @(
+        @{
+            ItemId     = $itemId1
+            ContentId  = $contentId1
+            FieldId    = "title"
+            TitleValue = "new value of the title"
+            BodyValue  = ""
+            ResultFile = "invoke-UpdatePullRequest-$contentId1.json"
+        },
+        @{
+            ItemId     = $itemId1
+            ContentId  = $contentId1
+            FieldId    = "body"
+            TitleValue = ""
+            BodyValue  = "new value of the body"
+            ResultFile = "invoke-UpdatePullRequest-$contentId1.json"
+        }
+    )
 
+    # Loop through the array and set the mock commands
+    foreach ($item in $mockItemsTitles) {
+        $command = 'Invoke-UpdatePullRequest -Id {id} -Title "{title}" -Body "{body}"'
+        $command = $command -replace '{id}', $item.ContentId
+        $command = $command -replace '{title}', $item.TitleValue
+        $command = $command -replace '{body}', $item.BodyValue
+
+        Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename $($item.ResultFile)" -Alias $command
+    }
+
+    # Mock Get-Item direct
+    Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename invoke-getitem-$itemId1.json" -Alias "Invoke-GetItem -ItemId $itemId1"
+
+    # Mock get-project
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json' -skipItems
+
+    # Edit fields
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
-    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId2 $fieldComment2 $fileCommentValue2
-    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId2 $fieldTitle2 $fileTitleValue2
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldBody $fieldBodyValue1
 
-    $result = Sync-ProjectItemStagedAsync -Owner $Owner -ProjectNumber $ProjectNumber -SyncBatchSize 2
+    # Act - Sync
+    $result = Sync-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
 
     # Return true
     Assert-IsTrue -Condition $result
@@ -205,14 +198,395 @@ function Test_CommitProjectItemsStagedAsync_SUCCESS{
     $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
     Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.$fieldComment1
     Assert-AreEqual -Expected $fieldTitleValue1 -Presented $item1.$fieldTitle1
+    Assert-AreEqual -Expected $fieldBodyValue1 -Presented $item1.$fieldBody
+}
 
-    $item2 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId2
-    Assert-AreEqual -Expected $fileCommentValue2 -Presented $item2.$fieldComment2
-    Assert-AreEqual -Expected $fileTitleValue2 -Presented $item2.$fieldTitle2
+function Test_CommitProjectItemsStaged_SUCCESS_Content_DraftIssue_NotCached {
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $Owner = "octodemo" ; $ProjectNumber = 700
+    $projectId = "PVT_kwDOAlIw4c4BCe3V"
+
+    # project item issue
+    $itemId1 = "PVTI_lADOAlIw4c4BCe3Vzgeiodc"
+
+    $fieldComment1 = "field-text" ; $fieldCommentValue1 = "new value of the comment 10"
+    $fieldTitle1 = "Title" ; $fieldTitleValue1 = "new value of the title"
+    $fieldBody = "Body" ; $fieldBodyValue1 = "new value of the body"
+
+    # Define an array of objects to de updated mocked
+    $mockItemsComments = @(
+        @{
+            ItemId     = $itemId1
+            FieldId    = "PVTF_lADOAlIw4c4BCe3Vzg0rhko"
+            Value      = "new value of the comment 10"
+            ResultFile = "invoke-GitHubUpdateItemValue-PVTI_lADOAlIw4c4BCe3Vzgeiodc-PVTF_lADOAlIw4c4BCe3Vzg0rhko.json"
+        }
+    )
+
+    # Loop through the array and set the mock commands
+    foreach ($item in $mockItemsComments) {
+        $command = 'Invoke-GitHubUpdateItemValues -ProjectId {ProjectId} -ItemId {ItemId} -FieldId {FieldId} -Value "{Value}" -Type text'
+        $command = $command -replace '{ProjectId}', $projectId
+        $command = $command -replace '{ItemId}', $item.ItemId
+        $command = $command -replace '{FieldId}', $item.FieldId
+        $command = $command -replace '{Value}', $item.Value
+
+        Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename $($item.ResultFile)" -Alias $command
+    }
+
+    # Mock Content updates
+    $mockItemsTitles = @(
+        @{
+            ItemId     = $itemId1
+            ContentId  = "DI_lADOAlIw4c4BCe3VzgJwmkk"
+            FieldId    = "title"
+            TitleValue = "new value of the title"
+            BodyValue  = ""
+            ResultFile = "invoke-UpdateDraftIssue-DI_lADOAlIw4c4BCe3VzgJwmkk.json"
+        },
+        @{
+            ItemId     = $itemId1
+            ContentId  = "DI_lADOAlIw4c4BCe3VzgJwmkk"
+            FieldId    = "body"
+            TitleValue = ""
+            BodyValue  = "new value of the body"
+            ResultFile = "invoke-UpdateDraftIssue-DI_lADOAlIw4c4BCe3VzgJwmkk.json"
+        }
+    )
+
+    # Loop through the array and set the mock commands
+    foreach ($item in $mockItemsTitles) {
+        $command = 'Invoke-UpdateDraftIssue -Id {id} -Title "{title}" -Body "{body}"'
+        $command = $command -replace '{id}', $item.ContentId
+        $command = $command -replace '{title}', $item.TitleValue
+        $command = $command -replace '{body}', $item.BodyValue
+
+        Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename $($item.ResultFile)" -Alias $command
+    }
+
+    # Mock Get-Item direct
+    Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename invoke-getitem-$itemId1.json" -Alias "Invoke-GetItem -ItemId $itemId1"
+
+    # Mock get-project
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json' -skipItems
+
+    # Edit fields
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldBody $fieldBodyValue1
+
+    # Act - Sync
+    $result = Sync-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+
+    # Return true
+    Assert-IsTrue -Condition $result
+
+    # Staged list is empty
+    $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    Assert-IsNull -Object $staged
+
+    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.$fieldComment1
+    Assert-AreEqual -Expected $fieldTitleValue1 -Presented $item1.$fieldTitle1
+    Assert-AreEqual -Expected $fieldBodyValue1 -Presented $item1.$fieldBody
 }
 
 
-function Test_ShowProjectItemsStaged{
+function Test_CommitProjectItemsStaged_SUCCESS_Content_Issue {
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $Owner = "octodemo" ; $ProjectNumber = 700
+
+    # Mock this call to cache the project in the test
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700.json'
+    
+    $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force
+    $projectId = $project.ProjectId
+
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot -NotReset
+
+    # project item issue
+    $itemId1 = "PVTI_lADOAlIw4c4BCe3Vzgeio4o"
+    $contentId1 = "I_kwDOPrRnkc7KkwSq"
+
+    $fieldComment1 = "field-text" ; $fieldCommentValue1 = "new value of the comment 10"
+    $fieldTitle1 = "Title" ; $fieldTitleValue1 = "new value of the title"
+    $fieldBody = "Body" ; $fieldBodyValue1 = "new value of the body"
+
+    # Define an array of objects to de updated mocked
+    $mockItemsComments = @(
+        @{
+            ItemId  = $itemId1
+            FieldId = "PVTF_lADOAlIw4c4BCe3Vzg0rhko"
+            Value   = "new value of the comment 10"
+        }
+    )
+
+    # Loop through the array and set the mock commands
+    foreach ($item in $mockItemsComments) {
+        $command = 'Invoke-GitHubUpdateItemValues -ProjectId {ProjectId} -ItemId {ItemId} -FieldId {FieldId} -Value "{Value}" -Type text'
+        $command = $command -replace '{ProjectId}', $projectId
+        $command = $command -replace '{ItemId}', $item.ItemId
+        $command = $command -replace '{FieldId}', $item.FieldId
+        $command = $command -replace '{Value}', $item.Value
+
+        Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename invoke-UpdateIssue-I_kwDOPrRnkc7KkwSq.json" -Alias $command
+    }
+
+    $mockItemsTitles = @(
+        @{
+            ItemId     = $itemId1
+            ContentId  = $contentId1
+            FieldId    = "title"
+            TitleValue = "new value of the title"
+            BodyValue  = ""
+            ResultFile = "invoke-UpdateIssue-$contentId1.json"
+        },
+        @{
+            ItemId     = $itemId1
+            ContentId  = $contentId1
+            FieldId    = "body"
+            TitleValue = ""
+            BodyValue  = "new value of the body"
+            ResultFile = "invoke-UpdateIssue-$contentId1.json"
+        }
+    )
+
+    # Loop through the array and set the mock commands
+    foreach ($item in $mockItemsTitles) {
+        $command = 'Invoke-UpdateIssue -Id {id} -Title "{title}" -Body "{body}"'
+        $command = $command -replace '{id}', $item.ContentId
+        $command = $command -replace '{title}', $item.TitleValue
+        $command = $command -replace '{body}', $item.BodyValue
+
+        Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename $($item.ResultFile)" -Alias $command
+    }
+
+    # Mock get-project
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json' -skipItems
+
+    # Edit fields
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldBody $fieldBodyValue1
+
+    # Act - Sync
+    $result = Sync-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+
+    # Return true
+    Assert-IsTrue -Condition $result
+
+    # Staged list is empty
+    $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    Assert-IsNull -Object $staged
+
+    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.$fieldComment1
+    Assert-AreEqual -Expected $fieldTitleValue1 -Presented $item1.$fieldTitle1
+    Assert-AreEqual -Expected $fieldBodyValue1 -Presented $item1.$fieldBody
+}
+
+function Test_CommitProjectItemsStaged_SUCCESS_Content_PullRequest {
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $Owner = "octodemo" ; $ProjectNumber = 700
+
+    # Mock this call to cache the project in the test
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700.json'
+    
+    $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force
+    $projectId = $project.ProjectId
+
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot -NotReset
+
+    # project item issue
+    $itemId1 = "PVTI_lADOAlIw4c4BCe3VzgeioBY"
+    $contentId1 = "PR_kwDOPrRnkc6nndcE"
+
+    $fieldComment1 = "field-text" ; $fieldCommentValue1 = "new value of the comment 10"
+    $fieldTitle1 = "Title" ; $fieldTitleValue1 = "new value of the title"
+    $fieldBody = "Body" ; $fieldBodyValue1 = "new value of the body"
+
+    # Define an array of objects to de updated mocked
+    $mockItemsComments = @(
+        @{
+            ItemId     = $itemId1
+            FieldId    = "PVTF_lADOAlIw4c4BCe3Vzg0rhko"
+            Value      = "new value of the comment 10"
+            ResultFile = "invoke-GitHubUpdateItemValue-PVTI_lADOAlIw4c4BCe3VzgeioBY-PVTF_lADOAlIw4c4BCe3Vzg0rhko.json"
+        }
+    )
+
+    # Loop through the array and set the mock commands
+    foreach ($item in $mockItemsComments) {
+        $command = 'Invoke-GitHubUpdateItemValues -ProjectId {ProjectId} -ItemId {ItemId} -FieldId {FieldId} -Value "{Value}" -Type text'
+        $command = $command -replace '{ProjectId}', $projectId
+        $command = $command -replace '{ItemId}', $item.ItemId
+        $command = $command -replace '{FieldId}', $item.FieldId
+        $command = $command -replace '{Value}', $item.Value
+
+        Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename $($item.ResultFile)" -Alias $command
+    }
+
+    $mockItemsTitles = @(
+        @{
+            ItemId     = $itemId1
+            ContentId  = "$contentId1"
+            FieldId    = "title"
+            TitleValue = "new value of the title"
+            BodyValue  = ""
+            ResultFile = "invoke-UpdatePullRequest-$contentId1.json"
+        },
+        @{
+            ItemId     = $itemId1
+            ContentId  = "$contentId1"
+            FieldId    = "body"
+            TitleValue = ""
+            BodyValue  = "new value of the body"
+            ResultFile = "invoke-UpdatePullRequest-$contentId1.json"
+        }
+    )
+
+    # Loop through the array and set the mock commands
+    foreach ($item in $mockItemsTitles) {
+        $command = 'Invoke-UpdatePullRequest -Id {id} -Title "{title}" -Body "{body}"'
+        $command = $command -replace '{id}', $item.ContentId
+        $command = $command -replace '{title}', $item.TitleValue
+        $command = $command -replace '{body}', $item.BodyValue
+
+        Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename $($item.ResultFile)" -Alias $command
+    }
+
+    # Mock get-project
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json' -skipItems
+
+    # Edit fields
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldBody $fieldBodyValue1
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
+
+    # Act - Sync
+    $result = Sync-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+
+    # Return true
+    Assert-IsTrue -Condition $result
+
+    # Staged list is empty
+    $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    Assert-IsNull -Object $staged
+
+    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.$fieldComment1
+    Assert-AreEqual -Expected $fieldTitleValue1 -Presented $item1.$fieldTitle1
+    Assert-AreEqual -Expected $fieldBodyValue1 -Presented $item1.$fieldBody
+}
+
+function Test_CommitProjectItemsStaged_SUCCESS_Content_DraftIssue {
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $Owner = "octodemo" ; $ProjectNumber = 700
+
+    # Mock this call to cache the project in the test
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700.json'
+    
+    $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force
+    $projectId = $project.ProjectId
+
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot -NotReset
+
+    # project item issue
+    $itemId1 = "PVTI_lADOAlIw4c4BCe3Vzgeiodc"
+
+    $fieldComment1 = "field-text" ; $fieldCommentValue1 = "new value of the comment 10"
+    $fieldTitle1 = "Title" ; $fieldTitleValue1 = "new value of the title"
+    $fieldBody = "Body" ; $fieldBodyValue1 = "new value of the body"
+
+    # Define an array of objects to de updated mocked
+    $mockItemsComments = @(
+        @{
+            ItemId     = $itemId1
+            FieldId    = "PVTF_lADOAlIw4c4BCe3Vzg0rhko"
+            Value      = "new value of the comment 10"
+            ResultFile = "invoke-GitHubUpdateItemValue-PVTI_lADOAlIw4c4BCe3Vzgeiodc-PVTF_lADOAlIw4c4BCe3Vzg0rhko.json"
+        }
+    )
+
+    # Loop through the array and set the mock commands
+    foreach ($item in $mockItemsComments) {
+        $command = 'Invoke-GitHubUpdateItemValues -ProjectId {ProjectId} -ItemId {ItemId} -FieldId {FieldId} -Value "{Value}" -Type text'
+        $command = $command -replace '{ProjectId}', $projectId
+        $command = $command -replace '{ItemId}', $item.ItemId
+        $command = $command -replace '{FieldId}', $item.FieldId
+        $command = $command -replace '{Value}', $item.Value
+
+        Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename $($item.ResultFile)" -Alias $command
+    }
+
+    # Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOAlIw4c4BCe3V -ItemId PVTI_lADOAlIw4c4BCe3Vzgeiodc -FieldId PVTI_lADOAlIw4c4BCe3Vzgeiodc -Value "new value of the comment 10" -Type text
+    # Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOAlIw4c4BCe3V -ItemId PVTI_lADOAlIw4c4BCe3Vzgeiodc -FieldId PVTF_lADOAlIw4c4BCe3Vzg0rhko -Value "new value of the comment 10" -Type text
+
+    $mockItemsTitles = @(
+        @{
+            ItemId     = $itemId1
+            ContentId  = "DI_lADOAlIw4c4BCe3VzgJwmkk"
+            FieldId    = "title"
+            TitleValue = "new value of the title"
+            BodyValue  = ""
+            ResultFile = "invoke-UpdateDraftIssue-DI_lADOAlIw4c4BCe3VzgJwmkk.json"
+        },
+        @{
+            ItemId     = $itemId1
+            ContentId  = "DI_lADOAlIw4c4BCe3VzgJwmkk"
+            FieldId    = "body"
+            TitleValue = ""
+            BodyValue  = "new value of the body"
+            ResultFile = "invoke-UpdateDraftIssue-DI_lADOAlIw4c4BCe3VzgJwmkk.json"
+        }
+    )
+
+    # Loop through the array and set the mock commands
+    foreach ($item in $mockItemsTitles) {
+        $command = 'Invoke-UpdateDraftIssue -Id {id} -Title "{title}" -Body "{body}"'
+        $command = $command -replace '{id}', $item.ContentId
+        $command = $command -replace '{title}', $item.TitleValue
+        $command = $command -replace '{body}', $item.BodyValue
+
+        Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename $($item.ResultFile)" -Alias $command
+    }
+
+    # Mock get-project
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json' -skipItems
+
+    # Edit fields
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldBody $fieldBodyValue1
+
+    # Act - Sync
+    $result = Sync-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+
+    # Return true
+    Assert-IsTrue -Condition $result
+
+    # Staged list is empty
+    $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    Assert-IsNull -Object $staged
+
+    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.$fieldComment1
+    Assert-AreEqual -Expected $fieldTitleValue1 -Presented $item1.$fieldTitle1
+    Assert-AreEqual -Expected $fieldBodyValue1 -Presented $item1.$fieldBody
+}
+
+function Test_ShowProjectItemsStaged {
 
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
@@ -289,7 +663,7 @@ function Test_ShowProjectItemsStaged{
 }
 
 
-function Test_TestProjectItemStaged{
+function Test_TestProjectItemStaged {
 
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
@@ -315,18 +689,18 @@ function Test_TestProjectItemStaged{
 
 }
 
-function Test_CommitProjectItemsStagedAsync_debug{
+function Test_CommitProjectItemsStagedAsync_debug {
 
     Assert-SkipTest
     Reset-InvokeCommandMock
     Enable-InvokeCommandAliasModule
 
     $params = @{
-        SourceOwner = "github"
+        SourceOwner              = "github"
         DestinationProjectNumber = "9279"
-        FieldSlug = "oa_"
-        DestinationOwner = "github"
-        SourceProjectNumber = "20521"
+        FieldSlug                = "oa_"
+        DestinationOwner         = "github"
+        SourceProjectNumber      = "20521"
     }
 
     $result = Update-ProjectItemsBetweenProjects @params
