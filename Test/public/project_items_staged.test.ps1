@@ -1,5 +1,5 @@
 
-function Test_CommitProjectItemsStaged_NoStaged {
+function Test_SyncProjectItemsStaged_NoStaged {
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
@@ -15,7 +15,7 @@ function Test_CommitProjectItemsStaged_NoStaged {
     Assert-IsNull -Object $result
 }
 
-function Test_CommitProjectItemsStaged_SUCCESS_Content_Issue_NotCached {
+function Test_SyncProjectItemsStaged_SUCCESS_Content_Issue_NotCached {
    Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
@@ -108,7 +108,7 @@ function Test_CommitProjectItemsStaged_SUCCESS_Content_Issue_NotCached {
     Assert-AreEqual -Expected $fieldBodyValue1 -Presented $item1.$fieldBody
 }
 
-function Test_CommitProjectItemsStaged_SUCCESS_Content_PullRequest_NotCached {
+function Test_SyncProjectItemsStaged_SUCCESS_Content_PullRequest_NotCached {
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
@@ -201,7 +201,7 @@ function Test_CommitProjectItemsStaged_SUCCESS_Content_PullRequest_NotCached {
     Assert-AreEqual -Expected $fieldBodyValue1 -Presented $item1.$fieldBody
 }
 
-function Test_CommitProjectItemsStaged_SUCCESS_Content_DraftIssue_NotCached {
+function Test_SyncProjectItemsStaged_SUCCESS_Content_DraftIssue_NotCached {
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
@@ -293,8 +293,7 @@ function Test_CommitProjectItemsStaged_SUCCESS_Content_DraftIssue_NotCached {
     Assert-AreEqual -Expected $fieldBodyValue1 -Presented $item1.$fieldBody
 }
 
-
-function Test_CommitProjectItemsStaged_SUCCESS_Content_Issue {
+function Test_SyncProjectItemsStaged_SUCCESS_Content_Issue {
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
@@ -390,7 +389,7 @@ function Test_CommitProjectItemsStaged_SUCCESS_Content_Issue {
     Assert-AreEqual -Expected $fieldBodyValue1 -Presented $item1.$fieldBody
 }
 
-function Test_CommitProjectItemsStaged_SUCCESS_Content_PullRequest {
+function Test_SyncProjectItemsStaged_SUCCESS_Content_PullRequest {
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
@@ -487,7 +486,7 @@ function Test_CommitProjectItemsStaged_SUCCESS_Content_PullRequest {
     Assert-AreEqual -Expected $fieldBodyValue1 -Presented $item1.$fieldBody
 }
 
-function Test_CommitProjectItemsStaged_SUCCESS_Content_DraftIssue {
+function Test_SyncProjectItemsStaged_SUCCESS_Content_DraftIssue {
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
@@ -662,7 +661,6 @@ function Test_ShowProjectItemsStaged {
     Assert-AreEqual -Expected $fieldDateValue1_Before -Presented $result.$fieldDate.Before
 }
 
-
 function Test_TestProjectItemStaged {
 
     Reset-InvokeCommandMock
@@ -689,7 +687,7 @@ function Test_TestProjectItemStaged {
 
 }
 
-function Test_CommitProjectItemsStagedAsync_debug {
+function Test_SyncProjectItemsStagedAsync_debug {
 
     Assert-SkipTest
     Reset-InvokeCommandMock
