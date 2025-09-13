@@ -257,6 +257,8 @@ function Get-ProjectItemDirect{
 
     $item = $response.data.node | Convert-NodeItemToHash
 
+    # Cache item
+
     return $item
 } Export-ModuleMember -Function Get-ProjectItemDirect
 

@@ -34,6 +34,24 @@ function Get-Item{
     }
 }
 
+function Set-Item{
+    [CmdletBinding()]
+    [OutputType([string])]
+    param(
+        [Parameter(Position = 0)][object[]]$Database,
+        [Parameter(ValueFromPipeline, Position = 1)][PSCustomObject]$Item
+    )
+
+    if(-not $database){
+        $db = New-Object System.Collections.Hashtable
+    }
+
+    $db | AddHashLink items
+
+    $db.items.$($Item.id) = $Item
+
+}
+
 function Get-ItemStaged{
     [CmdletBinding()]
     [OutputType([string])]
