@@ -1,8 +1,6 @@
 
-Set-MyInvokeCommandAlias -Alias GitHub_UpdateProjectV2ItemFieldValue -Command 'Invoke-GitHubUpdateItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid} -Value "{value}" -Type {type}'
-
 function Sync-ProjectDatabase{
-    [CmdletBinding(SupportsShouldProcess)]
+    [CmdletBinding()]
     [OutputType([bool])]
     param(
         [Parameter()][string]$Owner,
@@ -17,12 +15,11 @@ function Sync-ProjectDatabase{
         return
     }
 
-    $dbkey = Get-DatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
-
     $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
     # Send update to project
     $result = Sync-Project -Database $db
+
     if ($null -eq $result) {
         return $false
     }
@@ -58,7 +55,7 @@ function Sync-ProjectDatabase{
 
     if($different.Count -eq 0){
         $db.Staged = $null
-        Save-Database -Key $dbkey -Database $db
+        Save-ProjectDatabase -Database $db -Owner $owner -ProjectNumber $projectnumber
         return $true
     } else {
         "Error: Staged values are not equal to actual values" | Write-MyError
@@ -75,7 +72,6 @@ function Sync-Project{
     )
 
     $db = $Database
-    $project_id = $db.ProjectId
 
     $ItemsStagedId = $db.Staged.Keys
     foreach($itemId in $ItemsStagedId){
@@ -87,11 +83,6 @@ function Sync-Project{
             $fieldStagedValue = $itemStaged.$fieldId.Value
             $field = $itemStaged.$fieldId.Field
             $fieldName = $field.name
-
-            # if($db.items.$itemId.$fieldName -eq $db.Staged.$itemId.$fieldId.Value){
-            #     "Skipping [$itemId/$fieldId] as value is the same" | Write-MyHost
-            #     continue
-            # }
 
             $params = @{
                 Database = $db

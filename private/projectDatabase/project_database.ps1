@@ -75,8 +75,6 @@ function Set-ProjectDatabaseV2{
     $owner = $ProjectV2.owner.login
     $projectnumber = $ProjectV2.number
 
-    $dbkey = Get-DatabaseKey -Owner $owner -ProjectNumber $projectnumber
-
     $db = New-Object System.Collections.Hashtable
 
     $db.url              = $ProjectV2.url
@@ -93,7 +91,7 @@ function Set-ProjectDatabaseV2{
     $db.items = $items
     $db.fields = $fields
 
-    Save-Database -Key $dbkey -Database $db
+    Save-ProjectDatabase -Database $db -Owner $owner -ProjectNumber $projectnumber
 }
 
 function Save-ProjectDatabase{

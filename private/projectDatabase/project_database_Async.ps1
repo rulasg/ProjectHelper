@@ -18,8 +18,6 @@ function Sync-ProjectDatabaseAsync {
         return
     }
 
-    $dbkey = Get-DatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
-
     $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
     # Send update to project
@@ -83,7 +81,7 @@ function Sync-ProjectDatabaseAsync {
         $db.Staged = $null
     }
 
-    Save-Database -Key $dbkey -Database $db
+    Save-ProjectDatabase -Database $db -Owner $owner -ProjectNumber $projectnumber
 
     if ($different.Count -ne 0) {
         "Not all Staged values are not equal to actual values" | Write-MyError
