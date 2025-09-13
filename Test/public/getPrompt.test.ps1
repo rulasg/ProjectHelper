@@ -29,7 +29,7 @@ function Test_GetProjecthelperPrompt {
     Assert-AreEqual -Presented $result[$resultLine]     -Expected $($($s.OwnerStatus.PreText)+$owner)
     Assert-AreEqual -Presented $result[$resultLine + 1] -Expected $s.DelimStatus1.PreText
     Assert-AreEqual -Presented $result[$resultLine + 2] -Expected $($($s.NumberStatus.PreText)+$projectNumber)
-    Assert-AreEqual -Presented $result[$resultLine + 3] -Expected $s.DelimStatus2.PreText
+    Assert-AreEqual -Presented $result[$resultLine + 3] -Expected "" # $s.DelimStatus2.PreText as value of " " but prompt change to """
     Assert-AreEqual -Presented $result[$resultLine + 4] -Expected $s.OKStatus.PreText
     Assert-AreEqual -Presented $result[$resultLine + 5] -Expected $s.AfterStatus.PreText
     Assert-AreEqual -Presented $result[$resultLine + 6] -Expected ""
@@ -43,7 +43,7 @@ function Test_GetProjecthelperPrompt {
     Assert-AreEqual -Presented $result[$resultLine]     -Expected $($($s.OwnerStatus.PreText)+$owner)
     Assert-AreEqual -Presented $result[$resultLine + 1] -Expected $s.DelimStatus1.PreText
     Assert-AreEqual -Presented $result[$resultLine + 2] -Expected $($($s.NumberStatus.PreText)+$projectNumber)
-    Assert-AreEqual -Presented $result[$resultLine + 3] -Expected $s.DelimStatus2.PreText
+    Assert-AreEqual -Presented $result[$resultLine + 3] -Expected "" # $s.DelimStatus2.PreText as value of " " but prompt change to """
     Assert-AreEqual -Presented $result[$resultLine + 4] -Expected $s.OKStatus.PreText
     Assert-AreEqual -Presented $result[$resultLine + 5] -Expected $s.AfterStatus.PreText
     Assert-AreEqual -Presented $result[$resultLine + 6] -Expected ""
