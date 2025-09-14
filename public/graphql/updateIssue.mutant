@@ -1,1 +1,8 @@
-mutation IssueUpdate($input:UpdateIssueInput!){updateIssue(input: $input){__typename}}
+mutation IssueUpdate($input:UpdateIssueInput!){
+    updateIssue(input: $input){
+        __typename
+        issue {
+            id, url, title
+        }
+    }
+}

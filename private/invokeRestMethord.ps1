@@ -6,7 +6,7 @@ function Invoke-RestMethod{
         [Parameter(Position = 1)][string]$Uri,
         [Parameter(Position = 2)][hashtable]$Headers,
         [Parameter(Position = 3)][string]$Body,
-        [Parameter()][string]$Outfile
+        [Parameter()][string]$OutFile
     )
 
     $params = @{
@@ -15,8 +15,9 @@ function Invoke-RestMethod{
         Headers = $Headers
         Body = $Body
     }
-    if($Outfile){
-        $params.OutFile = $Outfile
+    
+    if (-not [string]::IsNullOrWhiteSpace($OutFile)) {
+        $params.OutFile = $OutFile
     }
 
     $result = Microsoft.PowerShell.Utility\Invoke-RestMethod @params

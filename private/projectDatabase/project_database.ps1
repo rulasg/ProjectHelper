@@ -50,6 +50,10 @@ function Get-ProjectFromDatabase{
     $key = Get-DatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
     $prj = Get-Database -Key $key
 
+    $prj.fields = $prj.fields | Copy-MyHashTable
+    $prj.items  = $prj.items  | Copy-MyHashTable
+    $prj.Staged = $prj.Staged | Copy-MyHashTable
+
     return $prj
 }
 
@@ -75,8 +79,6 @@ function Set-ProjectDatabaseV2{
     $owner = $ProjectV2.owner.login
     $projectnumber = $ProjectV2.number
 
-    $dbkey = Get-DatabaseKey -Owner $owner -ProjectNumber $projectnumber
-
     $db = New-Object System.Collections.Hashtable
 
     $db.url              = $ProjectV2.url
@@ -93,7 +95,7 @@ function Set-ProjectDatabaseV2{
     $db.items = $items
     $db.fields = $fields
 
-    Save-Database -Key $dbkey -Database $db
+    Save-ProjectDatabase -Database $db -Owner $owner -ProjectNumber $projectnumber
 }
 
 function Save-ProjectDatabase{
@@ -101,7 +103,7 @@ function Save-ProjectDatabase{
     param(
         [Parameter(Position = 0)][string]$Owner,
         [Parameter(Position = 1)][int]$ProjectNumber,
-        [Parameter(Position = 0)][hashtable]$Database
+        [Parameter(Position = 2)][hashtable]$Database
     )
 
     $dbkey = Get-DatabaseKey -Owner $owner -ProjectNumber $projectnumber

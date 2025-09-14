@@ -1,5 +1,6 @@
 Set-MyInvokeCommandAlias -Alias AddItemToProject -Command 'Invoke-AddItemToProject -ProjectId {projectid} -ContentId {contentid}'
 Set-MyInvokeCommandAlias -Alias RemoveItemFromProject -Command 'Invoke-RemoveItemFromProject -ProjectId {projectid} -ItemId {itemid}'
+Set-MyInvokeCommandAlias -Alias GetItem -Command 'Invoke-GetItem -ItemId {itemid}'
 
 <#
 .SYNOPSIS
@@ -12,21 +13,110 @@ Set-MyInvokeCommandAlias -Alias RemoveItemFromProject -Command 'Invoke-RemoveIte
 function Get-ProjectItem{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][string]$ProjectNumber,
-        [Parameter(Mandatory,Position = 2)][string]$ItemId,
+        [Parameter(Mandatory,ValueFromPipeline,Position = 0)][string]$ItemId,
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
         [Parameter()][switch]$Force
     )
 
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems:$(-not $Force)
 
-    $item = Get-Item $db $ItemId
+    # Get Item from Project database
+    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+
+    if($db){
+        $item = Get-Item $db $itemId
+    }
+
+    # If item not found on cache get it directly
+    if($null -eq $item){
+        $item = Get-ProjectItemDirect -ItemId $ItemId
+
+        Set-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Item $item
+    }
 
     return $item
 } Export-ModuleMember -Function Get-ProjectItem
+
+function Set-ProjectItem{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory,ValueFromPipeline,Position = 0)][object]$Item,
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber
+    )
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+
+    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+
+    Set-Item $db $item
+
+    Save-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
+}
+
+function Find-ProjectItem{
+    [CmdletBinding()]
+    param(
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter(Mandatory,Position = 0)][string]$Title,
+        [Parameter()][switch]$IncludeDone,
+        [Parameter()][switch]$Match,
+        [Parameter()][switch]$Force
+    )
+
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+
+    $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -ExcludeDone:$(-not $IncludeDone)
+
+    # return if #items is null
+    if($null -eq $items){ return $null}
+
+    # Find item in the database
+    if($Match){
+        $found = $items.Values | Where-Object { $_.Title -eq $Title }
+    } else {
+        $found = $items.Values | Where-Object { $_.Title -like "$Title" }
+    }
+
+    $ret = $found | ForEach-Object { 
+        [PSCustomObject]$_
+    } 
+
+    return $ret
+} Export-ModuleMember -Function Find-ProjectItem
+
+function Search-ProjectItem{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory,Position = 0)] [string]$Filter,
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter()][switch]$IncludeDone,
+        [Parameter()][switch]$Force
+    )
+
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+    
+    $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -ExcludeDone:$(-not $IncludeDone)
+
+    # return if #items is null
+    if($null -eq $items){ return $null}
+
+    $found = $items.Values | Where-Object { Test-ProjectItemIsLikeAnyField -Item $_ -Value $Filter }
+
+    $ret = @($found | ForEach-Object { 
+        [PSCustomObject]$_
+    })
+
+    return $ret
+
+} Export-ModuleMember -Function Search-ProjectItem
 
 <#
 .SYNOPSIS
@@ -61,7 +151,7 @@ function Edit-ProjectItem{
 
     # Check if item exists in cache and if so if the value is the same as the target value and we avoid update
     if($item){
-        if( IsAreEqual -Object1:$item.$FieldName -Object2:$Value){
+        if( IsEqual -Object1:$item.$FieldName -Object2:$Value){
             "The value is the same, no need to stage it" | Write-Verbose
             return
         }
@@ -77,8 +167,9 @@ function Edit-ProjectItem{
 
 } Export-ModuleMember -Function Edit-ProjectItem
 
-function Add-ProjectItem{
+function Add-ProjectItemDirect{
     [CmdletBinding()]
+    [alias("Add-ProjectItem","api")]
     param(
         [Parameter(ValueFromPipeline,Position = 0)][string]$Url,
         [Parameter()][string]$Owner,
@@ -126,27 +217,62 @@ function Add-ProjectItem{
         }
     }
 
-} Export-ModuleMember -Function Add-ProjectItem
+} Export-ModuleMember -Function Add-ProjectItemDirect -Alias "Add-ProjectItem","api"
 
-function Remove-ProjectItem{
+function Remove-ProjectItemDirect{
     [CmdletBinding()]
     param(
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
-        [Parameter(Position = 0)][string]$ItemId
+        [Parameter(Mandatory, ValueFromPipeline, Position = 0)][string]$ItemId
     )
-    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    # Get project id
-    $projectId = Get-ProjectId -Owner $Owner -ProjectNumber $ProjectNumber
-    if(-not $projectId){
-        "Project ID not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError
-        return $null
+    begin{
+        ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+        if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+        
+        # Get project id
+        $projectId = Get-ProjectId -Owner $Owner -ProjectNumber $ProjectNumber
+        if(-not $projectId){
+            "Project ID not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError
+        }
     }
 
-    # Remove item from project
-    $response = Invoke-MyCommand -Command RemoveItemFromProject -Parameters @{ projectid = $projectId ; itemid = $ItemId }
+    process{
+
+        if (-not $projectId){
+            "Project ID not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError
+            return
+        }
+
+        # Remove item from project
+        $response = Invoke-MyCommand -Command RemoveItemFromProject -Parameters @{ projectid = $projectId ; itemid = $ItemId }
+        
+        # check if the response is null
+        if($response.errors){
+            "[$($response.errors[0].type)] $($response.errors[0].message)" | Write-MyError
+            return $null
+        }
+        
+        if($response.data.deleteProjectV2Item.deletedItemId -ne $ItemId){
+            "Some issue removing [$ItemId] from project" | Write-MyError
+            return $null
+        }
+        
+        return $response.data.deleteProjectV2Item.deletedItemId
+    }
+
+} Export-ModuleMember -Function Remove-ProjectItemDirect
+
+function Get-ProjectItemDirect{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory,ValueFromPipeline,Position = 0)][string]$ItemId
+    )
+
+    $response = Invoke-MyCommand -Command GetItem -Parameters @{
+        itemid = $ItemId
+    }
 
     # check if the response is null
     if($response.errors){
@@ -154,16 +280,54 @@ function Remove-ProjectItem{
         return $null
     }
 
-    if($response.data.deleteProjectV2Item.deletedItemId -ne $ItemId){
-        "Some issue removing [$ItemId]from project" | Write-MyError
+    if($response.data.node.id -ne $ItemId){
+        "Item [$ItemId] not found" | Write-MyError
         return $null
     }
 
-    return $response.data.deleteProjectV2Item.deletedItemId
+    $item = $response.data.node | Convert-NodeItemToHash
 
-} Export-ModuleMember -Function Remove-ProjectItem
+    return $item
+} Export-ModuleMember -Function Get-ProjectItemDirect
 
-function IsAreEqual{
+function Show-ProjectItem{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][string]$Owner,
+        [Parameter(Position = 1)][string]$ProjectNumber,
+        [Parameter(ValueFromPipeline)][object]$Item,
+        [Parameter()][string[]]$AdditionalFields
+    )
+
+    begin{
+        $fields = Get-EnvironmentDisplayFields -Fields $AdditionalFields
+    } 
+
+    process{
+        $ret = $item | Select-Object -Property $Fields
+
+        return $ret
+    }
+} Export-ModuleMember -Function Show-ProjectItem
+
+
+function Test-ProjectItemIsLikeAnyField{
+    param(
+        [Parameter(Mandatory,ValueFromPipeline)] [object]$Item,
+        [Parameter(Mandatory,Position = 0)][string]$Value
+    )
+    foreach($key in $item.Keys){
+        if($item.$key -Like "*$Value*"){
+            return $true
+        }
+    }
+
+    return $false
+
+}
+
+
+function IsEqual{
     param(
         [object]$Object1,
         [object]$Object2

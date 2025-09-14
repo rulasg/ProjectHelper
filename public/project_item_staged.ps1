@@ -7,7 +7,7 @@
 function Get-ProjectItemStaged{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][string]$Owner,
+        [Parameter()][string]$Owner,
         [Parameter(Position = 1)][string]$ProjectNumber
     )
 
@@ -29,8 +29,8 @@ function Test-ProjectItemStaged{
     [CmdletBinding()]
     [OutputType([hashtable])]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][string]$ProjectNumber
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber
     )
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
@@ -47,8 +47,8 @@ function Sync-ProjectItemStaged{
     [CmdletBinding()]
     [OutputType([hashtable])]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][string]$ProjectNumber
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber
     )
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
@@ -69,10 +69,10 @@ function Sync-ProjectItemStaged{
 #>
 function Sync-ProjectItemStagedAsync{
     [CmdletBinding()]
-    [OutputType([hashtable])]
+    [OutputType([bool])]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][string]$ProjectNumber,
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
         [Parameter()][int]$SyncBatchSize = 30
     )
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
@@ -80,7 +80,7 @@ function Sync-ProjectItemStagedAsync{
 
     if(! $(Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber)){
         "Nothing to commit" | Write-MyHost
-        return
+        return $true
     }
 
    $result = Sync-ProjectDatabaseAsync -Owner $Owner -ProjectNumber $ProjectNumber -SyncBatchSize $SyncBatchSize
@@ -97,27 +97,26 @@ function Sync-ProjectItemStagedAsync{
 function Reset-ProjectItemStaged{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][string]$ProjectNumber
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber
     )
 
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    $dbkey = Get-DatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
     $db = Get-Project $Owner $ProjectNumber
 
     $db.Staged = $null
-    Save-Database -Key $dbkey -Database $db
+    Save-ProjectDatabase -Database $db -Owner $Owner -ProjectNumber $ProjectNumber
 
 } Export-ModuleMember -Function Reset-ProjectItemStaged
 
 function Show-ProjectItemStaged{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][string]$ProjectNumber,
-        [Parameter(ValueFromPipelineByPropertyName, Position = 2)][string]$Id
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter(ValueFromPipelineByPropertyName, Position = 0)][string]$Id
     )
 
     begin{

@@ -1,0 +1,9 @@
+
+mutation UpdateDraftIssueItem($input:UpdateProjectV2DraftIssueInput!){
+    updateProjectV2DraftIssue(input: $input){
+        __typename
+        draftIssue {
+            id, title
+        }
+    }
+}

@@ -6,8 +6,8 @@ function Update-ProjectDatabase {
     [CmdletBinding()]
     [OutputType([bool])]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber,
+        [Parameter()][string]$Owner,
+        [Parameter()][int]$ProjectNumber,
         [Parameter()][switch]$SkipItems,
         [Parameter()][switch]$Force
     )
@@ -80,6 +80,9 @@ function Update-ProjectDatabase {
         return $false
     }
 
+    # Add content fields
+    $fields = $fields | Set-ContentFields
+
     # Set-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Items $items -Fields $fields
     Set-ProjectDatabaseV2 $projectV2 -Items $items -Fields $fields
 
@@ -125,71 +128,75 @@ function Convert-ItemsFromResponse{
 
     $nodes = $ProjectV2.items.nodes
 
-    foreach($nodeItem in $nodes){
-
-        "Processing Item $($nodeItem.id) - $($nodeItem.content.title)" | Write-Verbose
+    foreach ($nodeItem in $nodes) {
 
         $itemId = $nodeItem.id
 
-        # TODO !! - Refactor to call Convert-ItemFromResponse for each node utem
+        $item = Convert-NodeItemToHash -NodeItem $nodeItem
 
-        $item = New-Object System.Collections.Hashtable
-        $item.id = $itemId
+        # "Processing Item $($nodeItem.id) - $($nodeItem.content.title)" | Write-Verbose
 
-        # Content
-        $item.type = $nodeItem.content.__typename
-        $item.body = $nodeItem.content.body
-        # Title is stored in two places. in the content and as a field.
-        # We will use the field value
-        # $item.title = $nodeItem.content.title
-        $item.number = $nodeItem.content.number
-        $item.url = $nodeItem.content.url
-        $item.state = $nodeItem.content.state
+        # $itemId = $nodeItem.id
 
-        $item.createdAt = GetDateTime -DateTimeString $nodeItem.content.createdAt
-        $item.updatedAt = GetDateTime -DateTimeString $nodeItem.content.updatedAt
+        # # TODO !! - Refactor to call Convert-ItemFromResponse for each node utem
 
-        #Fields
-        foreach($nodefield in $nodeItem.fieldValues.nodes){
+        # $item = New-Object System.Collections.Hashtable
+        # $item.id = $itemId
 
-            "      Procesing $($nodefield.field.name)" | Write-Verbose
+        # # Content
+        # $item.type = $nodeItem.content.__typename
+        # $item.body = $nodeItem.content.body
+        # $item.contentId = $nodeItem.content.id
+        # # Title is stored in two places. in the content and as a field.
+        # # We will use the field value
+        # # $item.title = $nodeItem.content.title
+        # $item.number = $nodeItem.content.number
+        # $item.url = $nodeItem.content.url
+        # $item.state = $nodeItem.content.state
 
-            switch($nodefield.__typename){
-                "ProjectV2ItemFieldTextValue" {
-                    $value = $nodefield.text
-                }
-                "ProjectV2ItemFieldSingleSelectValue" {
-                    $value = $nodefield.name
-                }
-                "ProjectV2ItemFieldNumberValue" {
-                    $value = $nodefield.number
-                }
-                "ProjectV2ItemFieldDateValue" {
-                    $value = $nodefield.date
-                }
-                "ProjectV2ItemFieldUserValue" {
-                    $value = GetUsers -FieldNode $nodefield
-                }
-                "ProjectV2ItemFieldRepositoryValue" {
-                    $value = $nodefield.repository.url
-                }
-                "ProjectV2ItemFieldLabelValue" {
-                    $value = GetLabels -FieldNode $nodefield
-                }
-                "ProjectV2ItemFieldMilestoneValue" {
-                    $value = $nodefield.milestone.title
-                }
-                "ProjectV2ItemFieldPullRequestValue" {
-                    $value = GetPullRequests -FieldNode $nodefield
-                }
-                Default {
-                    $value = $nodefield.text
-                }
-            }
-            $item.$($nodefield.field.name) = $value
+        # $item.createdAt = GetDateTime -DateTimeString $nodeItem.content.createdAt
+        # $item.updatedAt = GetDateTime -DateTimeString $nodeItem.content.updatedAt
 
-            # $item.$($nodefield.field.name) = $nodefield.name
-        }
+        # #Fields
+        # foreach ($nodefield in $nodeItem.fieldValues.nodes) {
+
+        #     "      Procesing $($nodefield.field.name)" | Write-Verbose
+
+        #     switch ($nodefield.__typename) {
+        #         "ProjectV2ItemFieldTextValue" {
+        #             $value = $nodefield.text
+        #         }
+        #         "ProjectV2ItemFieldSingleSelectValue" {
+        #             $value = $nodefield.name
+        #         }
+        #         "ProjectV2ItemFieldNumberValue" {
+        #             $value = $nodefield.number
+        #         }
+        #         "ProjectV2ItemFieldDateValue" {
+        #             $value = $nodefield.date
+        #         }
+        #         "ProjectV2ItemFieldUserValue" {
+        #             $value = GetUsers -FieldNode $nodefield
+        #         }
+        #         "ProjectV2ItemFieldRepositoryValue" {
+        #             $value = $nodefield.repository.url
+        #         }
+        #         "ProjectV2ItemFieldLabelValue" {
+        #             $value = GetLabels -FieldNode $nodefield
+        #         }
+        #         "ProjectV2ItemFieldMilestoneValue" {
+        #             $value = $nodefield.milestone.title
+        #         }
+        #         "ProjectV2ItemFieldPullRequestValue" {
+        #             $value = GetPullRequests -FieldNode $nodefield
+        #         }
+        #         Default {
+        #             $value = $nodefield.text
+        #         }
+        #     }
+        #     $item.$($nodefield.field.name) = $value
+
+        # }
 
         try {
             $items.$itemId += $item
@@ -207,20 +214,20 @@ function Convert-FieldsFromReponse{
     )
     $fields = New-Object System.Collections.Hashtable
 
-    $nodes = $ProjectV2.fields.nodes
-
-    foreach($node in $nodes){
+    # Custom properties comming from project
+    foreach ($node in $ProjectV2.fields.nodes) {
         $fieldId = $node.id
 
-        $field = New-Object System.Collections.Hashtable
-        $field.id = $node.id
-        $field.name = $node.name
-        $field.type = $node.__typename
-        $field.dataType = $node.dataType
+        $field = @{
+            id = $node.id
+            dataType = $node.dataType
+            type = $node.__typename
+            name = $node.name
+        }
 
-        if($field.type -eq "ProjectV2SingleSelectField"){
+        if ($field.dataType -eq "SINGLE_SELECT") {
             $field.options = New-Object System.Collections.Hashtable
-            foreach($option in $node.options){
+            foreach ($option in $node.options) {
                 $field.options.$($option.name) = $option.id
             }
         }
@@ -228,6 +235,37 @@ function Convert-FieldsFromReponse{
     }
 
     return $fields
+}
+
+function Set-ContentFields {
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline)][hashtable]$Fields
+    )
+    
+    # TITLE
+    # Remove old title field
+    $fieldTitleId = $fields.Keys | Where-Object {$fields.$_.dataType -eq "TITLE"}
+    $fields.Remove($fieldTitleId)
+    
+    # Add new title field
+    $fields.title = @{
+        id       = "title"
+        dataType = "TITLE"
+        type     = "ContentField"
+        name     = "Title"
+    }
+
+    # BODY
+    # Add BODY
+    $fields.body = @{
+        id       = "body"
+        dataType = "BODY"
+        type     = "ContentField"
+        name     = "Body"
+    }
+
+    return $Fields
 }
 
 function GetDateTime{

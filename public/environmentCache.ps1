@@ -7,8 +7,12 @@ function Get-ProjectHelperEnvironment{
 
     $ret = @{
 
+        # Last Known Good Owner
         Owner         = Get-EnvItem -Name "EnvironmentCache_Owner"
+        # Last Known Good Project Number
         ProjectNumber = Get-EnvItem -Name "EnvironmentCache_ProjectNumber"
+        # List of fields to display on Items display commands. Useful with ConvertToItemDisplay
+        # TODO : Consider if its worth keeping this setting
         DisplayFields = Get-EnvItem -Name "EnvironmentCache_Display_Fields"
     }
 
@@ -51,16 +55,20 @@ function Get-OwnerAndProjectNumber{
         $ProjectNumber = [string]::Empty
     }
 
-    if([string]::IsNullOrWhiteSpace($Owner)){
-        $owner = Get-EnvItem -Name "EnvironmentCache_Owner"
-    } else {
+    $ownerCache = Get-EnvItem -Name "EnvironmentCache_Owner"
+    if($owner -ne $ownerCache){
         Set-EnvItem -Name "EnvironmentCache_Owner" -Value $Owner
     }
+    if([string]::IsNullOrWhiteSpace($Owner)){
+        $owner = $ownerCache
+    }
 
-    if([string]::IsNullOrWhiteSpace($ProjectNumber)){
-        $ProjectNumber = Get-EnvItem -Name "EnvironmentCache_ProjectNumber"
-    } else {
+    $projectNumberCache = Get-EnvItem -Name "EnvironmentCache_ProjectNumber"
+    if($ProjectNumber -ne $projectNumberCache){
         Set-EnvItem -Name "EnvironmentCache_ProjectNumber" -Value $ProjectNumber
+    }
+    if([string]::IsNullOrWhiteSpace($ProjectNumber)){
+        $ProjectNumber = $projectNumberCache
     }
 
     return ($owner, $ProjectNumber)
@@ -73,22 +81,14 @@ function Get-EnvironmentDisplayFields{
     )
 
     $displayFields = Get-EnvItem -Name "EnvironmentCache_Display_Fields"
-    $defaultDisplayFields = Get-DefaultDisplayFields
-    $fields_Options = ($Fields , $displayFields , $defaultDisplayFields)
+    # Use this order
+    $fields_Options = @()
+    if ($DEFAULT_DISPLAY_FIELDS) { $fields_Options += $DEFAULT_DISPLAY_FIELDS }
+    if ($Fields) { $fields_Options += $Fields }
+    if ($displayFields) { $fields_Options += $displayFields }
 
-    # chos ethe first that is not empty
-    foreach($option in $fields_Options){
-        if ( -Not $option.Count -eq 0) {
-            Set-EnvItem -Name "EnvironmentCache_Display_Fields" -Value $option
-            $ret = $option
-            break
-        }
-    }
-
-    $ret = $defaultDisplayFields + $ret
-
-    # remove duplicates
-    $ret = $ret | Select-Object -Unique
+    # Remove nulls empty and duplicates
+    $ret = $fields_Options | Select-Object -Unique | Where-Object {-Not [string]::IsNullOrWhiteSpace($_)}
 
     return $ret
 }

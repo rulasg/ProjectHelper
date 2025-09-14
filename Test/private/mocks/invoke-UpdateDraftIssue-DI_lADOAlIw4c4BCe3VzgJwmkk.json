@@ -1,0 +1,11 @@
+{
+  "data": {
+    "updateProjectV2DraftIssue": {
+      "__typename": "UpdateProjectV2DraftIssuePayload",
+      "draftIssue": {
+        "id": "DI_lADOAlIw4c4BCe3VzgJwmkk",
+        "title": "new value of the title"
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "data": {
+    "updateIssue": {
+      "__typename": "UpdateIssuePayload",
+      "issue": {
+        "id": "I_lADOBCrGTM4ActQazgFYY03"
+      }
+    }
+  }
+}
