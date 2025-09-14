@@ -750,7 +750,7 @@ function Test_Sync_ProjectDatabaseAsync_ClearValues{
 
     # Staged list should be empty after successful sync
     $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
-    Assert-IsNull -Object $staged
+    Assert-Count -Expected 0 -Presented $staged
 
     # Verify the values in the database
     $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
@@ -805,7 +805,7 @@ function Test_CommitProjectItemsStaged_SUCCESS_Emptyfield{
 
     # Staged list is empty
     $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
-    Assert-IsNull -Object $staged
+    Assert-Count -Expected 0 -Presented $staged
 
     $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
     Assert-StringIsNullOrEmpty -Presented $item1.$fieldComment1
