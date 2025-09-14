@@ -151,7 +151,7 @@ function Edit-ProjectItem{
 
     # Check if item exists in cache and if so if the value is the same as the target value and we avoid update
     if($item){
-        if( IsAreEqual -Object1:$item.$FieldName -Object2:$Value){
+        if( IsEqual -Object1:$item.$FieldName -Object2:$Value){
             "The value is the same, no need to stage it" | Write-Verbose
             return
         }
@@ -169,7 +169,7 @@ function Edit-ProjectItem{
 
 function Add-ProjectItemDirect{
     [CmdletBinding()]
-    [alias("Add-ProjectItem")]
+    [alias("Add-ProjectItem","api")]
     param(
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
@@ -209,7 +209,7 @@ function Add-ProjectItemDirect{
         return $null
     }
 
-} Export-ModuleMember -Function Add-ProjectItemDirect -Alias Add-ProjectItem
+} Export-ModuleMember -Function Add-ProjectItemDirect -Alias "Add-ProjectItem","api"
 
 function Remove-ProjectItemDirect{
     [CmdletBinding()]
@@ -247,7 +247,7 @@ function Remove-ProjectItemDirect{
         }
         
         if($response.data.deleteProjectV2Item.deletedItemId -ne $ItemId){
-            "Some issue removing [$ItemId]from project" | Write-MyError
+            "Some issue removing [$ItemId] from project" | Write-MyError
             return $null
         }
         
@@ -319,7 +319,7 @@ function Test-ProjectItemIsLikeAnyField{
 }
 
 
-function IsAreEqual{
+function IsEqual{
     param(
         [object]$Object1,
         [object]$Object2

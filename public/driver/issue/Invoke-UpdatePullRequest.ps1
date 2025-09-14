@@ -1,5 +1,5 @@
 
-function Invoke-UpdateDraftIssue{
+function Invoke-UpdatePullRequest{
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)][string]$Id,
@@ -15,7 +15,7 @@ function Invoke-UpdateDraftIssue{
 
     # Define the GraphQL query with variables
     $public = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent
-    $qlPath =  $public | Join-Path -ChildPath "graphql" -AdditionalChildPath "updateDraftIssue.mutant"
+    $qlPath =  $public | Join-Path -ChildPath "graphql" -AdditionalChildPath "updatePullRequest.mutant"
     $mutation = get-content -path $qlPath | Out-String
 
     # Define the headers for the request
@@ -45,8 +45,8 @@ function Invoke-UpdateDraftIssue{
         return $null
     }
 
-    # Add the draft issue id to the variables
-    $variables.input.draftIssueId = $Id
+    # Add the pull request id to the variables
+    $variables.input.pullRequestId = $Id
 
     # Define the body for the request
     $body = @{
@@ -68,4 +68,4 @@ function Invoke-UpdateDraftIssue{
     # Return the field names
     return $response
 
-} Export-ModuleMember -Function Invoke-UpdateDraftIssue
+} Export-ModuleMember -Function Invoke-UpdatePullRequest

@@ -635,7 +635,7 @@ function Test_SyncProjectItemsStaged_Async_debug {
 
     Show-ProjectItemStaged
 
-    Sync-ProjectItemStagedAsyncAsync
+    Sync-ProjectItemStagedAsync
 
     Assert-NotImplemented
 

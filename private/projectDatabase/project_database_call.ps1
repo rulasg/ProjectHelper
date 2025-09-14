@@ -25,8 +25,8 @@ function Update-ProjectItem {
     $job = $null
 
     if ($FieldType -eq "ContentField") {
-        
-        $type, $contentId = GetItemInfo($ItemId)
+
+        $type, $contentId = GetItemInfo -ItemId $ItemId -Database $Database
 
         switch ($type) {
             "DraftIssue" {
@@ -63,13 +63,13 @@ function Update-ProjectItem {
     }
 
     if ($null -eq $result -and $null -eq $job) {
-        throw "Assertion failed: both result and job are null (ProjectId=$ProjectId, ItemId=$ItemId, FieldId=$FieldId)."
+        throw "Assertion failed: both result and job are null (ProjectId=$($database.ProjectId), ItemId=$ItemId, FieldId=$FieldId)."
     }
 
     $call = [PSCustomObject]@{
         Result    = $result
         Job       = $job
-        ProjectId = $ProjectId
+        ProjectId = $database.ProjectId
         ItemId    = $ItemId
         Value     = $Value
         FieldId   = $FieldId
@@ -80,7 +80,12 @@ function Update-ProjectItem {
 
     return $call
 }
-function GetItemInfo($itemId) {
+function GetItemInfo {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory, Position = 0)][object]$Database,
+        [Parameter(Mandatory, Position = 1)][string]$ItemId
+    )
     # Get Item to know what we are updating
     $item = Get-Item -Database $Database -ItemId $ItemId
 
