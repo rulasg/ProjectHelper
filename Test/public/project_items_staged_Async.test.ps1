@@ -215,7 +215,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_PullRequest_NotCached
 }
 
 function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_DraftIssue_NotCached {
-    Assert-NotImplemented
+
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
