@@ -7,6 +7,8 @@ Set-MyInvokeCommandAlias -Alias UpdatePullRequestAsync                    -Comma
 Set-MyInvokeCommandAlias -Alias UpdateDraftIssueAsync                     -Command 'Import-Module {projecthelper} ; Invoke-UpdateDraftIssue -Id {id} -Title "{title}" -Body "{body}"'
 Set-MyInvokeCommandAlias -Alias GitHub_UpdateProjectV2ItemFieldValueAsync -Command 'Import-Module {projecthelper} ; Invoke-GitHubUpdateItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid} -Value "{value}" -Type {type}'
 
+Set-MyInvokeCommandAlias -Alias GitHub_ClearProjectV2ItemFieldValueAsync  -Command 'Import-Module {projecthelper} ; Invoke-GitHubClearItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid}'
+Set-MyInvokeCommandAlias -Alias GitHub_ClearProjectV2ItemFieldValue       -Command 'Invoke-GitHubClearItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid}'
 
 function Update-ProjectItem {
     [CmdletBinding()]
@@ -17,7 +19,7 @@ function Update-ProjectItem {
         [Parameter(Mandatory, Position = 2)][string]$FieldName,
         [Parameter(Mandatory, Position = 3)][string]$FieldType,
         [Parameter(Mandatory, Position = 4)][string]$FieldDataType,
-        [Parameter(Mandatory, Position = 5)][string]$Value,
+        [Parameter(Position = 5)][string]$Value,
         [Parameter()][switch]$Async
     )
 
@@ -67,15 +69,15 @@ function Update-ProjectItem {
     }
 
     $call = [PSCustomObject]@{
-        Result    = $result
-        Job       = $job
-        ProjectId = $database.ProjectId
-        ItemId    = $ItemId
-        Value     = $Value
-        FieldId   = $FieldId
+        Result         = $result
+        Job            = $job
+        ProjectId      = $database.ProjectId
+        ItemId         = $ItemId
+        Value          = $Value
+        FieldId        = $FieldId
         ResultDataType = $resultDataType
-        FieldName = $FieldName
-        DataType  = $FieldDataType
+        FieldName      = $FieldName
+        DataType       = $FieldDataType
     }
 
     return $call
@@ -142,9 +144,9 @@ function ConvertTo-UpdateType {
 function Update-Issue {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory, Position = 0)][string]$Id,
-        [Parameter(Mandatory, Position = 1)][string]$FieldId,
-        [Parameter(Position = 1)][string]$Value,
+        [Parameter(Mandatory)][string]$Id,
+        [Parameter(Mandatory)][string]$FieldId,
+        [Parameter()][string]$Value,
         [Parameter()][switch]$Async
     )
 
@@ -172,9 +174,9 @@ function Update-Issue {
 function Update-PullRequest {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory, Position = 0)][string]$Id,
-        [Parameter(Mandatory, Position = 1)][string]$FieldId,
-        [Parameter(Position = 1)][string]$Value,
+        [Parameter(Mandatory)][string]$Id,
+        [Parameter(Mandatory)][string]$FieldId,
+        [Parameter()][string]$Value,
         [Parameter()][switch]$Async
     )
 
@@ -200,9 +202,9 @@ function Update-PullRequest {
 function Update-DraftIssue {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory, Position = 0)][string]$Id,
-        [Parameter(Mandatory, Position = 1)][string]$FieldId,
-        [Parameter(Position = 1)][string]$Value,
+        [Parameter(Mandatory)][string]$Id,
+        [Parameter(Mandatory)][string]$FieldId,
+        [Parameter()][string]$Value,
         [Parameter()][switch]$Async
     )
 
@@ -229,11 +231,11 @@ function Update-DraftIssue {
 function Update-ItemField {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory, Position = 0)][string]$ProjectId,
-        [Parameter(Mandatory, Position = 1)][string]$ItemId,
-        [Parameter(Mandatory, Position = 2)][string]$FieldId,
-        [Parameter(Mandatory, Position = 3)][string]$Value,
-        [Parameter(Mandatory, Position = 4)][string]$DataType,
+        [Parameter(Mandatory)][string]$ProjectId,
+        [Parameter(Mandatory)][string]$ItemId,
+        [Parameter(Mandatory)][string]$FieldId,
+        [Parameter(Mandatory)][string]$DataType,
+        [Parameter()][string]$Value,
         [Parameter()][switch]$Async
     )
 
@@ -241,23 +243,30 @@ function Update-ItemField {
 
     "Calling to update ItemField Async[$Async][$ProjectId/$ItemId/$FieldId ($type) = $Value ]" | Write-MyHost
 
+    $params = @{
+        projecthelper = $MODULE_PATH
+        projectid     = $ProjectId
+        itemid        = $ItemId
+        fieldid       = $FieldId
+        value         = $Value
+        type          = $type
+    }
+
     if ($Async) {
-        $job = Start-MyJob -Command GitHub_UpdateProjectV2ItemFieldValueAsync -Parameters @{
-            projecthelper = $MODULE_PATH
-            projectid     = $ProjectId
-            itemid        = $ItemId
-            fieldid       = $FieldId
-            value         = $Value
-            type          = $Type
+        if ([string]::IsNullOrWhiteSpace($value)) {
+            $job = Start-MyJob -Command GitHub_ClearProjectV2ItemFieldValueAsync -Parameters $params
+        }
+        else {
+            $job = Start-MyJob -Command GitHub_UpdateProjectV2ItemFieldValueAsync -Parameters $params
         }
     }
     else {
-        $result = Invoke-MyCommand -Command GitHub_UpdateProjectV2ItemFieldValue -Parameters @{
-            projectid = $ProjectId
-            itemid    = $ItemId
-            fieldid   = $FieldId
-            value     = $Value
-            type      = $Type
+
+        if ([string]::IsNullOrWhiteSpace($value)) {
+            $result = Invoke-MyCommand -Command GitHub_ClearProjectV2ItemFieldValue -Parameters $params
+        }
+        else {
+            $result = Invoke-MyCommand -Command GitHub_UpdateProjectV2ItemFieldValue -Parameters $params
         }
     }
 
@@ -274,7 +283,7 @@ function Test-UpdateProjectItemAsyncCall {
 
     $ret = $null -ne $result.data.$($call.ResultDataType)
 
-    if(! $ret){
+    if (! $ret) {
         "Update Project Item Async call Failed: $($result.errors.message -join ', ')" | Write-Verbose
     }
 
