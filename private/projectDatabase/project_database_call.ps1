@@ -150,7 +150,7 @@ function Update-Issue {
         [Parameter()][switch]$Async
     )
 
-    "Calling to update Issue Async[$Async] [$Id/$FieldId = $Value ]" | Write-MyHost
+    "Calling to update Issue Async[$Async] [$Id/$FieldId = ""$Value"" ]" | Write-MyHost
 
     $params = @{
         id    = $Id
@@ -180,7 +180,7 @@ function Update-PullRequest {
         [Parameter()][switch]$Async
     )
 
-    "Calling to update PullRequest Async[$Async] [$Id/$FieldId = $Value ]" | Write-MyHost
+    "Calling to update PullRequest Async[$Async] [$Id/$FieldId = ""$Value"" ]" | Write-MyHost
 
     $params = @{
         id    = $Id
@@ -208,7 +208,7 @@ function Update-DraftIssue {
         [Parameter()][switch]$Async
     )
 
-    "Calling to update DraftIssue Async[$Async] [$Id/$FieldId = $Value ]" | Write-MyHost
+    "Calling to update DraftIssue Async[$Async] [$Id/$FieldId = ""$Value"" ]" | Write-MyHost
 
     $params = @{
         id    = $Id
@@ -241,7 +241,7 @@ function Update-ItemField {
 
     $type = ConvertTo-UpdateType $DataType
 
-    "Calling to update ItemField Async[$Async][$ProjectId/$ItemId/$FieldId ($type) = $Value ]" | Write-MyHost
+    "Calling to update ItemField Async[$Async][$ProjectId/$ItemId/$FieldId ($type) = ""$Value"" ]" | Write-MyHost
 
     $params = @{
         projecthelper = $MODULE_PATH

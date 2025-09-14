@@ -68,7 +68,7 @@ function Sync-ProjectAsync {
             }
 
 
-            "Calling  [$($params.Database.ProjectId)/$($params.ItemId)/$($params.FieldId) ($($params.FieldType)) = $($params.Value) ] ..." | Write-MyHost -NoNewLine
+            # "Calling  [$($params.Database.ProjectId)/$($params.ItemId)/$($params.FieldId) ($($params.FieldType)) = $($params.Value) ] ..." | Write-MyHost -NoNewLine
 
             $call = Update-ProjectItem @params -Async
 
@@ -94,7 +94,7 @@ function Sync-ProjectAsync {
             continue
         }
 
-        "Saving to database [$($call.projectId)/$($call.itemId)/$($call.fieldName) ($($call.FieldType)) = $($call.Value) ]" | Write-MyHost
+        "Saving to database [$($call.projectId)/$($call.itemId)/$($call.fieldName) ($($call.FieldType)) = ""$($call.Value)"" ]" | Write-MyHost
 
         Set-ItemValue -Database $db -ItemId $call.itemId -FieldName $call.fieldName -Value $call.Value
         Remove-ItemStaged -Database $db -ItemId $call.itemId -FieldId $call.FieldId
