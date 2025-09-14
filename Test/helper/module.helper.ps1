@@ -54,7 +54,7 @@ function Get-Ps1FullPath{
     )
 
    # If folderName is not empty
-    if($FolderName -ne $null){
+    if($null -ne $FolderName){
         $folder = Get-ModuleFolder -FolderName $FolderName -ModuleRootPath $ModuleRootPath
         $path = $folder | Join-Path -ChildPath $Name
     } else {
@@ -102,6 +102,27 @@ function Get-ModuleName{
     return $MODULE_NAME
 }
 
+<#
+.SYNOPSIS
+Gets the full path of a specific module folder.
+
+.DESCRIPTION
+Gets the full path of a specific module folder based on the folder name and optionally the module root path.
+
+.PARAMETER FolderName
+The name of the folder to get the path for. Must be one of the valid folder names.
+
+.PARAMETER ModuleRootPath
+The root path of the module. If not provided, uses the default module root path.
+
+.EXAMPLE
+Get-ModuleFolder -FolderName "Public"
+Gets the path to the Public folder of the current module.
+
+.EXAMPLE
+Get-ModuleFolder -FolderName "Private" -ModuleRootPath "C:\MyModule"
+Gets the path to the Private folder of the specified module.
+#>
 function Get-ModuleFolder{
     [CmdletBinding()]
     param(

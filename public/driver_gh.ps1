@@ -216,6 +216,76 @@ function Invoke-GitHubUpdateItemValues{
 
 <#
 .SYNOPSIS
+Clears item values in a GitHub project
+
+.DESCRIPTION
+This is an integration function that is not intended to be used directly by the user.
+Clears the values of specific fields for an item in a GitHub project.
+
+.NOTES
+Currently only text, number, date, assignees, labels, single-select, iteration and milestone fields are supported.
+#>
+function Invoke-GitHubClearItemValues{
+    param(
+        [Parameter(Mandatory=$true)] [string]$ProjectId,
+        [Parameter(Mandatory=$true)] [string]$ItemId,
+        [Parameter(Mandatory=$true)] [string]$FieldId
+    )
+
+    # Use the environmentraviable
+    $token = Get-GithubToken
+    if(-not $token){
+        throw "GH Cli Auth Token not available. Run 'gh auth login' in your terminal."
+    }
+
+    # Define the GraphQL query with variables
+    $qlPath =  $PSScriptRoot | Join-Path -ChildPath "graphql" -AdditionalChildPath "clearItemValues.mutant"
+    $mutation = get-content -path $qlPath | Out-String
+
+    # Define the headers for the request
+    $headers = @{
+        "Authorization" = "Bearer $token"
+        "Content-Type" = "application/json"
+    }
+
+    # Ensure that if the $type is number the value is a number
+    # API fails if when updaring a number the value type in the Input payload s not a number
+    if($Type -eq "number"){
+        $Value = [decimal]$Value
+    }
+
+    # Define the variables for the request
+    $variables = @{
+        input = @{
+            projectId = $ProjectId
+            itemId = $ItemId
+            fieldId = $FieldId
+        }
+    }
+
+    # Define the body for the request
+    $body = @{
+        query= $mutation
+        variables = $variables
+    } | ConvertTo-Json -Depth 10
+
+    # Send the request
+    $response = Invoke-RestMethod -Uri 'https://api.github.com/graphql' -Method Post -Body $body -Headers $headers
+
+    # Check if here are errors
+    if($response.errors){
+        $response.errors | ForEach-Object {
+            "RESPONSE Type[$($_.type)] $($_.message)" | Write-MyError
+        }
+        return $null
+    }
+
+    # Return the field names
+    return $response
+} Export-ModuleMember -Function Invoke-GitHubClearItemValues
+
+<#
+.SYNOPSIS
 Gets issue or pull request information
 
 .DESCRIPTION

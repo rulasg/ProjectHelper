@@ -1,0 +1,117 @@
+{
+    "data": {
+      "updateProjectV2ItemFieldValue": {
+        "projectV2Item": {
+          "content": {
+            "__typename": "DraftIssue",
+            "id": "DI_lADOBCrGTM4ActQazgFYYPQ",
+            "body": "",
+            "title": "kk text"
+          },
+          "id": "PVTI_lADOBCrGTM4ActQazgMuXXc",
+          "fieldValues": {
+            "nodes": [
+              {
+                "__typename": "ProjectV2ItemFieldUserValue",
+                "users": {
+                  "nodes": [
+                    {
+                      "login": "rulasg"
+                    }
+                  ]
+                },
+                "field": {
+                  "__typename": "ProjectV2Field",
+                  "id": "PVTF_lADOBCrGTM4ActQazgSkYnA",
+                  "name": "Assignees",
+                  "dataType": "ASSIGNEES"
+                }
+              },
+              {
+                "__typename": "ProjectV2ItemFieldTextValue",
+                "text": "kk text",
+                "field": {
+                  "__typename": "ProjectV2Field",
+                  "id": "PVTF_lADOBCrGTM4ActQazgSkYm8",
+                  "name": "Title",
+                  "dataType": "TITLE"
+                }
+              },
+              {
+                "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                "name": "Todo",
+                "field": {
+                  "__typename": "ProjectV2SingleSelectField",
+                  "id": "PVTSSF_lADOBCrGTM4ActQazgSkYnE",
+                  "name": "Status",
+                  "dataType": "SINGLE_SELECT",
+                  "options": [
+                    {
+                      "id": "f75ad846",
+                      "name": "Todo"
+                    },
+                    {
+                      "id": "47fc9ee4",
+                      "name": "In Progress"
+                    },
+                    {
+                      "id": "98236657",
+                      "name": "Done"
+                    }
+                  ]
+                }
+              },
+              {
+                "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                "name": "Nice⭐️",
+                "field": {
+                  "__typename": "ProjectV2SingleSelectField",
+                  "id": "PVTSSF_lADOBCrGTM4ActQazgSl5ME",
+                  "name": "Severity",
+                  "dataType": "SINGLE_SELECT",
+                  "options": [
+                    {
+                      "id": "2d190e20",
+                      "name": "Critical⭐️⭐️⭐️⭐️"
+                    },
+                    {
+                      "id": "94d0bf94",
+                      "name": "Important⭐️⭐️⭐️"
+                    },
+                    {
+                      "id": "ea848251",
+                      "name": "Needed⭐️⭐️"
+                    },
+                    {
+                      "id": "c99f6d55",
+                      "name": "Nice⭐️"
+                    }
+                  ]
+                }
+              },
+              {
+                "__typename": "ProjectV2ItemFieldNumberValue",
+                "number": 8.0,
+                "field": {
+                  "__typename": "ProjectV2Field",
+                  "id": "PVTF_lADOBCrGTM4ActQazgSl5WM",
+                  "name": "UserStories",
+                  "dataType": "NUMBER"
+                }
+              },
+              {
+                "__typename": "ProjectV2ItemFieldNumberValue",
+                "number": 666.0,
+                "field": {
+                  "__typename": "ProjectV2Field",
+                  "id": "PVTF_lADOBCrGTM4ActQazgSkglc",
+                  "name": "TimeTracker",
+                  "dataType": "NUMBER"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
