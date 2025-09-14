@@ -69,7 +69,7 @@ function Sync-ProjectItemStaged{
 #>
 function Sync-ProjectItemStagedAsync{
     [CmdletBinding()]
-    [OutputType([hashtable])]
+    [OutputType([bool])]
     param(
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
@@ -80,7 +80,7 @@ function Sync-ProjectItemStagedAsync{
 
     if(! $(Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber)){
         "Nothing to commit" | Write-MyHost
-        return
+        return $true
     }
 
    $result = Sync-ProjectDatabaseAsync -Owner $Owner -ProjectNumber $ProjectNumber -SyncBatchSize $SyncBatchSize

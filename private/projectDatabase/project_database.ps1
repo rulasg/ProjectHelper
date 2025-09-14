@@ -50,6 +50,10 @@ function Get-ProjectFromDatabase{
     $key = Get-DatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
     $prj = Get-Database -Key $key
 
+    $prj.fields = $prj.fields | Copy-MyHashTable
+    $prj.items  = $prj.items  | Copy-MyHashTable
+    $prj.Staged = $prj.Staged | Copy-MyHashTable
+
     return $prj
 }
 

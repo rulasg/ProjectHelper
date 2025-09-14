@@ -43,13 +43,30 @@ function Set-Item{
     )
 
     if(-not $database){
-        $db = New-Object System.Collections.Hashtable
+        $db = New-HashTable
     }
 
-    $db | AddHashLink items
+    $items = $db | AddHashLink items
 
-    $db.items.$($Item.id) = $Item
+    $items.$($Item.id) = $Item
 
+}
+
+function Set-ItemValue{
+    [CmdletBinding()]
+    [OutputType([string])]
+    param(
+        [Parameter(Position = 0)][object[]]$Database,
+        [Parameter(Position = 1)][string]$ItemId,
+        [Parameter(Position = 2)][string]$FieldName,
+        [Parameter(Position = 3)][string]$Value
+    )
+
+    $db = $Database
+
+    $item = $db | AddHashLink items | AddHashLink $ItemId
+
+    $item.$FieldName = $Value
 }
 
 function Get-ItemStaged{
@@ -145,12 +162,19 @@ function AddHashLink{
 
         # element not present or $null
         if ($null -eq $parent.$Name){
-            $parent[$Name] = New-Object System.Collections.Hashtable
+            $parent[$Name] = New-HashTable
         }
 
         #element present but not a hash table
         if(-Not ($parent[$Name] -is [hashtable])){
-            throw "Element $Name is not a hash table"
+
+            if($parent[$Name].Keys.Count -eq 0){
+                # empty element, convert to hash table
+                $parent[$Name] = New-HashTable
+            }
+            else{
+                throw "Element $Name is not a hash table"
+            }
         }
 
         return $parent[$Name]
@@ -174,7 +198,29 @@ function Copy-MyHashTable{
             throw "Object is not a hashtable"
         }
 
-        $ret = $Object | ConvertTo-Json | ConvertFrom-Json -AsHashtable
+        $ret = $Object | ConvertTo-Json -Depth 10 | ConvertFrom-Json -Depth 10 -AsHashtable
+
+        return $ret
+    }
+}
+
+function Copy-MyStringArray{
+    [CmdletBinding()]
+    [OutputType([string[]])]
+    param(
+        [Parameter(ValueFromPipeline,Position = 0)][string[]]$Array
+    )
+
+    process{
+
+        if($null -eq $Array){
+            return $null
+        }
+
+        $ret = @()
+        foreach($item in $Array){
+            $ret += $item
+        }
 
         return $ret
     }

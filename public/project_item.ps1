@@ -22,18 +22,40 @@ function Get-ProjectItem{
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    $itemlist = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
-    $item = $itemlist.$ItemId
+    # Get Item from Project database
+    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+
+    if($db){
+        $item = Get-Item $db $itemId
+    }
 
     # If item not found on cache get it directly
     if($null -eq $item){
         $item = Get-ProjectItemDirect -ItemId $ItemId
+
+        Set-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Item $item
     }
 
     return $item
 } Export-ModuleMember -Function Get-ProjectItem
 
+function Set-ProjectItem{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory,ValueFromPipeline,Position = 0)][object]$Item,
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber
+    )
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+
+    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+
+    Set-Item $db $item
+
+    Save-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
+}
 
 function Find-ProjectItem{
     [CmdletBinding()]
@@ -256,8 +278,6 @@ function Get-ProjectItemDirect{
     }
 
     $item = $response.data.node | Convert-NodeItemToHash
-
-    # Cache item
 
     return $item
 } Export-ModuleMember -Function Get-ProjectItemDirect

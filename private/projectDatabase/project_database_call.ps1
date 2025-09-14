@@ -14,6 +14,7 @@ function Update-ProjectItem {
         [Parameter(Mandatory, Position = 0)][object]$Database,
         [Parameter(Mandatory, Position = 1)][string]$ItemId,
         [Parameter(Mandatory, Position = 2)][string]$FieldId,
+        [Parameter(Mandatory, Position = 2)][string]$FieldName,
         [Parameter(Mandatory, Position = 3)][string]$FieldType,
         [Parameter(Mandatory, Position = 4)][string]$FieldDataType,
         [Parameter(Mandatory, Position = 5)][string]$Value,
@@ -29,15 +30,15 @@ function Update-ProjectItem {
 
         switch ($type) {
             "DraftIssue" {
-                $result, $job = Update-DraftIssue -Id $contentId -FieldId $FieldId -Value $Value -Async:$Async
+                $result, $job, $resultDataType = Update-DraftIssue -Id $contentId -FieldId $FieldId -Value $Value -Async:$Async
                 break
             }
             "Issue" {
-                $result, $job = Update-Issue -Id $contentId -FieldId $FieldId -Value $Value -Async:$Async
+                $result, $job, $resultDataType = Update-Issue -Id $contentId -FieldId $FieldId -Value $Value -Async:$Async
                 break
             }
             "PullRequest" {
-                $result, $job = Update-PullRequest -Id $contentId -FieldId $FieldId -Value $Value -Async:$Async
+                $result, $job, $resultDataType = Update-PullRequest -Id $contentId -FieldId $FieldId -Value $Value -Async:$Async
                 break
             }
 
@@ -56,8 +57,9 @@ function Update-ProjectItem {
             Value     = $Value
             DataType  = $FieldDataType
         }
-        
-        $result, $job = Update-ItemField @params -Async:$Async
+
+        $result, $job , $resultDataType = Update-ItemField @params -Async:$Async
+
     }
 
     if ($null -eq $result -and $null -eq $job) {
@@ -71,24 +73,24 @@ function Update-ProjectItem {
         ItemId    = $ItemId
         Value     = $Value
         FieldId   = $FieldId
-        Type      = $updateDataType
-        FieldName = $FieldId
+        ResultDataType = $resultDataType
+        FieldName = $FieldName
         DataType  = $FieldDataType
     }
 
     return $call
 }
-
 function GetItemInfo($itemId) {
     # Get Item to know what we are updating
     $item = Get-Item -Database $Database -ItemId $ItemId
 
     # TODO: Situation where we are updating an item that is not cached and therefore type is not known
     if (-not $item.type) {
+        # Single fetch item from api
         $item = Get-ProjectItemDirect -ItemId $ItemId
     }
 
-    if( $null -eq $item) {
+    if ( $null -eq $item) {
         throw "Item $ItemId not found in database and could not be retrieved directly"
     }
 
@@ -159,7 +161,7 @@ function Update-Issue {
     }
 
 
-    return $result, $job
+    return $result, $job, "updateIssue"
 }
 
 function Update-PullRequest {
@@ -187,8 +189,7 @@ function Update-PullRequest {
         $result = Invoke-MyCommand -Command UpdatePullRequest -Parameters $params
     }
 
-
-    return $result, $job
+    return $result, $job , "updatePullRequest"
 }
 
 function Update-DraftIssue {
@@ -217,7 +218,7 @@ function Update-DraftIssue {
     }
 
 
-    return $result, $job
+    return $result, $job , "updateProjectV2DraftIssue"
 }
 
 function Update-ItemField {
@@ -236,7 +237,7 @@ function Update-ItemField {
     "Calling to update ItemField Async[$Async][$ProjectId/$ItemId/$FieldId ($type) = $Value ]" | Write-MyHost
 
     if ($Async) {
-        $ret = Start-MyJob -Command GitHub_UpdateProjectV2ItemFieldValueAsync -Parameters @{
+        $job = Start-MyJob -Command GitHub_UpdateProjectV2ItemFieldValueAsync -Parameters @{
             projecthelper = $MODULE_PATH
             projectid     = $ProjectId
             itemid        = $ItemId
@@ -246,7 +247,7 @@ function Update-ItemField {
         }
     }
     else {
-        $ret = Invoke-MyCommand -Command GitHub_UpdateProjectV2ItemFieldValue -Parameters @{
+        $result = Invoke-MyCommand -Command GitHub_UpdateProjectV2ItemFieldValue -Parameters @{
             projectid = $ProjectId
             itemid    = $ItemId
             fieldid   = $FieldId
@@ -254,6 +255,34 @@ function Update-ItemField {
             type      = $Type
         }
     }
+
+    return $result, $job , "updateProjectV2ItemFieldValue"
+}
+
+function Test-UpdateProjectItemAsyncCall {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory, Position = 0)][object]$Call
+    )
+
+    $result = Receive-Job -Job $Call.job
+
+    $ret = $null -ne $result.data.$($call.ResultDataType)
+
+    if(! $ret){
+        "Update Project Item Async call Failed: $($result.errors.message -join ', ')" | Write-Verbose
+    }
+
+    return $ret
+}
+
+function Test-UpdateProjectItemCall {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory, Position = 0)][object]$Call
+    )
+
+    $ret = $null -ne $call.Result.data.$($call.ResultDataType)
 
     return $ret
 }

@@ -18,51 +18,17 @@ function Sync-ProjectDatabase{
     $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
     # Send update to project
-    $result = Sync-Project -Database $db
+    $db = Sync-Project -Database $db
 
-    if ($null -eq $result) {
+    Save-ProjectDatabase -Database $db -Owner $Owner -ProjectNumber $ProjectNumber
+
+    if (Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber) {
+        "Still pending staged values" | Write-MyError
         return $false
-    }
-
-    # Check that all values are updated before clearing staging
-    $different = New-Object System.Collections.Hashtable
-    foreach($idemId in $db.Staged.Keys){
-
-        # skip if $itemid is not in items.
-        # This happenon direct item edit. Edit without full project sync
-        if(-not $db.items.$idemId){
-            continue
-        }
-
-        foreach($fieldId in $db.Staged.$idemId.Keys){
-            $fieldName = $db.fields.$fieldId.name
-
-            $stagedV = $db.Staged.$idemId.$fieldId.Value
-            $actualV = $db.items.$idemId.$fieldName
-
-            if(!($stagedV -eq $actualV)){
-                $diff = @{
-                    Id = $idemId
-                    Field = $fieldId
-                    Staged = $stagedV
-                    Actual = $actualV
-                }
-                $different.$itemId = $diff
-            }
-
-        }
-    }
-
-    if($different.Count -eq 0){
-        $db.Staged = $null
-        Save-ProjectDatabase -Database $db -Owner $owner -ProjectNumber $projectnumber
-        return $true
     } else {
-        "Error: Staged values are not equal to actual values" | Write-MyError
-        $different | convertto-json | Write-MyError
-        return $false
+        "All ($stagedItemsCount) staged values synced" | Write-MyHost
+        return $true
     }
-
 }
 
 function Sync-Project{
@@ -73,41 +39,41 @@ function Sync-Project{
 
     $db = $Database
 
-    $ItemsStagedId = $db.Staged.Keys
+    $ItemsStagedId = $db.Staged.Keys | Copy-MyStringArray
     foreach($itemId in $ItemsStagedId){
         
         $itemStaged = $db.Staged.$itemId
-        $FieldStagedId = $db.Staged.$itemId.Keys
+
+        $FieldStagedId = $itemStaged.Keys | Copy-MyStringArray
         foreach($fieldId in $FieldStagedId){
 
-            $fieldStagedValue = $itemStaged.$fieldId.Value
+            $value = $itemStaged.$fieldId.Value
             $field = $itemStaged.$fieldId.Field
-            $fieldName = $field.name
 
             $params = @{
                 Database = $db
                 ItemId = $itemId
-                FieldId = $fieldId
-                Value = $fieldStagedValue
+                FieldId = $field.id
+                FieldName = $field.name
                 FieldType = $field.type
                 FieldDataType = $field.dataType
+                Value = $value
             }
 
-            "Saving  [$($params.Database.ProjectId)/$($params.ItemId)/$($params.FieldId) ($($params.FieldType)) = $($params.Value) ] ..." | Write-MyHost -NoNewLine
+            "Saving  [$($params.Database.ProjectId)/$($params.ItemId)/$($params.FieldId) ($($params.FieldName)) = $($params.Value) ] ..." | Write-MyHost -NoNewLine
 
             $call = Update-ProjectItem @params
 
-            if ($null -eq $call.Result) {
+            if ( ! (Test-UpdateProjectItemCall $call) ) {
                 "FAILED !!" | Write-MyHost
                 continue
             }
 
-            # update database with change if exists
-            $db.items | AddHashLink $itemId
-            $db.items.$itemId.$fieldName = $fieldStagedValue
+            # update database with change
+            Set-ItemValue -Database $db -ItemId $call.itemId -FieldName $call.FieldName -Value $value
 
             # remove staged item field
-            $db = Remove-ItemStaged -Database $db -ItemId $itemId -FieldId $fieldId
+            Remove-ItemStaged -Database $db -ItemId $itemId -FieldId $fieldId
 
             "Done" | Write-MyHost
         }
@@ -126,14 +92,12 @@ function Remove-ItemStaged{
 
     $db = $Database
 
-    if ($db.Staged.$ItemId.$FieldName) {
-        $db.Staged.$ItemId.Remove($FieldName)
+    if ($db.Staged.$ItemId.$FieldId) {
+        $db.Staged.$ItemId.Remove($FieldId)
     }
 
     # If no more fields in item remove item
     if ($db.Staged.$ItemId.Count -eq 0) {
         $db.Staged.Remove($ItemId)
     }
-
-    return $db
 }

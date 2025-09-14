@@ -36,6 +36,33 @@ function Test_GetProjectItem_SUCCESS{
     Assert-AreEqual -Expected $fieldTitleValue -Presented $result.$fieldTitle
 }
 
+function Test_GetProjectItem_SUCCESS_CacheItem{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $Owner = "octodemo" ; $ProjectNumber = 700 ;
+    $itemId ="PVTI_lADOAlIw4c4BCe3Vzgeio4o"
+
+    # Cache project with no items
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $ProjectNumber -skipitems -FileName "invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json"
+    $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems
+
+    # Get item direct call
+    Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename invoke-getitem-$itemId.json" -Alias "Invoke-GetItem -ItemId $itemId"
+
+    # Act
+    $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
+
+    # Check return value is item
+    Assert-AreEqual -Expected $itemId -Presented $result.id
+
+    # Check that the item is cached
+    # As the project db did not have any item, now it should have one
+    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+    Assert-Count -Expected 1 -Presented $db.items.Keys
+    Assert-IsNotNull -Object $db.items.$itemId
+}
+
 function Test_EditProjetItems_SUCCESS{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
