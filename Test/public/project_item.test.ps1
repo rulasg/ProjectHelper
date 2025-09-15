@@ -366,6 +366,9 @@ function Test_GetItemDirect_SUCCESS{
     Assert-AreEqual -Expected $contentId -Presented $result.contentId
 
 }
+function Test_GetItemDirect_SUCCESS_WithCache{
+    Assert-NotImplemented
+}
 
 function Test_ShowProjectItem_SUCCESS{
 

@@ -22,7 +22,7 @@ function Sync-ProjectDatabaseAsync {
     $db = Sync-ProjectAsync -Database $db -SyncBatchSize $SyncBatchSize
 
     # Saved changes to database
-    Save-ProjectDatabase -Database $db -Owner $Owner -ProjectNumber $ProjectNumber
+    Save-ProjectDatabase -Database $db
 
     if (Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber) {
         "Still pending staged values" | Write-MyError
@@ -100,7 +100,7 @@ function Sync-ProjectAsync {
         Remove-ItemStaged -Database $db -ItemId $call.itemId -FieldId $call.FieldId
     }
 
-    Save-ProjectDatabase -Database $db -Owner $Owner -ProjectNumber $ProjectNumber
+    Save-ProjectDatabase -Database $db
 
     return $db
 }

@@ -16,7 +16,7 @@ function Reset-DatabaseStore{
 
         $databaseRoot = Invoke-MyCommand -Command GetDatabaseStorePath
 
-        Remove-Item -Path $databaseRoot -Recurse -Force -ErrorAction SilentlyContinue
+        Microsoft.PowerShell.Management\Remove-Item -Path $databaseRoot -Recurse -Force -ErrorAction SilentlyContinue
 
         New-Item -Path $databaseRoot -ItemType Directory
 
@@ -55,7 +55,7 @@ function Reset-Database{
         [Parameter(Position = 0)][string]$Key
     )
     $path =  Get-DatabaseFile -Key $Key
-    Remove-Item -Path $path -Force -ErrorAction SilentlyContinue
+    Microsoft.PowerShell.Management\Remove-Item -Path $path -Force -ErrorAction SilentlyContinue
     return
 }
 

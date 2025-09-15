@@ -20,6 +20,9 @@ function Convert-NodeItemToHash {
         $item.url = $NodeItem.content.url
         $item.state = $NodeItem.content.state
 
+        $item.projectId = $NodeItem.project.id
+        $item.projectUrl = $NodeItem.project.url
+
         $item.createdAt = GetDateTime -DateTimeString $NodeItem.content.createdAt
         $item.updatedAt = GetDateTime -DateTimeString $NodeItem.content.updatedAt
 
