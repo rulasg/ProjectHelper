@@ -32,9 +32,11 @@ function Get-ProjectItem{
 
     # If item not found on cache get it directly
     if($null -eq $item){
-        $item = Get-ProjectItemDirect -ItemId $ItemId
+        $item = Get-ProjectItemDirect -ItemId $ItemId -NoCache
 
-        Set-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Item $item
+        Set-Item $db $item
+
+        Save-ProjectDatabase -Database $db
     }
 
     return $item
@@ -53,6 +55,24 @@ function Set-ProjectItem{
     $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
     Set-Item $db $item
+
+    Save-ProjectDatabase -Database $db
+}
+
+function Remove-ProjectItem{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory,ValueFromPipeline,Position = 0)][string]$ItemId,
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber
+    )
+
+    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+
+    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+
+    Remove-Item $db $itemId
 
     Save-ProjectDatabase -Database $db
 }
@@ -173,7 +193,8 @@ function Add-ProjectItemDirect{
     param(
         [Parameter(ValueFromPipeline,Position = 0)][string]$Url,
         [Parameter()][string]$Owner,
-        [Parameter()][string]$ProjectNumber
+        [Parameter()][string]$ProjectNumber,
+        [Parameter()][switch]$NoCache
     )
 
     process{
@@ -182,7 +203,8 @@ function Add-ProjectItemDirect{
         if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
         # Get project id
-        $projectId = Get-ProjectId -Owner $Owner -ProjectNumber $ProjectNumber
+        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+        $projectId = $db.ProjectId
         if(-not $projectId){
             "Project ID not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError
             return $null
@@ -204,9 +226,24 @@ function Add-ProjectItemDirect{
             return $null
         }
 
-        if($response.data.addProjectV2ItemById.item.id)
+        $item = $response.data.addProjectV2ItemById.item
+
+        if($item)
         {
-            $ret = $response.data.addProjectV2ItemById.item.id
+            $ret = $item.id
+
+            if(! $NoCache){
+                "Adding item [$ret] to cache" | Write-Verbose
+
+                $item = $item | Convert-NodeItemToHash
+
+                Set-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Item $item
+
+                Save-ProjectDatabase -Database $db
+
+            }
+
+            "Setting global variable ItemId to [$ret]" | Write-Verbose
             $global:ItemId = $ret
 
             return $ret
@@ -224,7 +261,8 @@ function Remove-ProjectItemDirect{
     param(
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
-        [Parameter(Mandatory, ValueFromPipeline, Position = 0)][string]$ItemId
+        [Parameter(Mandatory, ValueFromPipeline, Position = 0)][string]$ItemId,
+        [Parameter()][switch]$NoCache
     )
 
     begin{
@@ -232,9 +270,11 @@ function Remove-ProjectItemDirect{
         if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
         
         # Get project id
-        $projectId = Get-ProjectId -Owner $Owner -ProjectNumber $ProjectNumber
-        if(-not $projectId){
-            "Project ID not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError
+        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+        if($db){
+            $projectId = $db.ProjectId
+        } else {
+            throw "Project not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]"
         }
     }
 
@@ -259,7 +299,16 @@ function Remove-ProjectItemDirect{
             return $null
         }
         
-        return $response.data.deleteProjectV2Item.deletedItemId
+        $ret =  $response.data.deleteProjectV2Item.deletedItemId
+
+        if(! $NoCache){
+            # Remove item from cache
+            "Removing item [$ItemId] from cache" | Write-Verbose
+            Remove-Item $db $ItemId
+            Save-ProjectDatabase $db
+        }
+
+        return $ret
     }
 
 } Export-ModuleMember -Function Remove-ProjectItemDirect
@@ -267,7 +316,8 @@ function Remove-ProjectItemDirect{
 function Get-ProjectItemDirect{
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory,ValueFromPipeline,Position = 0)][string]$ItemId
+        [Parameter(Mandatory,ValueFromPipeline,Position = 0)][string]$ItemId,
+        [Parameter()][switch]$NoCache
     )
 
     $response = Invoke-MyCommand -Command GetItem -Parameters @{
@@ -286,6 +336,12 @@ function Get-ProjectItemDirect{
     }
 
     $item = $response.data.node | Convert-NodeItemToHash
+
+    if(! $NoCache){
+        "Adding item [$ItemId] to cache" | Write-Verbose
+        Set-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Item $item
+        Save-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
+    }
 
     return $item
 } Export-ModuleMember -Function Get-ProjectItemDirect
