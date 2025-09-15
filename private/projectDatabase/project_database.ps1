@@ -95,27 +95,27 @@ function Set-ProjectDatabaseV2{
     $db.items = $items
     $db.fields = $fields
 
-    Save-ProjectDatabase -Database $db -Owner $owner -ProjectNumber $projectnumber
+    Save-ProjectDatabase -Database $db
 }
 
 function Save-ProjectDatabase{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][int]$ProjectNumber,
-        [Parameter(Position = 2)][hashtable]$Database
+        [Parameter(Position = 0)][hashtable]$Database
     )
+
+    $owner = $Database.owner
+    $projectnumber = $Database.number
 
     if($null -eq $Database){
         throw "Database parameter is required"
     }
 
-    if($Owner -ne $Database.owner){
-        throw "Owner parameter [$Owner] does not match database owner [$($Database.owner)]"
+    if([string]::IsNullOrWhiteSpace($owner)){
+        throw "Database.owner is null or empty"
     }
-
-    if($ProjectNumber -ne $Database.number){
-        throw "ProjectNumber parameter [$ProjectNumber] does not match database project number [$($Database.number)]"
+    if($projectnumber -le 0){
+        throw "Database.number is null or not a positive integer"
     }
 
     $dbkey = Get-DatabaseKey -Owner $owner -ProjectNumber $projectnumber

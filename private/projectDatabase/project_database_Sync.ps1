@@ -20,7 +20,7 @@ function Sync-ProjectDatabase{
     # Send update to project
     $db = Sync-Project -Database $db
 
-    Save-ProjectDatabase -Database $db -Owner $Owner -ProjectNumber $ProjectNumber
+    Save-ProjectDatabase -Database $db
 
     if (Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber) {
         "Still pending staged values" | Write-MyError

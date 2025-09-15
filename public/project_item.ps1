@@ -54,7 +54,7 @@ function Set-ProjectItem{
 
     Set-Item $db $item
 
-    Save-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
+    Save-ProjectDatabase -Database $db
 }
 
 function Find-ProjectItem{
@@ -163,7 +163,7 @@ function Edit-ProjectItem{
     Save-ItemFieldValue $db $itemId $FieldName $Value
 
     # Commit changes to the database
-    Save-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Database $db
+    Save-ProjectDatabase -Database $db
 
 } Export-ModuleMember -Function Edit-ProjectItem
 
