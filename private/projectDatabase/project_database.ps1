@@ -106,6 +106,18 @@ function Save-ProjectDatabase{
         [Parameter(Position = 2)][hashtable]$Database
     )
 
+    if($null -eq $Database){
+        throw "Database parameter is required"
+    }
+
+    if($Owner -ne $Database.owner){
+        throw "Owner parameter [$Owner] does not match database owner [$($Database.owner)]"
+    }
+
+    if($ProjectNumber -ne $Database.number){
+        throw "ProjectNumber parameter [$ProjectNumber] does not match database project number [$($Database.number)]"
+    }
+
     $dbkey = Get-DatabaseKey -Owner $owner -ProjectNumber $projectnumber
     Save-Database -Key $dbkey -Database $Database
 }
