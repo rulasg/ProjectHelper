@@ -58,7 +58,9 @@ function Remove-Item{
         [Parameter(ValueFromPipeline, Position = 1)][string]$ItemId
     )
 
-    $db.Items.Remove($ItemId) | Out-Null
+    process{
+        $Database.items.Remove($ItemId) | Out-Null
+    }
 
 }
 
