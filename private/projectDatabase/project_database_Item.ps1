@@ -36,7 +36,6 @@ function Get-Item{
 
 function Set-Item{
     [CmdletBinding()]
-    [OutputType([string])]
     param(
         [Parameter(Position = 0)][object[]]$Database,
         [Parameter(ValueFromPipeline, Position = 1)][PSCustomObject]$Item
@@ -49,6 +48,17 @@ function Set-Item{
     $items = $db | AddHashLink items
 
     $items.$($Item.id) = $Item
+
+}
+
+function Remove-Item{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][object[]]$Database,
+        [Parameter(ValueFromPipeline, Position = 1)][string]$ItemId
+    )
+
+    $db.Items.Remove($ItemId) | Out-Null
 
 }
 
