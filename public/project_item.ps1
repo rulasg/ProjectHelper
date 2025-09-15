@@ -19,27 +19,43 @@ function Get-ProjectItem{
         [Parameter()][switch]$Force
     )
 
-    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+    begin{
+        ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+        if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+    
+    
+        # Get Item from Project database
+        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
-
-    # Get Item from Project database
-    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
-
-    if($db){
-        $item = Get-Item $db $itemId
+        # Durty flag
+        $durty= $false
     }
 
-    # If item not found on cache get it directly
-    if($null -eq $item){
-        $item = Get-ProjectItemDirect -ItemId $ItemId -NoCache
+    process{
+        if($db){
+            $item = Get-Item $db $itemId
+        }
+        if($null -eq $item){
+            "Item [$ItemId] not found in cache, fetching from API" | Write-Verbose
+            
+            # Get direct. No cache as we are in a database modification context
+            $item = Get-ProjectItemDirect -ItemId $ItemId
 
-        Set-Item $db $item
+            # Add to database
+            Set-Item $db $item
+            $durty = $true
+        }
 
-        Save-ProjectDatabase -Database $db
+        return $item
+    }
+    
+    end{
+        if($durty){
+            "Saving durty database" | Write-Verbose
+            Save-ProjectDatabase -Database $db
+        }
     }
 
-    return $item
 } Export-ModuleMember -Function Get-ProjectItem
 
 function Set-ProjectItem{
@@ -67,14 +83,21 @@ function Remove-ProjectItem{
         [Parameter()][string]$ProjectNumber
     )
 
-    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+    begin{
+        ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+        if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+    
+        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+    }
 
-    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+    process{
+        Remove-Item $db $itemId
+    }
 
-    Remove-Item $db $itemId
+    end{
+        Save-ProjectDatabase -Database $db
+    }
 
-    Save-ProjectDatabase -Database $db
 }
 
 function Find-ProjectItem{
@@ -316,8 +339,7 @@ function Remove-ProjectItemDirect{
 function Get-ProjectItemDirect{
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory,ValueFromPipeline,Position = 0)][string]$ItemId,
-        [Parameter()][switch]$NoCache
+        [Parameter(Mandatory,ValueFromPipeline,Position = 0)][string]$ItemId
     )
 
     $response = Invoke-MyCommand -Command GetItem -Parameters @{
@@ -336,12 +358,6 @@ function Get-ProjectItemDirect{
     }
 
     $item = $response.data.node | Convert-NodeItemToHash
-
-    if(! $NoCache){
-        "Adding item [$ItemId] to cache" | Write-Verbose
-        Set-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Item $item
-        Save-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber
-    }
 
     return $item
 } Export-ModuleMember -Function Get-ProjectItemDirect
