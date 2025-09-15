@@ -359,7 +359,7 @@ function Test_GetItemDirect_SUCCESS{
 
     MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName 'getitemdirect_1.json'
 
-    $result = Get-ProjectItemDirect -ItemId $itemId -NoCache
+    $result = Get-ProjectItemDirect -ItemId $itemId
 
     Assert-AreEqual -Expected $itemId -Presented $result.id
     Assert-AreEqual -Expected $itemUrl -Presented $result.url

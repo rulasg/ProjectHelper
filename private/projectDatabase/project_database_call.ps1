@@ -95,7 +95,7 @@ function GetItemInfo {
     if (-not $item.type) {
         # Single fetch item from api
         # Avoid caching as we are beeing called from a Database modification context
-        $item = Get-ProjectItemDirect -ItemId $ItemId -NoCache
+        $item = Get-ProjectItemDirect -ItemId $ItemId
     }
 
     if ( $null -eq $item) {
