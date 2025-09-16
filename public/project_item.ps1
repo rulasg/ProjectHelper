@@ -324,11 +324,8 @@ function Add-ProjectItemDirect {
 
             }
 
-            "Setting global variable ItemId to [$ret]" | Write-Verbose
-            $global:ItemId = $ret
-
             return $ret
-            
+
         }
         else {
             "Item not added to project" | Write-MyError
