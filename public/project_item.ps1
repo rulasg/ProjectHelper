@@ -220,7 +220,7 @@ function Open-ProjectItem {
             return 
         }
         
-        Open-UrlInBrowser -Url $item.url
+        Open-Url -Url $item.url
     }
 } Export-ModuleMember -Function Open-ProjectItem
 
