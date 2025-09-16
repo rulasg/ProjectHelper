@@ -151,6 +151,9 @@ function Test_EditProejctItems_NumberDecimals{
 
     $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
 
+    # Mock the direct call for item
+    MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-$itemId.json"
+
     # [DBG]:> $prj.fields.PVTF_lADOBCrGTM4ActQazgSkglc
     # Name                           Value
     # ----                           -----
@@ -202,6 +205,9 @@ function Test_EditProejctItems_Direct{
 
     $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
     $fieldComment = "Comment" ; $fieldCommentValue = "new value of the comment 10.1"
+
+    # Mock the direct call for item
+    MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-$itemId.json"
 
     # Direct edit of the item
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId -FieldName $fieldComment -Value $fieldCommentValue

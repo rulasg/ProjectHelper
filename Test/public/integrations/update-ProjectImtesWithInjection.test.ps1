@@ -33,7 +33,7 @@ function Test_UpdateProjectWithInjection{
         Edit-ProjectItem @params
 
     }
-function global:Invoke-ProjectInjection_2 {
+    function global:Invoke-ProjectInjection_2 {
     [CmdletBinding()]
     param(
         [Parameter()][string]$Owner,
@@ -156,10 +156,14 @@ function Test_InvokeProjectInjection{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-        $owner = "octodemo"
+    $owner = "octodemo"
     $projectNumber = "625"
 
+    $itemId = "PVTI_lADOAlIw4c4A0Lf4zgYNTxI"
+
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber-skipitems.json" -skipitems
+
+    MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-$itemId.json"
 
     function global:Invoke-ProjectInjection_1 {
     [CmdletBinding()]
@@ -171,7 +175,7 @@ function Test_InvokeProjectInjection{
         "String from integration1" | Write-Host
 
         $params = @{
-            ItemId = "PVTI_lADOAlIw4c4A0Lf4zgYNTxI"
+            ItemId = $itemId
             Owner = $Owner
             ProjectNumber = $ProjectNumber
             FieldName = "sf_Text1"

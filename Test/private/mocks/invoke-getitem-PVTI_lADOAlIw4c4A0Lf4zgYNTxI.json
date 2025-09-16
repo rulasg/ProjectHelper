@@ -1,0 +1,84 @@
+{
+  "data": {
+    "node": {
+      "id": "PVTI_lADOAlIw4c4A0Lf4zgYNTxI",
+      "type": "DRAFT_ISSUE",
+      "project": {
+        "id": "PVT_kwDOAlIw4c4A0Lf4",
+        "url": "https://github.com/orgs/octodemo/projects/625"
+      },
+      "content": {
+        "__typename": "DraftIssue",
+        "id": "DI_lADOAlIw4c4A0Lf4zgJQEX4",
+        "body": "",
+        "title": "draft2",
+        "updatedAt": "2025-03-12T10:38:22Z",
+        "createdAt": "2025-03-12T10:38:22Z"
+      },
+      "fieldValues": {
+        "nodes": [
+          {
+            "__typename": "ProjectV2ItemFieldTextValue",
+            "text": "draft2",
+            "field": {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lTg",
+              "name": "Title",
+              "dataType": "TITLE"
+            }
+          },
+          {
+            "__typename": "ProjectV2ItemFieldDateValue",
+            "date": "2025-03-26",
+            "field": {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4A0Lf4zgqDG_s",
+              "name": "DueDate",
+              "dataType": "DATE"
+            }
+          },
+          {
+            "__typename": "ProjectV2ItemFieldSingleSelectValue",
+            "name": "ActionRequired",
+            "field": {
+              "__typename": "ProjectV2SingleSelectField",
+              "id": "PVTSSF_lADOAlIw4c4A0Lf4zgp2lTo",
+              "name": "Status",
+              "dataType": "SINGLE_SELECT",
+              "options": [
+                {
+                  "id": "9893bd57",
+                  "name": "ActionRequired"
+                },
+                {
+                  "id": "59a06e8d",
+                  "name": "Overdue"
+                },
+                {
+                  "id": "f75ad846",
+                  "name": "Todo"
+                },
+                {
+                  "id": "47fc9ee4",
+                  "name": "In Progress"
+                },
+                {
+                  "id": "98236657",
+                  "name": "Done"
+                },
+                {
+                  "id": "b057b134",
+                  "name": "Planned"
+                },
+                {
+                  "id": "090b4a67",
+                  "name": "Follow-up"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}
