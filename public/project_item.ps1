@@ -56,28 +56,28 @@ function Get-ProjectItem {
     end {
         if ($durty) {
             "Saving durty database" | Write-Verbose
-            Save-ProjectDatabase -Database $db
+            Save-ProjectDatabase -Database $db -Safe
         }
     }
 
 } Export-ModuleMember -Function Get-ProjectItem
 
-function Set-ProjectItem {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory, ValueFromPipeline, Position = 0)][object]$Item,
-        [Parameter()][string]$Owner,
-        [Parameter()][string]$ProjectNumber
-    )
-    ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+# function Set-ProjectItem {
+#     [CmdletBinding()]
+#     param(
+#         [Parameter(Mandatory, ValueFromPipeline, Position = 0)][object]$Item,
+#         [Parameter()][string]$Owner,
+#         [Parameter()][string]$ProjectNumber
+#     )
+#     ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+#     if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
 
-    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+#     $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
-    Set-Item $db $item
+#     Set-Item $db $item
 
-    Save-ProjectDatabase -Database $db
-}
+#     Save-ProjectDatabase -Database $db -Safe
+# }
 
 function Remove-ProjectItem {
     [CmdletBinding()]
@@ -99,7 +99,7 @@ function Remove-ProjectItem {
     }
 
     end {
-        Save-ProjectDatabase -Database $db
+        Save-ProjectDatabase -Database $db -Safe
     }
 
 }
@@ -269,7 +269,7 @@ function Edit-ProjectItem {
     Save-ItemFieldValue $db $itemId $FieldName $Value
 
     # Commit changes to the database
-    Save-ProjectDatabase -Database $db
+    Save-ProjectDatabase -Database $db 
 
 } Export-ModuleMember -Function Edit-ProjectItem
 
@@ -322,10 +322,9 @@ function Add-ProjectItemDirect {
 
                 $item = $item | Convert-NodeItemToHash
 
-                # Set-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Item $item
                 Set-Item $db $item
 
-                Save-ProjectDatabase -Database $db
+                Save-ProjectDatabase -Database $db -Safe
 
             }
 
@@ -386,12 +385,10 @@ function Remove-ProjectItemDirect {
         
         $ret = $response.data.deleteProjectV2Item.deletedItemId
 
-        if (! $NoCache) {
-            # Remove item from cache
-            "Removing item [$ItemId] from cache" | Write-Verbose
-            Remove-Item $db $ItemId
-            Save-ProjectDatabase $db
-        }
+        # Remove item from cache
+        "Removing item [$ItemId] from cache" | Write-Verbose
+        Remove-Item $db $ItemId
+        Save-ProjectDatabase -Database $db -Safe
 
         return $ret
     }
