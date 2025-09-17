@@ -22,7 +22,7 @@ function Test_SaveProjectDatabase_SafeId_Flag_PrivateCall{
         
         # Update project and the safeId should be updated
         $oldSafeId = $prj.safeId
-        Save-ProjectDatabase -Database $prj
+        Save-ProjectDatabaseSafe -Database $prj
         $prj2 = Get-ProjectFromDatabase -Owner $Owner -ProjectNumber $ProjectNumber
         
         Assert-IsNotNull -Object $prj2.safeId
@@ -50,7 +50,7 @@ function Test_SaveProjectDatabase_Safe_PrivateCall{
         $prj1 = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
         # modify the project
-        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber ; Save-ProjectDatabase -Database $db
+        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber ; Save-ProjectDatabaseSafe -Database $db
 
         # Check that safeId has changed
         $prj2 = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
@@ -59,7 +59,7 @@ function Test_SaveProjectDatabase_Safe_PrivateCall{
         ## When saving again as prj1 that has been saved before it will throw
         $hasThrow = $false
         try{
-            Save-ProjectDatabase -Database $prj1 -Safe
+            Save-ProjectDatabaseSafe -Database $prj1
         } catch {
             $hasThrow = $true
         }

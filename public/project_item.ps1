@@ -42,7 +42,7 @@ function Get-ProjectItem {
     end {
         if ($dirty) {
             "Saving dirty database" | Write-Verbose
-            Save-ProjectDatabase -Database $db -Safe
+            Save-ProjectDatabaseSafe -Database $db
         }
     }
 
@@ -62,7 +62,7 @@ function Get-ProjectItem {
 #
 #     Set-Item $db $item
 #
-#     Save-ProjectDatabase -Database $db -Safe
+#     Save-ProjectDatabaseSafe -Database $db
 # }
 
 function Remove-ProjectItem {
@@ -85,7 +85,7 @@ function Remove-ProjectItem {
     }
 
     end {
-        Save-ProjectDatabase -Database $db -Safe
+        Save-ProjectDatabaseSafe -Database $db
     }
 
 }
@@ -255,7 +255,7 @@ function Edit-ProjectItem {
     Save-ItemFieldValue $db $itemId $FieldName $Value
 
     # Commit changes to the database
-    Save-ProjectDatabase -Database $db -Safe
+    Save-ProjectDatabaseSafe -Database $db
 
 } Export-ModuleMember -Function Edit-ProjectItem
 
@@ -310,7 +310,7 @@ function Add-ProjectItemDirect {
 
                 Set-Item $db $item
 
-                Save-ProjectDatabase -Database $db -Safe
+                Save-ProjectDatabaseSafe -Database $db
 
             }
 
@@ -374,7 +374,7 @@ function Remove-ProjectItemDirect {
         # Remove item from cache
         "Removing item [$ItemId] from cache" | Write-Verbose
         Remove-Item $db $ItemId
-        Save-ProjectDatabase -Database $db -Safe
+        Save-ProjectDatabaseSafe -Database $db
 
         return $ret
     }

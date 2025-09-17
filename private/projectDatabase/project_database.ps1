@@ -99,6 +99,14 @@ function Save-ProjectV2toDatabase{
     Save-ProjectDatabase -Database $db
 }
 
+function Save-ProjectDatabaseSafe{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory,Position = 0)][hashtable]$Database
+    )
+    Save-ProjectDatabase -Database $Database -Safe
+}
+
 function Save-ProjectDatabase{
     [CmdletBinding()]
     param(
