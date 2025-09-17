@@ -25,7 +25,7 @@ function Get-ProjectItem {
     
     
         # Get Item from Project database
-        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
         # Durty flag
         $durty = $false
@@ -35,8 +35,9 @@ function Get-ProjectItem {
         if ($db) {
             $item = Get-Item $db $itemId
         }
-        if ($null -eq $item) {
-            "Item [$ItemId] not found in cache, fetching from API" | Write-Verbose
+
+        if (( ! $item ) -or $Force) {
+            "Fetching item [$ItemId] from API" | Write-Verbose
             
             # Get direct. No cache as we are in a database modification context
             $item = Get-ProjectItemDirect -ItemId $ItemId
@@ -44,6 +45,9 @@ function Get-ProjectItem {
             # Add to database
             Set-Item $db $item
             $durty = $true
+
+            # Get item again to allow the merge between staged and project fields
+            $item = Get-Item $db $itemId
         }
 
         return $item

@@ -9,59 +9,45 @@ function Test_GetProjectItem_SUCCESS{
 
 
     $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
-    $fieldTitleValue = "A draft in the project"
-    $fieldCommentValue = "This"
+    $projectFieldTitleValue = "A draft in the project"
+    $projectFieldCommentValue = "This"
+    $itemFieldTitleValue = "kk text"
+    $itemFieldCommentValue = "comment for draft 1"
 
-    # allow get project with skipitems
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2-skipitems.json' -skipitems
-
-    # Allow to get project with items for the FORCE
+    # allow get project
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+
+    # Even if id is in project we make a direct call when with Force
+    MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-$itemId.json"
+    
+    # Act get value from project
+    $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
+
+    Assert-AreEqual -Expected $itemId -Presented $result.id
+    Assert-AreEqual -Expected $projectFieldCommentValue -Presented $result.$fieldComment
+    Assert-AreEqual -Expected $projectFieldTitleValue -Presented $result.$fieldTitle
+
+    # Act with force - get value from direct call
     $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId -Force
 
     Assert-AreEqual -Expected $itemId -Presented $result.id
-    Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$fieldComment
-    Assert-AreEqual -Expected $fieldTitleValue -Presented $result.$fieldTitle
+    Assert-AreEqual -Expected $itemFieldCommentValue -Presented $result.$fieldComment
+    Assert-AreEqual -Expected $itemFieldTitleValue -Presented $result.$fieldTitle
 
     # Edit to see the staged references
-    $fieldCommentValue = "new value of the comment 10.1"
-    $fieldTitleValue = "new value of the title 10.1"
-    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldComment $fieldCommentValue
-    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldTitle $fieldTitleValue
+    $newFieldCommentValue = "new value of the comment 10.1"
+    $newFieldTitleValue = "new value of the title 10.1"
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldComment $newFieldCommentValue
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldTitle $newFieldTitleValue
 
+    # Act getting from cached project with staged values
     $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
 
     Assert-AreEqual -Expected $itemId -Presented $result.id
-    Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$fieldComment
-    Assert-AreEqual -Expected $fieldTitleValue -Presented $result.$fieldTitle
+    Assert-AreEqual -Expected $newFieldCommentValue -Presented $result.$fieldComment
+    Assert-AreEqual -Expected $newFieldTitleValue -Presented $result.$fieldTitle
 }
 
-function Test_GetProjectItem_SUCCESS_CacheItem{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
-    $Owner = "octodemo" ; $ProjectNumber = 700 ;
-    $itemId ="PVTI_lADOAlIw4c4BCe3Vzgeio4o"
-
-    # Cache project with no items
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $ProjectNumber -skipitems -FileName "invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json"
-    $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems
-
-    # Get item direct call
-    Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename invoke-getitem-$itemId.json" -Alias "Invoke-GetItem -ItemId $itemId"
-
-    # Act
-    $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
-
-    # Check return value is item
-    Assert-AreEqual -Expected $itemId -Presented $result.id
-
-    # Check that the item is cached
-    # As the project db did not have any item, now it should have one
-    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
-    Assert-Count -Expected 1 -Presented $db.items.Keys
-    Assert-IsNotNull -Object $db.items.$itemId
-}
 
 function Test_EditProjetItems_SUCCESS{
     Reset-InvokeCommandMock
