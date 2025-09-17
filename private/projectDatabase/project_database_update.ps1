@@ -83,9 +83,8 @@ function Update-ProjectDatabase {
     # Add content fields
     $fields = $fields | Set-ContentFields
 
-    # Set-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Items $items -Fields $fields
-    $db = Set-ProjectDatabaseV2 $projectV2 -Items $items -Fields $fields
-    Save-ProjectDatabase  $db
+    # Save ProjectV2 object to ProjectDatabase
+    Save-ProjectV2toDatabase $projectV2 -Items $items -Fields $fields
 
     return $true
 }

@@ -46,7 +46,7 @@ graph TD;
     U[Update-ProjectDatabase]
     G[Invoke-GitHubOrgProjectWithFields]
 
-    U<---->V2[Set-ProjectDatabaseV2]
+    U<---->V2[Save-ProjectV2toDatabase]
 
     end
     I<-->G

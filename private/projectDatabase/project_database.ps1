@@ -68,7 +68,7 @@ function Reset-ProjectDatabase{
     Reset-Database -Key $dbKey
 }
 
-function Set-ProjectDatabaseV2{
+function Save-ProjectV2toDatabase{
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][object]$ProjectV2,
@@ -95,7 +95,8 @@ function Set-ProjectDatabaseV2{
     $db.items = $items
     $db.fields = $fields
 
-    return $db
+    # This is the only Save.ProjectDatabase that should not be called with -Safe
+    Save-ProjectDatabase -Database $db
 }
 
 function Save-ProjectDatabase{
