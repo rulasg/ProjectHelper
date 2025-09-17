@@ -322,7 +322,8 @@ function Add-ProjectItemDirect {
 
                 $item = $item | Convert-NodeItemToHash
 
-                Set-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Item $item
+                # Set-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Item $item
+                Set-Item $db $item
 
                 Save-ProjectDatabase -Database $db
 
