@@ -27,35 +27,21 @@ function Get-ProjectItem {
         # Get Item from Project database
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
+        if(! $db){ "Project not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError; return $null}
+
         # Durty flag
         $durty = $false
     }
 
     process {
-        if ($db) {
-            $item = Get-Item $db $itemId
-        }
-
-        if (( ! $item ) -or $Force) {
-            "Fetching item [$ItemId] from API" | Write-Verbose
-            
-            # Get direct. No cache as we are in a database modification context
-            $item = Get-ProjectItemDirect -ItemId $ItemId
-
-            # Add to database
-            Set-Item $db $item
-            $durty = $true
-
-            # Get item again to allow the merge between staged and project fields
-            $item = Get-Item $db $itemId
-        }
+        $item, $dirty = Resolve-ProjectItem -Database $db -ItemId $ItemId -Force:$Force
 
         return $item
     }
     
     end {
-        if ($durty) {
-            "Saving durty database" | Write-Verbose
+        if ($dirty) {
+            "Saving dirty database" | Write-Verbose
             Save-ProjectDatabase -Database $db -Safe
         }
     }
@@ -71,11 +57,11 @@ function Get-ProjectItem {
 #     )
 #     ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
 #     if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
-
+#
 #     $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
-
+#
 #     Set-Item $db $item
-
+#
 #     Save-ProjectDatabase -Database $db -Safe
 # }
 
@@ -253,8 +239,8 @@ function Edit-ProjectItem {
     $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems:$(-not $Force)
 
     # Find the actual value of the item. Item+Staged
-    $item = Get-ProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber
-
+    # $item = Get-ProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber
+    $item = Resolve-ProjectItem -Database $db -ItemId $ItemId
 
     # if the item is not found
     if($null -eq $item){ "Item [$ItemId] not found" | Write-MyError; return $null}
@@ -269,7 +255,7 @@ function Edit-ProjectItem {
     Save-ItemFieldValue $db $itemId $FieldName $Value
 
     # Commit changes to the database
-    Save-ProjectDatabase -Database $db 
+    Save-ProjectDatabase -Database $db -Safe
 
 } Export-ModuleMember -Function Edit-ProjectItem
 
