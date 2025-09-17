@@ -95,7 +95,7 @@ function Set-ProjectDatabaseV2{
     $db.items = $items
     $db.fields = $fields
 
-    Save-ProjectDatabase -Database $db
+    return $db
 }
 
 function Save-ProjectDatabase{
