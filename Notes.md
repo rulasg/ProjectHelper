@@ -2,7 +2,7 @@
 
 Notes used during the development of the module
 
-## Save-ProjectDatabase
+## Save-ProjectDatabaseSafe
 
 ```mermaid
 graph TD;
@@ -11,7 +11,7 @@ graph TD;
 
     subgraph Module
         0([Sync-ProjectItemStaged])
-        1[Save-ProjectDatabase]
+        1[Save-ProjectDatabaseSafe]
         2[Get-Project]
         3[Get-Project]
         4[Set-ProjectV2Item]
@@ -46,7 +46,7 @@ graph TD;
     U[Update-ProjectDatabase]
     G[Invoke-GitHubOrgProjectWithFields]
 
-    U<---->V2[Set-ProjectDatabaseV2]
+    U<---->V2[Save-ProjectV2toDatabase]
 
     end
     I<-->G

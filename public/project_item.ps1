@@ -27,57 +27,43 @@ function Get-ProjectItem {
         # Get Item from Project database
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
+        if(! $db){ "Project not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError; return $null}
+
         # Durty flag
         $durty = $false
     }
 
     process {
-        if ($db) {
-            $item = Get-Item $db $itemId
-        }
-
-        if (( ! $item ) -or $Force) {
-            "Fetching item [$ItemId] from API" | Write-Verbose
-            
-            # Get direct. No cache as we are in a database modification context
-            $item = Get-ProjectItemDirect -ItemId $ItemId
-
-            # Add to database
-            Set-Item $db $item
-            $durty = $true
-
-            # Get item again to allow the merge between staged and project fields
-            $item = Get-Item $db $itemId
-        }
+        $item, $dirty = Resolve-ProjectItem -Database $db -ItemId $ItemId -Force:$Force
 
         return $item
     }
     
     end {
-        if ($durty) {
-            "Saving durty database" | Write-Verbose
-            Save-ProjectDatabase -Database $db
+        if ($dirty) {
+            "Saving dirty database" | Write-Verbose
+            Save-ProjectDatabaseSafe -Database $db
         }
     }
 
 } Export-ModuleMember -Function Get-ProjectItem
 
-function Set-ProjectItem {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory, ValueFromPipeline, Position = 0)][object]$Item,
-        [Parameter()][string]$Owner,
-        [Parameter()][string]$ProjectNumber
-    )
-    ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
-
-    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
-
-    Set-Item $db $item
-
-    Save-ProjectDatabase -Database $db
-}
+# function Set-ProjectItem {
+#     [CmdletBinding()]
+#     param(
+#         [Parameter(Mandatory, ValueFromPipeline, Position = 0)][object]$Item,
+#         [Parameter()][string]$Owner,
+#         [Parameter()][string]$ProjectNumber
+#     )
+#     ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+#     if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+#
+#     $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+#
+#     Set-Item $db $item
+#
+#     Save-ProjectDatabaseSafe -Database $db
+# }
 
 function Remove-ProjectItem {
     [CmdletBinding()]
@@ -99,7 +85,7 @@ function Remove-ProjectItem {
     }
 
     end {
-        Save-ProjectDatabase -Database $db
+        Save-ProjectDatabaseSafe -Database $db
     }
 
 }
@@ -253,8 +239,8 @@ function Edit-ProjectItem {
     $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems:$(-not $Force)
 
     # Find the actual value of the item. Item+Staged
-    $item = Get-ProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber
-
+    # $item = Get-ProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber
+     ($item, $dirty) = Resolve-ProjectItem -Database $db -ItemId $ItemId
 
     # if the item is not found
     if($null -eq $item){ "Item [$ItemId] not found" | Write-MyError; return $null}
@@ -269,7 +255,7 @@ function Edit-ProjectItem {
     Save-ItemFieldValue $db $itemId $FieldName $Value
 
     # Commit changes to the database
-    Save-ProjectDatabase -Database $db
+    Save-ProjectDatabaseSafe -Database $db
 
 } Export-ModuleMember -Function Edit-ProjectItem
 
@@ -322,9 +308,9 @@ function Add-ProjectItemDirect {
 
                 $item = $item | Convert-NodeItemToHash
 
-                Set-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Item $item
+                Set-Item $db $item
 
-                Save-ProjectDatabase -Database $db
+                Save-ProjectDatabaseSafe -Database $db
 
             }
 
@@ -385,12 +371,10 @@ function Remove-ProjectItemDirect {
         
         $ret = $response.data.deleteProjectV2Item.deletedItemId
 
-        if (! $NoCache) {
-            # Remove item from cache
-            "Removing item [$ItemId] from cache" | Write-Verbose
-            Remove-Item $db $ItemId
-            Save-ProjectDatabase $db
-        }
+        # Remove item from cache
+        "Removing item [$ItemId] from cache" | Write-Verbose
+        Remove-Item $db $ItemId
+        Save-ProjectDatabaseSafe -Database $db
 
         return $ret
     }

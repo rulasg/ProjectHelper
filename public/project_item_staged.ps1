@@ -107,7 +107,8 @@ function Reset-ProjectItemStaged{
     $db = Get-Project $Owner $ProjectNumber
 
     $db.Staged = $null
-    Save-ProjectDatabase -Database $db
+
+    Save-ProjectDatabaseSafe -Database $db
 
 } Export-ModuleMember -Function Reset-ProjectItemStaged
 

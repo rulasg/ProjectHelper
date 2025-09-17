@@ -94,8 +94,8 @@ function GetItemInfo {
     # TODO: Situation where we are updating an item that is not cached and therefore type is not known
     if (-not $item.type) {
         # Single fetch item from api
-        # Avoid caching as we are beeing called from a Database modification context
-        $item = Get-ProjectItemDirect -ItemId $ItemId
+        # memory Database is updated wit the item too
+        $item = Resolve-ProjectItem -Database $Database -ItemId $ItemId
     }
 
     if ( $null -eq $item) {
