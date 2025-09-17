@@ -101,15 +101,12 @@ function Set-ProjectDatabaseV2{
 function Save-ProjectDatabase{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][hashtable]$Database
+        [Parameter(Mandatory,Position = 0)][hashtable]$Database,
+        [Parameter()][switch]$Safe
     )
 
     $owner = $Database.owner
     $projectnumber = $Database.number
-
-    if($null -eq $Database){
-        throw "Database parameter is required"
-    }
 
     if([string]::IsNullOrWhiteSpace($owner)){
         throw "Database.owner is null or empty"
@@ -117,8 +114,21 @@ function Save-ProjectDatabase{
     if($projectnumber -le 0){
         throw "Database.number is null or not a positive integer"
     }
-
+    
     $dbkey = Get-DatabaseKey -Owner $owner -ProjectNumber $projectnumber
+
+    if($Safe){
+        $oldDatabase = Get-Database -Key $dbkey
+
+        if ($oldDatabase.safeId -ne $Database.safeId){
+            throw "The database has changed since it was read. Aborting save to prevent overwriting changes."
+        }
+
+    }
+
+    # Add safe mark
+    $Database.safeId = [guid]::NewGuid().ToString()
+
     Save-Database -Key $dbkey -Database $Database
 }
 
