@@ -11,6 +11,9 @@ function Test_EditProjectItemWithValues_Integration {
 
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$Owner-$ProjectNumber.2-skipitems.json" -SkipItems
 
+    # Mock the direct call for item
+    MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-$itemId.json"
+
     $data = @{
         "Text1"   = "value1"
         "Text2"   = "value2"

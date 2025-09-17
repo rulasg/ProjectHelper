@@ -80,3 +80,20 @@ function Open-Project{
     }
 
 } Export-ModuleMember -Function Open-Project
+
+function Set-Project {
+    [CmdletBinding()]
+    param(
+        [Parameter()][string]$Owner,
+        [Parameter(ValueFromPipeline,Position=1)][int]$ProjectNumber
+    )
+
+    process {
+
+        ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) {
+            throw "Owner and ProjectNumber are required on Open-Project"
+        }
+    }
+
+} Export-ModuleMember -Function Set-Project

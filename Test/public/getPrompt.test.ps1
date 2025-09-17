@@ -8,6 +8,8 @@ function Test_GetProjecthelperPrompt {
     $s = $ProjecthelperPromoptSettings
 
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-octodemo-625-skipitems.json" -SkipItems
+    MockCallJson -Command 'Invoke-GetItem -itemid id1' -FileName "invoke-getitem-id1.json"
+    MockCallJson -Command 'Invoke-GetItem -itemid id2' -FileName "invoke-getitem-id2.json"
 
     # No environment, return null
     $result = Invoke-WriteProjecthelperPrompt
