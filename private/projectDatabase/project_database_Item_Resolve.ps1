@@ -23,10 +23,10 @@ function Resolve-ProjectItem {
         }
 
         # Add to database
-        Set-Item $db $item
+        Set-Item $Database $item
 
         # Get item again to allow the merge between staged and project fields
-        $item = Get-Item $db $itemId
+        $item = Get-Item $Database $itemId
 
         $dirty = $true
     }

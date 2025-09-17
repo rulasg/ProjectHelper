@@ -240,7 +240,7 @@ function Edit-ProjectItem {
 
     # Find the actual value of the item. Item+Staged
     # $item = Get-ProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber
-    $item = Resolve-ProjectItem -Database $db -ItemId $ItemId
+     ($item, $dirty) = Resolve-ProjectItem -Database $db -ItemId $ItemId
 
     # if the item is not found
     if($null -eq $item){ "Item [$ItemId] not found" | Write-MyError; return $null}
