@@ -213,6 +213,11 @@ function ConvertTo-Number {
 
         # Get the numeric part from the string
         $match = $regex.Match($Value)
+
+        if (-not $match.Success) {
+            throw "Value '$Value' is not a valid number format"
+        }
+
         $numberPart = $match.Groups[1].Value
 
         # Try to guess which character is used for decimals and which is used for thousands
