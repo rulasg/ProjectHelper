@@ -15,9 +15,15 @@
             "endCursor": "Y3Vyc29yOnYyOpK5MDAwMDAwMDAuMDM1NzE0Mjg1NzE0Mjg1N84HoqOK",
             "hasNextPage": false
           },
-          "totalCount": 27,
+          "totalCount": 26,
           "nodes": [
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "Issue",
                 "id": "I_kwDOPrRnkc7KJA58",
@@ -184,6 +190,12 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "Issue",
                 "id": "I_kwDOPrRnkc7KJA25",
@@ -350,6 +362,12 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "Issue",
                 "id": "I_kwDOPrRnkc7KJA0S",
@@ -516,6 +534,12 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "Issue",
                 "id": "I_kwDOPrRnkc7KJAyT",
@@ -698,6 +722,12 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "Issue",
                 "id": "I_kwDOPrRnkc7KJAvo",
@@ -880,6 +910,12 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "Issue",
                 "id": "I_kwDOPrRnkc7KJAtI",
@@ -1065,6 +1101,12 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "Issue",
                 "id": "I_kwDOPrRnkc7KJAq7",
@@ -1237,6 +1279,12 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "Issue",
                 "id": "I_kwDOPrRnkc7KJApV",
@@ -1409,6 +1457,12 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "Issue",
                 "id": "I_kwDOPrRnkc7KJAm8",
@@ -1581,6 +1635,12 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "Issue",
                 "id": "I_kwDOPrRnkc7KJAku",
@@ -1753,6 +1813,12 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "PullRequest",
                 "id": "PR_kwDOPrRnkc6nPf2s",
@@ -1922,6 +1988,12 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "PullRequest",
                 "id": "PR_kwDOPrRnkc6nPgQb",
@@ -2067,6 +2139,12 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "Issue",
                 "id": "I_kwDOPrRnkc7KI7jH",
@@ -2180,6 +2258,12 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "DraftIssue",
                 "id": "DI_lADOAlIw4c4BCe3VzgJwMLs",
@@ -2259,6 +2343,12 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "DraftIssue",
                 "id": "DI_lADOAlIw4c4BCe3VzgJwML8",
@@ -2338,6 +2428,12 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "DraftIssue",
                 "id": "DI_lADOAlIw4c4BCe3VzgJwMMA",
@@ -2453,6 +2549,12 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "DraftIssue",
                 "id": "DI_lADOAlIw4c4BCe3VzgJwMME",
@@ -2558,6 +2660,12 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "DraftIssue",
                 "id": "DI_lADOAlIw4c4BCe3VzgJwMMM",
@@ -2673,6 +2781,12 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "Issue",
                 "id": "I_kwDOPrRnkc7KJQwB",
@@ -2839,6 +2953,12 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "Issue",
                 "id": "I_kwDOPrRnkc7KJQyo",
@@ -3005,6 +3125,12 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "Issue",
                 "id": "I_kwDOPrRnkc7KJQ0r",
@@ -3171,6 +3297,12 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "Issue",
                 "id": "I_kwDOPrRnkc7KJQ3G",
@@ -3337,6 +3469,12 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "Issue",
                 "id": "I_kwDOPrRnkc7KJRC1",
@@ -3399,71 +3537,18 @@
               }
             },
             {
-              "content": {
-                "__typename": "Issue",
-                "id": "I_kwDOIEf6YM7KQcCJ",
-                "body": "- https://github.com/github/sales/issues/10231\n\n---\n\n\n",
-                "title": "(*) Nice Systems",
-                "updatedAt": "2025-09-08T09:07:14Z",
-                "createdAt": "2025-09-08T09:07:14Z",
-                "number": 392,
-                "url": "https://github.com/github/rulasg.notes/issues/392",
-                "state": "OPEN",
-                "repository": {
-                  "nameWithOwner": "github/rulasg.notes"
-                }
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
               },
-              "id": "PVTI_lADOAlIw4c4BCe3Vzgeemmw",
-              "fieldValues": {
-                "nodes": [
-                  {
-                    "__typename": "ProjectV2ItemFieldUserValue",
-                    "users": {
-                      "nodes": [
-                        {
-                          "login": "rulasg"
-                        }
-                      ]
-                    },
-                    "field": {
-                      "__typename": "ProjectV2Field",
-                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-Q",
-                      "name": "Assignees",
-                      "dataType": "ASSIGNEES"
-                    }
-                  },
-                  {
-                    "__typename": "ProjectV2ItemFieldRepositoryValue",
-                    "repository": {
-                      "url": "https://github.com/github/rulasg.notes"
-                    },
-                    "field": {
-                      "__typename": "ProjectV2Field",
-                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-k",
-                      "name": "Repository",
-                      "dataType": "REPOSITORY"
-                    }
-                  },
-                  {
-                    "__typename": "ProjectV2ItemFieldTextValue",
-                    "text": "(*) Nice Systems",
-                    "field": {
-                      "__typename": "ProjectV2Field",
-                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-M",
-                      "name": "Title",
-                      "dataType": "TITLE"
-                    }
-                  }
-                ]
-              }
-            },
-            {
               "content": {
                 "__typename": "PullRequest",
                 "id": "PR_kwDOPrRnkc6nndcE",
                 "body": "",
                 "title": "PullRequest for development",
-                "updatedAt": "2025-09-09T14:04:20Z",
+                "updatedAt": "2025-09-11T14:35:05Z",
                 "createdAt": "2025-09-09T13:56:05Z",
                 "number": 25,
                 "url": "https://github.com/octodemo/rulasg-dev-1/pull/25",
@@ -3519,7 +3604,7 @@
                   },
                   {
                     "__typename": "ProjectV2ItemFieldTextValue",
-                    "text": "PR for development",
+                    "text": "PullRequest for development",
                     "field": {
                       "__typename": "ProjectV2Field",
                       "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-M",
@@ -3611,12 +3696,18 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "DraftIssue",
                 "id": "DI_lADOAlIw4c4BCe3VzgJwmkk",
                 "body": "",
                 "title": "DraftIssue for development",
-                "updatedAt": "2025-09-09T13:59:33Z",
+                "updatedAt": "2025-09-11T15:14:28Z",
                 "createdAt": "2025-09-09T13:59:21Z"
               },
               "id": "PVTI_lADOAlIw4c4BCe3Vzgeiodc",
@@ -3716,12 +3807,18 @@
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
               "content": {
                 "__typename": "Issue",
                 "id": "I_kwDOPrRnkc7KkwSq",
                 "body": "Body of issue for development",
                 "title": "Issue for development",
-                "updatedAt": "2025-09-09T14:01:23Z",
+                "updatedAt": "2025-09-11T13:06:24Z",
                 "createdAt": "2025-09-09T14:01:17Z",
                 "number": 26,
                 "url": "https://github.com/octodemo/rulasg-dev-1/issues/26",
@@ -3847,6 +3944,16 @@
                       "id": "PVTIF_lADOAlIw4c4BCe3Vzg0rhqQ",
                       "name": "field-iteration",
                       "dataType": "ITERATION"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldDateValue",
+                    "date": "2025-09-17",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhlU",
+                      "name": "field-date",
+                      "dataType": "DATE"
                     }
                   }
                 ]
