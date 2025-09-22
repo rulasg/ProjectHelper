@@ -3,22 +3,25 @@ function Test_GetProjectItem_SUCCESS{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "octodemo" ; $ProjectNumber = 16700
-    # $itemsCount = 12 ; $fieldsCount = 18
-    $fieldComment = "field-text" ; $fieldTitle = "Title"
+    $p = Get-Mock_Project_700
+    $i = $p.draftissue
+    $f = $p.fieldtext
 
+    $owner = $p.owner ; $projectNumber = $p.number
 
-    $itemId = "PVTI_lADOAlIw4c4BCe3Vzgeio4o"
-    $projectFieldTitleValue = "A draft in the project"
-    $projectFieldCommentValue = "This"
-    $itemFieldTitleValue = "kk text"
-    $itemFieldCommentValue = "comment for draft 1"
+    $fieldComment = $f.name ; $fieldTitle = "Title"
+
+    $itemId = $i.id
+    $projectFieldTitleValue = $i.title
+    $projectFieldCommentValue = $i.fieldtext
+    $itemFieldTitleValue = $projectFieldTitleValue + " updated"
+    $itemFieldCommentValue = $projectFieldCommentValue + " updated"
 
     # allow get project
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    MockCall_GetProject_700
 
     # Even if id is in project we make a direct call when with Force
-    MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-$itemId.json"
+    MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-$itemId-updated.json"
     
     # Act get value from project
     $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
