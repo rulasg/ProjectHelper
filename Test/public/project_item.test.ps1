@@ -200,60 +200,6 @@ function Test_UpdateProjectDatabase_Fail_With_Staged{
 
 }
 
-function Test_FindProjectItem_SUCCESS{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
-    $Owner = "octodemo" ; $ProjectNumber = 164700
-    #$itemsCount = 12 ; $fieldsCount = 18
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
-
-    $title = "Issue 455d29e3"
-    $itemId1 = "PVTI_lADNJr_OALnx2s4Fqq8f"
-    $itemId2 = "PVTI_lADNJr_OALnx2s4Fqq8p"
-    $subtitle = $title.Substring(4,4)
-    $subtitle
-
-    # Item not found
-    $result = Find-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Title "No item with this title"
-    Assert-IsNull -Object $result
-
-    # Several items with similar title
-    $result = Find-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Title "*$subtitle*" -IncludeDone
-    Assert-Count -Expected 2 -Presented $result
-    Assert-Contains -Expected $itemId1 -Presented $result.id
-    Assert-Contains -Expected $itemId2 -Presented $result.id
-
-    # Not Match
-    $result = Find-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Title $title -Match
-    Assert-IsNull -Object $result
-
-    # Match
-    $result = Find-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Title "$title 1" -Match
-    Assert-Count -Expected 1 -Presented $result
-    Assert-Contains -Expected $itemId1 -Presented $result.id
-}
-
-function Test_FindProjectItem_FAIL{
-
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
-    $Owner = "octodemo" ; $ProjectNumber = 1700
-    $erroMessage= "Error: Project not found. Check owner and projectnumber"
-
-    Mock_DatabaseRoot
-
-    MockCall_GitHubOrgProjectWithFields_Null  -Owner $owner -ProjectNumber $projectNumber
-
-    # Run the command
-    Start-MyTranscript
-    $result = Find-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Title "no title"
-    $tt = Stop-MyTranscript
-    
-    Assert-IsNull -Object $result
-    Assert-Contains -Expected $erroMessage -Presented $tt
-}
 
 function Test_SearchProjectItem_SUCCESS{
 
@@ -313,16 +259,18 @@ function Test_ShowProjectItem_SUCCESS{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "octodemo" ; $ProjectNumber = 700
-    $id = "PVTI_lADOBCrGTM4ActQazgMtRO0"
-    $title = "EPIC 1 "
-    $status = "Todo"
+    MockCall_GetProject_700
+
+    $p = Get-Mock_Project_700; $Owner = "octodemo" ; $ProjectNumber = 700
+
+    $i = $p.issue
+    $id = $i.Id
+    $title = $i.title
+    $status = $i.status
 
     # title refrence with differnt case and spaces
 
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
-    
-    $item = Find-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Title $title -Match
+    $item = Get-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $id
 
     $result = $item | Show-ProjectItem -AdditionalFields "Status"
     
@@ -331,7 +279,6 @@ function Test_ShowProjectItem_SUCCESS{
     Assert-AreEqual -Expected $id -Presented $result[0].id
     Assert-AreEqual -Expected $title -Presented $result[0].Title
     Assert-AreEqual -Expected $status -Presented $result[0].Status
-    
 }
 
 function Test_ShowProjectItem_SUCCESS_Multiple{

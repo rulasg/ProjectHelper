@@ -90,40 +90,6 @@ function Remove-ProjectItem {
 
 }
 
-function Find-ProjectItem {
-    [CmdletBinding()]
-    param(
-        [Parameter()][string]$Owner,
-        [Parameter()][string]$ProjectNumber,
-        [Parameter(Mandatory, Position = 0)][string]$Title,
-        [Parameter()][switch]$IncludeDone,
-        [Parameter()][switch]$Match,
-        [Parameter()][switch]$Force
-    )
-
-    ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
-
-    $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -ExcludeDone:$(-not $IncludeDone)
-
-    # return if #items is null
-    if ($null -eq $items) { return $null }
-
-    # Find item in the database
-    if ($Match) {
-        $found = $items.Values | Where-Object { $_.Title -eq $Title }
-    }
-    else {
-        $found = $items.Values | Where-Object { $_.Title -like "$Title" }
-    }
-
-    $ret = $found | ForEach-Object { 
-        [PSCustomObject]$_
-    } 
-
-    return $ret
-} Export-ModuleMember -Function Find-ProjectItem
-
 function Search-ProjectItem {
     [CmdletBinding()]
     param(

@@ -3,7 +3,7 @@ function Test_GetProjetItemList_SUCCESS{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $ProjectNumber = $p.number
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $i = $p.issue
     $itemsCount = $p.items.totalCount
 
@@ -79,7 +79,7 @@ function Test_ProjectItemList_ExcludeDone{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $ProjectNumber = $p.number
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $i = $p.issue
     $itemsCount = $p.items.totalCount
     $itemsDone = $p.items.doneCount
@@ -95,91 +95,23 @@ function Test_ProjectItemList_ExcludeDone{
     Assert-AreEqual -Expected ($itemsCount - $itemsDone) -Presented $result.Keys.Count
 }
 
-function Test_FindProjectItemByTitle_SUCCESS{
-
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
-    MockCall_GetProject_700
-
-    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $ProjectNumber = $p.number
-
-    $i = $p.issue
-    $id = $i.Id
-
-    # title refrence with differnt case and spaces
-    $title = "    ISSUE fOr DEVELOPMENT   "
-    $actual = $p.issue.title
-
-    $result = Find-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $title
-
-    Assert-AreEqual -Expected $id -Presented $result.id
-    Assert-AreEqual -Expected $actual -Presented $result.Title
-}
-
-function Test_FindProjectItemByTitle_SUCCESS_MultipleResults{
-
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
-    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $ProjectNumber = $p.number
-    MockCall_GetProject_700
-
-
-
-    $id1 = $i.Id
-    $id2 = $pullRequest.Id
-
-    # title refrence with differnt case and spaces
-    $title = "issue to find"
-    $title1 = "Issue to find"
-    $title2 = "ISSUE to FIND"
-
-    $result = Find-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $title -Force
-
-    Assert-Count -Expected 2 -Presented $result
-    Assert-Contains -Expected $p.issueToFind.Ids[0] -Presented $result.id
-    Assert-Contains -Expected $p.issueToFind.Ids[1] -Presented $result.id
-    Assert-Contains -Expected $title1 -Presented $result.Title
-    Assert-Contains -Expected $title2 -Presented $result.Title
-}
-
-function Test_FindProjectItemByTitle_FAIL{
-
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
-    $Owner = "SomeOrg" ; $ProjectNumber = 164
-
-    MockCall_GitHubOrgProjectWithFields_Null  -Owner $owner -ProjectNumber $projectNumber
-
-    # Run the command
-    Start-MyTranscript
-    $result = Find-ProjectItemByTitle -Owner $Owner -ProjectNumber $ProjectNumber
-    $tt = Stop-MyTranscript
-
-    # Capture the standard output
-    $erroMessage1= "Error: Project not found. Check owner and projectnumber"
-
-    Assert-IsNull -Object $result
-    Assert-Contains -Expected $erroMessage1 -Presented $tt
-}
-
 function Test_SearchProjectItemByTitle_SUCCESS{
 
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164  ; $id = "PVTI_lADOBCrGTM4ActQazgMtRO0"
+    MockCall_GetProject_700
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $id = $p.issue.Id
 
     # title refrence with differnt case and spaces
-    $title = "epic"
+    $title = "development"
 
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
-
+    # Act
     $result = Search-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $title
 
-    Assert-Count -Expected 2 -Presented $result
+    Assert-Count -Expected 3 -Presented $result
 
     Assert-Contains -Expected "EPIC 1 " -Presented $result.Title
     Assert-Contains -Expected "PVTI_lADOBCrGTM4ActQazgMtRO0" -Presented $result.id

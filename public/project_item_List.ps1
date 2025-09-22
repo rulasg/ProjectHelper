@@ -99,63 +99,10 @@ function Test-ItemIsDone($Item){
 
 <#
 .SYNOPSIS
-Finds project items by exact title match.
-
-.DESCRIPTION
-Searches for project items that have an exact title match (case-insensitive). 
-Returns all items that match the specified title.
-
-.PARAMETER Title
-The exact title to search for. The comparison is case-insensitive and trims whitespace.
-
-.PARAMETER Owner
-The owner of the GitHub repository containing the project.
-
-.PARAMETER ProjectNumber
-The project number in the repository.
-
-.PARAMETER Force
-Forces a refresh of the project data from GitHub.
-
-.OUTPUTS
-System.Object[]
-Returns an array of project item objects that match the title.
-
-.EXAMPLE
-Find-ProjectItemByTitle -Title "Bug Fix" -Owner "octocat" -ProjectNumber "1"
-Finds all items in project 1 with the exact title "Bug Fix".
-#>
-function Find-ProjectItemByTitle{
-    [CmdletBinding()]
-    param(
-        [Parameter(Position = 0)] [string]$Title,
-        [Parameter()] [string]$Owner,
-        [Parameter()] [string]$ProjectNumber,
-        [Parameter()] [switch]$Force
-    )
-
-    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
-
-    $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
-
-    # return if #db is null
-    if($null -eq $items){ return $null }
-
-    # Equal seems to be case unsensitive
-    $ret =  $items.Values | Where-Object { $_.Title.Trim() -eq $($Title.Trim()) }
-
-    return $ret
-
-} Export-ModuleMember -Function Find-ProjectItemByTitle
-
-<#
-.SYNOPSIS
 Searches for project items by title using wildcard matching.
 
 .DESCRIPTION
 Searches for project items where the title contains the specified text using wildcard matching.
-This is different from Find-ProjectItemByTitle which requires an exact match.
 
 .PARAMETER Owner
 The owner of the GitHub repository containing the project.

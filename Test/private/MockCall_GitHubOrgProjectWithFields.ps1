@@ -37,6 +37,7 @@ function Get-Mock_Project_700 {
         id        = $issue.id
         contentId = $issue.content.id
         title     = $issue.content.title
+        status    = ($issue.fieldValues.nodes | Where-Object { $_.field.name -eq "Status" }).name
         fieldtext = ($issue.fieldValues.nodes | Where-Object { $_.field.id -eq $($fieldtext.id) }).text
     }
 
@@ -46,6 +47,7 @@ function Get-Mock_Project_700 {
         id        = $pullRequest.id
         contentId = $pullRequest.content.id
         title     = $pullRequest.content.title
+        status    = ($pullRequest.fieldValues.nodes | Where-Object { $_.field.name -eq "Status" }).name
         fieldtext = ($pullRequest.fieldValues.nodes | Where-Object { $_.field.id -eq $($fieldtext.id) }).text
     }
 
@@ -55,6 +57,7 @@ function Get-Mock_Project_700 {
         id        = $draftIssue.id
         contentId = $draftIssue.content.id
         title     = $draftIssue.content.title
+        status    = ($draftIssue.fieldValues.nodes | Where-Object { $_.field.name -eq "Status" }).name
         fieldtext = ($draftIssue.fieldValues.nodes | Where-Object { $_.field.id -eq $($fieldtext.id) }).text
         
     }
