@@ -10,6 +10,11 @@ function Convert-NodeItemToHash {
         $item = New-Object System.Collections.Hashtable
         $item.id = $NodeItem.id
         $item.databaseId = $NodeItem.fullDatabaseId
+
+        # Project
+        $item.projectId = $NodeItem.project.id
+        $item.projectUrl = $NodeItem.project.url
+
         # Content
         $item.type = $NodeItem.content.__typename
         $item.body = $NodeItem.content.body
@@ -17,15 +22,14 @@ function Convert-NodeItemToHash {
         # Title is stored in two places. in the content and as a field.
         # We will use the field value
         $item.number = $NodeItem.content.number
-        $item.url = [string]::IsNullOrWhiteSpace($NodeItem.content.url) ? $item.urlPanel : $item.urlContent
-        $item.urlContent = $NodeItem.content.url
         $item.state = $NodeItem.content.state
-
-        $item.projectId = $NodeItem.project.id
-        $item.projectUrl = $NodeItem.project.url
-        $item.urlPanel = Build-ItemPanelUrl -Item $item
+        $item.urlContent = $NodeItem.content.url
         $item.createdAt = GetDateTime -DateTimeString $NodeItem.content.createdAt
         $item.updatedAt = GetDateTime -DateTimeString $NodeItem.content.updatedAt
+        
+        # Url
+        $item.urlPanel = Build-ItemPanelUrl -Item $item
+        $item.url = [string]::IsNullOrWhiteSpace($item.urlContent) ? $item.urlPanel : $item.urlContent
 
         #Fields
         foreach ($nodefield in $NodeItem.fieldValues.nodes) {

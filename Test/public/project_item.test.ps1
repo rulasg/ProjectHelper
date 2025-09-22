@@ -297,7 +297,7 @@ function Test_GetItemDirect_SUCCESS{
     $itemUrl = "https://github.com/github/sales/issues/11742"
     $contentId ="I_kwDOAFbrpM6s_fNK"
 
-    MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName 'getitemdirect_1.json'
+    MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-$itemId.json"
 
     $result = Get-ProjectItemDirect -ItemId $itemId
 

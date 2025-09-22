@@ -1,0 +1,325 @@
+{
+  "data": {
+    "node": {
+      "id": "PVTI_lADNJr_OADU3Ys4GAgVO",
+      "type": "ISSUE",
+      "fullDatabaseId": "100795726",
+      "project": {
+        "id": "PVT_kwDNJr_OADU3Yg",
+        "url": "https://github.com/orgs/github/projects/9279"
+      },
+      "content": {
+        "__typename": "Issue",
+        "id": "I_kwDOAFbrpM6s_fNK",
+        "body": "Pending customer information",
+        "title": "CaixaBank",
+        "updatedAt": "2025-09-08T09:00:32Z",
+        "createdAt": "2025-03-07T08:16:57Z",
+        "number": 11742,
+        "url": "https://github.com/github/sales/issues/11742",
+        "state": "OPEN",
+        "repository": {
+          "nameWithOwner": "github/sales"
+        }
+      },
+      "fieldValues": {
+        "nodes": [
+          {
+            "__typename": "ProjectV2ItemFieldUserValue",
+            "users": {
+              "nodes": [
+                {
+                  "login": "oanamariadinca"
+                }
+              ]
+            },
+            "field": {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADNJr_OADU3Ys4CH1oS",
+              "name": "Assignees",
+              "dataType": "ASSIGNEES"
+            }
+          },
+          {
+            "__typename": "ProjectV2ItemFieldRepositoryValue",
+            "repository": {
+              "url": "https://github.com/github/sales"
+            },
+            "field": {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADNJr_OADU3Ys4CH1oY",
+              "name": "Repository",
+              "dataType": "REPOSITORY"
+            }
+          },
+          {
+            "__typename": "ProjectV2ItemFieldLabelValue",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "Client"
+                }
+              ]
+            },
+            "field": {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADNJr_OADU3Ys4CH1oU",
+              "name": "Labels",
+              "dataType": "LABELS"
+            }
+          },
+          {
+            "__typename": "ProjectV2ItemFieldTextValue",
+            "text": "CaixaBank",
+            "field": {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADNJr_OADU3Ys4CH1oR",
+              "name": "Title",
+              "dataType": "TITLE"
+            }
+          },
+          {
+            "__typename": "ProjectV2ItemFieldSingleSelectValue",
+            "name": "🔴 Client",
+            "field": {
+              "__typename": "ProjectV2SingleSelectField",
+              "id": "PVTSSF_lADNJr_OADU3Ys4H9tgv",
+              "name": "MyType",
+              "dataType": "SINGLE_SELECT",
+              "options": [
+                {
+                  "id": "52dd0a94",
+                  "name": "🟣 Event"
+                },
+                {
+                  "id": "07f69b86",
+                  "name": "🔴 Client"
+                },
+                {
+                  "id": "936b8226",
+                  "name": "🔴 Sub-Client"
+                },
+                {
+                  "id": "676aeaed",
+                  "name": "🔵 Project"
+                },
+                {
+                  "id": "1f915e81",
+                  "name": "🔵 Opportunity"
+                },
+                {
+                  "id": "dc2c7605",
+                  "name": "🟠 Session"
+                },
+                {
+                  "id": "b1c7a26b",
+                  "name": "🟡 Support"
+                },
+                {
+                  "id": "a474d0fe",
+                  "name": "🟡 CxQuestion"
+                },
+                {
+                  "id": "b52d5003",
+                  "name": "🟤 Training"
+                },
+                {
+                  "id": "10ea9bf2",
+                  "name": "🟢 Task"
+                },
+                {
+                  "id": "92474147",
+                  "name": "🟢 Dev Task"
+                },
+                {
+                  "id": "feb2cfe2",
+                  "name": "⚫️ Followup"
+                },
+                {
+                  "id": "c4555c8b",
+                  "name": "⚪️ Reference"
+                },
+                {
+                  "id": "85528198",
+                  "name": "🟣 Preview/Feature"
+                }
+              ]
+            }
+          },
+          {
+            "__typename": "ProjectV2ItemFieldTextValue",
+            "text": "Spain 🇪🇸",
+            "field": {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADNJr_OADU3Ys4Keswg",
+              "name": "oa_Country",
+              "dataType": "TEXT"
+            }
+          },
+          {
+            "__typename": "ProjectV2ItemFieldSingleSelectValue",
+            "name": "☺️ Normal",
+            "field": {
+              "__typename": "ProjectV2SingleSelectField",
+              "id": "PVTSSF_lADNJr_OADU3Ys4CNK1v",
+              "name": "Priority",
+              "dataType": "SINGLE_SELECT",
+              "options": [
+                {
+                  "id": "ce18a259",
+                  "name": "🔥 Critical"
+                },
+                {
+                  "id": "31843608",
+                  "name": "🥵 High"
+                },
+                {
+                  "id": "a389e3b2",
+                  "name": "☺️ Normal"
+                },
+                {
+                  "id": "1cb3b85a",
+                  "name": "🥶 Low"
+                }
+              ]
+            }
+          },
+          {
+            "__typename": "ProjectV2ItemFieldSingleSelectValue",
+            "name": "InProgress",
+            "field": {
+              "__typename": "ProjectV2SingleSelectField",
+              "id": "PVTSSF_lADNJr_OADU3Ys4CH1oT",
+              "name": "Status",
+              "dataType": "SINGLE_SELECT",
+              "options": [
+                {
+                  "id": "50071b25",
+                  "name": "ActionRequired"
+                },
+                {
+                  "id": "f75ad846",
+                  "name": "Todo"
+                },
+                {
+                  "id": "5954772e",
+                  "name": "Followup"
+                },
+                {
+                  "id": "47fc9ee4",
+                  "name": "InProgress"
+                },
+                {
+                  "id": "8caaa5f1",
+                  "name": "Waiting"
+                },
+                {
+                  "id": "700d6341",
+                  "name": "Planned"
+                },
+                {
+                  "id": "fa3a5614",
+                  "name": "Answered"
+                },
+                {
+                  "id": "3fec1e37",
+                  "name": "Dormant"
+                },
+                {
+                  "id": "98236657",
+                  "name": "Done"
+                }
+              ]
+            }
+          },
+          {
+            "__typename": "ProjectV2ItemFieldSingleSelectValue",
+            "name": "⚪️",
+            "field": {
+              "__typename": "ProjectV2SingleSelectField",
+              "id": "PVTSSF_lADNJr_OADU3Ys4H-wa8",
+              "name": "Topic",
+              "dataType": "SINGLE_SELECT",
+              "options": [
+                {
+                  "id": "4109cf64",
+                  "name": "🟡"
+                },
+                {
+                  "id": "7141fadd",
+                  "name": "⚪️"
+                },
+                {
+                  "id": "8f98d44d",
+                  "name": "🟠"
+                },
+                {
+                  "id": "bd39a099",
+                  "name": "🟢"
+                },
+                {
+                  "id": "6c319f30",
+                  "name": "⚫️"
+                },
+                {
+                  "id": "d5222459",
+                  "name": "🔵"
+                },
+                {
+                  "id": "6727fc0d",
+                  "name": "🟣"
+                },
+                {
+                  "id": "2130ccae",
+                  "name": "🟤"
+                },
+                {
+                  "id": "484975c2",
+                  "name": "🔴"
+                }
+              ]
+            }
+          },
+          {
+            "__typename": "ProjectV2ItemFieldNumberValue",
+            "number": 1.0,
+            "field": {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADNJr_OADU3Ys4LxRAX",
+              "name": "LastUpdateInWeeks",
+              "dataType": "NUMBER"
+            }
+          },
+          {
+            "__typename": "ProjectV2ItemFieldSingleSelectValue",
+            "name": "Critical",
+            "field": {
+              "__typename": "ProjectV2SingleSelectField",
+              "id": "PVTSSF_lADNJr_OADU3Ys4NBnOe",
+              "name": "Severity",
+              "dataType": "SINGLE_SELECT",
+              "options": [
+                {
+                  "id": "f4488bd9",
+                  "name": "Critical"
+                },
+                {
+                  "id": "bd05cbe2",
+                  "name": "High"
+                },
+                {
+                  "id": "c17bf654",
+                  "name": "Medium"
+                },
+                {
+                  "id": "50650f37",
+                  "name": "Low"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}
