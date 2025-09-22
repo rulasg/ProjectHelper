@@ -783,22 +783,36 @@ function Test_TestProjectItemStaged {
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164
+    $p = Get-Mock_Project_700 ; $Owner = $p.Owner ; $ProjectNumber = $p.Number
+    $i = $p.issue
+    $f = $p.fieldtext
+    $fieldName = "field-text"
+    $fieldValue = "some value"
+
 
     # no project information available
     $result = Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-IsFalse -Condition $result
 
     # Project is cached
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    MockCall_GetProject_700 -Cache
     $null = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
     $result = Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-IsFalse -Condition $result
 
     # Edit some thing
-    MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc -FieldId PVTF_lADOBCrGTM4ActQazgSl5GU -Value "new value of the comment 10" -Type text'
-    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber PVTI_lADOBCrGTM4ActQazgMuXXc "Comment" "new value of the comment 10"
+    $params = @{
+        ProjectId     = $p.Id
+        ItemId        = $i.Id
+        FieldId       = $f.Id
+        Type          = "text"
+        Value         = $fieldValue
+    }
+    MockCall_GitHubUpdateItemValues @params
+    MockCall_GetItem -ItemId $i.Id
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $i.Id $fieldName $fieldValue
 
+    # Act
     $result = Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-IsTrue -Condition $result
 
