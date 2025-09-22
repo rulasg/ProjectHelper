@@ -16,7 +16,7 @@ function Test_EnvironmentCache{
     $fieldTitle = "Title"
 
     # Cache the project
-    MockCall_GitHubOrgProjectWithFields_700 -Cache
+    MockCall_GetProject_700 -Cache
 
     # Reset mock calls
     Reset-invokeCommandMock

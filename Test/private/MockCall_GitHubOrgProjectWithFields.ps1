@@ -43,9 +43,7 @@ function Get-Mock_Project_700 {
     return $project_700
 }
 
-$PROJECT_700 = Get-Mock_Project_700
-
-function MockCall_GitHubOrgProjectWithFields_700{
+function MockCall_GetProject_700{
     [CmdletBinding()]
     param(
         [parameter()][switch]$SkipItems,
