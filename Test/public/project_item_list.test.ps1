@@ -3,11 +3,9 @@ function Test_GetProjetItemList_SUCCESS{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $p = Get-Mock_Project_700
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $ProjectNumber = $p.number
     $i = $p.issue
-    $owner = $p.owner
-    $ProjectNumber = $p.number
-    $itemsCount = $p.itemsCount
+    $itemsCount = $p.items.totalCount
 
     MockCall_GetProject_700
 
@@ -83,8 +81,8 @@ function Test_ProjectItemList_ExcludeDone{
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $ProjectNumber = $p.number
     $i = $p.issue
-    $itemsCount = $p.itemsCount
-    $itemsDone = $p.itemsCountDone
+    $itemsCount = $p.items.totalCount
+    $itemsDone = $p.items.doneCount
 
     MockCall_GetProject_700
 

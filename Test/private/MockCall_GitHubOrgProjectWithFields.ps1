@@ -24,8 +24,8 @@ function Get-Mock_Project_700 {
     # Items
     # $project_700.$statusField = $p.fields.nodes | Where-Object { $_.name -eq "Status" }
     $project_700.items = @{}
-    $project_700.items.itemsCount = $p.items.totalcount
-    $project_700.items.itemsCountDone = 6 # too complicated to read from structure
+    $project_700.items.totalCount = $p.items.totalcount
+    $project_700.items.doneCount = 6 # too complicated to read from structure
 
     # Issues to find
     $project_700.issueToFind = @{}
