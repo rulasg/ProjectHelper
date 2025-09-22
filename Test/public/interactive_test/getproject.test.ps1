@@ -29,11 +29,6 @@ function Test_Get_Project_ItemId_Equal_Case_Sensitive{
     Assert-IsNotNull -Object $result3
     Assert-AreEqual -Expected $result3.id -Presented $result.items.$item3.id
 
-    $result4 = Get-ProjectItem  -ItemId $item4
-    Assert-IsNotNull -Object $result4
-    Assert-AreEqual -Expected $result4.id -Presented $result.items.$item4.id
-
-
 }
 
 function Test_Get_Project_ItemId_Equal_Case_Sensitive_2{

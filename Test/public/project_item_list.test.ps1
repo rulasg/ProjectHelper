@@ -102,11 +102,9 @@ function Test_FindProjectItemByTitle_SUCCESS{
 
     MockCall_GetProject_700
 
-    $p = Get-Mock_Project_700
-    $i = $p.issue
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $ProjectNumber = $p.number
 
-    $Owner = $p.owner
-    $ProjectNumber = $p.number
+    $i = $p.issue
     $id = $i.Id
 
     # title refrence with differnt case and spaces

@@ -3,11 +3,9 @@ function Test_GetProjectItem_SUCCESS{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $p = Get-Mock_Project_700
+    $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $ProjectNumber = $p.number
     $i = $p.draftissue
     $f = $p.fieldtext
-
-    $owner = $p.owner ; $projectNumber = $p.number
 
     $fieldComment = $f.name ; $fieldTitle = "Title"
 

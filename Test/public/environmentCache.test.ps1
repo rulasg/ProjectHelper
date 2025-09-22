@@ -7,11 +7,10 @@ function Test_EnvironmentCache{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $p = Get-Mock_Project_700
+    $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $ProjectNumber = $p.number
     $i = $p.issue
     $f = $p.fieldtext
 
-    $Owner = $p.owner ; $ProjectNumber = $p.number
     $fieldComment = $f.name
     $fieldTitle = "Title"
 
