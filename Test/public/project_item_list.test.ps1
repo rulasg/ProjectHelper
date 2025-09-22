@@ -84,13 +84,18 @@ function Test_FindProjectItemByTitle_SUCCESS{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164  ; $id = "PVTI_lADOBCrGTM4ActQazgMtRO0"
+    MockCall_GetProject_700
+
+    $p = Get-Mock_Project_700
+    $i = $p.issue
+
+    $Owner = $p.owner
+    $ProjectNumber = $p.number
+    $id = $i.Id
 
     # title refrence with differnt case and spaces
-    $title = "epic 1"
-    $actual = "EPIC 1 "
-
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    $title = "    ISSUE fOr DEVELOPMENT   "
+    $actual = $p.issue.title
 
     $result = Find-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $title
 
