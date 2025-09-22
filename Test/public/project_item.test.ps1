@@ -164,20 +164,22 @@ function Test_UpdateProjectDatabase_Fail_With_Staged{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "octodemo" ; $ProjectNumber = 164 ; $itemsCount = 1700
-    $itemId = "PVTI_lADOBCrGTM4ActQazgMueM4"
-    $fieldComment = "comment" ; $fieldCommentValue = "new value of the comment 10.1"
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    MockCall_GetProject_700
+    $p = Get-Mock_Project_700 ; $Owner = $p.Owner ; $ProjectNumber = $p.Number
+    $itemsCount = $p.items.totalCount
+    $itemId = $p.issue.Id
+    $fieldComment = "field-text" ; $fieldCommentValue = "new value of the comment 10.1"
 
+    MockCall_GetItem -ItemId $itemId
 
-    # Calling Get-ProjectItemList with Force to trigger update-projectdatabase that should fail as their are
-    # staged changes not yet synced to remote.
+    # Act empty as their is nothing staged yet
     $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force
     Assert-Count -Expected $itemsCount -Presented $result
 
-    $result = Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldComment $fieldCommentValue
-    Assert-IsNull -Object $result
+    # arrange modifyt to add staged
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldComment $fieldCommentValue
 
+    # Act get staged. 1 modified
     $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
     Assert-Count -Expected 1 -Presented $result.Keys
     Assert-AreEqual -Expected $itemId -Presented $result.Keys
