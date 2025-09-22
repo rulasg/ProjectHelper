@@ -142,7 +142,8 @@ function Find-ProjectItemByTitle{
     # return if #db is null
     if($null -eq $items){ return $null }
 
-    $ret =  $items.Values | Where-Object { $_.Title.Trim().ToLower() -eq $($Title.Trim().ToLower()) }
+    # Equal seems to be case unsensitive
+    $ret =  $items.Values | Where-Object { $_.Title.Trim() -eq $($Title.Trim()) }
 
     return $ret
 

@@ -7,7 +7,7 @@ function Test_GetProjetItemList_SUCCESS{
     $i = $p.issue
     $owner = $p.owner
     $ProjectNumber = $p.number
-    $itemsCount = 26
+    $itemsCount = $p.itemsCount
 
     MockCall_GetProject_700
 
@@ -83,8 +83,8 @@ function Test_ProjectItemList_ExcludeDone{
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $ProjectNumber = $p.number
     $i = $p.issue
-    $itemsCount = 26
-    $itemsDone = 6
+    $itemsCount = $p.itemsCount
+    $itemsDone = $p.itemsCountDone
 
     MockCall_GetProject_700
 
@@ -126,24 +126,26 @@ function Test_FindProjectItemByTitle_SUCCESS_MultipleResults{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164  ;
-    $id1 = "PVTI_lADNJr_OALnx2s4Fqq8P"
-    $id2 = "PVTI_lADOBCrGTM4ActQazgMtRPA"
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $ProjectNumber = $p.number
+    MockCall_GetProject_700
+
+
+
+    $id1 = $i.Id
+    $id2 = $pullRequest.Id
 
     # title refrence with differnt case and spaces
-    $title = "issue name 1"
-    $title1 = "Issue Name 1"
-    $title2 = "ISSUE NAME 1"
-
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    $title = "issue to find"
+    $title1 = "Issue to find"
+    $title2 = "ISSUE to FIND"
 
     $result = Find-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $title -Force
 
     Assert-Count -Expected 2 -Presented $result
-    Assert-Contains -Expected $id1 -Presented $result.id
-    Assert-Contains -Expected $id2 -Presented $result.id
-    Assert-AreEqual -Expected $title1 -Presented $result[0].Title
-    Assert-AreEqual -Expected $title2 -Presented $result[1].Title
+    Assert-Contains -Expected $p.issueToFind.Ids[0] -Presented $result.id
+    Assert-Contains -Expected $p.issueToFind.Ids[1] -Presented $result.id
+    Assert-Contains -Expected $title1 -Presented $result.Title
+    Assert-Contains -Expected $title2 -Presented $result.Title
 }
 
 function Test_FindProjectItemByTitle_FAIL{

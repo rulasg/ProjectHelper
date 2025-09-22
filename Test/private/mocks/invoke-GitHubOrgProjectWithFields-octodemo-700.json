@@ -12,10 +12,10 @@
         "readme": null,
         "items": {
           "pageInfo": {
-            "endCursor": "Y3Vyc29yOnYyOpK5MDAwMDAwMDAuMDM1NzE0Mjg1NzE0Mjg1N84HoqOK",
+            "endCursor": "Y3Vyc29yOnYyOpK5MDAwMDAwMDAuMDMzMzMzMzMzMzMzMzMzM84HwRmY",
             "hasNextPage": false
           },
-          "totalCount": 26,
+          "totalCount": 28,
           "nodes": [
             {
               "project": {
@@ -3980,6 +3980,70 @@
                       "id": "PVTIF_lADOAlIw4c4BCe3Vzg0rhqQ",
                       "name": "field-iteration",
                       "dataType": "ITERATION"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
+              "content": {
+                "__typename": "DraftIssue",
+                "id": "DI_lADOAlIw4c4BCe3VzgJymYM",
+                "body": "",
+                "title": "Issue to find",
+                "updatedAt": "2025-09-22T14:23:38Z",
+                "createdAt": "2025-09-22T14:23:38Z"
+              },
+              "id": "PVTI_lADOAlIw4c4BCe3VzgfBGX8",
+              "fullDatabaseId": "130095487",
+              "fieldValues": {
+                "nodes": [
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Issue to find",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-M",
+                      "name": "Title",
+                      "dataType": "TITLE"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
+              "content": {
+                "__typename": "DraftIssue",
+                "id": "DI_lADOAlIw4c4BCe3VzgJymYQ",
+                "body": "",
+                "title": "ISSUE to FIND",
+                "updatedAt": "2025-09-22T14:29:30Z",
+                "createdAt": "2025-09-22T14:23:41Z"
+              },
+              "id": "PVTI_lADOAlIw4c4BCe3VzgfBGZg",
+              "fullDatabaseId": "130095512",
+              "fieldValues": {
+                "nodes": [
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "ISSUE to FIND",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-M",
+                      "name": "Title",
+                      "dataType": "TITLE"
                     }
                   }
                 ]
