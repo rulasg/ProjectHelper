@@ -1,22 +1,22 @@
 {
   "data": {
     "node": {
-      "id": "PVTI_lADOAlIw4c4BCe3Vzgeio4o",
-      "type": "ISSUE",
-      "fullDatabaseId": "128099210",
+      "id": "PVTI_lADOAlIw4c4BCe3VzgeioBY",
+      "type": "PULL_REQUEST",
+      "fullDatabaseId": "128098326",
       "project": {
         "id": "PVT_kwDOAlIw4c4BCe3V",
         "url": "https://github.com/orgs/octodemo/projects/700"
       },
       "content": {
-        "__typename": "Issue",
-        "id": "I_kwDOPrRnkc7KkwSq",
-        "body": "Body of issue for development",
-        "title": "Issue for development",
-        "updatedAt": "2025-09-11T13:06:24Z",
-        "createdAt": "2025-09-09T14:01:17Z",
-        "number": 26,
-        "url": "https://github.com/octodemo/rulasg-dev-1/issues/26",
+        "__typename": "PullRequest",
+        "id": "PR_kwDOPrRnkc6nndcE",
+        "body": "",
+        "title": "PullRequest for development",
+        "updatedAt": "2025-09-11T14:35:05Z",
+        "createdAt": "2025-09-09T13:56:05Z",
+        "number": 25,
+        "url": "https://github.com/octodemo/rulasg-dev-1/pull/25",
         "state": "OPEN",
         "repository": {
           "nameWithOwner": "octodemo/rulasg-dev-1"
@@ -24,6 +24,22 @@
       },
       "fieldValues": {
         "nodes": [
+          {
+            "__typename": "ProjectV2ItemFieldUserValue",
+            "users": {
+              "nodes": [
+                {
+                  "login": "rulasg"
+                }
+              ]
+            },
+            "field": {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-Q",
+              "name": "Assignees",
+              "dataType": "ASSIGNEES"
+            }
+          },
           {
             "__typename": "ProjectV2ItemFieldRepositoryValue",
             "repository": {
@@ -39,9 +55,9 @@
           {
             "__typename": "ProjectV2ItemFieldMilestoneValue",
             "milestone": {
-              "title": "Milestone 3: Quality and Deployment",
-              "description": "Testing, documentation, and deployment pipeline setup",
-              "dueOn": "2025-10-18T00:00:00Z"
+              "title": "Milestone 1: Project Setup",
+              "description": "Initial project setup and basic infrastructure",
+              "dueOn": "2025-09-20T00:00:00Z"
             },
             "field": {
               "__typename": "ProjectV2Field",
@@ -52,7 +68,7 @@
           },
           {
             "__typename": "ProjectV2ItemFieldTextValue",
-            "text": "Issue for development",
+            "text": "PullRequest for development",
             "field": {
               "__typename": "ProjectV2Field",
               "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-M",
@@ -86,7 +102,7 @@
           },
           {
             "__typename": "ProjectV2ItemFieldNumberValue",
-            "number": 333.0,
+            "number": 111.0,
             "field": {
               "__typename": "ProjectV2Field",
               "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhjU",
@@ -96,7 +112,7 @@
           },
           {
             "__typename": "ProjectV2ItemFieldTextValue",
-            "text": "text3",
+            "text": "text1",
             "field": {
               "__typename": "ProjectV2Field",
               "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhko",
@@ -106,7 +122,7 @@
           },
           {
             "__typename": "ProjectV2ItemFieldSingleSelectValue",
-            "name": "option-3",
+            "name": "option-1",
             "field": {
               "__typename": "ProjectV2SingleSelectField",
               "id": "PVTSSF_lADOAlIw4c4BCe3Vzg0rhno",
@@ -130,14 +146,24 @@
           },
           {
             "__typename": "ProjectV2ItemFieldIterationValue",
-            "title": "field-iteration 3",
-            "startDate": "2025-10-05",
+            "title": "field-iteration 1",
+            "startDate": "2025-09-07",
             "duration": 14,
             "field": {
               "__typename": "ProjectV2IterationField",
               "id": "PVTIF_lADOAlIw4c4BCe3Vzg0rhqQ",
               "name": "field-iteration",
               "dataType": "ITERATION"
+            }
+          },
+          {
+            "__typename": "ProjectV2ItemFieldDateValue",
+            "date": "2025-09-01",
+            "field": {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhlU",
+              "name": "field-date",
+              "dataType": "DATE"
             }
           }
         ]
