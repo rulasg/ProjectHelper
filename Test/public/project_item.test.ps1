@@ -138,6 +138,7 @@ function Test_EditProjectItems_Direct{
 
     $itemId = "PVTI_lADOAlIw4c4BCe3Vzgeio4o"
     $fieldComment = "field-text" ; $fieldCommentValue = "new value of the comment 10.1"
+    $fieldId = "PVTF_lADOAlIw4c4BCe3Vzg0rhko"
 
     # Mock the direct call for item
     MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-$itemId.json"
@@ -150,8 +151,8 @@ function Test_EditProjectItems_Direct{
 
     Assert-Count -Expected 1 -Presented $result.Keys
     Assert-AreEqual -Expected $itemId -Presented $result.Keys[0]
-    Assert-AreEqual -Expected $fieldComment -Presented $result.$itemId.PVTF_lADOBCrGTM4ActQazgSl5GU.Field.name
-    Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$itemId.PVTF_lADOBCrGTM4ActQazgSl5GU.Value
+    Assert-AreEqual -Expected $fieldComment -Presented $result.$itemId.$fieldId.Field.name
+    Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$itemId.$fieldId.Value
 
 }
 
