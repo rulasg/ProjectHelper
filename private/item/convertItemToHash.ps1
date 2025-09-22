@@ -9,7 +9,7 @@ function Convert-NodeItemToHash {
 
         $item = New-Object System.Collections.Hashtable
         $item.id = $NodeItem.id
-
+        $item.databaseId = $NodeItem.fullDatabaseId
         # Content
         $item.type = $NodeItem.content.__typename
         $item.body = $NodeItem.content.body
@@ -17,12 +17,13 @@ function Convert-NodeItemToHash {
         # Title is stored in two places. in the content and as a field.
         # We will use the field value
         $item.number = $NodeItem.content.number
-        $item.url = $NodeItem.content.url
+        $item.url = [string]::IsNullOrWhiteSpace($NodeItem.content.url) ? $item.urlPanel : $item.urlContent
+        $item.urlContent = $NodeItem.content.url
         $item.state = $NodeItem.content.state
 
         $item.projectId = $NodeItem.project.id
         $item.projectUrl = $NodeItem.project.url
-
+        $item.urlPanel = Build-ItemPanelUrl -Item $item
         $item.createdAt = GetDateTime -DateTimeString $NodeItem.content.createdAt
         $item.updatedAt = GetDateTime -DateTimeString $NodeItem.content.updatedAt
 
@@ -38,7 +39,8 @@ function Convert-NodeItemToHash {
                     $value = $nodefield.name
                 }
                 "ProjectV2ItemFieldNumberValue" {
-                    $value = $nodefield.number
+                    # $value = $nodefield.number
+                    $value = ConvertFrom-FieldValue -Field $nodefield.field -Value $nodefield.number
                 }
                 "ProjectV2ItemFieldDateValue" {
                     $value = $nodefield.date
@@ -68,3 +70,30 @@ function Convert-NodeItemToHash {
         return $item
     }
 }
+
+function Build-ItemPanelUrl{
+    [CmdletBinding()]
+    [OutputType([string])]
+    param(
+        [Parameter(Position = 1)][object]$Item
+    )
+    
+    $baseUrl = $item.projectUrl
+    $uriBuilder = [System.UriBuilder]::new($baseUrl)
+    $uriBuilder.Path += "/views/1"
+
+    # Remove the port to avoid :443 in HTTPS URLs
+    $uriBuilder.Port = -1
+
+    # Add query parameters
+    $query = [System.Web.HttpUtility]::ParseQueryString([string]::Empty)
+    $query.Add("pane", "issue")
+    $query.Add("itemId", $Item.databaseId)
+
+    $uriBuilder.Query = $query.ToString()
+
+    # Get the final URL
+    $finalUrl = $uriBuilder.ToString()
+    
+    return $finalUrl
+} 

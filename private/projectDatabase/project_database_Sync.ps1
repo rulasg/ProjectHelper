@@ -47,7 +47,9 @@ function Sync-Project{
         $FieldStagedId = $itemStaged.Keys | Copy-MyStringArray
         foreach($fieldId in $FieldStagedId){
 
-            $value = $itemStaged.$fieldId.Value
+            # Staged has the display value. 
+            # Convert to the update value
+            $value = ConvertTo-FieldValue -Field $itemStaged.$fieldId.Field -Value $itemStaged.$fieldId.Value
             $field = $itemStaged.$fieldId.Field
 
             $params = @{

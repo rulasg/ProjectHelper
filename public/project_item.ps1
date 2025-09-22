@@ -206,6 +206,7 @@ function Open-ProjectItem {
         }
         
         if (-not $item.url) {
+            # We should never reach this point as we are setting url for drafts at Convert-NodeItemToHash
             "No URL found for Item [$ItemId] type $($item.type)" | Write-Error
             return 
         }
@@ -418,6 +419,8 @@ function Show-ProjectItem {
 
     begin {
         $fields = Get-EnvironmentDisplayFields -Fields $AdditionalFields
+
+        $fields | Write-Verbose
     } 
 
     process {

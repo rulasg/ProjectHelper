@@ -7,20 +7,24 @@ function Test_EnvironmentCache{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $fieldsCount = 18
-    $fieldComment = "Comment" ; $fieldTitle = "Title"
+    $p = Get-Mock_Project_700
+    $i = $p.issue
+    $f = $p.fieldtext
+
+    $Owner = $p.owner ; $ProjectNumber = $p.number
+    $fieldComment = $f.name
+    $fieldTitle = "Title"
 
     # Cache the project
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
-    $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+    MockCall_GitHubOrgProjectWithFields_700 -Cache
 
     # Reset mock calls
     Reset-invokeCommandMock
     Mock_DatabaseRoot -NotReset
 
-    $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
-    $fieldTitleValue = "A draft in the project"
-    $fieldCommentValue = "This"
+    $itemId = $i.Id
+    $fieldTitleValue = $i.title
+    $fieldCommentValue = $i.fieldtext
 
     $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
 

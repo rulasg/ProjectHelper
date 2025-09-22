@@ -38,9 +38,16 @@ function Set-ProjectHelperEnvironment{
         [Parameter()][string[]]$DisplayFields
     )
 
-    Set-EnvItem -Name "EnvironmentCache_Owner" -Value $owner
-    Set-EnvItem -Name "EnvironmentCache_ProjectNumber" -Value $projectNumber
-    Set-EnvItem -Name "EnvironmentCache_Display_Fields" -Value $displayFields
+    if(! [string]::IsNullOrWhiteSpace($Owner)) {
+        Set-EnvItem -Name "EnvironmentCache_Owner" -Value $Owner
+    }
+
+    if(! [string]::IsNullOrWhiteSpace($ProjectNumber)) {
+        Set-EnvItem -Name "EnvironmentCache_ProjectNumber" -Value $ProjectNumber
+    }
+    if($DisplayFields) {
+        Set-EnvItem -Name "EnvironmentCache_Display_Fields" -Value $DisplayFields
+    }
 
 } Export-ModuleMember -Function Set-ProjectHelperEnvironment
 

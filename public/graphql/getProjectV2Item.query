@@ -1,7 +1,7 @@
 query($itemId: ID!) {
   node(id: $itemId) {
     ... on ProjectV2Item {
-      id, type,
+      id, type, fullDatabaseId,
       project{ id, url},
       content{__typename,
            ... on DraftIssue {id,body,title,updatedAt,createdAt},

@@ -18,7 +18,7 @@ function Get-Item{
             foreach($fieldKey in $database.Staged.$ItemId.keys){
                 $fieldname = $database.Staged.$ItemId.$fieldKey.Field.name
                 # Make type conversions to string
-                $ret.$fieldname = ConvertFrom-FieldValue -Value $database.Staged.$ItemId.$fieldKey.Value -Field $database.fields.$fieldKey
+                $ret.$fieldname = $database.Staged.$ItemId.$fieldKey.Value
             }
         }
 
@@ -136,12 +136,12 @@ function Save-ItemFieldValue{
         throw "Failed testing value [$Value] for field $FieldName [$($field.dataType)]"
     }
 
-    #Transform value if needed. Sample SingleSelect will change form String to option
-    $value = ConvertTo-FieldValue $field $Value
-    if($null -eq $value){
-         "Failed convertig value [$Value] for field $FieldName [$($field.dataType)]" | Write-MyError
-         return
-    }
+    # #Transform value if needed. Sample SingleSelect will change form String to option
+    # $value = ConvertTo-FieldValue $field $Value
+    # if($null -eq $value){
+    #      "Failed convertig value [$Value] for field $FieldName [$($field.dataType)]" | Write-MyError
+    #      return
+    # }
 
     $node = $Database | AddHashLink Staged | AddHashLink $ItemId
     $node.$fieldId = [PSCustomObject]@{

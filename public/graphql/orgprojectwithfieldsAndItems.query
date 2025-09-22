@@ -7,7 +7,7 @@ query OrgProjectWithFields($afterFields:String$afterItems:String$firstFields:Int
                         },... on PullRequest{id,body,title,updatedAt,createdAt,number,url,state,repository{nameWithOwner}
                         },... on       Issue{id,body,title,updatedAt,createdAt,number,url,state,repository{nameWithOwner}
                         }
-                    },id,
+                    },id,fullDatabaseId,
                     fieldValues(first: 100){nodes{__typename,... on ProjectV2ItemFieldDateValue{date,field{__typename,... on ProjectV2Field{id,name,dataType
                                     },... on ProjectV2IterationField{id,name,dataType
                                     },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
