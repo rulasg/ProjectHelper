@@ -9,6 +9,7 @@ function Get-Mock_Project_700 {
     $fieldtext = $p.fields.nodes | Where-Object { $_.name -eq "field-text" }
     $fieldnumber = $p.fields.nodes | Where-Object { $_.name -eq "field-number" }
     $fielddate = $p.fields.nodes | Where-Object { $_.name -eq "field-date" }
+    $fieldsingleselect = $p.fields.nodes | Where-Object { $_.name -eq "field-singleselect" }
 
     # Project info
     $project_700.id = $p.id
@@ -20,6 +21,7 @@ function Get-Mock_Project_700 {
     $project_700.fieldtext = @{ id = $fieldtext.id ; name = $fieldtext.name }
     $project_700.fieldnumber = @{ id = $fieldnumber.id ; name = $fieldnumber.name }
     $project_700.fielddate = @{ id = $fielddate.id ; name = $fielddate.name }
+    $project_700.fieldsingleselect = @{ id = $fieldsingleselect.id ; name = $fieldsingleselect.name }
     
     # Items
     # $project_700.$statusField = $p.fields.nodes | Where-Object { $_.name -eq "Status" }
