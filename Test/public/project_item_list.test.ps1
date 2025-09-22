@@ -81,8 +81,12 @@ function Test_ProjectItemList_ExcludeDone{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ; $itemsDone = 3
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $ProjectNumber = $p.number
+    $i = $p.issue
+    $itemsCount = 26
+    $itemsDone = 6
+
+    MockCall_GetProject_700
 
     $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
 
