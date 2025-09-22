@@ -4,7 +4,7 @@ function Test_SaveProjectDatabase_SafeId_Flag_PrivateCall{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $ProjectNumber = $p.number
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     MockCall_GetProject_700
 
     Invoke-PrivateContext {
