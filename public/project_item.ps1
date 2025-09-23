@@ -12,6 +12,7 @@ Set-MyInvokeCommandAlias -Alias GetItem -Command 'Invoke-GetItem -ItemId {itemid
 #>
 function Get-ProjectItem {
     [CmdletBinding()]
+    [Alias ("gpi")]
     param(
         [Parameter(Mandatory, ValueFromPipeline, Position = 0)][string]$ItemId,
         [Parameter()][string]$Owner,
@@ -46,7 +47,7 @@ function Get-ProjectItem {
         }
     }
 
-} Export-ModuleMember -Function Get-ProjectItem
+} Export-ModuleMember -Function Get-ProjectItem -Alias "gpi"
 
 # function Set-ProjectItem {
 #     [CmdletBinding()]
@@ -97,10 +98,15 @@ function Search-ProjectItem {
         [Parameter(Mandatory, Position = 0)] [string]$Filter,
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
+        [Parameter()][string[]]$Attributes,
         [Parameter()][switch]$IncludeDone,
         [Parameter()][switch]$Force,
         [Parameter()][switch]$PassThru
     )
+
+    if([string]::IsNullOrWhiteSpace($Attributes)){
+        $Attributes = @("id", "Title")
+    }
 
     ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
@@ -116,17 +122,42 @@ function Search-ProjectItem {
         $ret = $found
     } else {
 
-        $ret = @($found | ForEach-Object { 
-            [PSCustomObject]@{
-                id    = $_.id
-                title = $_.Title
-            }
+        $ret = @($found | ForEach-Object {
+            $i = [pscustomobject]::new()
+            # return the issue with additional attributes
+            Add-Attributes  -SourceObject $_ -DestinationObject $i -Attributes $Attributes
         })
+
     }
 
     return $ret
 
 } Export-ModuleMember -Function Search-ProjectItem -Alias "spi"
+
+function Add-Attributes{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][object]$SourceObject,
+        [Parameter(Position = 1)][object]$DestinationObject,
+        [Parameter(Position = 2)][string[]]$Attributes
+    )
+
+    # return if empty attributes
+    if([string]::IsNullOrWhiteSpace($Attributes)){
+        return $DestinationObject
+    }
+
+    foreach($a in $Attributes){
+        if($null -ne $Item.$a){
+            continue
+        }
+
+        $DestinationObject | Add-Member -MemberType NoteProperty -Name $a -Value $SourceObject.$a -force
+    }
+
+    return $DestinationObject
+}
+
 
 function Get-ProjectItems {
     [CmdletBinding()]
@@ -172,7 +203,7 @@ function Open-ProjectItem {
         }
         
         "Project set to [$owner/$ProjectNumber]" | Write-Verbose
-        
+
     }
 
     process {
