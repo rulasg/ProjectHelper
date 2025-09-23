@@ -92,12 +92,14 @@ function Remove-ProjectItem {
 
 function Search-ProjectItem {
     [CmdletBinding()]
+    [Alias ("spi")]
     param(
         [Parameter(Mandatory, Position = 0)] [string]$Filter,
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
         [Parameter()][switch]$IncludeDone,
-        [Parameter()][switch]$Force
+        [Parameter()][switch]$Force,
+        [Parameter()][switch]$PassThru
     )
 
     ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
@@ -110,13 +112,21 @@ function Search-ProjectItem {
 
     $found = $items.Values | Where-Object { Test-ProjectItemIsLikeAnyField -Item $_ -Value $Filter }
 
-    $ret = @($found | ForEach-Object { 
-            [PSCustomObject]$_
+    if($PassThru){
+        $ret = $found
+    } else {
+
+        $ret = @($found | ForEach-Object { 
+            [PSCustomObject]@{
+                id    = $_.id
+                title = $_.Title
+            }
         })
+    }
 
     return $ret
 
-} Export-ModuleMember -Function Search-ProjectItem
+} Export-ModuleMember -Function Search-ProjectItem -Alias "spi"
 
 function Get-ProjectItems {
     [CmdletBinding()]
@@ -145,24 +155,29 @@ function Get-ProjectItems {
 
 function Open-ProjectItem {
     [CmdletBinding()]
+    [Alias ("opi")]
     param(
         [Parameter()][string]$Owner,
         [Parameter()][int]$ProjectNumber,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)]
-        [string]$ItemId
+        [string]$Id
     )
 
     begin {
 
-        "Project set to [$owner/$ProjectNumber]" | Write-Verbose
-
+        
         ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
         if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) {
             throw "Owner and ProjectNumber are required on Open-ProjectItem"
         }
+        
+        "Project set to [$owner/$ProjectNumber]" | Write-Verbose
+        
     }
 
     process {
+
+        $itemId = $Id
 
         "Opening item [$ItemId] in project [$Owner/$ProjectNumber]" | Write-Verbose
    
@@ -170,16 +185,18 @@ function Open-ProjectItem {
         if (-not $item) {
             throw "Item not found for Owner [$Owner], ProjectNumber [$ProjectNumber] and ItemId [$ItemId]"
         }
+
+        $url = $item.urlPanel
         
-        if (-not $item.url) {
-            # We should never reach this point as we are setting url for drafts at Convert-NodeItemToHash
-            "No URL found for Item [$ItemId] type $($item.type)" | Write-Error
+        if ([string]::IsNullOrWhiteSpace($url)) {
+            # We should never reach this point as all items has a urlpanel set in Convert-NodeItemToHash
+            "No URL found for Item [$ItemId] type [ $($item.type) ]" | Write-Error
             return 
         }
-        
-        Open-Url -Url $item.url
+
+        Open-Url -Url $url
     }
-} Export-ModuleMember -Function Open-ProjectItem
+} Export-ModuleMember -Function Open-ProjectItem -Alias "opi"
 
 <#
 .SYNOPSIS
