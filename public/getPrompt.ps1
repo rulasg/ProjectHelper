@@ -138,6 +138,7 @@ function Write-HostPrompt {
 
 function Set-ProjecthelperPrompt {
     [CmdletBinding()]
+    [Alias("sphp")]
     param(
         [switch]$WithNewLine
     )
@@ -179,7 +180,7 @@ function Set-ProjecthelperPrompt {
     }
 
 
-} Export-ModuleMember -Function Set-ProjecthelperPrompt
+} Export-ModuleMember -Function Set-ProjecthelperPrompt -Alias sphp
 
 function Reset-ProjecthelperPrompt {
     [CmdletBinding()]
