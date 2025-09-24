@@ -191,7 +191,8 @@ function Open-ProjectItem {
         [Parameter()][string]$Owner,
         [Parameter()][int]$ProjectNumber,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)]
-        [string]$Id
+        [string]$Id,
+        [Parameter()][switch]$InProject
     )
 
     begin {
@@ -217,7 +218,12 @@ function Open-ProjectItem {
             throw "Item not found for Owner [$Owner], ProjectNumber [$ProjectNumber] and ItemId [$ItemId]"
         }
 
-        $url = $item.urlPanel
+        if($InProject){
+            $url = $item.urlPanel
+        } else {
+            # fall back to url if urlcontent is empty
+            $url = $item.urlContent ?? $item.url
+        }
         
         if ([string]::IsNullOrWhiteSpace($url)) {
             # We should never reach this point as all items has a urlpanel set in Convert-NodeItemToHash
