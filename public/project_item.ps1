@@ -96,9 +96,9 @@ function Search-ProjectItem {
     [Alias ("spi")]
     param(
         [Parameter(Mandatory, Position = 0)] [string]$Filter,
+        [Parameter(Position = 1)][string[]]$Attributes,
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
-        [Parameter()][string[]]$Attributes,
         [Parameter()][switch]$IncludeDone,
         [Parameter()][switch]$Force,
         [Parameter()][switch]$PassThru
@@ -148,7 +148,7 @@ function Add-Attributes{
     }
 
     foreach($a in $Attributes){
-        if($null -ne $Item.$a){
+        if( ! $SourceObject.$a){
             continue
         }
 
