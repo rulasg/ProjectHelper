@@ -1,8 +1,6 @@
 Set-MyInvokeCommandAlias -Alias AddIssueComment -Command 'Invoke-AddIssueComment -SubjectId {subjectid} -Comment "{comment}"'
 
-# 
-
-function Add-IssueCommentDirect {
+function Add-IssuePullRequestCommentDirect {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory, ValueFromPipeline, Position = 0)][string]$ItemId,
@@ -24,8 +22,9 @@ function Add-IssueCommentDirect {
         throw "ItemId [$ItemId] not found"
     }
 
-    if ($item.type -ne 'Issue') {
-        throw "ItemId [$ItemId] is not an Issue. Type is [$($item.Type)]"
+    if ( ! ($item.type -in ('Issue', 'PullRequest')) ) {
+        "ItemId [$ItemId] is not an Issue. Type is [$($item.type)]" | Write-Error
+        return $null
     }
 
     $response = Invoke-MyCommand -Command 'AddIssueComment' -Parameters @{
@@ -36,14 +35,16 @@ function Add-IssueCommentDirect {
     # check if the response is null
     if ($response.errors) {
         "[$($response.errors[0].type)] $($response.errors[0].message)" | Write-MyError
-        return $false
+        return $null
     }
 
-    if ($null -eq $response.data.addComment.commentEdge.node.url) {
+    $url = $response.data.addComment.commentEdge.node.url
+
+    if ($null -eq $url) {
         "Failed to add comment to issue [$ItemId]" | Write-MyError
-        return $false
+        return $null
     }
 
-    return $true
+    return $url
 
-} Export-ModuleMember -Function Add-IssueCommentDirect
+} Export-ModuleMember -Function Add-IssuePullRequestCommentDirect
