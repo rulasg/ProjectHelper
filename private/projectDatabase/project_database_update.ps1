@@ -134,72 +134,8 @@ function Convert-ItemsFromResponse{
 
         $item = Convert-NodeItemToHash -NodeItem $nodeItem
 
-        # "Processing Item $($nodeItem.id) - $($nodeItem.content.title)" | Write-Verbose
-
-        # $itemId = $nodeItem.id
-
-        # # TODO !! - Refactor to call Convert-ItemFromResponse for each node utem
-
-        # $item = New-Object System.Collections.Hashtable
-        # $item.id = $itemId
-
-        # # Content
-        # $item.type = $nodeItem.content.__typename
-        # $item.body = $nodeItem.content.body
-        # $item.contentId = $nodeItem.content.id
-        # # Title is stored in two places. in the content and as a field.
-        # # We will use the field value
-        # # $item.title = $nodeItem.content.title
-        # $item.number = $nodeItem.content.number
-        # $item.url = $nodeItem.content.url
-        # $item.state = $nodeItem.content.state
-
-        # $item.createdAt = GetDateTime -DateTimeString $nodeItem.content.createdAt
-        # $item.updatedAt = GetDateTime -DateTimeString $nodeItem.content.updatedAt
-
-        # #Fields
-        # foreach ($nodefield in $nodeItem.fieldValues.nodes) {
-
-        #     "      Procesing $($nodefield.field.name)" | Write-Verbose
-
-        #     switch ($nodefield.__typename) {
-        #         "ProjectV2ItemFieldTextValue" {
-        #             $value = $nodefield.text
-        #         }
-        #         "ProjectV2ItemFieldSingleSelectValue" {
-        #             $value = $nodefield.name
-        #         }
-        #         "ProjectV2ItemFieldNumberValue" {
-        #             $value = $nodefield.number
-        #         }
-        #         "ProjectV2ItemFieldDateValue" {
-        #             $value = $nodefield.date
-        #         }
-        #         "ProjectV2ItemFieldUserValue" {
-        #             $value = GetUsers -FieldNode $nodefield
-        #         }
-        #         "ProjectV2ItemFieldRepositoryValue" {
-        #             $value = $nodefield.repository.url
-        #         }
-        #         "ProjectV2ItemFieldLabelValue" {
-        #             $value = GetLabels -FieldNode $nodefield
-        #         }
-        #         "ProjectV2ItemFieldMilestoneValue" {
-        #             $value = $nodefield.milestone.title
-        #         }
-        #         "ProjectV2ItemFieldPullRequestValue" {
-        #             $value = GetPullRequests -FieldNode $nodefield
-        #         }
-        #         Default {
-        #             $value = $nodefield.text
-        #         }
-        #     }
-        #     $item.$($nodefield.field.name) = $value
-
-        # }
-
         try {
-            $items.$itemId += $item
+            $items.$itemId = $item
         } catch {
             "Failed to add item $itemId to items collection" | Write-Error
         }

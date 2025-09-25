@@ -8,5 +8,6 @@
 #>
 Function New-HashTable(){
     # Return a case-sensitive hashtable
-    return new-object System.Collections.Hashtable
+    $ret = New-Object System.Collections.Hashtable
+    return $ret
 }

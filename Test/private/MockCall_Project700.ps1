@@ -3,7 +3,14 @@ function Get-Mock_Project_700 {
 
     $project_700 = @{}
 
-    $content = Get-MockFileContentJson -FileName "invoke-GitHubOrgProjectWithFields-octodemo-700.json"
+    $project_700.projectFile = "invoke-GitHubOrgProjectWithFields-octodemo-700.json"
+    $project_700.projectFile_skipitems = "invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json"
+
+    # Version of the project file modified manually to have two items with same id case sensitive
+    # this is used to test case sensitivity of item ids in hashtables
+    $project_700.projectFile_caseSensitive = "invoke-GitHubOrgProjectWithFields-octodemo-700-caseSensitive.json"
+
+    $content = Get-MockFileContentJson -FileName $project_700.projectFile
     $p = $content.data.organization.projectV2
 
     $fieldtext = $p.fields.nodes | Where-Object { $_.name -eq "field-text" }
@@ -73,10 +80,14 @@ function MockCall_GetProject_700 {
         [parameter()][switch]$SkipItems,
         [parameter()][switch]$Cache
     )
-    $owner = "octodemo"
-    $projectNumber = "700"
-    $filenameTag = $SkipItems ? "-skipitems" : $null
-    $filename = "invoke-GitHubOrgProjectWithFields-octodemo-700$filenameTag.json"
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+
+    if( $SkipItems ){
+        $filename = $p.projectFile_skipitems
+    } else {
+        $filename = $p.projectFile
+    }
 
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName $filename -SkipItems:$SkipItems
  
@@ -84,3 +95,23 @@ function MockCall_GetProject_700 {
         $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems
     }
 }
+
+function MockCall_GetProject_700_CaseSensitive {
+    [CmdletBinding()]
+    param(
+        # [parameter()][switch]$SkipItems,
+        [parameter()][switch]$Cache
+    )
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    # $filenameTag = $SkipItems ? "-skipitems" : $null
+    # $filename = "invoke-GitHubOrgProjectWithFields-octodemo-700$filenameTag.json"
+    $filename = $p.projectFile_caseSensitive
+
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName $filename -SkipItems:$SkipItems
+ 
+    if ($Cache) {
+        $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems
+    }
+}
+
