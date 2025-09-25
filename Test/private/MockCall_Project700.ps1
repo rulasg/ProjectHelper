@@ -1,48 +1,47 @@
 
 function Get-Mock_Project_700 {
 
-    $project_700 = @{}
+    $project = @{}
 
-    $project_700.projectFile = "invoke-GitHubOrgProjectWithFields-octodemo-700.json"
-    $project_700.projectFile_skipitems = "invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json"
+    $project.projectFile = "invoke-GitHubOrgProjectWithFields-octodemo-700.json"
+    $project.projectFile_skipitems = "invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json"
 
     # Version of the project file modified manually to have two items with same id case sensitive
     # this is used to test case sensitivity of item ids in hashtables
-    $project_700.projectFile_caseSensitive = "invoke-GitHubOrgProjectWithFields-octodemo-700-caseSensitive.json"
+    $project.projectFile_caseSensitive = "invoke-GitHubOrgProjectWithFields-octodemo-700-caseSensitive.json"
 
-    $content = Get-MockFileContentJson -FileName $project_700.projectFile
-    $p = $content.data.organization.projectV2
+    $content = Get-MockFileContentJson -FileName $project.projectFile
+    $pActual = $content.data.organization.projectV2
 
-    $fieldtext = $p.fields.nodes | Where-Object { $_.name -eq "field-text" }
-    $fieldnumber = $p.fields.nodes | Where-Object { $_.name -eq "field-number" }
-    $fielddate = $p.fields.nodes | Where-Object { $_.name -eq "field-date" }
-    $fieldsingleselect = $p.fields.nodes | Where-Object { $_.name -eq "field-singleselect" }
+    $fieldtext = $pActual.fields.nodes | Where-Object { $_.name -eq "field-text" }
+    $fieldnumber = $pActual.fields.nodes | Where-Object { $_.name -eq "field-number" }
+    $fielddate = $pActual.fields.nodes | Where-Object { $_.name -eq "field-date" }
+    $fieldsingleselect = $pActual.fields.nodes | Where-Object { $_.name -eq "field-singleselect" }
 
     # Project info
-    $project_700.id = $p.id
-    $project_700.owner = $p.owner.login
-    $project_700.number = $p.number
-    $project_700.url = $p.url
+    $project.id = $pActual.id
+    $project.owner = $pActual.owner.login
+    $project.number = $pActual.number
+    $project.url = $pActual.url
 
     # Fields info
-    $project_700.fieldtext = @{ id = $fieldtext.id ; name = $fieldtext.name }
-    $project_700.fieldnumber = @{ id = $fieldnumber.id ; name = $fieldnumber.name }
-    $project_700.fielddate = @{ id = $fielddate.id ; name = $fielddate.name }
-    $project_700.fieldsingleselect = @{ id = $fieldsingleselect.id ; name = $fieldsingleselect.name ; options = $fieldsingleselect.options }
+    $project.fieldtext = @{ id = $fieldtext.id ; name = $fieldtext.name }
+    $project.fieldnumber = @{ id = $fieldnumber.id ; name = $fieldnumber.name }
+    $project.fielddate = @{ id = $fielddate.id ; name = $fielddate.name }
+    $project.fieldsingleselect = @{ id = $fieldsingleselect.id ; name = $fieldsingleselect.name ; options = $fieldsingleselect.options }
     
     # Items
-    # $project_700.$statusField = $p.fields.nodes | Where-Object { $_.name -eq "Status" }
-    $project_700.items = @{}
-    $project_700.items.totalCount = $p.items.totalcount
-    $project_700.items.doneCount = 6 # too complicated to read from structure
+    $project.items = @{}
+    $project.items.totalCount = $pActual.items.totalcount
+    $project.items.doneCount = 6 # too complicated to read from structure
 
     # Issues to find
-    $project_700.issueToFind = @{}
-    $project_700.issueToFind.Ids = ($p.items.nodes | Where-Object { $_.content.title -eq "Issue to find" }).Id
+    $project.issueToFind = @{}
+    $project.issueToFind.Ids = ($pActual.items.nodes | Where-Object { $_.content.title -eq "Issue to find" }).Id
 
     # Issue for developer
-    $issue = $p.items.nodes | Where-Object { $_.content.title -eq "Issue for development" }
-    $project_700.issue = @{
+    $issue = $pActual.items.nodes | Where-Object { $_.content.title -eq "Issue for development" }
+    $project.issue = @{
         id        = $issue.id
         contentId = $issue.content.id
         title     = $issue.content.title
@@ -51,8 +50,8 @@ function Get-Mock_Project_700 {
     }
 
     # PullRequest for developer
-    $pullRequest = $p.items.nodes | Where-Object { $_.content.title -eq "PullRequest for development" }
-    $project_700.pullrequest = @{
+    $pullRequest = $pActual.items.nodes | Where-Object { $_.content.title -eq "PullRequest for development" }
+    $project.pullrequest = @{
         id        = $pullRequest.id
         contentId = $pullRequest.content.id
         title     = $pullRequest.content.title
@@ -61,8 +60,8 @@ function Get-Mock_Project_700 {
     }
 
     # DraftIssue for developer
-    $draftIssue = $p.items.nodes | Where-Object { $_.content.title -eq "DraftIssue for development" }
-    $project_700.draftissue = @{
+    $draftIssue = $pActual.items.nodes | Where-Object { $_.content.title -eq "DraftIssue for development" }
+    $project.draftissue = @{
         id        = $draftIssue.id
         contentId = $draftIssue.content.id
         title     = $draftIssue.content.title
@@ -72,14 +71,14 @@ function Get-Mock_Project_700 {
     }
 
     # Search tests
-    $project_700.searchInTitle = @{}
-    $project_700.searchInTitle.titleFilter = "development"
-    $project_700.searchInTitle.Titles = $p.items.nodes.content.title | Where-Object { $_ -like "*development*" }
-    $project_700.searchInTitle.totalCount = $project_700.searchInTitle.Titles.Count
+    $project.searchInTitle = @{}
+    $project.searchInTitle.titleFilter = "development"
+    $project.searchInTitle.Titles = $pActual.items.nodes.content.title | Where-Object { $_ -like "*development*" }
+    $project.searchInTitle.totalCount = $project.searchInTitle.Titles.Count
 
-    $project_700.searchInAnyField = @{}
-    $project_700.searchInAnyField."development" = @{}
-    $project_700.searchInAnyField."development".Titles = @(
+    $project.searchInAnyField = @{}
+    $project.searchInAnyField."development" = @{}
+    $project.searchInAnyField."development".Titles = @(
         "Implement caching strategy"
         "Configure CI/CD pipeline"
         "Issue for development"
@@ -88,22 +87,22 @@ function Get-Mock_Project_700 {
         "Create comprehensive .NET Web API development initialization documentation with 10 structured tasks"
         "DraftIssue for development"
         )
-    $project_700.searchInAnyField."development".totalCount = $project_700.searchInAnyField."development".Titles.Count
+    $project.searchInAnyField."development".totalCount = $project.searchInAnyField."development".Titles.Count
 
-    $project_700.searchInAnyField."96" = @{}
-    $project_700.searchInAnyField."96".Titles = @(
+    $project.searchInAnyField."96" = @{}
+    $project.searchInAnyField."96".Titles = @(
         "Implement health checks and monitoring"
         "Implement logging and error handling"
     )
-    $project_700.searchInAnyField."96".totalCount = $project_700.searchInAnyField."96".Titles.Count
+    $project.searchInAnyField."96".totalCount = $project.searchInAnyField."96".Titles.Count
 
     # All items except Drafts that do not have repository
-    $project_700.searchInAnyField."rulasg-dev-1" = @{}
-    $i = $content.data.organization.projectV2.items.nodes.content | Where-Object { $_.repository.nameWithOwner -like "$($project_700.owner)/rulasg-dev-1" }
-    $project_700.searchInAnyField."rulasg-dev-1".totalCount = $i.Count
-    $project_700.searchInAnyField."rulasg-dev-1".Titles = $i.title
+    $project.searchInAnyField."rulasg-dev-1" = @{}
+    $i = $content.data.organization.projectV2.items.nodes.content | Where-Object { $_.repository.nameWithOwner -like "$($project.owner)/rulasg-dev-1" }
+    $project.searchInAnyField."rulasg-dev-1".totalCount = $i.Count
+    $project.searchInAnyField."rulasg-dev-1".Titles = $i.title
 
-    return $project_700
+    return $project
 }
 
 function MockCall_GetProject_700 {
