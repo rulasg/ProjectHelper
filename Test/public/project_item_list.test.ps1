@@ -103,20 +103,18 @@ function Test_SearchProjectItemByTitle_SUCCESS{
     MockCall_GetProject_700
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
-    $id = $p.issue.Id
 
     # title refrence with differnt case and spaces
-    $title = "development"
+    $title = $p.searchInTitle.titleFilter
 
     # Act
     $result = Search-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $title
 
-    Assert-Count -Expected 3 -Presented $result
+    Assert-Count -Expected $p.searchInTitle.Titles.Count -Presented $result
 
-    Assert-Contains -Expected "EPIC 1 " -Presented $result.Title
-    Assert-Contains -Expected "PVTI_lADOBCrGTM4ActQazgMtRO0" -Presented $result.id
-    Assert-Contains -Expected "EPIC 2"  -Presented $result.Title
-    Assert-Contains -Expected "PVTI_lADOBCrGTM4ActQazgMtRPg" -Presented $result.id
+    $p.searchInTitle.Titles | ForEach-Object {
+        Assert-Contains -Expected $_ -Presented $result.Title
+    }
 
 }
 

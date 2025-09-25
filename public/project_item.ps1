@@ -30,8 +30,8 @@ function Get-ProjectItem {
 
         if(! $db){ "Project not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError; return $null}
 
-        # Durty flag
-        $durty = $false
+        # Dirty flag
+        $dirty = $false
     }
 
     process {

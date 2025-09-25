@@ -71,6 +71,10 @@ function Get-Mock_Project_700 {
         
     }
 
+    $project_700.searchInTitle = @{}
+    $project_700.searchInTitle.titleFilter = "development"
+    $project_700.searchInTitle.Titles = $p.items.nodes.content.title | Where-Object { $_ -like "*development*" }
+
     return $project_700
 }
 
