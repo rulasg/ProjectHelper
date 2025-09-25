@@ -185,7 +185,7 @@ Searches for items containing "urgent" and displays only Title and Status fields
 function Search-ProjectItem{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)] [string]$filter,
+        [Parameter(Position = 0)] [string]$Filter,
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
         [Parameter()][string[]]$Fields,
@@ -201,12 +201,12 @@ function Search-ProjectItem{
 
     if($null -eq $itemList){ return $null}
 
-    $itemListValues = $itemList.Values | FilterItems -Filter $filter
+    $itemListValues = $itemList.Values | FilterItems -Filter $Filter
 
     $items = $itemListValues | ConvertToItemDisplay -Fields $Fields
 
     Write-MyHost
-    "Filter: $filter" | Write-MyHost
+    "Filter: $Filter" | Write-MyHost
     Write-MyHost
 
     return $items
