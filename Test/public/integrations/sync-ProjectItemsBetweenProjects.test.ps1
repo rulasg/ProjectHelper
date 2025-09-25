@@ -86,15 +86,12 @@ function Test_SyncProjectItemsBetweenProjects_SameValues{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $owner = "octodemo"
-    $sourceProjectNumber = 625
-    $destinationProjectNumber = 625
+    MockCall_GetProject_700
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
 
-    # Mock poject calls
-    $sourceProjectNumber, $destinationProjectNumber | ForEach-Object {
-        $projectNumber = $_
-        MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber.syncprj.json"
-    }
+    # Setting source and destination project the same
+    $sourceProjectNumber = $projectNumber
+    $destinationProjectNumber = $projectNumber
 
     $params = @{
         SourceOwner = $owner
@@ -102,8 +99,11 @@ function Test_SyncProjectItemsBetweenProjects_SameValues{
         DestinationOwner = $owner
         DestinationProjectNumber = $destinationProjectNumber
     }
+
+    # TODO : this call takes long on every test. Make it quicker
     $result = Update-ProjectItemsBetweenProjects @params
-    Assert-IsNull -Object $result
+
+    Assert-IsNull -Object $result -Comment "func always should return null"
 
     $staged = Get-ProjectItemStaged -Owner $owner -ProjectNumber $destinationProjectNumber
 
