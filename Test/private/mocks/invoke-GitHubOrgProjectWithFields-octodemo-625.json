@@ -7,24 +7,33 @@
         "shortDescription": null,
         "public": false,
         "closed": false,
-        "title": "rulasg-dev-project",
+        "title": "rulasg-dev-project-625",
         "id": "PVT_kwDOAlIw4c4A0Lf4",
         "readme": null,
         "items": {
           "pageInfo": {
-            "endCursor": "Y3Vyc29yOnYyOpKrMDAwMDAwMDAuMjXOBg1PIw==",
+            "endCursor": "Y3Vyc29yOnYyOpK5MDAwMDAwMDAuMTY2NjY2NjY2NjY2NjY2Ns4HyWL-",
             "hasNextPage": false
           },
-          "totalCount": 4,
+          "totalCount": 7,
           "nodes": [
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4A0Lf4",
+                "number": 625,
+                "title": "rulasg-dev-project-625",
+                "url": "https://github.com/orgs/octodemo/projects/625"
+              },
               "content": {
                 "__typename": "DraftIssue",
                 "id": "DI_lADOAlIw4c4A0Lf4zgJQEVU",
                 "body": "",
-                "title": "Target Item"
+                "title": "Target Item",
+                "updatedAt": "2025-03-12T10:36:49Z",
+                "createdAt": "2025-03-12T10:36:25Z"
               },
               "id": "PVTI_lADOAlIw4c4A0Lf4zgYNTc0",
+              "fullDatabaseId": "101535181",
               "fieldValues": {
                 "nodes": [
                   {
@@ -39,55 +48,118 @@
                   },
                   {
                     "__typename": "ProjectV2ItemFieldTextValue",
-                    "text": "https://some.com/1234/viuew",
+                    "text": "Value 1",
                     "field": {
                       "__typename": "ProjectV2Field",
-                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lpw",
-                      "name": "sfUrl",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp6aFk",
+                      "name": "Text1",
                       "dataType": "TEXT"
                     }
                   },
                   {
-                    "__typename": "ProjectV2ItemFieldTextValue",
-                    "text": "Text1_value_target",
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "Option1",
                     "field": {
-                      "__typename": "ProjectV2Field",
-                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lxM",
-                      "name": "sf_Text1",
-                      "dataType": "TEXT"
-                    }
-                  },
-                  {
-                    "__typename": "ProjectV2ItemFieldTextValue",
-                    "text": "Text2_value",
-                    "field": {
-                      "__typename": "ProjectV2Field",
-                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2l3o",
-                      "name": "sf_Text2",
-                      "dataType": "TEXT"
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4A0Lf4zgp9CRc",
+                      "name": "IntSS",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "ae9ef0df",
+                          "name": "Option1"
+                        },
+                        {
+                          "id": "9f685ff0",
+                          "name": "Option2"
+                        },
+                        {
+                          "id": "e8a519ad",
+                          "name": "Option3"
+                        }
+                      ]
                     }
                   },
                   {
                     "__typename": "ProjectV2ItemFieldNumberValue",
-                    "number": 666.0,
+                    "number": 0.0,
                     "field": {
                       "__typename": "ProjectV2Field",
-                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2mBs",
-                      "name": "sf_Number1",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp6aIw",
+                      "name": "Int2",
                       "dataType": "NUMBER"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldDateValue",
+                    "date": "2025-03-15",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgqDG_s",
+                      "name": "DueDate",
+                      "dataType": "DATE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "Overdue",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4A0Lf4zgp2lTo",
+                      "name": "Status",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "9893bd57",
+                          "name": "ActionRequired"
+                        },
+                        {
+                          "id": "59a06e8d",
+                          "name": "Overdue"
+                        },
+                        {
+                          "id": "f75ad846",
+                          "name": "Todo"
+                        },
+                        {
+                          "id": "47fc9ee4",
+                          "name": "In Progress"
+                        },
+                        {
+                          "id": "98236657",
+                          "name": "Done"
+                        },
+                        {
+                          "id": "b057b134",
+                          "name": "Planned"
+                        },
+                        {
+                          "id": "090b4a67",
+                          "name": "Follow-up"
+                        }
+                      ]
                     }
                   }
                 ]
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4A0Lf4",
+                "number": 625,
+                "title": "rulasg-dev-project-625",
+                "url": "https://github.com/orgs/octodemo/projects/625"
+              },
               "content": {
                 "__typename": "DraftIssue",
                 "id": "DI_lADOAlIw4c4A0Lf4zgJQEX0",
                 "body": "",
-                "title": "draft 1"
+                "title": "draft 1",
+                "updatedAt": "2025-03-12T10:38:18Z",
+                "createdAt": "2025-03-12T10:38:18Z"
               },
               "id": "PVTI_lADOAlIw4c4A0Lf4zgYNTwo",
+              "fullDatabaseId": "101535498",
               "fieldValues": {
                 "nodes": [
                   {
@@ -101,46 +173,85 @@
                     }
                   },
                   {
-                    "__typename": "ProjectV2ItemFieldTextValue",
-                    "text": "Text1_value_1",
+                    "__typename": "ProjectV2ItemFieldDateValue",
+                    "date": "2025-03-11",
                     "field": {
                       "__typename": "ProjectV2Field",
-                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lxM",
-                      "name": "sf_Text1",
-                      "dataType": "TEXT"
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgqDG_s",
+                      "name": "DueDate",
+                      "dataType": "DATE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "Overdue",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4A0Lf4zgp2lTo",
+                      "name": "Status",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "9893bd57",
+                          "name": "ActionRequired"
+                        },
+                        {
+                          "id": "59a06e8d",
+                          "name": "Overdue"
+                        },
+                        {
+                          "id": "f75ad846",
+                          "name": "Todo"
+                        },
+                        {
+                          "id": "47fc9ee4",
+                          "name": "In Progress"
+                        },
+                        {
+                          "id": "98236657",
+                          "name": "Done"
+                        },
+                        {
+                          "id": "b057b134",
+                          "name": "Planned"
+                        },
+                        {
+                          "id": "090b4a67",
+                          "name": "Follow-up"
+                        }
+                      ]
                     }
                   },
                   {
                     "__typename": "ProjectV2ItemFieldTextValue",
-                    "text": "Text2_value_1",
+                    "text": "Meeting Date",
                     "field": {
                       "__typename": "ProjectV2Field",
-                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2l3o",
-                      "name": "sf_Text2",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgqoEIo",
+                      "name": "Comment",
                       "dataType": "TEXT"
-                    }
-                  },
-                  {
-                    "__typename": "ProjectV2ItemFieldNumberValue",
-                    "number": 100.0,
-                    "field": {
-                      "__typename": "ProjectV2Field",
-                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2mBs",
-                      "name": "sf_Number1",
-                      "dataType": "NUMBER"
                     }
                   }
                 ]
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4A0Lf4",
+                "number": 625,
+                "title": "rulasg-dev-project-625",
+                "url": "https://github.com/orgs/octodemo/projects/625"
+              },
               "content": {
                 "__typename": "DraftIssue",
                 "id": "DI_lADOAlIw4c4A0Lf4zgJQEX4",
                 "body": "",
-                "title": "draft2"
+                "title": "draft2",
+                "updatedAt": "2025-03-12T10:38:22Z",
+                "createdAt": "2025-03-12T10:38:22Z"
               },
               "id": "PVTI_lADOAlIw4c4A0Lf4zgYNTxI",
+              "fullDatabaseId": "101535506",
               "fieldValues": {
                 "nodes": [
                   {
@@ -154,46 +265,75 @@
                     }
                   },
                   {
-                    "__typename": "ProjectV2ItemFieldTextValue",
-                    "text": "Text1_value_2",
+                    "__typename": "ProjectV2ItemFieldDateValue",
+                    "date": "2025-03-26",
                     "field": {
                       "__typename": "ProjectV2Field",
-                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lxM",
-                      "name": "sf_Text1",
-                      "dataType": "TEXT"
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgqDG_s",
+                      "name": "DueDate",
+                      "dataType": "DATE"
                     }
                   },
                   {
-                    "__typename": "ProjectV2ItemFieldTextValue",
-                    "text": "Text2_value_2",
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "ActionRequired",
                     "field": {
-                      "__typename": "ProjectV2Field",
-                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2l3o",
-                      "name": "sf_Text2",
-                      "dataType": "TEXT"
-                    }
-                  },
-                  {
-                    "__typename": "ProjectV2ItemFieldNumberValue",
-                    "number": 200.0,
-                    "field": {
-                      "__typename": "ProjectV2Field",
-                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2mBs",
-                      "name": "sf_Number1",
-                      "dataType": "NUMBER"
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4A0Lf4zgp2lTo",
+                      "name": "Status",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "9893bd57",
+                          "name": "ActionRequired"
+                        },
+                        {
+                          "id": "59a06e8d",
+                          "name": "Overdue"
+                        },
+                        {
+                          "id": "f75ad846",
+                          "name": "Todo"
+                        },
+                        {
+                          "id": "47fc9ee4",
+                          "name": "In Progress"
+                        },
+                        {
+                          "id": "98236657",
+                          "name": "Done"
+                        },
+                        {
+                          "id": "b057b134",
+                          "name": "Planned"
+                        },
+                        {
+                          "id": "090b4a67",
+                          "name": "Follow-up"
+                        }
+                      ]
                     }
                   }
                 ]
               }
             },
             {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4A0Lf4",
+                "number": 625,
+                "title": "rulasg-dev-project-625",
+                "url": "https://github.com/orgs/octodemo/projects/625"
+              },
               "content": {
                 "__typename": "DraftIssue",
                 "id": "DI_lADOAlIw4c4A0Lf4zgJQEYA",
                 "body": "",
-                "title": "draft3"
+                "title": "draft3",
+                "updatedAt": "2025-03-12T10:38:30Z",
+                "createdAt": "2025-03-12T10:38:30Z"
               },
               "id": "PVTI_lADOAlIw4c4A0Lf4zgYNTyM",
+              "fullDatabaseId": "101535523",
               "fieldValues": {
                 "nodes": [
                   {
@@ -207,33 +347,377 @@
                     }
                   },
                   {
-                    "__typename": "ProjectV2ItemFieldTextValue",
-                    "text": "Text1_value_3",
+                    "__typename": "ProjectV2ItemFieldDateValue",
+                    "date": "2025-03-31",
                     "field": {
                       "__typename": "ProjectV2Field",
-                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lxM",
-                      "name": "sf_Text1",
-                      "dataType": "TEXT"
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgqDG_s",
+                      "name": "DueDate",
+                      "dataType": "DATE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "Planned",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4A0Lf4zgp2lTo",
+                      "name": "Status",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "9893bd57",
+                          "name": "ActionRequired"
+                        },
+                        {
+                          "id": "59a06e8d",
+                          "name": "Overdue"
+                        },
+                        {
+                          "id": "f75ad846",
+                          "name": "Todo"
+                        },
+                        {
+                          "id": "47fc9ee4",
+                          "name": "In Progress"
+                        },
+                        {
+                          "id": "98236657",
+                          "name": "Done"
+                        },
+                        {
+                          "id": "b057b134",
+                          "name": "Planned"
+                        },
+                        {
+                          "id": "090b4a67",
+                          "name": "Follow-up"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4A0Lf4",
+                "number": 625,
+                "title": "rulasg-dev-project-625",
+                "url": "https://github.com/orgs/octodemo/projects/625"
+              },
+              "content": {
+                "__typename": "DraftIssue",
+                "id": "DI_lADOAlIw4c4A0Lf4zgJRF5k",
+                "body": "",
+                "title": "draft4",
+                "updatedAt": "2025-03-15T11:26:32Z",
+                "createdAt": "2025-03-15T11:26:32Z"
+              },
+              "id": "PVTI_lADOAlIw4c4A0Lf4zgYVsJc",
+              "fullDatabaseId": "102084759",
+              "fieldValues": {
+                "nodes": [
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "draft4",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lTg",
+                      "name": "Title",
+                      "dataType": "TITLE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldDateValue",
+                    "date": "2025-03-19",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgqDG_s",
+                      "name": "DueDate",
+                      "dataType": "DATE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "Overdue",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4A0Lf4zgp2lTo",
+                      "name": "Status",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "9893bd57",
+                          "name": "ActionRequired"
+                        },
+                        {
+                          "id": "59a06e8d",
+                          "name": "Overdue"
+                        },
+                        {
+                          "id": "f75ad846",
+                          "name": "Todo"
+                        },
+                        {
+                          "id": "47fc9ee4",
+                          "name": "In Progress"
+                        },
+                        {
+                          "id": "98236657",
+                          "name": "Done"
+                        },
+                        {
+                          "id": "b057b134",
+                          "name": "Planned"
+                        },
+                        {
+                          "id": "090b4a67",
+                          "name": "Follow-up"
+                        }
+                      ]
                     }
                   },
                   {
                     "__typename": "ProjectV2ItemFieldTextValue",
-                    "text": "Text2_value_3",
+                    "text": "Trail implementation",
                     "field": {
                       "__typename": "ProjectV2Field",
-                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2l3o",
-                      "name": "sf_Text2",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgqoEIo",
+                      "name": "Comment",
+                      "dataType": "TEXT"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4A0Lf4",
+                "number": 625,
+                "title": "rulasg-dev-project-625",
+                "url": "https://github.com/orgs/octodemo/projects/625"
+              },
+              "content": {
+                "__typename": "PullRequest",
+                "id": "PR_kwDOPrRnkc6nndcE",
+                "body": "",
+                "title": "PullRequest for development",
+                "updatedAt": "2025-09-24T08:56:12Z",
+                "createdAt": "2025-09-09T13:56:05Z",
+                "number": 25,
+                "url": "https://github.com/octodemo/rulasg-dev-1/pull/25",
+                "state": "OPEN",
+                "repository": {
+                  "nameWithOwner": "octodemo/rulasg-dev-1"
+                }
+              },
+              "id": "PVTI_lADOAlIw4c4A0Lf4zgfJYvk",
+              "fullDatabaseId": "130638585",
+              "fieldValues": {
+                "nodes": [
+                  {
+                    "__typename": "ProjectV2ItemFieldUserValue",
+                    "users": {
+                      "nodes": [
+                        {
+                          "login": "rulasg"
+                        }
+                      ]
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lTk",
+                      "name": "Assignees",
+                      "dataType": "ASSIGNEES"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldRepositoryValue",
+                    "repository": {
+                      "url": "https://github.com/octodemo/rulasg-dev-1"
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lT4",
+                      "name": "Repository",
+                      "dataType": "REPOSITORY"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldMilestoneValue",
+                    "milestone": {
+                      "title": "Milestone 1: Project Setup",
+                      "description": "Initial project setup and basic infrastructure",
+                      "dueOn": "2025-09-20T00:00:00Z"
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lT0",
+                      "name": "Milestone",
+                      "dataType": "MILESTONE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "PullRequest for development",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lTg",
+                      "name": "Title",
+                      "dataType": "TITLE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "PR Text1 Value",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp6aFk",
+                      "name": "Text1",
                       "dataType": "TEXT"
                     }
                   },
                   {
                     "__typename": "ProjectV2ItemFieldNumberValue",
-                    "number": 300.0,
+                    "number": 11.0,
                     "field": {
                       "__typename": "ProjectV2Field",
-                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2mBs",
-                      "name": "sf_Number1",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp6aIw",
+                      "name": "Int2",
                       "dataType": "NUMBER"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "Option1",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4A0Lf4zgp9CRc",
+                      "name": "IntSS",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "ae9ef0df",
+                          "name": "Option1"
+                        },
+                        {
+                          "id": "9f685ff0",
+                          "name": "Option2"
+                        },
+                        {
+                          "id": "e8a519ad",
+                          "name": "Option3"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "project": {
+                "id": "PVT_kwDOAlIw4c4A0Lf4",
+                "number": 625,
+                "title": "rulasg-dev-project-625",
+                "url": "https://github.com/orgs/octodemo/projects/625"
+              },
+              "content": {
+                "__typename": "Issue",
+                "id": "I_kwDOPrRnkc7KkwSq",
+                "body": "Body of issue for development",
+                "title": "Issue for development",
+                "updatedAt": "2025-09-24T08:29:13Z",
+                "createdAt": "2025-09-09T14:01:17Z",
+                "number": 26,
+                "url": "https://github.com/octodemo/rulasg-dev-1/issues/26",
+                "state": "OPEN",
+                "repository": {
+                  "nameWithOwner": "octodemo/rulasg-dev-1"
+                }
+              },
+              "id": "PVTI_lADOAlIw4c4A0Lf4zgfJYv4",
+              "fullDatabaseId": "130638590",
+              "fieldValues": {
+                "nodes": [
+                  {
+                    "__typename": "ProjectV2ItemFieldRepositoryValue",
+                    "repository": {
+                      "url": "https://github.com/octodemo/rulasg-dev-1"
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lT4",
+                      "name": "Repository",
+                      "dataType": "REPOSITORY"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldMilestoneValue",
+                    "milestone": {
+                      "title": "Milestone 3: Quality and Deployment",
+                      "description": "Testing, documentation, and deployment pipeline setup",
+                      "dueOn": "2025-10-18T00:00:00Z"
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lT0",
+                      "name": "Milestone",
+                      "dataType": "MILESTONE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Issue for development",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lTg",
+                      "name": "Title",
+                      "dataType": "TITLE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Issue Text1 Value",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp6aFk",
+                      "name": "Text1",
+                      "dataType": "TEXT"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldNumberValue",
+                    "number": 33.0,
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp6aIw",
+                      "name": "Int2",
+                      "dataType": "NUMBER"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "Option3",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4A0Lf4zgp9CRc",
+                      "name": "IntSS",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "ae9ef0df",
+                          "name": "Option1"
+                        },
+                        {
+                          "id": "9f685ff0",
+                          "name": "Option2"
+                        },
+                        {
+                          "id": "e8a519ad",
+                          "name": "Option3"
+                        }
+                      ]
                     }
                   }
                 ]
@@ -242,7 +726,7 @@
           ]
         },
         "fields": {
-          "totalCount": 14,
+          "totalCount": 16,
           "nodes": [
             {
               "__typename": "ProjectV2Field",
@@ -263,6 +747,14 @@
               "dataType": "SINGLE_SELECT",
               "options": [
                 {
+                  "id": "9893bd57",
+                  "name": "ActionRequired"
+                },
+                {
+                  "id": "59a06e8d",
+                  "name": "Overdue"
+                },
+                {
                   "id": "f75ad846",
                   "name": "Todo"
                 },
@@ -273,6 +765,14 @@
                 {
                   "id": "98236657",
                   "name": "Done"
+                },
+                {
+                  "id": "b057b134",
+                  "name": "Planned"
+                },
+                {
+                  "id": "090b4a67",
+                  "name": "Follow-up"
                 }
               ]
             },
@@ -326,25 +826,51 @@
             },
             {
               "__typename": "ProjectV2Field",
-              "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lxM",
-              "name": "sf_Text1",
+              "id": "PVTF_lADOAlIw4c4A0Lf4zgp6aFk",
+              "name": "Text1",
               "dataType": "TEXT"
             },
             {
               "__typename": "ProjectV2Field",
-              "id": "PVTF_lADOAlIw4c4A0Lf4zgp2l3o",
-              "name": "sf_Text2",
-              "dataType": "TEXT"
-            },
-            {
-              "__typename": "ProjectV2Field",
-              "id": "PVTF_lADOAlIw4c4A0Lf4zgp2mBs",
-              "name": "sf_Number1",
+              "id": "PVTF_lADOAlIw4c4A0Lf4zgp6aIw",
+              "name": "Int2",
               "dataType": "NUMBER"
+            },
+            {
+              "__typename": "ProjectV2SingleSelectField",
+              "id": "PVTSSF_lADOAlIw4c4A0Lf4zgp9CRc",
+              "name": "IntSS",
+              "dataType": "SINGLE_SELECT",
+              "options": [
+                {
+                  "id": "ae9ef0df",
+                  "name": "Option1"
+                },
+                {
+                  "id": "9f685ff0",
+                  "name": "Option2"
+                },
+                {
+                  "id": "e8a519ad",
+                  "name": "Option3"
+                }
+              ]
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4A0Lf4zgqDG_s",
+              "name": "DueDate",
+              "dataType": "DATE"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4A0Lf4zgqoEIo",
+              "name": "Comment",
+              "dataType": "TEXT"
             }
           ],
           "pageInfo": {
-            "endCursor": "MTQ",
+            "endCursor": "MTY",
             "hasNextPage": false
           }
         },
