@@ -208,34 +208,21 @@ function Test_SearchProjectItem_SUCCESS{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "octodemo" ; $ProjectNumber = 700
+    MockCall_GetProject_700
 
-    # title refrence with differnt case and spaces
-    $filter = "epic"
+    $p = Get-Mock_Project_700;  $owner = $p.owner ; $projectNumber = $p.number
 
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
 
-    # Act 1
-    $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Filter $filter -IncludeDone
+    "development", "96", "rulasg-dev-1" | ForEach-Object{
 
-    Assert-Count -Expected 2 -Presented $result
-    
-    Assert-Contains -Expected "EPIC 1 " -Presented $result.Title
-    Assert-Contains -Expected "PVTI_lADOBCrGTM4ActQazgMtRO0" -Presented $result.id
-    Assert-Contains -Expected "EPIC 2"  -Presented $result.Title
-    Assert-Contains -Expected "PVTI_lADOBCrGTM4ActQazgMtRPg" -Presented $result.id
+        $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Filter $_ -IncludeDone
 
-    # Act 2
-    $result = Search-ProjectItem 68 -IncludeDone # TimeTracker value 684
-
-    Assert-Count -Expected 1 -Presented $result
-    Assert-AreEqual -Expected "Issue 455d29e3 2" -Presented $result[0].Title
-    Assert-AreEqual -Expected "PVTI_lADNJr_OALnx2s4Fqq8p" -Presented $result[0].id
-
-    # Act 3
-    $result = Search-ProjectItem "ProjectDemoTest-repo-front" 
-    Assert-Count -Expected 5 -Presented $result
-
+        Assert-Count -Expected $p.searchInAnyField.$_.totalCount -Presented $result
+        
+        foreach ($r in $result) {
+            Assert-Contains -Expected $r.Title -Presented $p.searchInAnyField.$_.Titles
+        }
+    }
 }
 
 function Test_GetItemDirect_SUCCESS{

@@ -458,6 +458,7 @@ function Test-ProjectItemIsLikeAnyField {
     )
     foreach ($key in $item.Keys) {
         if ($item.$key -Like "*$Value*") {
+            "Found [$Value] in field [$key] in [$($item.$key)]" | Write-Verbose
             return $true
         }
     }
