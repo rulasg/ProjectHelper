@@ -275,19 +275,17 @@ function Test_ShowProjectItem_SUCCESS_Multiple{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "octodemo" ; $ProjectNumber = 700
+    MockCall_GetProject_700
+    $p = Get-Mock_Project_700; $Owner = $p.owner; $ProjectNumber = $p.number
 
-
-    # title refrence with differnt case and spaces
-
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
-    
-    $items = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Filter "Issue*"
+    # Arrange - get a few items using search-projectitem
+    $items = Search-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $p.searchInTitle.titleFilter
+    $itemsCount = $items.Count
+    Assert-Count -Expected $p.searchInTitle.totalCount -Presented $items
 
     $result = $items | Show-ProjectItem -AdditionalFields "Status"
-    
-    Assert-Count -Expected 8 -Presented $Items
-    Assert-Count -Expected 8 -Presented $result
+
+    Assert-Count -Expected $itemsCount -Presented $result
 
     # Get properties of the first item to verify
     $expectedProperties = @("id", "Title", "Status")
