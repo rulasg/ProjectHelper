@@ -62,7 +62,7 @@ function Sync-Project{
                 Value = $value
             }
 
-            "Saving  [$($params.Database.ProjectId)/$($params.ItemId)/$($params.FieldId) ($($params.FieldName)) = $($params.Value) ] ..." | Write-MyHost -NoNewLine
+            "Saving [$($params.Database.ProjectId)/$($params.ItemId)/$($params.FieldId) ($($params.FieldName)) = ""$($params.Value)"" ] ..." | Write-MyHost -NoNewLine
 
             $call = Update-ProjectItem @params
 

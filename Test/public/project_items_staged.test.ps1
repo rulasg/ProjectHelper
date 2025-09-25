@@ -848,20 +848,22 @@ function Test_Sync_ProjectDatabaseAsync_ClearValues{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164
-
     $moduleRootPath = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent | Convert-Path
 
-    $projectId = "PVT_kwDOBCrGTM4ActQa"
-    $itemId1 = "PVTI_lADOBCrGTM4ActQazgMuXXc"
-    $fieldComment1 = "Comment"  ; $fieldComment1Id = "PVTF_lADOBCrGTM4ActQazgSl5GU"
-    $fieldPriority1 = "Priority" ; $fieldPriority1Id ="PVTSSF_lADOBCrGTM4ActQazgSl5LY"
+    $p = Get-Mock_Project_700 ; $Owner = $p.Owner ; $ProjectNumber = $p.Number
+    $i = $p.issue
+    $f = $p.fieldtext
+    $fss = $p.fieldsingleselect
+
+    $projectId = $p.Id 
+    $itemId1 = $i.Id
+    $fieldComment1 = $f.name  ; $fieldComment1Id = $f.Id ; $fieldCommentName = "field-text"
+    $fieldPriority1 = $fss.name ; $fieldPriority1Id = $fss.Id ; $fieldPriorityName = "field-singleselect"
 
     # Edit-ProjectItem will call Get-Project with SkipItems
     # This test is to confirm the sync works with the project and items
     # Cache the project with items
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
-    $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+    MockCall_GetProject_700 -Cache
 
     # Mock clear command for empty comment field (using async alias)
     $clearCommand = 'Import-Module {projecthelper} ; Invoke-GitHubClearItemValues -ProjectId {ProjectId} -ItemId {ItemId} -FieldId {FieldId}'
@@ -884,7 +886,7 @@ function Test_Sync_ProjectDatabaseAsync_ClearValues{
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldPriority1 ""
 
     Start-MyTranscript
-    $result = Sync-ProjectItemStagedAsync -Owner $Owner -ProjectNumber $ProjectNumber -SyncBatchSize 2
+    $result = Sync-ProjectItemStagedAsync -Owner $Owner -ProjectNumber $ProjectNumber
     $transcript = Stop-MyTranscript
 
     # Return true
@@ -892,11 +894,15 @@ function Test_Sync_ProjectDatabaseAsync_ClearValues{
 
     # Verify clear and update commands were called by checking mock invocations
     # The transcript should show both operations on async: Calling and Saving
-    Assert-Contains -Presented $transcript -Expected 'Calling to update ItemField Async[True][PVT_kwDOBCrGTM4ActQa/PVTI_lADOBCrGTM4ActQazgMuXXc/PVTF_lADOBCrGTM4ActQazgSl5GU (text) = "" ]'
-    Assert-Contains -Presented $transcript -Expected 'Saving to database [PVT_kwDOBCrGTM4ActQa/PVTI_lADOBCrGTM4ActQazgMuXXc/Comment () = "" ]'
-
-    Assert-Contains -Presented $transcript -Expected 'Calling to update ItemField Async[True][PVT_kwDOBCrGTM4ActQa/PVTI_lADOBCrGTM4ActQazgMuXXc/PVTSSF_lADOBCrGTM4ActQazgSl5LY (singleSelectOptionId) = "" ]'
-    Assert-Contains -Presented $transcript -Expected 'Saving to database [PVT_kwDOBCrGTM4ActQa/PVTI_lADOBCrGTM4ActQazgMuXXc/Priority () = "" ]'
+    @(
+        "Saving [$projectId/$itemId1/$fieldComment1Id ($fieldCommentName) = """" ] ..."
+        "Calling to update ItemField Async[True][$projectId/$itemId1/$fieldComment1Id (text) = """" ]"
+        "Done"
+        "Saving [$projectId/$itemId1/$fieldPriority1Id ($fieldPriorityName) = """" ] ..."
+        "Calling to update ItemField Async[True][$projectId/$itemId1/$fieldPriority1Id (singleSelectOptionId) = """" ]"
+    ) | ForEach-Object { 
+        Assert-Contains -Presented $transcript -Expected $_ -Comment "Not found in transcript: '$_'"
+    }
 
     # Staged list should be empty after successful sync
     $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
@@ -939,7 +945,7 @@ function Test_Sync_ProjectDatabase_ClearValues{
     $clearCommand = $clearCommand -replace '{ProjectId}', $projectId
     $clearCommand = $clearCommand -replace '{ItemId}', $itemId1
     $clearCommand = $clearCommand -replace '{FieldId}', $fieldPriority1Id
-    MockCallJsonAsync -Command $clearCommand -FileName "clearProjectV2ItemFieldValue.json"
+    MockCallJson -Command $clearCommand -FileName "clearProjectV2ItemFieldValue.json"
 
     # Stage the values - clear comment (empty string) and update title
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 ""
@@ -955,10 +961,10 @@ function Test_Sync_ProjectDatabase_ClearValues{
     # Verify clear and update commands were called by checking mock invocations
     # The transcript should show both operations on async: Calling and Saving
     @(
-        "Saving  [$projectId/$itemId1/$fieldComment1Id ($fieldCommentName) =  ] ..."
+        "Saving [$projectId/$itemId1/$fieldComment1Id ($fieldCommentName) = """" ] ..."
         "Calling to update ItemField Async[False][$projectId/$itemId1/$fieldComment1Id (text) = """" ]"
         "Done"
-        "Saving  [$projectId/$itemId1/$fieldPriority1Id ($fieldPriorityName) =  ] ..."
+        "Saving [$projectId/$itemId1/$fieldPriority1Id ($fieldPriorityName) = """" ] ..."
         "Calling to update ItemField Async[False][$projectId/$itemId1/$fieldPriority1Id (singleSelectOptionId) = """" ]"
     ) | ForEach-Object { 
         Assert-Contains -Presented $transcript -Expected $_ -Comment "Not found in transcript: '$_'"
