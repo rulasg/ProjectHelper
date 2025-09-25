@@ -707,8 +707,13 @@ function Test_ShowProjectItemsStaged {
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    MockCall_GetProject_700
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $i = $p.pullrequest
+    $pr = $p.issue
+    $fieldText = $p.fieldtext
+    $fieldSingleSelect = $p.fieldsingleselect
+    $fielddate = $p.fielddate
 
     $result = Show-ProjectItemStaged -Owner $owner -ProjectNumber $ProjectNumber
     Assert-IsNull -Object $result
@@ -716,18 +721,18 @@ function Test_ShowProjectItemsStaged {
     $projectBefore = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
     # Item 1
-    $itemId1 = "PVTI_lADOBCrGTM4ActQazgMuXXc"
+    $itemId1 = $i.id
 
-    $fieldComment1 = "Comment" ; $fieldCommentValue1 = "new value of the comment 10"
+    $fieldComment1 = $fieldText.name ; $fieldCommentValue1 = "new value of the comment 10"
     $fieldCommentValue1_Before = $projectBefore.items.$itemId1.$fieldComment1
 
     $fieldTitle1 = "Title" ; $fieldTitleValue1 = "new value of the title"
     $fieldTitleValue1_Before = $projectBefore.items.$itemId1.$fieldTitle1
 
-    $fieldStatus = "Status" ; $fieldStatusValue1 = "Done"
+    $fieldStatus = $fieldSingleSelect.name ; $fieldStatusValue1 = $fieldSingleSelect.options[1].name
     $fieldStatusValue1_Before = $projectBefore.items.$itemId1.$fieldStatus
 
-    $fieldDate = "Next Action Date" ; $fieldDateValue1 = "2024-03-31"
+    $fieldDate = $fielddate.name ; $fieldDateValue1 = "2024-03-31"
     $fieldDateValue1_Before = $projectBefore.items.$itemId1.$fieldDate
 
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
@@ -736,12 +741,12 @@ function Test_ShowProjectItemsStaged {
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldDate $fieldDateValue1
 
     # Item 2
-    $itemId2 = "PVTI_lADOBCrGTM4ActQazgMueM4"
-    $fieldComment2 = "Comment" ; $fileCommentValue2 = "new value of the comment 11"
-    $fieldTitle2 = "Title" ; $fileTitleValue2 = "new value of the title 11"
+    $itemId2 = $pr.id
+    $fieldComment2 = $fieldText.name ; $fieldCommentValue2 = "new value of the comment 11"
+    $fieldTitle2 = "Title" ; $fieldTitleValue2 = "new value of the title 11"
 
-    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId2 $fieldComment2 $fileCommentValue2
-    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId2 $fieldTitle2 $fileTitleValue2
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId2 $fieldComment2 $fieldCommentValue2
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId2 $fieldTitle2 $fieldTitleValue2
 
     # Act all staged items
     $result = Show-ProjectItemStaged -Owner $owner -ProjectNumber $ProjectNumber

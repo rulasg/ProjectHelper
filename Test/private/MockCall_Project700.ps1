@@ -28,7 +28,7 @@ function Get-Mock_Project_700 {
     $project_700.fieldtext = @{ id = $fieldtext.id ; name = $fieldtext.name }
     $project_700.fieldnumber = @{ id = $fieldnumber.id ; name = $fieldnumber.name }
     $project_700.fielddate = @{ id = $fielddate.id ; name = $fielddate.name }
-    $project_700.fieldsingleselect = @{ id = $fieldsingleselect.id ; name = $fieldsingleselect.name }
+    $project_700.fieldsingleselect = @{ id = $fieldsingleselect.id ; name = $fieldsingleselect.name ; options = $fieldsingleselect.options }
     
     # Items
     # $project_700.$statusField = $p.fields.nodes | Where-Object { $_.name -eq "Status" }
@@ -71,9 +71,36 @@ function Get-Mock_Project_700 {
         
     }
 
+    # Search tests
     $project_700.searchInTitle = @{}
     $project_700.searchInTitle.titleFilter = "development"
     $project_700.searchInTitle.Titles = $p.items.nodes.content.title | Where-Object { $_ -like "*development*" }
+
+    $project_700.searchInAnyField = @{}
+    $project_700.searchInAnyField."development" = @{}
+    $project_700.searchInAnyField."development".Titles = @(
+        "Implement caching strategy"
+        "Configure CI/CD pipeline"
+        "Issue for development"
+        "Create comprehensive web API setup with Node.js and Express"
+        "PullRequest for development"
+        "Create comprehensive .NET Web API development initialization documentation with 10 structured tasks"
+        "DraftIssue for development"
+        )
+    $project_700.searchInAnyField."development".totalCount = $project_700.searchInAnyField."development".Titles.Count
+
+    $project_700.searchInAnyField."96" = @{}
+    $project_700.searchInAnyField."96".Titles = @(
+        "Implement health checks and monitoring"
+        "Implement logging and error handling"
+    )
+    $project_700.searchInAnyField."96".totalCount = $project_700.searchInAnyField."96".Titles.Count
+
+    # All items except Drafts that do not have repository
+    $project_700.searchInAnyField."rulasg-dev-1" = @{}
+    $i = $content.data.organization.projectV2.items.nodes.content | Where-Object { $_.repository.nameWithOwner -like "$($project_700.owner)/rulasg-dev-1" }
+    $project_700.searchInAnyField."rulasg-dev-1".totalCount = $i.Count
+    $project_700.searchInAnyField."rulasg-dev-1".Titles = $i.title
 
     return $project_700
 }
