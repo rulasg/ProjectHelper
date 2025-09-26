@@ -68,6 +68,7 @@ function Sync-Project{
 
             if ( ! (Test-UpdateProjectItemCall $call) ) {
                 "FAILED !!" | Write-MyHost
+                Write-Debug -section "Sync-Project" -Message "Update-ProjectItem call failed" -Object $call
                 continue
             }
 

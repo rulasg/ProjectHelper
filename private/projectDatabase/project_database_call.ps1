@@ -299,5 +299,9 @@ function Test-UpdateProjectItemCall {
 
     $ret = $null -ne $call.Result.data.$($call.ResultDataType)
 
+    if (! $ret) {
+        "Update Project Item call Failed: $($call.Result.errors.message -join ', ')" | Write-Debug
+    }
+
     return $ret
 }

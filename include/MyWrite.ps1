@@ -37,7 +37,7 @@ function Write-MyHost {
     Write-ToConsole $message -Color $OUTPUT_COLOR -NoNewLine:$NoNewLine
 }
 
-function Write-MyDebug {
+function Write-Debug {
     param(
         [Parameter(Position = 0)][string]$section,
         [Parameter(Position = 1, ValueFromPipeline)][string]$Message,
@@ -73,5 +73,5 @@ function Write-ToConsole {
         [Parameter()][switch]$NoNewLine
 
     )
-    Write-Host $message -ForegroundColor $Color -NoNewLine:$NoNewLine
+    Microsoft.PowerShell.Utility\Write-Host $message -ForegroundColor $Color -NoNewLine:$NoNewLine
 }

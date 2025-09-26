@@ -27,3 +27,15 @@ function Set-MyInvokeCommandAlias{
         InvokeHelper\Set-InvokeCommandAlias -Alias $Alias -Command $Command -Tag $MODULE_INVOKATION_TAG
     }
 }
+
+function Invoke-MyCommand{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory,ValueFromPipeline,Position=0)][string]$Command,
+        [Parameter(Position=1)][hashtable]$Parameters
+    )
+
+    Write-Debug "[invoke] $Command" $Parameters
+
+    return InvokeHelper\Invoke-MyCommand -Command $Command -Parameters $Parameters
+}
