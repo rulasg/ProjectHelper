@@ -41,19 +41,14 @@ function Test_UpdateProjectItemsBetweenProjects_NoRefresh_NoRefresh{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $owner = "octodemo"
-    $sourceProjectNumber = 625
-    $destinationProjectNumber = 626
+    $p625 = Get-Mock_Project_625 ; $owner0 = $p625.owner ; $projectNumber0 = $p625.number
+    $p626 = Get-Mock_Project_626 ; $owner1 = $p626.owner ; $projectNumber1 = $p626.number
 
-    # Mock project calls
-    $sourceProjectNumber, $destinationProjectNumber | ForEach-Object {
-        $projectNumber = $_
-        MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber.syncprj.json"
-    }
+    $sourceOwner = $owner0 ; $sourceProjectNumber = $projectNumber0
+    $destinationOwner = $owner1 ; $destinationProjectNumber = $projectNumber1
 
-    # Cache projects using mocks calls
-    $destinationProject = Get-Project -Owner $owner -ProjectNumber $destinationProjectNumber
-    $sourceProject = Get-Project -Owner $owner -ProjectNumber $sourceProjectNumber
+    MockCall_GetProject -MockProject $p625 -Cache
+    MockCall_GetProject -MockProject $p626 -Cache
 
     # Reset mocks to fail if mocks are called again
     Reset-InvokeCommandMock
@@ -62,18 +57,20 @@ function Test_UpdateProjectItemsBetweenProjects_NoRefresh_NoRefresh{
     # Act
 
     $params = @{
-        SourceOwner = $owner
+        SourceOwner = $sourceOwner
         SourceProjectNumber = $sourceProjectNumber
-        DestinationOwner = $owner
+        DestinationOwner = $destinationOwner
         DestinationProjectNumber = $destinationProjectNumber
+        FieldSlug = "pr1_"
     }
-    $result = Update-ProjectItemsBetweenProjects -IncludeDoneItems  -NoRefreshDestination -NoRefreshSource @params
+    $result = Update-ProjectItemsBetweenProjects -IncludeDoneItems -NoRefreshDestination -NoRefreshSource @params
 
     Assert-IsNull -Object $result
 
-    $staged = Get-ProjectItemStaged -Owner $owner -ProjectNumber $destinationProjectNumber
+    $staged = Get-ProjectItemStaged -Owner $destinationOwner -ProjectNumber $destinationProjectNumber
 
-    Assert-Count -Expected 3 -Presented $staged.Keys
+    $p = $p626.syncBtwPrj_625
+    Assert-AreEqual -Expected $p.staged.Count -Presented $staged.Count
 
 }
 
