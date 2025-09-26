@@ -48,7 +48,7 @@ function Open-Url {
             Write-Error "Failed to open URL: $_"
         }
     }
-} Export-ModuleMember -Function 'Open-Url'
+}
 
 function Open-File {
     [CmdletBinding()]
