@@ -876,7 +876,9 @@ function Test_Sync_ProjectDatabaseAsync_ClearValues{
     $clearCommand = $clearCommand -replace '{ProjectId}', $projectId
     $clearCommand = $clearCommand -replace '{ItemId}', $itemId1
     $clearCommand = $clearCommand -replace '{FieldId}', $fieldComment1Id
-    MockCallJsonAsync -Command $clearCommand -FileName "clearProjectV2ItemFieldValue.json"
+    # MockCallJsonAsync -Command $clearCommand -FileName "clearProjectV2ItemFieldValue.json"
+    MockCallJsonAsync -Command $clearCommand -FileName "invoke-clearProjectV2ItemFieldValue-$projectId-$itemId1-$fieldComment1Id.json"
+
 
     # Mock clear command for empty priority field (using async alias)
     $clearCommand = 'Import-Module {projecthelper} ; Invoke-GitHubClearItemValues -ProjectId {ProjectId} -ItemId {ItemId} -FieldId {FieldId}'
@@ -884,7 +886,8 @@ function Test_Sync_ProjectDatabaseAsync_ClearValues{
     $clearCommand = $clearCommand -replace '{ProjectId}', $projectId
     $clearCommand = $clearCommand -replace '{ItemId}', $itemId1
     $clearCommand = $clearCommand -replace '{FieldId}', $fieldPriority1Id
-    MockCallJsonAsync -Command $clearCommand -FileName "clearProjectV2ItemFieldValue.json"
+    # MockCallJsonAsync -Command $clearCommand -FileName "clearProjectV2ItemFieldValue.json"
+    MockCallJsonAsync -Command $clearCommand -FileName "invoke-clearProjectV2ItemFieldValue-$projectId-$itemId1-$fieldPriority1Id.json"
 
     # Stage the values - clear comment (empty string) and update title
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 ""
