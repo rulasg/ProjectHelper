@@ -25,7 +25,9 @@ function Get-Mock_Project_625 {
     # Add Items to mock
     Add-ItemsToMock -project $project
 
-    # Update Status on DueDate
+    #############################
+    # Update Status on DueDate  #
+    #############################
     <#
     $prj = Get-Project -Owner octodemo -ProjectNumber 625
     $prj.items.values | Select id,title,DueDate,Status,Comment | Sort-Object title | ft
@@ -54,25 +56,25 @@ function Get-Mock_Project_625 {
     $sf = ($content.data.organization.projectV2.fields.nodes | Where-Object { $_.name -eq $statusFieldName })
     $df = ($content.data.organization.projectV2.fields.nodes | Where-Object { $_.name -eq $dateFieldName })
     $project.updateStatusOnDueDate = @{
-        statusAction     = $statusAction
-        statusPlanned    = $statusPlanned
-        statusDoneOther  = "Todo"
-        fields           = @{ status = $sf ; dueDate = $df }
-        staged           = @{
+        statusAction                   = $statusAction
+        statusPlanned                  = $statusPlanned
+        statusDoneOther                = "Todo"
+        fields                         = @{ status = $sf ; dueDate = $df }
+        staged                         = @{
             "PVTI_lADOAlIw4c4A0Lf4zgYNTyM" = @{ $($sf.id) = $statusAction } # draft0
             "PVTI_lADOAlIw4c4A0Lf4zgfN-44" = @{ $($sf.id) = $statusAction } # draft5
             "PVTI_lADOAlIw4c4A0Lf4zgfNuvM" = @{ $($sf.id) = $statusPlanned } # draft2
         }
-        anyStatus        = @{
+        anyStatus                      = @{
             "PVTI_lADOAlIw4c4A0Lf4zgYNTxI" = @{ $($sf.id) = $statusAction } # draft4
             "PVTI_lADOAlIw4c4A0Lf4zgfN77A" = @{ $($sf.id) = $statusAction } # draft9
             
         }
-        includeDone      = @{
+        includeDone                    = @{
             "PVTI_lADOAlIw4c4A0Lf4zgYNTc0" = @{ $($df.id) = "" } # draft8
             
         }
-        includeDoneOther = @{
+        includeDoneOther               = @{
             "PVTI_lADOAlIw4c4A0Lf4zgfN77A" = @{ $($df.id) = "" } # draft5
             "PVTI_lADOAlIw4c4A0Lf4zgfOmpo" = @{ $($df.id) = "" } # draft9
         }
@@ -81,6 +83,50 @@ function Get-Mock_Project_625 {
             "PVTI_lADOAlIw4c4A0Lf4zgfN77A" = @{ $($df.id) = "" } # draft5
             "PVTI_lADOAlIw4c4A0Lf4zgfOmpo" = @{ $($df.id) = "" } # draft9
         }
+    }
+
+    #############################
+    # Update With Integration   #
+    #############################
+
+    $project.updateWithIntegration = @{
+        fieldSlug = "sf_"
+        integrationField = "sfUrl"
+        fields = @("sf_Int2","sf_Text1")
+        
+        integrationCommand = "Get-SfAccount"
+
+        mockdata1 = @{
+            command = 'Get-SfAccount "https://some.com/1234/viuew"'
+            data = @{
+                "Text1"   = "value11"
+                "Text2"   = "value12"
+                "Number1" = 11
+                "Int2"    = 111
+            }
+        }
+
+        mockdata2 = @{
+            command = 'Get-SfAccount "https://some.com/4321/viuew"'
+            data = @{
+                "Text1"   = "value21"
+                "Text2"   = "value22"
+                "Number1" = 22
+                "Int2"    = 222
+            }
+        }
+
+        staged =@{
+            PVTI_lADOAlIw4c4A0Lf4zgfJYv4 = @{
+                PVTF_lADOAlIw4c4A0Lf4zg15NKg = 222
+                PVTF_lADOAlIw4c4A0Lf4zg15NMg = "value21"
+            }
+            PVTI_lADOAlIw4c4A0Lf4zgfJYvk = @{
+                PVTF_lADOAlIw4c4A0Lf4zg15NKg = 111
+                PVTF_lADOAlIw4c4A0Lf4zg15NMg = "value11"
+            }
+
+        } 
     }
 
 

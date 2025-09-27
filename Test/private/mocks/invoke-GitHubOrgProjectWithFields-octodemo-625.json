@@ -835,6 +835,36 @@
                       "name": "Comment",
                       "dataType": "TEXT"
                     }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "https://some.com/1234/viuew",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lpw",
+                      "name": "sfUrl",
+                      "dataType": "TEXT"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldNumberValue",
+                    "number": 1111.0,
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zg15NKg",
+                      "name": "sf_Int2",
+                      "dataType": "NUMBER"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "PR Sf Test1 field",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zg15NMg",
+                      "name": "sf_Text1",
+                      "dataType": "TEXT"
+                    }
                   }
                 ]
               }
@@ -951,6 +981,36 @@
                       "__typename": "ProjectV2Field",
                       "id": "PVTF_lADOAlIw4c4A0Lf4zgqoEIo",
                       "name": "Comment",
+                      "dataType": "TEXT"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "https://some.com/4321/viuew",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zgp2lpw",
+                      "name": "sfUrl",
+                      "dataType": "TEXT"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldNumberValue",
+                    "number": 3333.0,
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zg15NKg",
+                      "name": "sf_Int2",
+                      "dataType": "NUMBER"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Issue sf Text1 field",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4A0Lf4zg15NMg",
+                      "name": "sf_Text1",
                       "dataType": "TEXT"
                     }
                   }
@@ -1236,7 +1296,7 @@
           ]
         },
         "fields": {
-          "totalCount": 16,
+          "totalCount": 18,
           "nodes": [
             {
               "__typename": "ProjectV2Field",
@@ -1377,10 +1437,22 @@
               "id": "PVTF_lADOAlIw4c4A0Lf4zgqoEIo",
               "name": "Comment",
               "dataType": "TEXT"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4A0Lf4zg15NKg",
+              "name": "sf_Int2",
+              "dataType": "NUMBER"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4A0Lf4zg15NMg",
+              "name": "sf_Text1",
+              "dataType": "TEXT"
             }
           ],
           "pageInfo": {
-            "endCursor": "MTY",
+            "endCursor": "MTg",
             "hasNextPage": false
           }
         },
