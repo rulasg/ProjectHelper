@@ -146,6 +146,88 @@ function Test_SyncProjectItemsStaged_SUCCESS_Date{
     Assert-AreEqual -Expected $fieldValueToUpdate -Presented $item1.$fieldName
 }
 
+function Test_SyncProjectItemsStaged_SUCCESS_SingleSelect{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+
+    $projectId = $p.id
+
+    # project item issuue
+    $item = $p.pullrequest
+    $field = $p.fieldsingleselect
+
+    $itemId1 = $item.id
+    
+    $fieldName = $field.name
+    $fieldId = $field.id
+    $type = "singleSelectOptionId"
+
+    $fieldBeforeValueSingleSelect = $item.fieldsingleselect.name
+    $fieldNewValue = $field.options[1].name
+    $fieldNewValueId = $field.options[1].id
+
+    $mockItems = @(
+        @{
+            ItemId     = $itemId1
+            FieldId    = $fieldId
+            Value      = $fieldNewValue
+            ResultFile = "invoke-GitHubUpdateItemValue-$itemId1-$fieldId.json"
+        }
+    )
+
+    # Loop through the array and set the mock commands
+    foreach ($item in $mockItems) {
+        $command = 'Invoke-GitHubUpdateItemValues -ProjectId {ProjectId} -ItemId {ItemId} -FieldId {FieldId} -Value "{Value}" -Type {Type}'
+        $command = $command -replace '{ProjectId}', $projectId
+        $command = $command -replace '{ItemId}', $item.ItemId
+        $command = $command -replace '{FieldId}', $item.FieldId
+        $command = $command -replace '{Value}', $fieldNewValueId
+        $command = $command -replace '{Type}', $type
+
+        Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename $($item.ResultFile)" -Alias $command
+    }
+
+    # Mock get-project
+    MockCall_GetProject -MockProject $p -Cache
+    
+
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldName $fieldNewValue
+
+    $expectedStaged = @{
+        $($itemId1) = @{
+            $($fieldId) = $fieldNewValue
+        }
+    }
+
+    # Act- Staged
+    # Confirm that the changes are staged
+    $staged = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
+    Assert-AreEqual -Expected $expectedStaged.Count -Presented $staged.Count -Comment "Items staged"
+    foreach($id in $expectedStaged.Keys){
+        foreach($field in $expectedStaged.$id.Keys){
+            Assert-AreEqual -Expected $expectedStaged.$id.$field -Presented $staged.$id.$field.Value -Comment "Item $id Field $field"
+        }
+    }
+
+    $showStaged = Show-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber | Show-ProjectItemStaged
+    Assert-AreEqual -Expected $fieldNewValue -Presented $showStaged.$fieldName.Value
+    Assert-AreEqual -Expected $fieldBeforeValueSingleSelect -Presented $showStaged.$fieldName.Before
+
+    # Act - Sync
+    $result = Sync-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+
+    # Assert
+    Assert-IsTrue -Condition $result
+    
+    $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    Assert-Count -Expected 0 -Presented $staged
+
+    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    Assert-AreEqual -Expected $fieldNewValue -Presented $item1.$fieldName
+}
+
 function Test_SyncProjectItemsStaged_SUCCESS_Content_Issue_NotCached {
     Reset-InvokeCommandMock
     Mock_DatabaseRoot

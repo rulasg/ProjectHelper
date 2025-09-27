@@ -47,9 +47,10 @@ function Sync-Project{
         $FieldStagedId = $itemStaged.Keys | Copy-MyStringArray
         foreach($fieldId in $FieldStagedId){
 
-            # Staged has the display value. 
+            # Staged has the display value.
             # Convert to the update value
-            $value = ConvertTo-FieldValue -Field $itemStaged.$fieldId.Field -Value $itemStaged.$fieldId.Value
+            $value = $itemStaged.$fieldId.Value
+            $valueToSend = ConvertTo-FieldValue -Field $itemStaged.$fieldId.Field -Value $value
             $field = $itemStaged.$fieldId.Field
 
             $params = @{
@@ -59,7 +60,7 @@ function Sync-Project{
                 FieldName = $field.name
                 FieldType = $field.type
                 FieldDataType = $field.dataType
-                Value = $value
+                Value = $valueToSend
             }
 
             "Saving [$($params.Database.ProjectId)/$($params.ItemId)/$($params.FieldId) ($($params.FieldName)) = ""$($params.Value)"" ] ..." | Write-MyHost
