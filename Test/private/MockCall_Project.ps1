@@ -129,6 +129,30 @@ function Get-Mock_Project_625 {
         } 
     }
 
+    #############################
+    # Update With Injection    #
+    #############################
+
+    $project.updateWithInjection = @{
+        item1 = @{
+            id = "PVTI_lADOAlIw4c4A0Lf4zgYNTxI"
+            fieldName = "sf_Text1"
+        }
+        item2 = @{
+            id = "PVTI_lADOAlIw4c4A0Lf4zgYNTc0"
+            fieldName = "Text1"
+        }
+        field1 = @{
+            id = "PVTF_lADOAlIw4c4A0Lf4zg15NMg"
+            name = "sf_Text1"
+        }
+        field2 = @{
+            id = "PVTF_lADOAlIw4c4A0Lf4zgp6aFk"
+            name = "Text1"
+        }
+    }
+
+
 
     return $project
 
