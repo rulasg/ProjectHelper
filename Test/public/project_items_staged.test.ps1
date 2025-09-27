@@ -75,10 +75,12 @@ function Test_SyncProjectItemsStaged_SUCCESS_Number{
 
     # Assert
     Assert-IsTrue -Condition $result
+
     $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-Count -Expected 0 -Presented $staged
+    
     $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
-    Assert-AreEqual -Expected $fieldValueToUpdate -Presented $item1.$fieldName
+    Assert-AreEqual -Expected $fieldValue -Presented $item1.$fieldName
 }
 
 function Test_SyncProjectItemsStaged_SUCCESS_Date{
