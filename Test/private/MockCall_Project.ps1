@@ -2,8 +2,16 @@ function Get-Mock_Project_625 {
 
     $project = @{}
 
-    $project.projectFile = "invoke-GitHubOrgProjectWithFields-octodemo-625.json"
-    $project.projectFile_skipitems = "invoke-GitHubOrgProjectWithFields-octodemo-625-skipitems.json"
+    <#
+    Reset-InvokeCommandMock
+    Enable-InvokeCommandAliasModule 
+    $cmd = 'Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 625 -afterFields "" -afterItems ""'
+    save-invokeAsMockFile $cmd "invoke-GitHubOrgProjectWithFields-octodemo-625.json"
+    #>
+
+    $name = "invoke-GitHubOrgProjectWithFields-octodemo-625"
+    $project.projectFile = $name + ".json"
+    $project.projectFile_skipitems = $name + "-skipitems.json"
 
     $content = Get-MockFileContentJson -FileName $project.projectFile
     $p = $content.data.organization.projectV2
@@ -16,6 +24,65 @@ function Get-Mock_Project_625 {
 
     # Add Items to mock
     Add-ItemsToMock -project $project
+
+    # Update Status on DueDate
+    <#
+    $prj = Get-Project -Owner octodemo -ProjectNumber 625
+    $prj.items.values | Select id,title,DueDate,Status,Comment | Sort-Object title | ft
+
+    id                           Title                       DueDate    Status         Comment
+    --                           -----                       -------    ------         -------
+    PVTI_lADOAlIw4c4A0Lf4zgYNTyM draft0                      2025-03-01 Planned        Change AR Past
+    PVTI_lADOAlIw4c4A0Lf4zgYVsJc draft1                      9999-12-12 Planned        Ignore as Future
+    PVTI_lADOAlIw4c4A0Lf4zgfNuvM draft2                      9999-12-12 ActionRequired Change to P as AR+Future
+    PVTI_lADOAlIw4c4A0Lf4zgfNum4 draft3                      2025-03-03 ActionRequired Ignore as Past and AR
+    PVTI_lADOAlIw4c4A0Lf4zgYNTxI draft4                      2025-03-09 In Progress    (ignore not P)  | (Changed AR as Past)
+    PVTI_lADOAlIw4c4A0Lf4zgfN77A draft5                      2025-03-15 Todo            (ignore not P)  | (Change AR as Today)
+    PVTI_lADOAlIw4c4A0Lf4zgfN-44 draft6                      2025-03-15 Planned        Change to AR as P and Today
+    PVTI_lADOAlIw4c4A0Lf4zgYNTc0 draft7                      2025-03-05 Done           Ignore as Done | (Change AR as Past)
+    PVTI_lADOAlIw4c4A0Lf4zgYNTwo draft8                      9999-12-12 In Progress    Ignore future
+    PVTI_lADOAlIw4c4A0Lf4zgfOmpo draft9                      9999-12-12 Todo           (Ignore not P) 
+    PVTI_lADOAlIw4c4A0Lf4zgfJYv4 Issue for development                                 skip no DueDate
+    PVTI_lADOAlIw4c4A0Lf4zgfJYvk PullRequest for development                           skip no DueDate
+
+    #>
+    $statusFieldName = "Status"
+    $dateFieldName = "DueDate"
+    $statusAction = "ActionRequired"
+    $statusPlanned = "Planned"
+    
+    $sf = ($content.data.organization.projectV2.fields.nodes | Where-Object { $_.name -eq $statusFieldName })
+    $df = ($content.data.organization.projectV2.fields.nodes | Where-Object { $_.name -eq $dateFieldName })
+    $project.updateStatusOnDueDate = @{
+        statusAction     = $statusAction
+        statusPlanned    = $statusPlanned
+        statusDoneOther  = "Todo"
+        fields           = @{ status = $sf ; dueDate = $df }
+        staged           = @{
+            "PVTI_lADOAlIw4c4A0Lf4zgYNTyM" = @{ $($sf.id) = $statusAction } # draft0
+            "PVTI_lADOAlIw4c4A0Lf4zgfN-44" = @{ $($sf.id) = $statusAction } # draft5
+            "PVTI_lADOAlIw4c4A0Lf4zgfNuvM" = @{ $($sf.id) = $statusPlanned } # draft2
+        }
+        anyStatus        = @{
+            "PVTI_lADOAlIw4c4A0Lf4zgYNTxI" = @{ $($sf.id) = $statusAction } # draft4
+            "PVTI_lADOAlIw4c4A0Lf4zgfN77A" = @{ $($sf.id) = $statusAction } # draft9
+            
+        }
+        includeDone      = @{
+            "PVTI_lADOAlIw4c4A0Lf4zgYNTc0" = @{ $($df.id) = "" } # draft8
+            
+        }
+        includeDoneOther = @{
+            "PVTI_lADOAlIw4c4A0Lf4zgfN77A" = @{ $($df.id) = "" } # draft5
+            "PVTI_lADOAlIw4c4A0Lf4zgfOmpo" = @{ $($df.id) = "" } # draft9
+        }
+        anyStatus_and_includeDoneOther = @{
+            "PVTI_lADOAlIw4c4A0Lf4zgYNTxI" = @{ $($sf.id) = $statusAction } # draft4
+            "PVTI_lADOAlIw4c4A0Lf4zgfN77A" = @{ $($df.id) = "" } # draft5
+            "PVTI_lADOAlIw4c4A0Lf4zgfOmpo" = @{ $($df.id) = "" } # draft9
+        }
+    }
+
 
     return $project
 

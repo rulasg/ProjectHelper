@@ -1,65 +1,73 @@
-function Test_UpdateProjectItemStatusOnDueDate{
+function Test_UpdateProjectItemStatusOnDueDate {
 
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
+
+    # Mock calling Toda
     MockCallToString -Command "Get-Date -Format yyyy-MM-dd" -OutString "2025-03-15"
-    MockCall_GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 625 -FileName "invoke-GitHubOrgProjectWithFields-octodemo-625.updateStatus.json"
 
-    # > prg = Get-Project -Owner octodemo -ProjectNumber 625
-    # > $prj.items.values | Select id,NCC,Status | Sort-Object NCC
-    #
-    # id                           NCC        Status
-    # --                           ---        ------
-    # PVTI_lADOAlIw4c4A0Lf4zgYQpP4
-    # PVTI_lADOAlIw4c4A0Lf4zgYVsJc 2025-03-09 Done
-    # PVTI_lADOAlIw4c4A0Lf4zgYNTwo 2025-03-11
-    # PVTI_lADOAlIw4c4A0Lf4zgYQpRc 2025-03-14
-    # PVTI_lADOAlIw4c4A0Lf4zgYNTc0 2025-03-15
-    # PVTI_lADOAlIw4c4A0Lf4zgYUeW4 2025-03-15
-    # PVTI_lADOAlIw4c4A0Lf4zgYNTxI 2025-03-15
-    # PVTI_lADOAlIw4c4A0Lf4zgYQpSY 2025-03-16
-    # PVTI_lADOAlIw4c4A0Lf4zgYNTyM 2025-03-22
-    # PVTI_lADOAlIw4c4A0Lf4zgYUecs 2025-03-26
-    #
-    # 10 total
-    # 9 with NCC
-    # 6 with NCC overdued
-    # 1 with Status Done
+    $mp = Get-Mock_Project_625 ; $owner = $mp.owner ; $projectNumber = $mp.number
+    MockCall_GetProject -MockProject $mp -Cache
 
+    $p = $mp.updateStatusOnDueDate
+    $statusFieldId = $p.fields.status.id
+    $otherDone = $p.statusDoneOther
 
-    $params = @{
-        Owner = "octodemo"
-        ProjectNumber = 625
-        Status = "Todo"
-        DueDateFieldName = "NCC"
+    # Act and Assert
+    function Assert-DueDateStaged{
+        param(
+            [Parameter()][object]$Expected,
+            [Parameter(Position=1)][bool]$AnyStatus,
+            [Parameter(Position=2)][bool]$IncludeDoneItems,
+            [Parameter(Position=3)][string]$StatusDone
+        )
+
+        Reset-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
+        $params = @{
+            Owner            = $owner
+            ProjectNumber    = $projectNumber
+            StatusFieldName  = $p.fields.status.name
+            DateFieldName    = $p.fields.dueDate.name
+            StatusAction     = $p.statusAction
+            StatusPlanned    = $p.statusPlanned
+            IncludeDoneItems = $IncludeDoneItems
+            StatusDone       = $StatusDone
+            AnyStatus        = $AnyStatus
+        }
+
+        # Act
+        $result = Update-ProjectItemsStatusOnDueDate @params
+
+        # Result is null
+        Assert-IsNull -Object $result -Comment "Result is null"
+
+        # Assert
+        $staged = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
+
+        # Items edited to ActionRequired or Planned
+        $total = $Expected.Count
+        Assert-AreEqual -Expected $total -Presented $staged.Count
+        foreach($id in $Expected.Keys){
+            foreach($field in $Expected.$id.Keys){
+                Assert-AreEqual -Expected $Expected.$id.$field -Presented $staged.$id.$field.Value -Comment "Item $id Field $field"
+            }
+        }
     }
 
-    $result = Update-ProjectItemsStatusOnDueDate @params
+    # Assert of the combination of the three parameters
 
-    Assert-IsNull -Object $result
-
-    $staged = Get-ProjectItemStaged -Owner octodemo -ProjectNumber 625
-
-    Assert-Count -Expected 5 -Presented $staged
-
-    Assert-Contains -Expected PVTI_lADOAlIw4c4A0Lf4zgYNTc0 -Presented $staged.Keys
-    Assert-Contains -Expected PVTI_lADOAlIw4c4A0Lf4zgYNTwo -Presented $staged.Keys
-    Assert-Contains -Expected PVTI_lADOAlIw4c4A0Lf4zgYNTxI -Presented $staged.Keys
-    Assert-Contains -Expected PVTI_lADOAlIw4c4A0Lf4zgYQpRc -Presented $staged.Keys
-    Assert-Contains -Expected PVTI_lADOAlIw4c4A0Lf4zgYUeW4 -Presented $staged.Keys
-    Assert-NotContains -Expected PVTI_lADOAlIw4c4A0Lf4zgYVsJc -Presented $staged.Keys -Comment "Done item"
-    Assert-NotContains -Expected PVTI_lADOAlIw4c4A0Lf4zgYQpP4 -Presented $staged.Keys -Comment "Item without NCC"
-
-    # Act with NotDone
-    Reset-ProjectItemStaged -Owner octodemo -ProjectNumber 625
-
-    # Act
-    $result = Update-ProjectItemsStatusOnDueDate -IncludeDoneItems @params
-
-    # Assert
-    Assert-IsNull -Object $result
-    $staged = Get-ProjectItemStaged -Owner octodemo -ProjectNumber 625
-    Assert-Count -Expected 6 -Presented $staged
-    Assert-Contains -Expected PVTI_lADOAlIw4c4A0Lf4zgYVsJc -Presented $staged.Keys -Comment "Done item "
+    #                    AnyStatus | IncludeDoneItems | DoneOther  | Expected
+    Assert-DueDateStaged   $true         $true           ""          -Expected ($p.staged + $p.anyStatus                      + $p.includeDone  )
+    Assert-DueDateStaged   $false        $true           ""          -Expected ($p.staged                                     + $p.includeDone  )
+    Assert-DueDateStaged   $true         $false          ""          -Expected ($p.staged + $p.anyStatus                                        )
+    Assert-DueDateStaged   $false        $false          ""          -Expected ($p.staged                                                       )
+    Assert-DueDateStaged   $true         $true          $otherDone   -Expected ($p.staged + $p.anyStatus_and_includeDoneOther + $p.includeDone  )
+    Assert-DueDateStaged   $false        $true          $otherDone   -Expected ($p.staged               + $p.includeDoneOther + $p.includeDone  )
+    Assert-DueDateStaged   $true         $false         $otherDone   -Expected ($p.staged + $p.anyStatus_and_includeDoneOther                   )
+    Assert-DueDateStaged   $false        $false         $otherDone   -Expected ($p.staged               + $p.includeDoneOther                   )
 
 }
+
+
+
+
