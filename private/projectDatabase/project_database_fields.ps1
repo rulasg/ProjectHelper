@@ -42,6 +42,10 @@ function Test-FieldValue{
     return $ret
 }
 
+<#
+.SYNOPSIS
+    Convert from UpdateValue to DisplayValue
+#>
 function ConvertTo-FieldValue{
     [CmdletBinding()]
     [OutputType([string])]
@@ -63,6 +67,11 @@ function ConvertTo-FieldValue{
     return $ret
 }
 
+<#
+.SYNOPSIS
+    Convert from Id to Name
+    Convert from Internal to Display
+#>
 function ConvertFrom-FieldValue{
     [CmdletBinding()]
     [OutputType([string])]
@@ -83,7 +92,8 @@ function ConvertFrom-FieldValue{
     return $ret
 }
 
-<#.SYNOPSIS
+<#
+.SYNOPSIS
     Convert from OptionId to OptionName
 #>
 function ConvertFrom-SingleSelect{
@@ -109,8 +119,12 @@ function ConvertFrom-SingleSelect{
     }
 }
 
-<#.SYNOPSIS
+<#
+.SYNOPSIS
     Convert from OptionName to OptionId
+.DESCRIPTION
+    DisplayValue to UpdateValue
+    Display to Internal
 #>
 function ConvertTo-SingleSelect{
     [CmdletBinding()]
@@ -213,6 +227,11 @@ function ConvertTo-Number {
 
         # Get the numeric part from the string
         $match = $regex.Match($Value)
+
+        if (-not $match.Success) {
+            throw "Value '$Value' is not a valid number format"
+        }
+
         $numberPart = $match.Groups[1].Value
 
         # Try to guess which character is used for decimals and which is used for thousands

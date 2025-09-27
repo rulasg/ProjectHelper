@@ -87,7 +87,7 @@ function Update-ProjectItemsBetweenProjects {
         # Create hashtable with the values of the fields defined in $fieldlist
         $values = @{}
         foreach($field in $FieldsList){
-            $values[$field] = $sourceItem.$field
+            $values.$field = $sourceItem.$field
         }
 
         # Check if values is empty or null

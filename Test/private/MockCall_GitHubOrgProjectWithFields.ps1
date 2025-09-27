@@ -1,5 +1,5 @@
 
-function MockCall_GitHubOrgProjectWithFields{
+function MockCall_GitHubOrgProjectWithFields {
     Param(
         [string]$Owner,
         [string]$ProjectNumber,
@@ -23,7 +23,7 @@ function MockCall_GitHubOrgProjectWithFields{
     MockCallJson -Command $cmd -Filename $FileName
 }
 
-function MockCall_GitHubOrgProjectWithFields_Null{
+function MockCall_GitHubOrgProjectWithFields_Null {
     Param(
         [string]$Owner,
         [string]$ProjectNumber

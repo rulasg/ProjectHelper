@@ -256,22 +256,26 @@ function Update-ItemField {
     if ($Async) {
         if ([string]::IsNullOrWhiteSpace($value)) {
             $job = Start-MyJob -Command GitHub_ClearProjectV2ItemFieldValueAsync -Parameters $params
+            $resultDataType = "clearProjectV2ItemFieldValue"
         }
         else {
             $job = Start-MyJob -Command GitHub_UpdateProjectV2ItemFieldValueAsync -Parameters $params
+            $resultDataType = "updateProjectV2ItemFieldValue"
         }
     }
     else {
-
+        
         if ([string]::IsNullOrWhiteSpace($value)) {
             $result = Invoke-MyCommand -Command GitHub_ClearProjectV2ItemFieldValue -Parameters $params
+            $resultDataType = "clearProjectV2ItemFieldValue"
         }
         else {
             $result = Invoke-MyCommand -Command GitHub_UpdateProjectV2ItemFieldValue -Parameters $params
+            $resultDataType = "updateProjectV2ItemFieldValue"
         }
     }
 
-    return $result, $job , "updateProjectV2ItemFieldValue"
+    return $result, $job , $resultDataType
 }
 
 function Test-UpdateProjectItemAsyncCall {
@@ -298,6 +302,10 @@ function Test-UpdateProjectItemCall {
     )
 
     $ret = $null -ne $call.Result.data.$($call.ResultDataType)
+
+    if (! $ret) {
+        "Update Project Item call Failed: $($call.Result.errors.message -join ', ')" | Write-Debug
+    }
 
     return $ret
 }

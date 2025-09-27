@@ -34,9 +34,9 @@ function Get-ProjectFields{
     [CmdletBinding()]
     [OutputType([string[]])]
     param(
-        [Parameter(Position = 0)] [string]$Owner,
-        [Parameter(Position = 1)] [string]$ProjectNumber,
-        [Parameter()][string]$Name,
+        [Parameter()] [string]$Owner,
+        [Parameter()] [string]$ProjectNumber,
+        [Parameter(Position = 0)][string]$Name,
         [Parameter()][switch]$Force
     )
 

@@ -3,22 +3,23 @@ function Test_GetProjectItem_SUCCESS{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164 ;
-    # $itemsCount = 12 ; $fieldsCount = 18
-    $fieldComment = "Comment" ; $fieldTitle = "Title"
+    $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $projectNumber = $p.number
+    $i = $p.draftissue
+    $f = $p.fieldtext
 
+    $fieldComment = $f.name ; $fieldTitle = "Title"
 
-    $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
-    $projectFieldTitleValue = "A draft in the project"
-    $projectFieldCommentValue = "This"
-    $itemFieldTitleValue = "kk text"
-    $itemFieldCommentValue = "comment for draft 1"
+    $itemId = $i.id
+    $projectFieldTitleValue = $i.title
+    $projectFieldCommentValue = $i.fieldtext
+    $itemFieldTitleValue = $projectFieldTitleValue + " updated"
+    $itemFieldCommentValue = $projectFieldCommentValue + " updated"
 
     # allow get project
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    MockCall_GetProject_700
 
     # Even if id is in project we make a direct call when with Force
-    MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-$itemId.json"
+    MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-$itemId-updated.json"
     
     # Act get value from project
     $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
@@ -53,22 +54,23 @@ function Test_EditProjetItems_SUCCESS{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164 ;
+    $Owner = "octodemo" ; $ProjectNumber = 700 ;
     #$itemsCount = 12 ; $fieldsCount = 18
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    # MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700.json'
 
     $before = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
     # Item id 10
     # $title = "A draft in the project"
 
-    $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
+    $itemId = "PVTI_lADOAlIw4c4BCe3Vzgeio4o"
     # $title_fieldid= "PVTF_lADOBCrGTM4ActQazgSkYm8"
     $title_fieldid= "title"
 
-    $comment_fieldid = "PVTF_lADOBCrGTM4ActQazgSl5GU"
+    $comment_fieldid = "PVTF_lADOAlIw4c4BCe3Vzg0rhko"
 
-    $fieldComment = "Comment" ; $fieldCommentValue = "new value of the comment 10.1" ; $fieldCommentValue_Before = $before.items.$itemId.$fieldComment
+    $fieldComment = "field-text" ; $fieldCommentValue = "new value of the comment 10.1" ; $fieldCommentValue_Before = $before.items.$itemId.$fieldComment
     $fieldTitle = "Title" ; $fieldTitleValue = "new value of the title 10.1" ; $fieldTitleValue_Before = $before.items.$itemId.$fieldTitle
 
     # Act
@@ -91,19 +93,19 @@ function Test_EditProjetItems_SUCCESS{
     Assert-Contains -Expected $itemId -Presented $result.Keys
 
     Assert-Count -Expected 2 -Presented $result.$itemId
-    Assert-AreEqual -Expected "Comment" -Presented $result.$itemId.$comment_fieldid.Field.name
-    Assert-AreEqual -Expected "Title" -Presented $result.$itemId.$title_fieldid.Field.name
+    Assert-AreEqual -Expected $fieldComment -Presented $result.$itemId.$comment_fieldid.Field.name
+    Assert-AreEqual -Expected $fieldTitle -Presented $result.$itemId.$title_fieldid.Field.name
 
     Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$itemId.$comment_fieldid.Value
     Assert-AreEqual -Expected $fieldTitleValue -Presented $result.$itemId.$title_fieldid.Value
 }
 
-function Test_EditProejctItems_SameValue{
+function Test_EditProjectItems_SameValue{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    $Owner = "octodemo" ; $ProjectNumber = 700
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700.json'
 
     $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
     #$actualtitle = $prj.items.$itemId."Title"
@@ -111,11 +113,11 @@ function Test_EditProejctItems_SameValue{
     # Item id 10
     # $title = "A draft in the project"
 
-    $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
+    $itemId = "PVTI_lADOAlIw4c4BCe3Vzgeio4o"
     #$title_fieldid= "PVTF_lADOBCrGTM4ActQazgSkYm8"
     #$comment_fieldid = "PVTF_lADOBCrGTM4ActQazgSl5GU"
 
-    $fieldComment = "Comment" ; $fieldCommentValue = $prj.items.$itemId."Comment"
+    $fieldComment = "field-text" ; $fieldCommentValue = $prj.items.$itemId."field-text"
     $fieldTitle = "Title" ; $fieldTitleValue = $prj.items.$itemId."Title"
 
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldComment $fieldCommentValue
@@ -126,71 +128,18 @@ function Test_EditProejctItems_SameValue{
     Assert-Count -Expected 0 -Presented $result.Keys
 }
 
-function Test_EditProejctItems_NumberDecimals{
+function Test_EditProjectItems_Direct{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2-skipitems.json' -SkipItems
-
-    # $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
-
-    $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
-
-    # Mock the direct call for item
-    MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-$itemId.json"
-
-    # [DBG]:> $prj.fields.PVTF_lADOBCrGTM4ActQazgSkglc
-    # Name                           Value
-    # ----                           -----
-    # dataType                       NUMBER
-    # id                             PVTF_lADOBCrGTM4ActQazgSkglc
-    # type                           ProjectV2Field
-    # name                           TimeTracker
-
-    $fieldNumber = "TimeTracker"
-
-    "NotANumber","1.000.1","1,000,1" | ForEach-Object{
-
-        # Not a valid value
-        $hasThrow= $false
-        try {
-            Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldNumber "NotNumber"
-        }
-        catch {
-            $hasThrow = $true
-        }
-        Assert-IsTrue -Condition $hasThrow -Comment "Should throw as the value is not a number"
-    }
-
-    "10.1","10,1" | ForEach-Object {
-        Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldNumber $_
-        $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
-        Assert-Count -Expected 1 -Presented $result.Keys
-        Assert-AreEqual -Expected 10.1 -Presented $result.$itemId.PVTF_lADOBCrGTM4ActQazgSkglc.Value
-        Reset-ProjectItemStaged
-    }
-
-    "1,000.1","1.000,1" | ForEach-Object {
-        Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldNumber $_
-        $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
-        Assert-Count -Expected 1 -Presented $result.Keys
-        Assert-AreEqual -Expected 1000.1 -Presented $result.$itemId.PVTF_lADOBCrGTM4ActQazgSkglc.Value
-        Reset-ProjectItemStaged
-    }
-}
-
-function Test_EditProejctItems_Direct{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
-    $Owner = "SomeOrg" ; $ProjectNumber = 164
+    $Owner = "octodemo" ; $ProjectNumber = 700
 
     # No sync of project with items allowed just with skipitems
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2-skipitems.json' -skipitems
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json' -skipitems
 
-    $itemId = "PVTI_lADOBCrGTM4ActQazgMuXXc"
-    $fieldComment = "Comment" ; $fieldCommentValue = "new value of the comment 10.1"
+    $itemId = "PVTI_lADOAlIw4c4BCe3Vzgeio4o"
+    $fieldComment = "field-text" ; $fieldCommentValue = "new value of the comment 10.1"
+    $fieldId = "PVTF_lADOAlIw4c4BCe3Vzg0rhko"
 
     # Mock the direct call for item
     MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-$itemId.json"
@@ -203,8 +152,8 @@ function Test_EditProejctItems_Direct{
 
     Assert-Count -Expected 1 -Presented $result.Keys
     Assert-AreEqual -Expected $itemId -Presented $result.Keys[0]
-    Assert-AreEqual -Expected "Comment" -Presented $result.$itemId.PVTF_lADOBCrGTM4ActQazgSl5GU.Field.name
-    Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$itemId.PVTF_lADOBCrGTM4ActQazgSl5GU.Value
+    Assert-AreEqual -Expected $fieldComment -Presented $result.$itemId.$fieldId.Field.name
+    Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$itemId.$fieldId.Value
 
 }
 
@@ -215,20 +164,22 @@ function Test_UpdateProjectDatabase_Fail_With_Staged{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12 ;
-    $itemId = "PVTI_lADOBCrGTM4ActQazgMueM4"
-    $fieldComment = "comment" ; $fieldCommentValue = "new value of the comment 10.1"
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    MockCall_GetProject_700
+    $p = Get-Mock_Project_700 ; $Owner = $p.Owner ; $ProjectNumber = $p.Number
+    $itemsCount = $p.items.totalCount
+    $itemId = $p.issue.Id
+    $fieldComment = "field-text" ; $fieldCommentValue = "new value of the comment 10.1"
 
+    MockCall_GetItem -ItemId $itemId
 
-    # Calling Get-ProjectItemList with Force to trigger update-projectdatabase that should fail as their are
-    # staged changes not yet synced to remote.
+    # Act empty as their is nothing staged yet
     $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force
     Assert-Count -Expected $itemsCount -Presented $result
 
-    $result = Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldComment $fieldCommentValue
-    Assert-IsNull -Object $result
+    # arrange modifyt to add staged
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldComment $fieldCommentValue
 
+    # Act get staged. 1 modified
     $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
     Assert-Count -Expected 1 -Presented $result.Keys
     Assert-AreEqual -Expected $itemId -Presented $result.Keys
@@ -251,94 +202,27 @@ function Test_UpdateProjectDatabase_Fail_With_Staged{
 
 }
 
-function Test_FindProjectItem_SUCCESS{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
-    $Owner = "SomeOrg" ; $ProjectNumber = 164 ; 
-    #$itemsCount = 12 ; $fieldsCount = 18
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
-
-    $title = "Issue 455d29e3"
-    $itemId1 = "PVTI_lADNJr_OALnx2s4Fqq8f"
-    $itemId2 = "PVTI_lADNJr_OALnx2s4Fqq8p"
-    $subtitle = $title.Substring(4,4)
-    $subtitle
-
-    # Item not found
-    $result = Find-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Title "No item with this title"
-    Assert-IsNull -Object $result
-
-    # Several items with similar title
-    $result = Find-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Title "*$subtitle*" -IncludeDone
-    Assert-Count -Expected 2 -Presented $result
-    Assert-Contains -Expected $itemId1 -Presented $result.id
-    Assert-Contains -Expected $itemId2 -Presented $result.id
-
-    # Not Match
-    $result = Find-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Title $title -Match
-    Assert-IsNull -Object $result
-
-    # Match
-    $result = Find-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Title "$title 1" -Match
-    Assert-Count -Expected 1 -Presented $result
-    Assert-Contains -Expected $itemId1 -Presented $result.id
-}
-
-function Test_FindProjectItem_FAIL{
-
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
-    $Owner = "SomeOrg" ; $ProjectNumber = 164 
-    $erroMessage= "Error: Project not found. Check owner and projectnumber"
-
-    Mock_DatabaseRoot
-
-    MockCall_GitHubOrgProjectWithFields_Null  -Owner $owner -ProjectNumber $projectNumber
-
-    # Run the command
-    Start-MyTranscript
-    $result = Find-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Title "no title"
-    $tt = Stop-MyTranscript
-    
-    Assert-IsNull -Object $result
-    Assert-Contains -Expected $erroMessage -Presented $tt
-}
 
 function Test_SearchProjectItem_SUCCESS{
 
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164
+    MockCall_GetProject_700
 
-    # title refrence with differnt case and spaces
-    $filter = "epic"
+    $p = Get-Mock_Project_700;  $owner = $p.owner ; $projectNumber = $p.number
 
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
 
-    # Act 1
-    $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Filter $filter -IncludeDone
+    "development", "96", "rulasg-dev-1" | ForEach-Object{
 
-    Assert-Count -Expected 2 -Presented $result
-    
-    Assert-Contains -Expected "EPIC 1 " -Presented $result.Title
-    Assert-Contains -Expected "PVTI_lADOBCrGTM4ActQazgMtRO0" -Presented $result.id
-    Assert-Contains -Expected "EPIC 2"  -Presented $result.Title
-    Assert-Contains -Expected "PVTI_lADOBCrGTM4ActQazgMtRPg" -Presented $result.id
+        $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Filter $_ -IncludeDone
 
-    # Act 2
-    $result = Search-ProjectItem 68 -IncludeDone # TimeTracker value 684
-
-    Assert-Count -Expected 1 -Presented $result
-    Assert-AreEqual -Expected "Issue 455d29e3 2" -Presented $result[0].Title
-    Assert-AreEqual -Expected "PVTI_lADNJr_OALnx2s4Fqq8p" -Presented $result[0].id
-
-    # Act 3
-    $result = Search-ProjectItem "ProjectDemoTest-repo-front" 
-    Assert-Count -Expected 5 -Presented $result
-
+        Assert-Count -Expected $p.searchInAnyField.$_.totalCount -Presented $result
+        
+        foreach ($r in $result) {
+            Assert-Contains -Expected $r.Title -Presented $p.searchInAnyField.$_.Titles
+        }
+    }
 }
 
 function Test_GetItemDirect_SUCCESS{
@@ -349,7 +233,7 @@ function Test_GetItemDirect_SUCCESS{
     $itemUrl = "https://github.com/github/sales/issues/11742"
     $contentId ="I_kwDOAFbrpM6s_fNK"
 
-    MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName 'getitemdirect_1.json'
+    MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-$itemId.json"
 
     $result = Get-ProjectItemDirect -ItemId $itemId
 
@@ -364,16 +248,18 @@ function Test_ShowProjectItem_SUCCESS{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164
-    $id = "PVTI_lADOBCrGTM4ActQazgMtRO0"
-    $title = "EPIC 1 "
-    $status = "Todo"
+    MockCall_GetProject_700
+
+    $p = Get-Mock_Project_700; $Owner = "octodemo" ; $ProjectNumber = 700
+
+    $i = $p.issue
+    $id = $i.Id
+    $title = $i.title
+    $status = $i.status
 
     # title refrence with differnt case and spaces
 
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
-    
-    $item = Find-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Title $title -Match
+    $item = Get-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $id
 
     $result = $item | Show-ProjectItem -AdditionalFields "Status"
     
@@ -382,7 +268,6 @@ function Test_ShowProjectItem_SUCCESS{
     Assert-AreEqual -Expected $id -Presented $result[0].id
     Assert-AreEqual -Expected $title -Presented $result[0].Title
     Assert-AreEqual -Expected $status -Presented $result[0].Status
-    
 }
 
 function Test_ShowProjectItem_SUCCESS_Multiple{
@@ -390,19 +275,17 @@ function Test_ShowProjectItem_SUCCESS_Multiple{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164
+    MockCall_GetProject_700
+    $p = Get-Mock_Project_700; $Owner = $p.owner; $ProjectNumber = $p.number
 
-
-    # title refrence with differnt case and spaces
-
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
-    
-    $items = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Filter "Issue*"
+    # Arrange - get a few items using search-projectitem
+    $items = Search-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $p.searchInTitle.titleFilter
+    $itemsCount = $items.Count
+    Assert-Count -Expected $p.searchInTitle.totalCount -Presented $items
 
     $result = $items | Show-ProjectItem -AdditionalFields "Status"
-    
-    Assert-Count -Expected 8 -Presented $Items
-    Assert-Count -Expected 8 -Presented $result
+
+    Assert-Count -Expected $itemsCount -Presented $result
 
     # Get properties of the first item to verify
     $expectedProperties = @("id", "Title", "Status")

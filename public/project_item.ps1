@@ -12,6 +12,7 @@ Set-MyInvokeCommandAlias -Alias GetItem -Command 'Invoke-GetItem -ItemId {itemid
 #>
 function Get-ProjectItem {
     [CmdletBinding()]
+    [Alias ("gpi")]
     param(
         [Parameter(Mandatory, ValueFromPipeline, Position = 0)][string]$ItemId,
         [Parameter()][string]$Owner,
@@ -29,8 +30,8 @@ function Get-ProjectItem {
 
         if(! $db){ "Project not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError; return $null}
 
-        # Durty flag
-        $durty = $false
+        # Dirty flag
+        $dirty = $false
     }
 
     process {
@@ -46,7 +47,7 @@ function Get-ProjectItem {
         }
     }
 
-} Export-ModuleMember -Function Get-ProjectItem
+} Export-ModuleMember -Function Get-ProjectItem -Alias "gpi"
 
 # function Set-ProjectItem {
 #     [CmdletBinding()]
@@ -90,49 +91,22 @@ function Remove-ProjectItem {
 
 }
 
-function Find-ProjectItem {
-    [CmdletBinding()]
-    param(
-        [Parameter()][string]$Owner,
-        [Parameter()][string]$ProjectNumber,
-        [Parameter(Mandatory, Position = 0)][string]$Title,
-        [Parameter()][switch]$IncludeDone,
-        [Parameter()][switch]$Match,
-        [Parameter()][switch]$Force
-    )
-
-    ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
-
-    $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -ExcludeDone:$(-not $IncludeDone)
-
-    # return if #items is null
-    if ($null -eq $items) { return $null }
-
-    # Find item in the database
-    if ($Match) {
-        $found = $items.Values | Where-Object { $_.Title -eq $Title }
-    }
-    else {
-        $found = $items.Values | Where-Object { $_.Title -like "$Title" }
-    }
-
-    $ret = $found | ForEach-Object { 
-        [PSCustomObject]$_
-    } 
-
-    return $ret
-} Export-ModuleMember -Function Find-ProjectItem
-
 function Search-ProjectItem {
     [CmdletBinding()]
+    [Alias ("spi")]
     param(
         [Parameter(Mandatory, Position = 0)] [string]$Filter,
+        [Parameter(Position = 1)][string[]]$Attributes,
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
         [Parameter()][switch]$IncludeDone,
-        [Parameter()][switch]$Force
+        [Parameter()][switch]$Force,
+        [Parameter()][switch]$PassThru
     )
+
+    if([string]::IsNullOrWhiteSpace($Attributes)){
+        $Attributes = @("id", "Title")
+    }
 
     ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
@@ -144,13 +118,46 @@ function Search-ProjectItem {
 
     $found = $items.Values | Where-Object { Test-ProjectItemIsLikeAnyField -Item $_ -Value $Filter }
 
-    $ret = @($found | ForEach-Object { 
-            [PSCustomObject]$_
+    if($PassThru){
+        $ret = $found
+    } else {
+
+        $ret = @($found | ForEach-Object {
+            $i = [pscustomobject]::new()
+            # return the issue with additional attributes
+            Add-Attributes  -SourceObject $_ -DestinationObject $i -Attributes $Attributes
         })
+
+    }
 
     return $ret
 
-} Export-ModuleMember -Function Search-ProjectItem
+} Export-ModuleMember -Function Search-ProjectItem -Alias "spi"
+
+function Add-Attributes{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][object]$SourceObject,
+        [Parameter(Position = 1)][object]$DestinationObject,
+        [Parameter(Position = 2)][string[]]$Attributes
+    )
+
+    # return if empty attributes
+    if([string]::IsNullOrWhiteSpace($Attributes)){
+        return $DestinationObject
+    }
+
+    foreach($a in $Attributes){
+        if( ! $SourceObject.$a){
+            continue
+        }
+
+        $DestinationObject | Add-Member -MemberType NoteProperty -Name $a -Value $SourceObject.$a -force
+    }
+
+    return $DestinationObject
+}
+
 
 function Get-ProjectItems {
     [CmdletBinding()]
@@ -179,24 +186,30 @@ function Get-ProjectItems {
 
 function Open-ProjectItem {
     [CmdletBinding()]
+    [Alias ("opi")]
     param(
         [Parameter()][string]$Owner,
         [Parameter()][int]$ProjectNumber,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)]
-        [string]$ItemId
+        [string]$Id,
+        [Parameter()][switch]$InProject
     )
 
     begin {
 
-        "Project set to [$owner/$ProjectNumber]" | Write-Verbose
-
+        
         ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
         if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) {
             throw "Owner and ProjectNumber are required on Open-ProjectItem"
         }
+        
+        "Project set to [$owner/$ProjectNumber]" | Write-Verbose
+
     }
 
     process {
+
+        $itemId = $Id
 
         "Opening item [$ItemId] in project [$Owner/$ProjectNumber]" | Write-Verbose
    
@@ -204,15 +217,23 @@ function Open-ProjectItem {
         if (-not $item) {
             throw "Item not found for Owner [$Owner], ProjectNumber [$ProjectNumber] and ItemId [$ItemId]"
         }
-        
-        if (-not $item.url) {
-            "No URL found for Item [$ItemId] type $($item.type)" | Write-Error
-            return 
+
+        if($InProject){
+            $url = $item.urlPanel
+        } else {
+            # fall back to url if urlcontent is empty
+            $url = $item.urlContent ?? $item.url
         }
         
-        Open-Url -Url $item.url
+        if ([string]::IsNullOrWhiteSpace($url)) {
+            # We should never reach this point as all items has a urlpanel set in Convert-NodeItemToHash
+            "No URL found for Item [$ItemId] type [ $($item.type) ]" | Write-Error
+            return 
+        }
+
+        Open-Url -Url $url
     }
-} Export-ModuleMember -Function Open-ProjectItem
+} Export-ModuleMember -Function Open-ProjectItem -Alias "opi"
 
 <#
 .SYNOPSIS
@@ -418,6 +439,8 @@ function Show-ProjectItem {
 
     begin {
         $fields = Get-EnvironmentDisplayFields -Fields $AdditionalFields
+
+        $fields | Write-Verbose
     } 
 
     process {
@@ -435,6 +458,7 @@ function Test-ProjectItemIsLikeAnyField {
     )
     foreach ($key in $item.Keys) {
         if ($item.$key -Like "*$Value*") {
+            "Found [$Value] in field [$key] in [$($item.$key)]" | Write-Verbose
             return $true
         }
     }

@@ -1,0 +1,105 @@
+{
+  "data": {
+    "clearProjectV2ItemFieldValue": {
+      "projectV2Item": {
+        "content": {
+          "__typename": "Issue",
+          "body": "Body of issue for development",
+          "title": "Issue for development",
+          "number": 26,
+          "url": "https://github.com/octodemo/rulasg-dev-1/issues/26",
+          "repository": {
+            "nameWithOwner": "octodemo/rulasg-dev-1"
+          }
+        },
+        "id": "PVTI_lADOAlIw4c4BCe3Vzgeio4o",
+        "fieldValues": {
+          "nodes": [
+            {
+              "__typename": "ProjectV2ItemFieldRepositoryValue",
+              "repository": {
+                "url": "https://github.com/octodemo/rulasg-dev-1"
+              },
+              "field": {
+                "__typename": "ProjectV2Field",
+                "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-k",
+                "name": "Repository",
+                "dataType": "REPOSITORY"
+              }
+            },
+            {
+              "__typename": "ProjectV2ItemFieldMilestoneValue",
+              "milestone": {
+                "title": "Milestone 3: Quality and Deployment",
+                "description": "Testing, documentation, and deployment pipeline setup",
+                "dueOn": "2025-10-18T00:00:00Z"
+              },
+              "field": {
+                "__typename": "ProjectV2Field",
+                "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-g",
+                "name": "Milestone",
+                "dataType": "MILESTONE"
+              }
+            },
+            {
+              "__typename": "ProjectV2ItemFieldTextValue",
+              "text": "Issue for development",
+              "field": {
+                "__typename": "ProjectV2Field",
+                "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-M",
+                "name": "Title",
+                "dataType": "TITLE"
+              }
+            },
+            {
+              "__typename": "ProjectV2ItemFieldSingleSelectValue",
+              "name": "Todo",
+              "field": {
+                "__typename": "ProjectV2SingleSelectField",
+                "id": "PVTSSF_lADOAlIw4c4BCe3Vzg0rg-U",
+                "name": "Status",
+                "dataType": "SINGLE_SELECT",
+                "options": [
+                  {
+                    "id": "f75ad846",
+                    "name": "Todo"
+                  },
+                  {
+                    "id": "47fc9ee4",
+                    "name": "In Progress"
+                  },
+                  {
+                    "id": "98236657",
+                    "name": "Done"
+                  }
+                ]
+              }
+            },
+            {
+              "__typename": "ProjectV2ItemFieldNumberValue",
+              "number": 333.0,
+              "field": {
+                "__typename": "ProjectV2Field",
+                "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhjU",
+                "name": "field-number",
+                "dataType": "NUMBER"
+              }
+            },
+            {
+              "__typename": "ProjectV2ItemFieldIterationValue",
+              "title": "field-iteration 3",
+              "startDate": "2025-10-05",
+              "duration": 14,
+              "field": {
+                "__typename": "ProjectV2IterationField",
+                "id": "PVTIF_lADOAlIw4c4BCe3Vzg0rhqQ",
+                "name": "field-iteration",
+                "dataType": "ITERATION"
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

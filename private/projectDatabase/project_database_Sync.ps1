@@ -47,7 +47,10 @@ function Sync-Project{
         $FieldStagedId = $itemStaged.Keys | Copy-MyStringArray
         foreach($fieldId in $FieldStagedId){
 
+            # Staged has the display value.
+            # Convert to the update value
             $value = $itemStaged.$fieldId.Value
+            $valueToSend = ConvertTo-FieldValue -Field $itemStaged.$fieldId.Field -Value $value
             $field = $itemStaged.$fieldId.Field
 
             $params = @{
@@ -57,15 +60,16 @@ function Sync-Project{
                 FieldName = $field.name
                 FieldType = $field.type
                 FieldDataType = $field.dataType
-                Value = $value
+                Value = $valueToSend
             }
 
-            "Saving  [$($params.Database.ProjectId)/$($params.ItemId)/$($params.FieldId) ($($params.FieldName)) = $($params.Value) ] ..." | Write-MyHost -NoNewLine
+            "Saving [$($params.Database.ProjectId)/$($params.ItemId)/$($params.FieldId) ($($params.FieldName)) = ""$($params.Value)"" ] ..." | Write-MyHost
 
             $call = Update-ProjectItem @params
 
             if ( ! (Test-UpdateProjectItemCall $call) ) {
                 "FAILED !!" | Write-MyHost
+                Write-Debug -section "Sync-Project" -Message "Update-ProjectItem call failed" -Object $call
                 continue
             }
 

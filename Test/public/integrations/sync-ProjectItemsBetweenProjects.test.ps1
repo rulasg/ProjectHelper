@@ -2,23 +2,23 @@ function Test_UpdateProjectItemsBetweenProjects{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $owner = "octodemo"
-    $sourceProjectNumber = 625
-    $destinationProjectNumber = 626
+    $p625 = Get-Mock_Project_625 ; $owner0 = $p625.owner ; $projectNumber0 = $p625.number
+    $p626 = Get-Mock_Project_626 ; $owner1 = $p626.owner ; $projectNumber1 = $p626.number
 
-    # Mock project calls
-    $sourceProjectNumber, $destinationProjectNumber | ForEach-Object {
-        $projectNumber = $_
-        MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber.syncprj.json"
-    }
+    $sourceOwner = $owner0 ; $sourceProjectNumber = $projectNumber0
+    $destinationOwner = $owner1 ; $destinationProjectNumber = $projectNumber1
+
+    MockCall_GetProject -MockProject $p625
+    MockCall_GetProject -MockProject $p626
 
     $fieldlist = @("Int1", "Int2")
 
     $params = @{
-        SourceOwner = $owner
+        SourceOwner = $sourceOwner
         SourceProjectNumber = $sourceProjectNumber
-        DestinationOwner = $owner
+        DestinationOwner = $destinationOwner
         DestinationProjectNumber = $destinationProjectNumber
+        FieldSlug = "pr1_"
     }
     $result = Update-ProjectItemsBetweenProjects -IncludeDoneItems     @params
 
@@ -26,39 +26,29 @@ function Test_UpdateProjectItemsBetweenProjects{
 
     $staged = Get-ProjectItemStaged -Owner $owner -ProjectNumber $destinationProjectNumber
 
-    Assert-Count -Expected 3 -Presented $staged.Keys
-
-    Assert-Count -Expected 2 -Presented $staged.PVTI_lADOAlIw4c4A0QAozgYQpRY.Keys
-    Assert-AreEqual -Presented $staged.PVTI_lADOAlIw4c4A0QAozgYQpP0.PVTF_lADOAlIw4c4A0QAozgp6aGw.Value -Expected "Value issue 1"
-    Assert-AreEqual -Presented $staged.PVTI_lADOAlIw4c4A0QAozgYQpP0.PVTF_lADOAlIw4c4A0QAozgp6aK4.Value -Expected "11"
-
-    Assert-Count -Expected 2 -Presented $staged.PVTI_lADOAlIw4c4A0QAozgYQpSc.Keys
-    Assert-AreEqual -Presented $staged.PVTI_lADOAlIw4c4A0QAozgYQpSc.PVTF_lADOAlIw4c4A0QAozgp6aGw.Value -Expected "Value issue 3"
-    Assert-AreEqual -Presented $staged.PVTI_lADOAlIw4c4A0QAozgYQpSc.PVTF_lADOAlIw4c4A0QAozgp6aK4.Value -Expected "33"
-
-    Assert-Count -Expected 2 -Presented $staged.PVTI_lADOAlIw4c4A0QAozgYQpP0.Keys
-    Assert-AreEqual -Presented $staged.PVTI_lADOAlIw4c4A0QAozgYQpRY.PVTF_lADOAlIw4c4A0QAozgp6aGw.Value -Expected "Value issue 2"
-    Assert-AreEqual -Presented $staged.PVTI_lADOAlIw4c4A0QAozgYQpRY.PVTF_lADOAlIw4c4A0QAozgp6aK4.Value -Expected "22"
-
+    $p = $p626.syncBtwPrj_625
+    
+    Assert-AreEqual -Expected $p.staged.Count -Presented $staged.Count
+    foreach ($itemId in $staged.Keys) {
+        Assert-AreEqual -Expected $p.staged.$itemId.Count -Presented $staged.$itemId.Count
+        foreach ($fieldId in $p.staged.$itemId.Keys) {
+            Assert-AreEqual -Expected $p.staged.$itemId.$fieldId -Presented $staged.$itemId.$fieldId.Value
+        }
+    }
 }
 
 function Test_UpdateProjectItemsBetweenProjects_NoRefresh_NoRefresh{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $owner = "octodemo"
-    $sourceProjectNumber = 625
-    $destinationProjectNumber = 626
+    $p625 = Get-Mock_Project_625 ; $owner0 = $p625.owner ; $projectNumber0 = $p625.number
+    $p626 = Get-Mock_Project_626 ; $owner1 = $p626.owner ; $projectNumber1 = $p626.number
 
-    # Mock project calls
-    $sourceProjectNumber, $destinationProjectNumber | ForEach-Object {
-        $projectNumber = $_
-        MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber.syncprj.json"
-    }
+    $sourceOwner = $owner0 ; $sourceProjectNumber = $projectNumber0
+    $destinationOwner = $owner1 ; $destinationProjectNumber = $projectNumber1
 
-    # Cache projects using mocks calls
-    $destinationProject = Get-Project -Owner $owner -ProjectNumber $destinationProjectNumber
-    $sourceProject = Get-Project -Owner $owner -ProjectNumber $sourceProjectNumber
+    MockCall_GetProject -MockProject $p625 -Cache
+    MockCall_GetProject -MockProject $p626 -Cache
 
     # Reset mocks to fail if mocks are called again
     Reset-InvokeCommandMock
@@ -67,18 +57,20 @@ function Test_UpdateProjectItemsBetweenProjects_NoRefresh_NoRefresh{
     # Act
 
     $params = @{
-        SourceOwner = $owner
+        SourceOwner = $sourceOwner
         SourceProjectNumber = $sourceProjectNumber
-        DestinationOwner = $owner
+        DestinationOwner = $destinationOwner
         DestinationProjectNumber = $destinationProjectNumber
+        FieldSlug = "pr1_"
     }
-    $result = Update-ProjectItemsBetweenProjects -IncludeDoneItems  -NoRefreshDestination -NoRefreshSource @params
+    $result = Update-ProjectItemsBetweenProjects -IncludeDoneItems -NoRefreshDestination -NoRefreshSource @params
 
     Assert-IsNull -Object $result
 
-    $staged = Get-ProjectItemStaged -Owner $owner -ProjectNumber $destinationProjectNumber
+    $staged = Get-ProjectItemStaged -Owner $destinationOwner -ProjectNumber $destinationProjectNumber
 
-    Assert-Count -Expected 3 -Presented $staged.Keys
+    $p = $p626.syncBtwPrj_625
+    Assert-AreEqual -Expected $p.staged.Count -Presented $staged.Count
 
 }
 
@@ -86,15 +78,12 @@ function Test_SyncProjectItemsBetweenProjects_SameValues{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $owner = "octodemo"
-    $sourceProjectNumber = 625
-    $destinationProjectNumber = 625
+    MockCall_GetProject_700
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
 
-    # Mock poject calls
-    $sourceProjectNumber, $destinationProjectNumber | ForEach-Object {
-        $projectNumber = $_
-        MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber.syncprj.json"
-    }
+    # Setting source and destination project the same
+    $sourceProjectNumber = $projectNumber
+    $destinationProjectNumber = $projectNumber
 
     $params = @{
         SourceOwner = $owner
@@ -102,8 +91,11 @@ function Test_SyncProjectItemsBetweenProjects_SameValues{
         DestinationOwner = $owner
         DestinationProjectNumber = $destinationProjectNumber
     }
+
+    # TODO : this call takes long on every test. Make it quicker
     $result = Update-ProjectItemsBetweenProjects @params
-    Assert-IsNull -Object $result
+
+    Assert-IsNull -Object $result -Comment "func always should return null"
 
     $staged = Get-ProjectItemStaged -Owner $owner -ProjectNumber $destinationProjectNumber
 

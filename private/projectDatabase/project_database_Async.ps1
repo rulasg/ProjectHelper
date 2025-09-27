@@ -94,11 +94,13 @@ function Sync-ProjectAsync {
             continue
         }
 
-        "Saving to database [$($call.projectId)/$($call.itemId)/$($call.fieldName) ($($call.FieldType)) = ""$($call.Value)"" ]" | Write-MyHost
+        "Saving [$($call.projectId)/$($call.itemId)/$($call.FieldId) ($($call.FieldName)) = ""$($call.Value)"" ] ..." | Write-MyHost
 
         Set-ItemValue -Database $db -ItemId $call.itemId -FieldName $call.fieldName -Value $call.Value
         Remove-ItemStaged -Database $db -ItemId $call.itemId -FieldId $call.FieldId
     }
+
+    "Done" | Write-MyHost
 
     return $db
 }

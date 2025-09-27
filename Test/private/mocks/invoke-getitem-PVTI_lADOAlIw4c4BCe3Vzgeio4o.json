@@ -3,6 +3,11 @@
     "node": {
       "id": "PVTI_lADOAlIw4c4BCe3Vzgeio4o",
       "type": "ISSUE",
+      "fullDatabaseId": "128099210",
+      "project": {
+        "id": "PVT_kwDOAlIw4c4BCe3V",
+        "url": "https://github.com/orgs/octodemo/projects/700"
+      },
       "content": {
         "__typename": "Issue",
         "id": "I_kwDOPrRnkc7KkwSq",

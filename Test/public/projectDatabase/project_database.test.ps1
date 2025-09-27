@@ -4,15 +4,11 @@ function Test_SaveProjectDatabase_SafeId_Flag_PrivateCall{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
-    
-    # Call on private mode
-    $modulePath = $MODULE_PATH | Split-Path -Parent
-    $module = Import-Module -Name $modulePath -PassThru
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    MockCall_GetProject_700
 
-    & $module {
-        $Owner = "SomeOrg" ; $ProjectNumber = 164
+    Invoke-PrivateContext {
+        $Owner = "octodemo" ; $ProjectNumber = 700
         # Cache the project
         $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
@@ -36,16 +32,12 @@ function Test_SaveProjectDatabase_Safe_PrivateCall{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
-    
-    # Call on private mode
-    $modulePath = $MODULE_PATH | Split-Path -Parent
-    $module = Import-Module -Name $modulePath -PassThru
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    MockCall_GetProject_700
 
-    & $module {
+    Invoke-PrivateContext {
 
-        $Owner = "SomeOrg" ; $ProjectNumber = 164
+        $Owner = "octodemo" ; $ProjectNumber = 700
         # Cache the project
         $prj1 = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 

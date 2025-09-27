@@ -3,6 +3,11 @@
     "node": {
       "id": "PVTI_lADOAlIw4c4BCe3Vzgeiodc",
       "type": "DRAFT_ISSUE",
+      "fullDatabaseId": "128098775",
+      "project": {
+        "id": "PVT_kwDOAlIw4c4BCe3V",
+        "url": "https://github.com/orgs/octodemo/projects/700"
+      },
       "content": {
         "__typename": "DraftIssue",
         "id": "DI_lADOAlIw4c4BCe3VzgJwmkk",
@@ -59,7 +64,7 @@
           },
           {
             "__typename": "ProjectV2ItemFieldTextValue",
-            "text": "new value of the comment 10",
+            "text": "text2",
             "field": {
               "__typename": "ProjectV2Field",
               "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhko",

@@ -15,8 +15,223 @@ function Test_SyncProjectItemsStaged_NoStaged {
     Assert-IsNull -Object $result
 }
 
+function Test_SyncProjectItemsStaged_SUCCESS_Number{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $Owner = "octodemo" ; $ProjectNumber = 700
+    $projectId = "PVT_kwDOAlIw4c4BCe3V"
+
+    # project item issue
+    $itemId1 = "PVTI_lADOAlIw4c4BCe3VzgeioBY"
+    $contentId1 = "I_kwDOPrRnkc7KkwSq"
+
+    $fieldName = "field-number" 
+    $fieldBeforeValueNumber = 111.0
+    $fieldValue = "10,1" 
+    $fieldValueToUpdate = "10.1"
+    $fieldId = "PVTF_lADOAlIw4c4BCe3Vzg0rhjU"
+    $type = "number"
+
+    $mockItems = @(
+        @{
+            ItemId     = $itemId1
+            FieldId    = $fieldId
+            Value      = $fieldValueToUpdate
+            ResultFile = "invoke-GitHubUpdateItemValue-$itemId1-$fieldId.json"
+        }
+    )
+
+    # Loop through the array and set the mock commands
+    foreach ($item in $mockItems) {
+        $command = 'Invoke-GitHubUpdateItemValues -ProjectId {ProjectId} -ItemId {ItemId} -FieldId {FieldId} -Value "{Value}" -Type {Type}'
+        $command = $command -replace '{ProjectId}', $projectId
+        $command = $command -replace '{ItemId}', $item.ItemId
+        $command = $command -replace '{FieldId}', $item.FieldId
+        $command = $command -replace '{Value}', $item.Value
+        $command = $command -replace '{Type}', $type
+
+        Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename $($item.ResultFile)" -Alias $command
+    }
+
+    # Mock get-project
+    # MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json' -skipItems
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700.json'
+    $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force
+
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldName $fieldValue
+
+    # Act- Staged
+    # Check that show shows the display value
+    $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    Assert-AreEqual -Expected $fieldValue -Presented $staged.$itemId1.$fieldId.Value
+
+    $showStaged = Show-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber | Show-ProjectItemStaged
+    Assert-AreEqual -Expected $fieldValue -Presented $showStaged.$fieldName.Value
+    Assert-AreEqual -Expected $fieldBeforeValueNumber -Presented $showStaged.$fieldName.Before
+
+    # Act - Sync
+    $result = Sync-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+
+    # Assert
+    Assert-IsTrue -Condition $result
+
+    $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    Assert-Count -Expected 0 -Presented $staged
+    
+    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    Assert-AreEqual -Expected $fieldValue -Presented $item1.$fieldName
+}
+
+function Test_SyncProjectItemsStaged_SUCCESS_Date{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $Owner = "octodemo" ; $ProjectNumber = 700
+    $projectId = "PVT_kwDOAlIw4c4BCe3V"
+
+    # project item issue
+    $itemId1 = "PVTI_lADOAlIw4c4BCe3VzgeioBY"
+    $contentId1 = "I_kwDOPrRnkc7KkwSq"
+
+    $fieldName = "field-date" 
+    $fieldBeforeValueDate = "2025-09-01"
+    $fieldValue = "2021-01-10"
+    $fieldValueToUpdate = "2021-01-10"
+    $fieldId = "PVTF_lADOAlIw4c4BCe3Vzg0rhlU"
+    $type = "date"
+
+    $mockItems = @(
+        @{
+            ItemId     = $itemId1
+            FieldId    = $fieldId
+            Value      = $fieldValueToUpdate
+            ResultFile = "invoke-GitHubUpdateItemValue-$itemId1-$fieldId.json"
+        }
+    )
+
+    # Loop through the array and set the mock commands
+    foreach ($item in $mockItems) {
+        $command = 'Invoke-GitHubUpdateItemValues -ProjectId {ProjectId} -ItemId {ItemId} -FieldId {FieldId} -Value "{Value}" -Type {Type}'
+        $command = $command -replace '{ProjectId}', $projectId
+        $command = $command -replace '{ItemId}', $item.ItemId
+        $command = $command -replace '{FieldId}', $item.FieldId
+        $command = $command -replace '{Value}', $item.Value
+        $command = $command -replace '{Type}', $type
+
+        Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename $($item.ResultFile)" -Alias $command
+    }
+
+    # Mock get-project
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700.json'
+    $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldName $fieldValue
+
+    # Act- Staged
+    # Check that show shows the display value
+    $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    Assert-AreEqual -Expected $fieldValue -Presented $staged.$itemId1.$fieldId.Value
+
+    $showStaged = Show-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber | Show-ProjectItemStaged
+    Assert-AreEqual -Expected $fieldValue -Presented $showStaged.$fieldName.Value
+    Assert-AreEqual -Expected $fieldBeforeValueDate -Presented $showStaged.$fieldName.Before
+
+    # Act - Sync
+    $result = Sync-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+
+    # Assert
+    Assert-IsTrue -Condition $result
+    $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    Assert-Count -Expected 0 -Presented $staged
+    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    Assert-AreEqual -Expected $fieldValueToUpdate -Presented $item1.$fieldName
+}
+
+function Test_SyncProjectItemsStaged_SUCCESS_SingleSelect{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+
+    $projectId = $p.id
+
+    # project item issuue
+    $item = $p.pullrequest
+    $field = $p.fieldsingleselect
+
+    $itemId1 = $item.id
+    
+    $fieldName = $field.name
+    $fieldId = $field.id
+    $type = "singleSelectOptionId"
+
+    $fieldBeforeValueSingleSelect = $item.fieldsingleselect.name
+    $fieldNewValue = $field.options[1].name
+    $fieldNewValueId = $field.options[1].id
+
+    $mockItems = @(
+        @{
+            ItemId     = $itemId1
+            FieldId    = $fieldId
+            Value      = $fieldNewValue
+            ResultFile = "invoke-GitHubUpdateItemValue-$itemId1-$fieldId.json"
+        }
+    )
+
+    # Loop through the array and set the mock commands
+    foreach ($item in $mockItems) {
+        $command = 'Invoke-GitHubUpdateItemValues -ProjectId {ProjectId} -ItemId {ItemId} -FieldId {FieldId} -Value "{Value}" -Type {Type}'
+        $command = $command -replace '{ProjectId}', $projectId
+        $command = $command -replace '{ItemId}', $item.ItemId
+        $command = $command -replace '{FieldId}', $item.FieldId
+        $command = $command -replace '{Value}', $fieldNewValueId
+        $command = $command -replace '{Type}', $type
+
+        Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename $($item.ResultFile)" -Alias $command
+    }
+
+    # Mock get-project
+    MockCall_GetProject -MockProject $p -Cache
+    
+
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldName $fieldNewValue
+
+    $expectedStaged = @{
+        $($itemId1) = @{
+            $($fieldId) = $fieldNewValue
+        }
+    }
+
+    # Act- Staged
+    # Confirm that the changes are staged
+    $staged = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
+    Assert-AreEqual -Expected $expectedStaged.Count -Presented $staged.Count -Comment "Items staged"
+    foreach($id in $expectedStaged.Keys){
+        foreach($field in $expectedStaged.$id.Keys){
+            Assert-AreEqual -Expected $expectedStaged.$id.$field -Presented $staged.$id.$field.Value -Comment "Item $id Field $field"
+        }
+    }
+
+    $showStaged = Show-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber | Show-ProjectItemStaged
+    Assert-AreEqual -Expected $fieldNewValue -Presented $showStaged.$fieldName.Value
+    Assert-AreEqual -Expected $fieldBeforeValueSingleSelect -Presented $showStaged.$fieldName.Before
+
+    # Act - Sync
+    $result = Sync-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+
+    # Assert
+    Assert-IsTrue -Condition $result
+    
+    $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    Assert-Count -Expected 0 -Presented $staged
+
+    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    Assert-AreEqual -Expected $fieldNewValue -Presented $item1.$fieldName
+}
+
 function Test_SyncProjectItemsStaged_SUCCESS_Content_Issue_NotCached {
-   Reset-InvokeCommandMock
+    Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
     $Owner = "octodemo" ; $ProjectNumber = 700
@@ -576,8 +791,13 @@ function Test_ShowProjectItemsStaged {
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    MockCall_GetProject_700
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $i = $p.pullrequest
+    $pr = $p.issue
+    $fieldText = $p.fieldtext
+    $fieldSingleSelect = $p.fieldsingleselect
+    $fielddate = $p.fielddate
 
     $result = Show-ProjectItemStaged -Owner $owner -ProjectNumber $ProjectNumber
     Assert-IsNull -Object $result
@@ -585,18 +805,18 @@ function Test_ShowProjectItemsStaged {
     $projectBefore = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
     # Item 1
-    $itemId1 = "PVTI_lADOBCrGTM4ActQazgMuXXc"
+    $itemId1 = $i.id
 
-    $fieldComment1 = "Comment" ; $fieldCommentValue1 = "new value of the comment 10"
+    $fieldComment1 = $fieldText.name ; $fieldCommentValue1 = "new value of the comment 10"
     $fieldCommentValue1_Before = $projectBefore.items.$itemId1.$fieldComment1
 
     $fieldTitle1 = "Title" ; $fieldTitleValue1 = "new value of the title"
     $fieldTitleValue1_Before = $projectBefore.items.$itemId1.$fieldTitle1
 
-    $fieldStatus = "Status" ; $fieldStatusValue1 = "Done"
+    $fieldStatus = $fieldSingleSelect.name ; $fieldStatusValue1 = $fieldSingleSelect.options[1].name
     $fieldStatusValue1_Before = $projectBefore.items.$itemId1.$fieldStatus
 
-    $fieldDate = "Next Action Date" ; $fieldDateValue1 = "2024-03-31"
+    $fieldDate = $fielddate.name ; $fieldDateValue1 = "2024-03-31"
     $fieldDateValue1_Before = $projectBefore.items.$itemId1.$fieldDate
 
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
@@ -605,12 +825,12 @@ function Test_ShowProjectItemsStaged {
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldDate $fieldDateValue1
 
     # Item 2
-    $itemId2 = "PVTI_lADOBCrGTM4ActQazgMueM4"
-    $fieldComment2 = "Comment" ; $fileCommentValue2 = "new value of the comment 11"
-    $fieldTitle2 = "Title" ; $fileTitleValue2 = "new value of the title 11"
+    $itemId2 = $pr.id
+    $fieldComment2 = $fieldText.name ; $fieldCommentValue2 = "new value of the comment 11"
+    $fieldTitle2 = "Title" ; $fieldTitleValue2 = "new value of the title 11"
 
-    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId2 $fieldComment2 $fileCommentValue2
-    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId2 $fieldTitle2 $fileTitleValue2
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId2 $fieldComment2 $fieldCommentValue2
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId2 $fieldTitle2 $fieldTitleValue2
 
     # Act all staged items
     $result = Show-ProjectItemStaged -Owner $owner -ProjectNumber $ProjectNumber
@@ -652,22 +872,36 @@ function Test_TestProjectItemStaged {
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164
+    $p = Get-Mock_Project_700 ; $Owner = $p.Owner ; $ProjectNumber = $p.Number
+    $i = $p.issue
+    $f = $p.fieldtext
+    $fieldName = "field-text"
+    $fieldValue = "some value"
+
 
     # no project information available
     $result = Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-IsFalse -Condition $result
 
     # Project is cached
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
+    MockCall_GetProject_700 -Cache
     $null = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
     $result = Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-IsFalse -Condition $result
 
     # Edit some thing
-    MockCallJson -FileName 'updateProjectV2ItemFieldValue.json' -Command 'Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOBCrGTM4ActQa -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc -FieldId PVTF_lADOBCrGTM4ActQazgSl5GU -Value "new value of the comment 10" -Type text'
-    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber PVTI_lADOBCrGTM4ActQazgMuXXc "Comment" "new value of the comment 10"
+    $params = @{
+        ProjectId     = $p.Id
+        ItemId        = $i.Id
+        FieldId       = $f.Id
+        Type          = "text"
+        Value         = $fieldValue
+    }
+    MockCall_GitHubUpdateItemValues @params
+    MockCall_GetItem -ItemId $i.Id
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $i.Id $fieldName $fieldValue
 
+    # Act
     $result = Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-IsTrue -Condition $result
 
@@ -703,20 +937,22 @@ function Test_Sync_ProjectDatabaseAsync_ClearValues{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164
-
     $moduleRootPath = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent | Convert-Path
 
-    $projectId = "PVT_kwDOBCrGTM4ActQa"
-    $itemId1 = "PVTI_lADOBCrGTM4ActQazgMuXXc"
-    $fieldComment1 = "Comment"  ; $fieldComment1Id = "PVTF_lADOBCrGTM4ActQazgSl5GU"
-    $fieldPriority1 = "Priority" ; $fieldPriority1Id ="PVTSSF_lADOBCrGTM4ActQazgSl5LY"
+    $p = Get-Mock_Project_700 ; $Owner = $p.Owner ; $ProjectNumber = $p.Number
+    $i = $p.issue
+    $f = $p.fieldtext
+    $fss = $p.fieldsingleselect
+
+    $projectId = $p.Id 
+    $itemId1 = $i.Id
+    $fieldComment1 = $f.name  ; $fieldComment1Id = $f.Id ; $fieldCommentName = "field-text"
+    $fieldPriority1 = $fss.name ; $fieldPriority1Id = $fss.Id ; $fieldPriorityName = "field-singleselect"
 
     # Edit-ProjectItem will call Get-Project with SkipItems
     # This test is to confirm the sync works with the project and items
     # Cache the project with items
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
-    $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+    MockCall_GetProject_700 -Cache
 
     # Mock clear command for empty comment field (using async alias)
     $clearCommand = 'Import-Module {projecthelper} ; Invoke-GitHubClearItemValues -ProjectId {ProjectId} -ItemId {ItemId} -FieldId {FieldId}'
@@ -724,7 +960,9 @@ function Test_Sync_ProjectDatabaseAsync_ClearValues{
     $clearCommand = $clearCommand -replace '{ProjectId}', $projectId
     $clearCommand = $clearCommand -replace '{ItemId}', $itemId1
     $clearCommand = $clearCommand -replace '{FieldId}', $fieldComment1Id
-    MockCallJsonAsync -Command $clearCommand -FileName "clearProjectV2ItemFieldValue.json"
+    # MockCallJsonAsync -Command $clearCommand -FileName "clearProjectV2ItemFieldValue.json"
+    MockCallJsonAsync -Command $clearCommand -FileName "invoke-clearProjectV2ItemFieldValue-$projectId-$itemId1-$fieldComment1Id.json"
+
 
     # Mock clear command for empty priority field (using async alias)
     $clearCommand = 'Import-Module {projecthelper} ; Invoke-GitHubClearItemValues -ProjectId {ProjectId} -ItemId {ItemId} -FieldId {FieldId}'
@@ -732,14 +970,15 @@ function Test_Sync_ProjectDatabaseAsync_ClearValues{
     $clearCommand = $clearCommand -replace '{ProjectId}', $projectId
     $clearCommand = $clearCommand -replace '{ItemId}', $itemId1
     $clearCommand = $clearCommand -replace '{FieldId}', $fieldPriority1Id
-    MockCallJsonAsync -Command $clearCommand -FileName "clearProjectV2ItemFieldValue.json"
+    # MockCallJsonAsync -Command $clearCommand -FileName "clearProjectV2ItemFieldValue.json"
+    MockCallJsonAsync -Command $clearCommand -FileName "invoke-clearProjectV2ItemFieldValue-$projectId-$itemId1-$fieldPriority1Id.json"
 
     # Stage the values - clear comment (empty string) and update title
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 ""
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldPriority1 ""
 
     Start-MyTranscript
-    $result = Sync-ProjectItemStagedAsync -Owner $Owner -ProjectNumber $ProjectNumber -SyncBatchSize 2
+    $result = Sync-ProjectItemStagedAsync -Owner $Owner -ProjectNumber $ProjectNumber
     $transcript = Stop-MyTranscript
 
     # Return true
@@ -747,11 +986,15 @@ function Test_Sync_ProjectDatabaseAsync_ClearValues{
 
     # Verify clear and update commands were called by checking mock invocations
     # The transcript should show both operations on async: Calling and Saving
-    Assert-Contains -Presented $transcript -Expected 'Calling to update ItemField Async[True][PVT_kwDOBCrGTM4ActQa/PVTI_lADOBCrGTM4ActQazgMuXXc/PVTF_lADOBCrGTM4ActQazgSl5GU (text) = "" ]'
-    Assert-Contains -Presented $transcript -Expected 'Saving to database [PVT_kwDOBCrGTM4ActQa/PVTI_lADOBCrGTM4ActQazgMuXXc/Comment () = "" ]'
-
-    Assert-Contains -Presented $transcript -Expected 'Calling to update ItemField Async[True][PVT_kwDOBCrGTM4ActQa/PVTI_lADOBCrGTM4ActQazgMuXXc/PVTSSF_lADOBCrGTM4ActQazgSl5LY (singleSelectOptionId) = "" ]'
-    Assert-Contains -Presented $transcript -Expected 'Saving to database [PVT_kwDOBCrGTM4ActQa/PVTI_lADOBCrGTM4ActQazgMuXXc/Priority () = "" ]'
+    @(
+        "Saving [$projectId/$itemId1/$fieldComment1Id ($fieldCommentName) = """" ] ..."
+        "Calling to update ItemField Async[True][$projectId/$itemId1/$fieldComment1Id (text) = """" ]"
+        "Done"
+        "Saving [$projectId/$itemId1/$fieldPriority1Id ($fieldPriorityName) = """" ] ..."
+        "Calling to update ItemField Async[True][$projectId/$itemId1/$fieldPriority1Id (singleSelectOptionId) = """" ]"
+    ) | ForEach-Object { 
+        Assert-Contains -Presented $transcript -Expected $_ -Comment "Not found in transcript: '$_'"
+    }
 
     # Staged list should be empty after successful sync
     $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
@@ -767,36 +1010,34 @@ function Test_Sync_ProjectDatabase_ClearValues{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164
+    $p = Get-Mock_Project_700 ; $Owner = $p.Owner ; $ProjectNumber = $p.Number
+    $i = $p.issue
+    $f = $p.fieldtext
+    $fss = $p.fieldsingleselect
 
-    $moduleRootPath = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent | Convert-Path
-
-    $projectId = "PVT_kwDOBCrGTM4ActQa"
-    $itemId1 = "PVTI_lADOBCrGTM4ActQazgMuXXc"
-    $fieldComment1 = "Comment"  ; $fieldComment1Id = "PVTF_lADOBCrGTM4ActQazgSl5GU"
-    $fieldPriority1 = "Priority" ; $fieldPriority1Id ="PVTSSF_lADOBCrGTM4ActQazgSl5LY"
+    $projectId = $p.Id 
+    $itemId1 = $i.Id
+    $fieldComment1 = $f.name  ; $fieldComment1Id = $f.Id ; $fieldCommentName = "field-text"
+    $fieldPriority1 = $fss.name ; $fieldPriority1Id = $fss.Id ; $fieldPriorityName = "field-singleselect"
 
     # Edit-ProjectItem will call Get-Project with SkipItems
     # This test is to confirm the sync works with the project and items
     # Cache the project with items
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
-    $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+    MockCall_GetProject_700 -Cache
 
     # Mock clear command for empty comment field (using async alias)
     $clearCommand = 'Invoke-GitHubClearItemValues -ProjectId {ProjectId} -ItemId {ItemId} -FieldId {FieldId}'
-    $clearCommand = $clearCommand -replace '{projecthelper}', $moduleRootPath
     $clearCommand = $clearCommand -replace '{ProjectId}', $projectId
     $clearCommand = $clearCommand -replace '{ItemId}', $itemId1
     $clearCommand = $clearCommand -replace '{FieldId}', $fieldComment1Id
-    MockCallJson -Command $clearCommand -FileName "clearProjectV2ItemFieldValue.json"
+    MockCallJson -Command $clearCommand -FileName "invoke-clearProjectV2ItemFieldValue-$projectId-$itemId1-$fieldComment1Id.json"
 
     # Mock clear command for empty priority field (using async alias)
     $clearCommand = 'Invoke-GitHubClearItemValues -ProjectId {ProjectId} -ItemId {ItemId} -FieldId {FieldId}'
-    $clearCommand = $clearCommand -replace '{projecthelper}', $moduleRootPath
     $clearCommand = $clearCommand -replace '{ProjectId}', $projectId
     $clearCommand = $clearCommand -replace '{ItemId}', $itemId1
     $clearCommand = $clearCommand -replace '{FieldId}', $fieldPriority1Id
-    MockCallJsonAsync -Command $clearCommand -FileName "clearProjectV2ItemFieldValue.json"
+    MockCallJson -Command $clearCommand -FileName "invoke-clearProjectV2ItemFieldValue-$projectId-$itemId1-$fieldPriority1Id.json"
 
     # Stage the values - clear comment (empty string) and update title
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 ""
@@ -812,12 +1053,14 @@ function Test_Sync_ProjectDatabase_ClearValues{
     # Verify clear and update commands were called by checking mock invocations
     # The transcript should show both operations on async: Calling and Saving
     @(
-        'Saving  [PVT_kwDOBCrGTM4ActQa/PVTI_lADOBCrGTM4ActQazgMuXXc/PVTF_lADOBCrGTM4ActQazgSl5GU (Comment) =  ] ...'
-        'Calling to update ItemField Async[False][PVT_kwDOBCrGTM4ActQa/PVTI_lADOBCrGTM4ActQazgMuXXc/PVTF_lADOBCrGTM4ActQazgSl5GU (text) = "" ]'
-        'Done' 
-        'Saving  [PVT_kwDOBCrGTM4ActQa/PVTI_lADOBCrGTM4ActQazgMuXXc/PVTSSF_lADOBCrGTM4ActQazgSl5LY (Priority) =  ] ...'
-        'Calling to update ItemField Async[False][PVT_kwDOBCrGTM4ActQa/PVTI_lADOBCrGTM4ActQazgMuXXc/PVTSSF_lADOBCrGTM4ActQazgSl5LY (singleSelectOptionId) = "" ]'
-    ) | ForEach-Object { Assert-Contains -Presented $transcript -Expected $_ }
+        "Saving [$projectId/$itemId1/$fieldComment1Id ($fieldCommentName) = """" ] ..."
+        "Calling to update ItemField Async[False][$projectId/$itemId1/$fieldComment1Id (text) = """" ]"
+        "Done"
+        "Saving [$projectId/$itemId1/$fieldPriority1Id ($fieldPriorityName) = """" ] ..."
+        "Calling to update ItemField Async[False][$projectId/$itemId1/$fieldPriority1Id (singleSelectOptionId) = """" ]"
+    ) | ForEach-Object { 
+        Assert-Contains -Presented $transcript -Expected $_ -Comment "Not found in transcript: '$_'"
+    }
 
     # Staged list should be empty after successful sync
     $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber

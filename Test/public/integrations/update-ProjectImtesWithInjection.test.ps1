@@ -7,13 +7,11 @@ function Test_UpdateProjectWithInjection{
 
     # https://github.com/orgs/octodemo/projects/625/views/1
 
-    $owner = "octodemo"
-    $projectNumber = "625"
+    $mp = Get-Mock_Project_625 ; $owner = $mp.owner ; $projectNumber = $mp.number
+    MockCall_GetProject -MockProject $mp
+    $p = $mp.updateWithInjection
 
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber.json"
-
-    New-ModuleV3 -Name IntegrationFunctions
-
+    # Define global integration functions
     function global:Invoke-ProjectInjection_1 {
     [CmdletBinding()]
     param(
@@ -24,15 +22,22 @@ function Test_UpdateProjectWithInjection{
         "String from integration1" | Write-Host
 
         $params = @{
-            ItemId = "PVTI_lADOAlIw4c4A0Lf4zgYNTxI"
             Owner = $Owner
             ProjectNumber = $ProjectNumber
-            FieldName = "sf_Text1"
+            ItemId = $p.item1.id
+            FieldName = $p.field1.name
             Value = "Value updated from integration1"
         }
         Edit-ProjectItem @params
-
     }
+
+    # Expected staged info for invoke-ProjectInjection_1
+    $expectedStaged = @{
+        $($p.item1.id) = @{
+            $($p.field1.id) = "Value updated from integration1"
+        }
+    }
+
     function global:Invoke-ProjectInjection_2 {
     [CmdletBinding()]
     param(
@@ -42,21 +47,24 @@ function Test_UpdateProjectWithInjection{
         "String from integration1" | Write-Host
 
         $params = @{
-            ItemId = "PVTI_lADOAlIw4c4A0Lf4zgYNTc0"
             Owner = $Owner
             ProjectNumber = $ProjectNumber
-            FieldName = "sf_Text2"
+            ItemId = $p.item2.id
+            FieldName = $p.field2.name
             Value = "Value updated from integration2"
             }
             Edit-ProjectItem @params
     }
 
-    $param = @{
-        Owner = $Owner
-        ProjectNumber = $ProjectNumber
+    # Expected staged info for invoke-ProjectInjection_2
+    $expectedStaged += @{
+        $($p.item2.id) = @{
+            $($p.field2.id) = "Value updated from integration2"
+        }
     }
 
-   $result = Update-ProjectItemsWithInjection @param
+    # Act
+   $result = Update-ProjectItemsWithInjection -owner $Owner -ProjectNumber $ProjectNumber
 
    Assert-AreEqual -Expected 2 -Presented $result.Pass
    Assert-AreEqual -Expected 2 -Presented $result.Integrations
@@ -64,16 +72,15 @@ function Test_UpdateProjectWithInjection{
    Assert-Contains -Expected "Invoke-ProjectInjection_2" -Presented $result.IntegrationsName
 
     # Confirm that the changes are staged
-    $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
+    $staged = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
 
-    Assert-Count -Expected 2 -Presented $result
-
-    # PVTI_lADOAlIw4c4A0Lf4zgYNTxI
-    Assert-AreEqual -Expected "Value updated from integration1" -Presented $result.PVTI_lADOAlIw4c4A0Lf4zgYNTxI.PVTF_lADOAlIw4c4A0Lf4zgp2lxM.Value
-
-    # PVTI_lADOAlIw4c4A0Lf4zgYNTc0
-    Assert-AreEqual -Expected "Value updated from integration2" -Presented $result.PVTI_lADOAlIw4c4A0Lf4zgYNTc0.PVTF_lADOAlIw4c4A0Lf4zgp2l3o.Value
-
+    # Items edited
+    Assert-AreEqual -Expected $expectedStaged.Count -Presented $staged.Count -Comment "Items staged"
+    foreach($id in $expectedStaged.Keys){
+        foreach($field in $expectedStaged.$id.Keys){
+            Assert-AreEqual -Expected $expectedStaged.$id.$field -Presented $staged.$id.$field.Value -Comment "Item $id Field $field"
+        }
+    }
 }
 
 function Test_UpdateProjectWithInjection_Failed_1{
@@ -83,13 +90,11 @@ function Test_UpdateProjectWithInjection_Failed_1{
 
     # https://github.com/orgs/octodemo/projects/625/views/1
 
-    $owner = "octodemo"
-    $projectNumber = "625"
+    $mp = Get-Mock_Project_625 ; $owner = $mp.owner ; $projectNumber = $mp.number
+    MockCall_GetProject -MockProject $mp
+    $p = $mp.updateWithInjection
 
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber.json"
-
-    New-ModuleV3 -Name IntegrationFunctions
-
+    # Define global integration functions
     function global:Invoke-ProjectInjection_1 {
     [CmdletBinding()]
     param(
@@ -100,15 +105,22 @@ function Test_UpdateProjectWithInjection_Failed_1{
         "String from integration1" | Write-Host
 
         $params = @{
-            ItemId = "PVTI_lADOAlIw4c4A0Lf4zgYNTxI"
             Owner = $Owner
             ProjectNumber = $ProjectNumber
-            FieldName = "sf_Text1"
+            ItemId = $p.item1.id
+            FieldName = $p.field1.name
             Value = "Value updated from integration1"
         }
         Edit-ProjectItem @params
-
     }
+
+    # Expected staged info for invoke-ProjectInjection_1
+    $expectedStaged = @{
+        $($p.item1.id) = @{
+            $($p.field1.id) = "Value updated from integration1"
+        }
+    }
+
     function global:Invoke-ProjectInjection_2 {
     [CmdletBinding()]
     param(
@@ -120,12 +132,8 @@ function Test_UpdateProjectWithInjection_Failed_1{
         throw "Integration 2 failed"
     }
 
-    $param = @{
-        Owner = $Owner
-        ProjectNumber = $ProjectNumber
-    }
-
-   $result = Update-ProjectItemsWithInjection @param
+    # Act
+   $result = Update-ProjectItemsWithInjection -Owner $Owner -ProjectNumber $ProjectNumber
 
    Assert-AreEqual -Expected 2                           -Presented $result.Integrations
    Assert-Contains -Expected "Invoke-ProjectInjection_1" -Presented $result.IntegrationsName
@@ -138,17 +146,17 @@ function Test_UpdateProjectWithInjection_Failed_1{
    Assert-AreEqual -Expected "Integration 2 failed" -Presented $result.FailedIntegrationErrors."Invoke-ProjectInjection_2".Exception.Message
    Assert-AreEqual -Expected "Integration 2 failed" -Presented $global:FailedIntegrationErrors."Invoke-ProjectInjection_2".Exception.Message
 
-
     # Confirm that the changes are staged
-    $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
+    $staged = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
 
-    Assert-Count -Expected 1 -Presented $result
-
-    # PVTI_lADOAlIw4c4A0Lf4zgYNTxI
-    Assert-AreEqual -Expected "Value updated from integration1" -Presented $result.PVTI_lADOAlIw4c4A0Lf4zgYNTxI.PVTF_lADOAlIw4c4A0Lf4zgp2lxM.Value
-
-    # # PVTI_lADOAlIw4c4A0Lf4zgYNTc0
-    # Assert-AreEqual -Expected "Value updated from integration2" -Presented $result.PVTI_lADOAlIw4c4A0Lf4zgYNTc0.PVTF_lADOAlIw4c4A0Lf4zgp2l3o.Value
+    # Items edited
+    Assert-AreEqual -Expected $expectedStaged.Count -Presented $staged.Count -Comment "Items staged"
+    foreach($id in $expectedStaged.Keys){
+        foreach($field in $expectedStaged.$id.Keys){
+            Assert-AreEqual -Expected $expectedStaged.$id.$field -Presented $staged.$id.$field.Value -Comment "Item $id Field $field"
+        }
+    }
+    
 }
 
 function Test_InvokeProjectInjection{
