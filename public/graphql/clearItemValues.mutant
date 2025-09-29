@@ -1,8 +1,6 @@
 mutation ClearItemValues($input:ClearProjectV2ItemFieldValueInput!){clearProjectV2ItemFieldValue(input:$input){projectV2Item{content{__typename,... on DraftIssue{id,body,title
-                },... on PullRequest{body,title,number,url,repository{nameWithOwner
-                    }
-                },... on Issue{body,title,number,url,repository{nameWithOwner
-                    }
+                },... on PullRequest{body,title,number,url,repository{name,owner{login}}
+                },... on Issue{body,title,number,url,repository{name,owner{login}}
                 }
             },id,fieldValues(first: 100){nodes{__typename,... on ProjectV2ItemFieldDateValue{date,field{__typename,... on ProjectV2Field{id,name,dataType
                             },... on ProjectV2IterationField{id,name,dataType
