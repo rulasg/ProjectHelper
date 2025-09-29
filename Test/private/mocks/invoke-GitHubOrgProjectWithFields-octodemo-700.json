@@ -35,7 +35,10 @@
                 "url": "https://github.com/octodemo/rulasg-dev-1/issues/13",
                 "state": "CLOSED",
                 "repository": {
-                  "nameWithOwner": "octodemo/rulasg-dev-1"
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
                 }
               },
               "id": "PVTI_lADOAlIw4c4BCe3Vzgec8pU",
@@ -208,7 +211,10 @@
                 "url": "https://github.com/octodemo/rulasg-dev-1/issues/12",
                 "state": "OPEN",
                 "repository": {
-                  "nameWithOwner": "octodemo/rulasg-dev-1"
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
                 }
               },
               "id": "PVTI_lADOAlIw4c4BCe3Vzgec8pY",
@@ -381,7 +387,10 @@
                 "url": "https://github.com/octodemo/rulasg-dev-1/issues/11",
                 "state": "OPEN",
                 "repository": {
-                  "nameWithOwner": "octodemo/rulasg-dev-1"
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
                 }
               },
               "id": "PVTI_lADOAlIw4c4BCe3Vzgec8pc",
@@ -554,7 +563,10 @@
                 "url": "https://github.com/octodemo/rulasg-dev-1/issues/10",
                 "state": "OPEN",
                 "repository": {
-                  "nameWithOwner": "octodemo/rulasg-dev-1"
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
                 }
               },
               "id": "PVTI_lADOAlIw4c4BCe3Vzgec8pg",
@@ -743,7 +755,10 @@
                 "url": "https://github.com/octodemo/rulasg-dev-1/issues/9",
                 "state": "CLOSED",
                 "repository": {
-                  "nameWithOwner": "octodemo/rulasg-dev-1"
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
                 }
               },
               "id": "PVTI_lADOAlIw4c4BCe3Vzgec8pk",
@@ -932,7 +947,10 @@
                 "url": "https://github.com/octodemo/rulasg-dev-1/issues/8",
                 "state": "OPEN",
                 "repository": {
-                  "nameWithOwner": "octodemo/rulasg-dev-1"
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
                 }
               },
               "id": "PVTI_lADOAlIw4c4BCe3Vzgec8po",
@@ -1124,7 +1142,10 @@
                 "url": "https://github.com/octodemo/rulasg-dev-1/issues/7",
                 "state": "OPEN",
                 "repository": {
-                  "nameWithOwner": "octodemo/rulasg-dev-1"
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
                 }
               },
               "id": "PVTI_lADOAlIw4c4BCe3Vzgec8ps",
@@ -1303,7 +1324,10 @@
                 "url": "https://github.com/octodemo/rulasg-dev-1/issues/6",
                 "state": "OPEN",
                 "repository": {
-                  "nameWithOwner": "octodemo/rulasg-dev-1"
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
                 }
               },
               "id": "PVTI_lADOAlIw4c4BCe3Vzgec8pw",
@@ -1482,7 +1506,10 @@
                 "url": "https://github.com/octodemo/rulasg-dev-1/issues/5",
                 "state": "OPEN",
                 "repository": {
-                  "nameWithOwner": "octodemo/rulasg-dev-1"
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
                 }
               },
               "id": "PVTI_lADOAlIw4c4BCe3Vzgec8p0",
@@ -1661,7 +1688,10 @@
                 "url": "https://github.com/octodemo/rulasg-dev-1/issues/4",
                 "state": "OPEN",
                 "repository": {
-                  "nameWithOwner": "octodemo/rulasg-dev-1"
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
                 }
               },
               "id": "PVTI_lADOAlIw4c4BCe3Vzgec8p8",
@@ -1840,7 +1870,10 @@
                 "url": "https://github.com/octodemo/rulasg-dev-1/pull/1",
                 "state": "OPEN",
                 "repository": {
-                  "nameWithOwner": "octodemo/rulasg-dev-1"
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
                 }
               },
               "id": "PVTI_lADOAlIw4c4BCe3Vzgec8qA",
@@ -2016,7 +2049,10 @@
                 "url": "https://github.com/octodemo/rulasg-dev-1/pull/3",
                 "state": "OPEN",
                 "repository": {
-                  "nameWithOwner": "octodemo/rulasg-dev-1"
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
                 }
               },
               "id": "PVTI_lADOAlIw4c4BCe3Vzgec8qE",
@@ -2168,7 +2204,10 @@
                 "url": "https://github.com/octodemo/rulasg-dev-1/issues/2",
                 "state": "OPEN",
                 "repository": {
-                  "nameWithOwner": "octodemo/rulasg-dev-1"
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
                 }
               },
               "id": "PVTI_lADOAlIw4c4BCe3Vzgec8qI",
@@ -2816,7 +2855,10 @@
                 "url": "https://github.com/octodemo/rulasg-dev-1/issues/14",
                 "state": "CLOSED",
                 "repository": {
-                  "nameWithOwner": "octodemo/rulasg-dev-1"
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
                 }
               },
               "id": "PVTI_lADOAlIw4c4BCe3VzgedAUw",
@@ -2989,7 +3031,10 @@
                 "url": "https://github.com/octodemo/rulasg-dev-1/issues/15",
                 "state": "OPEN",
                 "repository": {
-                  "nameWithOwner": "octodemo/rulasg-dev-1"
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
                 }
               },
               "id": "PVTI_lADOAlIw4c4BCe3VzgedAVU",
@@ -3162,7 +3207,10 @@
                 "url": "https://github.com/octodemo/rulasg-dev-1/issues/16",
                 "state": "CLOSED",
                 "repository": {
-                  "nameWithOwner": "octodemo/rulasg-dev-1"
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
                 }
               },
               "id": "PVTI_lADOAlIw4c4BCe3VzgedAWU",
@@ -3335,7 +3383,10 @@
                 "url": "https://github.com/octodemo/rulasg-dev-1/issues/17",
                 "state": "OPEN",
                 "repository": {
-                  "nameWithOwner": "octodemo/rulasg-dev-1"
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
                 }
               },
               "id": "PVTI_lADOAlIw4c4BCe3VzgedAWs",
@@ -3508,7 +3559,10 @@
                 "url": "https://github.com/octodemo/rulasg-dev-1/issues/18",
                 "state": "OPEN",
                 "repository": {
-                  "nameWithOwner": "octodemo/rulasg-dev-1"
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
                 }
               },
               "id": "PVTI_lADOAlIw4c4BCe3VzgedAwI",
@@ -3577,7 +3631,10 @@
                 "url": "https://github.com/octodemo/rulasg-dev-1/pull/25",
                 "state": "OPEN",
                 "repository": {
-                  "nameWithOwner": "octodemo/rulasg-dev-1"
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
                 }
               },
               "id": "PVTI_lADOAlIw4c4BCe3VzgeioBY",
@@ -3859,7 +3916,10 @@
                 "url": "https://github.com/octodemo/rulasg-dev-1/issues/26",
                 "state": "OPEN",
                 "repository": {
-                  "nameWithOwner": "octodemo/rulasg-dev-1"
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
                 }
               },
               "id": "PVTI_lADOAlIw4c4BCe3Vzgeio4o",

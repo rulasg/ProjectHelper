@@ -4,8 +4,8 @@ query OrgProjectWithFields($afterFields:String$afterItems:String$firstFields:Int
                     project{ id, number, title, url},
                     content{__typename
                          ,... on DraftIssue {id,body,title,updatedAt,createdAt
-                        },... on PullRequest{id,body,title,updatedAt,createdAt,number,url,state,repository{nameWithOwner}
-                        },... on       Issue{id,body,title,updatedAt,createdAt,number,url,state,repository{nameWithOwner}
+                        },... on PullRequest{id,body,title,updatedAt,createdAt,number,url,state,repository{name,owner{login}}
+                        },... on       Issue{id,body,title,updatedAt,createdAt,number,url,state,repository{name,owner{login}}
                         }
                     },id,fullDatabaseId,
                     fieldValues(first: 100){nodes{__typename,... on ProjectV2ItemFieldDateValue{date,field{__typename,... on ProjectV2Field{id,name,dataType

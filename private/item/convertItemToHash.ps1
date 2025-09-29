@@ -24,6 +24,8 @@ function Convert-NodeItemToHash {
         $item.number = $NodeItem.content.number
         $item.state = $NodeItem.content.state
         $item.urlContent = $NodeItem.content.url
+        $item.RepositoryName = $NodeItem.content.repository.name
+        $item.RepositoryOwner = $NodeItem.content.repository.owner.login
         $item.createdAt = GetDateTime -DateTimeString $NodeItem.content.createdAt
         $item.updatedAt = GetDateTime -DateTimeString $NodeItem.content.updatedAt
         

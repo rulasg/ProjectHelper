@@ -5,8 +5,8 @@ query($itemId: ID!) {
       project{ id, url},
       content{__typename,
            ... on DraftIssue {id,body,title,updatedAt,createdAt},
-           ... on PullRequest{id,body,title,updatedAt,createdAt,number,url,state,repository{nameWithOwner}},
-           ... on       Issue{id,body,title,updatedAt,createdAt,number,url,state,repository{nameWithOwner}
+           ... on PullRequest{id,body,title,updatedAt,createdAt,number,url,state,repository{name,owner{login}}},
+           ... on       Issue{id,body,title,updatedAt,createdAt,number,url,state,repository{name,owner{login}}
           },
       }
       fieldValues(first: 100){
