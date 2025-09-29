@@ -53,6 +53,7 @@ function Get-Mock_Project_700 {
         id        = $issue.id
         contentId = $issue.content.id
         title     = $issue.content.title
+        repositoryName = $issue.content.repository.name
         status    = ($issue.fieldValues.nodes | Where-Object { $_.field.name -eq "Status" }).name
         fieldtext = ($issue.fieldValues.nodes | Where-Object { $_.field.id -eq $($fieldtext.id) }).text
         fieldsingleselect = @{
@@ -68,6 +69,7 @@ function Get-Mock_Project_700 {
         id        = $pullRequest.id
         contentId = $pullRequest.content.id
         title     = $pullRequest.content.title
+        repositoryName = $pullRequest.content.repository.name
         status    = ($pullRequest.fieldValues.nodes | Where-Object { $_.field.name -eq "Status" }).name
         fieldtext = ($pullRequest.fieldValues.nodes | Where-Object { $_.field.id -eq $($fieldtext.id) }).text
         fieldsingleselect = @{
@@ -119,7 +121,7 @@ function Get-Mock_Project_700 {
 
     # All items except Drafts that do not have repository
     $project.searchInAnyField."rulasg-dev-1" = @{}
-    $i = $content.data.organization.projectV2.items.nodes.content | Where-Object { $_.repository.nameWithOwner -like "$($project.owner)/rulasg-dev-1" }
+    $i = $content.data.organization.projectV2.items.nodes.content | Where-Object { $_.repository.name -like "rulasg-dev-1" }
     $project.searchInAnyField."rulasg-dev-1".totalCount = $i.Count
     $project.searchInAnyField."rulasg-dev-1".Titles = $i.title
 

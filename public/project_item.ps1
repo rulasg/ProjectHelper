@@ -260,20 +260,23 @@ function Edit-ProjectItem {
     $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems:$(-not $Force)
 
     # Find the actual value of the item. Item+Staged
-    # $item = Get-ProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber
+    # Ignore $dirty as we are changing the db we will always save
      ($item, $dirty) = Resolve-ProjectItem -Database $db -ItemId $ItemId
 
     # if the item is not found
     if($null -eq $item){ "Item [$ItemId] not found" | Write-MyError; return $null}
 
+    # Value transformations
+    $valueTransformed = Convertto-ItemTransformedValue -Item $item -Value $Value
+
     # Check if value is the same
-    if ( IsEqual -Object1:$item.$FieldName -Object2:$Value) {
+    if ( IsEqual -Object1:$item.$FieldName -Object2:$valueTransformed) {
         "The value is the same, no need to stage it" | Write-Verbose
         return
     }
 
     # save the new value
-    Save-ItemFieldValue $db $itemId $FieldName $Value
+    Save-ItemFieldValue $db $itemId $FieldName $valueTransformed
 
     # Commit changes to the database
     Save-ProjectDatabaseSafe -Database $db

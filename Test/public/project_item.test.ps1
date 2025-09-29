@@ -55,8 +55,6 @@ function Test_EditProjetItems_SUCCESS{
     Mock_DatabaseRoot
 
     $Owner = "octodemo" ; $ProjectNumber = 700 ;
-    #$itemsCount = 12 ; $fieldsCount = 18
-    # MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700.json'
 
     $before = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
@@ -98,6 +96,31 @@ function Test_EditProjetItems_SUCCESS{
 
     Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$itemId.$comment_fieldid.Value
     Assert-AreEqual -Expected $fieldTitleValue -Presented $result.$itemId.$title_fieldid.Value
+}
+
+function  Test_EditProjetItems_SUCCESS_Transformations{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $ProjectNumber = $p.number
+    MockCall_GetProject -MockProject $p -Cache
+
+    $i = $p.issue
+    $fieldTitle = "title"
+
+    $itemId = $i.id
+    $actualTitle = $i.title
+    $actualRepoName = $i.repositoryName
+
+    $newValue ="(*) [{{RepositoryName}}] {{Title}}"
+    $finalValue = $newValue -replace '{{RepositoryName}}', $actualRepoName -replace '{{Title}}', $actualTitle
+
+    # Act
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $i.id $fieldTitle $newValue
+
+    $staged = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
+    Assert-AreEqual -Expected $finalValue -Presented $staged.$itemId.$fieldTitle.Value
+
 }
 
 function Test_EditProjectItems_SameValue{
