@@ -129,6 +129,11 @@ function Search-ProjectItem {
         $ret = $found | Show-ProjectItem -Attributes $Attributes
     }
 
+    # If Title is in attributes, sort by title
+    if($Attributes -contains "Title") {
+        $ret = $ret | Sort-Object -Property Title
+    }
+
     return $ret
 
 } Export-ModuleMember -Function Search-ProjectItem -Alias "spi"
