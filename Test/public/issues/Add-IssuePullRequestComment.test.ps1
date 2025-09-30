@@ -12,7 +12,7 @@ function Test_AddComment_SUCCESS_Using_Cache{
 
     Set-ProjectHelperEnvironment -Owner $owner -ProjectNumber $projectNumber -DisplayFields @("Status","FieldText")
 
-    MockCallJson -Command "Invoke-AddComment -SubjectId $contentId -Comment ""$comment""" -FileName "invoke-addissuecomment-$contentId.json"
+    MockCallJson -Command "Invoke-AddComment -SubjectId $contentId -Comment ""$comment""" -FileName "invoke-addcomment-$contentId.json"
 
     #Act
     $result = Add-IssuePullRequestCommentDirect -ItemId $i.id -Comment $comment
@@ -33,7 +33,7 @@ function Test_AddComment_SUCCESS_Using_Direct{
 
     MockCallJson -Command "Invoke-GetItem -ItemId $id" -FileName "invoke-getitem-$id.json"
 
-    MockCallJson -Command "Invoke-AddComment -SubjectId $contentId -Comment ""$comment""" -FileName "invoke-addissuecomment-$contentId.json"
+    MockCallJson -Command "Invoke-AddComment -SubjectId $contentId -Comment ""$comment""" -FileName "invoke-addcomment-$contentId.json"
 
     #Act
     $result = Add-IssuePullRequestCommentDirect -ItemId $i.id -Comment $comment
@@ -54,7 +54,7 @@ function Test_AddComment_SUCCESS_Using_Direct_PR{
 
     MockCallJson -Command "Invoke-GetItem -ItemId $id" -FileName "invoke-getitem-$id.json"
 
-    MockCallJson -Command "Invoke-AddComment -SubjectId $contentId -Comment ""$comment""" -FileName "invoke-addissuecomment-$contentId.json"
+    MockCallJson -Command "Invoke-AddComment -SubjectId $contentId -Comment ""$comment""" -FileName "invoke-addcomment-$contentId.json"
 
     #Act
     $result = Add-IssuePullRequestCommentDirect -ItemId $i.id -Comment $comment
