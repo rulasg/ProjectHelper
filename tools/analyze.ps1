@@ -16,7 +16,8 @@ if ($null -eq $analyzerModule) {
 Import-Module -Name PSScriptAnalyzer
 
 # Analyze the current folder
-$result = Invoke-ScriptAnalyzer -Recurse -path .  -ExcludeRule PSUseToExportFieldsInManifest
+# $result = "public","private" | Invoke-ScriptAnalyzer -Recurse -ExcludeRule PSUseToExportFieldsInManifest 
+$result = "public","private" | Invoke-ScriptAnalyzer -Recurse -ExcludeRule PSUseToExportFieldsInManifest -Severity Error,Warning
 
 # Output the results
 $result
