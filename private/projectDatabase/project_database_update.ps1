@@ -201,6 +201,14 @@ function Set-ContentFields {
         name     = "Body"
     }
 
+    # Comments
+    $fields.comments = @{
+        id       = "comment"
+        dataType = "COMMENT"
+        type     = "ContentField"
+        name     = "Comment"
+    }
+
     return $Fields
 }
 
