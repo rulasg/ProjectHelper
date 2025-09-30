@@ -1,5 +1,5 @@
 
-function Test_AddIssueComment_SUCCESS_Using_Cache{
+function Test_AddComment_SUCCESS_Using_Cache{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
@@ -12,7 +12,7 @@ function Test_AddIssueComment_SUCCESS_Using_Cache{
 
     Set-ProjectHelperEnvironment -Owner $owner -ProjectNumber $projectNumber -DisplayFields @("Status","FieldText")
 
-    MockCallJson -Command "Invoke-AddIssueComment -SubjectId $contentId -Comment ""$comment""" -FileName "invoke-addissuecomment-$contentId.json"
+    MockCallJson -Command "Invoke-AddComment -SubjectId $contentId -Comment ""$comment""" -FileName "invoke-addcomment-$contentId.json"
 
     #Act
     $result = Add-IssuePullRequestCommentDirect -ItemId $i.id -Comment $comment
@@ -21,7 +21,7 @@ function Test_AddIssueComment_SUCCESS_Using_Cache{
     Assert-IsUrl -Presented $result
 }
 
-function Test_AddIssueComment_SUCCESS_Using_Direct{
+function Test_AddComment_SUCCESS_Using_Direct{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
@@ -33,7 +33,7 @@ function Test_AddIssueComment_SUCCESS_Using_Direct{
 
     MockCallJson -Command "Invoke-GetItem -ItemId $id" -FileName "invoke-getitem-$id.json"
 
-    MockCallJson -Command "Invoke-AddIssueComment -SubjectId $contentId -Comment ""$comment""" -FileName "invoke-addissuecomment-$contentId.json"
+    MockCallJson -Command "Invoke-AddComment -SubjectId $contentId -Comment ""$comment""" -FileName "invoke-addcomment-$contentId.json"
 
     #Act
     $result = Add-IssuePullRequestCommentDirect -ItemId $i.id -Comment $comment
@@ -42,7 +42,7 @@ function Test_AddIssueComment_SUCCESS_Using_Direct{
     Assert-IsUrl -Presented $result
 }
 
-function Test_AddIssueComment_SUCCESS_Using_Direct_PR{
+function Test_AddComment_SUCCESS_Using_Direct_PR{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
@@ -54,7 +54,7 @@ function Test_AddIssueComment_SUCCESS_Using_Direct_PR{
 
     MockCallJson -Command "Invoke-GetItem -ItemId $id" -FileName "invoke-getitem-$id.json"
 
-    MockCallJson -Command "Invoke-AddIssueComment -SubjectId $contentId -Comment ""$comment""" -FileName "invoke-addissuecomment-$contentId.json"
+    MockCallJson -Command "Invoke-AddComment -SubjectId $contentId -Comment ""$comment""" -FileName "invoke-addcomment-$contentId.json"
 
     #Act
     $result = Add-IssuePullRequestCommentDirect -ItemId $i.id -Comment $comment

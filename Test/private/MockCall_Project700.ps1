@@ -12,6 +12,7 @@ function Get-Mock_Project_700 {
 
     $project.projectFile = "invoke-GitHubOrgProjectWithFields-octodemo-700.json"
     $project.projectFile_skipitems = "invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json"
+    $project.projectFile_WrongField = "invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems-WrongField.json"
 
     # Version of the project file modified manually to have two items with same id case sensitive
     # this is used to test case sensitivity of item ids in hashtables
@@ -32,6 +33,10 @@ function Get-Mock_Project_700 {
     $project.url = $pActual.url
 
     # Fields info
+    $project.fields = @{}
+    $project.fields = @{ totalCount = $pActual.fields.nodes.Count + 2 } # Extra two Content fields Body and Comments. Title is removed from Fields and added as Content Field.
+    $project.fields.list = $pActual.fields.nodes | Select-Object name, datatype
+
     $project.fieldtext = @{ id = $fieldtext.id ; name = $fieldtext.name }
     $project.fieldnumber = @{ id = $fieldnumber.id ; name = $fieldnumber.name }
     $project.fielddate = @{ id = $fielddate.id ; name = $fielddate.name }

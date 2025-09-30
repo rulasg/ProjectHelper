@@ -180,9 +180,15 @@ function Set-ContentFields {
     )
     
     # TITLE
-    # Remove old title field
+    # Remove Title field comming from CustomFields
     $fieldTitleId = $fields.Keys | Where-Object {$fields.$_.dataType -eq "TITLE"}
     $fields.Remove($fieldTitleId)
+
+    # Check that Title field does not exist
+    $fieldTitleId = $fields.Keys | Where-Object {$fields.$_.name -eq "Title"}
+    if($fieldTitleId){
+        throw "Set-ContentFields: [ Title ] field already exists. Please remove or rename this field from the project"
+    }
     
     # Add new title field
     $fields.title = @{
@@ -193,12 +199,30 @@ function Set-ContentFields {
     }
 
     # BODY
+    # Check that BODY field does not exist
+    $fieldBodyId = $fields.Keys | Where-Object {$fields.$_.name -eq "Body"}
+    if($fieldBodyId){
+        throw "Set-ContentFields: [ Body ] field already exists. Please remove or rename this field from the project"
+    }
     # Add BODY
     $fields.body = @{
         id       = "body"
         dataType = "BODY"
         type     = "ContentField"
         name     = "Body"
+    }
+
+    # AddComments
+    # Check that AddComment field does not exist
+    $fieldCommentId = $fields.Keys | Where-Object {$fields.$_.name -eq "AddComment"}
+    if($fieldCommentId){
+        throw "Set-ContentFields: [ AddComment ] field already exists. Please remove or rename this field from the project"
+    }
+    $fields.comments = @{
+        id       = "addcomment"
+        dataType = "ADDCOMMENT"
+        type     = "ContentField"
+        name     = "AddComment"
     }
 
     return $Fields

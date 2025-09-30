@@ -10,6 +10,9 @@ Set-MyInvokeCommandAlias -Alias GitHub_UpdateProjectV2ItemFieldValueAsync -Comma
 Set-MyInvokeCommandAlias -Alias GitHub_ClearProjectV2ItemFieldValueAsync  -Command 'Import-Module {projecthelper} ; Invoke-GitHubClearItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid}'
 Set-MyInvokeCommandAlias -Alias GitHub_ClearProjectV2ItemFieldValue       -Command 'Invoke-GitHubClearItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid}'
 
+Set-MyInvokeCommandAlias -Alias AddComment      -Command 'Invoke-AddComment -SubjectId {subjectid} -Comment "{comment}"'
+Set-MyInvokeCommandAlias -Alias AddCommentAsync -Command 'Import-Module {projecthelper} ; Invoke-AddComment -SubjectId {subjectid} -Comment "{comment}"'
+
 function Update-ProjectItem {
     [CmdletBinding()]
     param(
@@ -153,23 +156,52 @@ function Update-Issue {
 
     "Calling to update Issue Async[$Async] [$Id/$FieldId = ""$Value"" ]" | Write-MyHost
 
-    $params = @{
-        id    = $Id
-        title = if ($FieldId -eq "title") { $Value } else { "" }
-        body  = if ($FieldId -eq "body") { $Value } else { "" }
+    if($FieldId -eq "addcomment"){
+        # ADD COMMENT
+
+        if([string]::IsNullOrWhiteSpace($Value)){
+            "Comment value is empty" | Write-MyWarning
+            return $null, $null, "addComment"
+        } 
+
+         $params =  @{
+                subjectid = $Id
+                comment   = $Value
+         }
+         
+        if ($Async) {
+            $params.projecthelper = $MODULE_PATH
+            $job = Start-MyJob -Command AddCommentAsync -Parameters $params
+
+        }
+        else {
+            $result = Invoke-MyCommand -Command AddComment -Parameters $params
+        }
+
+        $returnType = "addComment"
+    
+    } else {
+        # TITLE AND BODY
+        
+        $params = @{
+            id    = $Id
+            title = if ($FieldId -eq "title") { $Value } else { "" }
+            body  = if ($FieldId -eq "body") { $Value } else { "" }
+        }
+        
+        if ($Async) {
+            $params.projecthelper = $MODULE_PATH
+            $job = Start-MyJob -Command UpdateIssueAsync -Parameters $params
+            
+        }
+        else {
+            $result = Invoke-MyCommand -Command UpdateIssue -Parameters $params
+        }
+        
+        $returnType = "updateIssue"
     }
 
-    if ($Async) {
-        $params.projecthelper = $MODULE_PATH
-        $job = Start-MyJob -Command UpdateIssueAsync -Parameters $params
-
-    }
-    else {
-        $result = Invoke-MyCommand -Command UpdateIssue -Parameters $params
-    }
-
-
-    return $result, $job, "updateIssue"
+    return $result, $job, $returnType
 }
 
 function Update-PullRequest {
@@ -181,23 +213,54 @@ function Update-PullRequest {
         [Parameter()][switch]$Async
     )
 
-    "Calling to update PullRequest Async[$Async] [$Id/$FieldId = ""$Value"" ]" | Write-MyHost
+    "Calling to update Issue Async[$Async] [$Id/$FieldId = ""$Value"" ]" | Write-MyHost
 
-    $params = @{
-        id    = $Id
-        title = if ($FieldId -eq "title") { $Value } else { "" }
-        body  = if ($FieldId -eq "body") { $Value } else { "" }
+    if($FieldId -eq "addcomment"){
+        # ADD COMMENT
+
+        if([string]::IsNullOrWhiteSpace($Value)){
+            "Comment value is empty" | Write-MyWarning
+            return $null, $null, "addComment"
+        } 
+
+         $params =  @{
+                subjectid = $Id
+                comment   = $Value
+         }
+         
+        if ($Async) {
+            $params.projecthelper = $MODULE_PATH
+            $job = Start-MyJob -Command AddCommentAsync -Parameters $params
+
+        }
+        else {
+            $result = Invoke-MyCommand -Command AddComment -Parameters $params
+        }
+
+        $returnType = "addComment"
+    
+    } else {
+        # TITLE AND BODY
+        
+        $params = @{
+            id    = $Id
+            title = if ($FieldId -eq "title") { $Value } else { "" }
+            body  = if ($FieldId -eq "body") { $Value } else { "" }
+        }
+        
+        if ($Async) {
+            $params.projecthelper = $MODULE_PATH
+            $job = Start-MyJob -Command UpdatePullRequestAsync -Parameters $params
+            
+        }
+        else {
+            $result = Invoke-MyCommand -Command UpdatePullRequest -Parameters $params
+        }
+
+        $returnType = "updatePullRequest"
     }
 
-    if ($Async) {
-        $params.projecthelper = $MODULE_PATH
-        $job = Start-MyJob -Command UpdatePullRequestAsync -Parameters $params
-    }
-    else {
-        $result = Invoke-MyCommand -Command UpdatePullRequest -Parameters $params
-    }
-
-    return $result, $job , "updatePullRequest"
+    return $result, $job, $returnType
 }
 
 function Update-DraftIssue {

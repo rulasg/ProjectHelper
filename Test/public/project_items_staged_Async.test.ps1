@@ -640,3 +640,73 @@ function Test_SyncProjectItemsStaged_Async_debug {
     Assert-NotImplemented
 
 }
+
+function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue_AddComment {
+
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $modulePath = $MODULE_PATH | split-path -Parent
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    MockCall_GetProject -MockProject $p -skipItems
+
+    $i = $p.issue
+    $id = $i.id
+    $contentId = $i.contentId
+    $fieldName = "AddComment"
+    $fieldAddCommentValue = "new comment added"
+
+    MockCall_GetItem -ItemId $id
+
+    $Command = "Import-Module $modulePath ; Invoke-AddComment -SubjectId $contentId -Comment ""$fieldAddCommentValue"""
+    MockCallJsonAsync -Command $Command -FileName "invoke-addcomment-$contentId.json"
+
+    # Edit fields
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $id $fieldName $fieldAddCommentValue
+
+    # Act - Sync
+    $result = Sync-ProjectItemStagedAsync -Owner $owner -ProjectNumber $projectNumber
+
+    # Return true
+    Assert-IsTrue -Condition $result
+
+    # Staged list is empty
+    $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    Assert-Count -Expected 0 -Presented $staged.Keys.Count
+}
+
+function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_PullRequest_AddComment {
+
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $modulePath = $MODULE_PATH | split-path -Parent
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    MockCall_GetProject -MockProject $p -skipItems
+
+    $i = $p.pullRequest
+    $id = $i.id
+    $contentId = $i.contentId
+    $fieldName = "AddComment"
+    $fieldAddCommentValue = "new comment added"
+
+    MockCall_GetItem -ItemId $id
+
+    $Command = "Import-Module $modulePath ; Invoke-AddComment -SubjectId $contentId -Comment ""$fieldAddCommentValue"""
+    MockCallJsonAsync -Command $Command -FileName "invoke-addcomment-$contentId.json"
+
+    # Edit fields
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $id $fieldName $fieldAddCommentValue
+
+    # Act - Sync
+    $result = Sync-ProjectItemStagedAsync -Owner $owner -ProjectNumber $projectNumber
+
+    # Return true
+    Assert-IsTrue -Condition $result
+
+    # Staged list is empty
+    $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
+    Assert-Count -Expected 0 -Presented $staged.Keys.Count
+}

@@ -33,7 +33,7 @@ function MockCall_GitHubUpdateItemValues {
 function MockCall_GetItem{
     [cmdletbinding()]
     param(
-        [parameter(Mandatory)][string]$ItemId
+        [parameter(Mandatory, Position = 0)][string]$ItemId
     )
 
     $command = "Invoke-GetItem -ItemId $ItemId"
