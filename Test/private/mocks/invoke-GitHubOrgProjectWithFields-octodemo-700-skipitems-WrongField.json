@@ -1,0 +1,155 @@
+{
+  "data": {
+    "organization": {
+      "projectV2": {
+        "number": 700,
+        "url": "https://github.com/orgs/octodemo/projects/700",
+        "shortDescription": "Project used as development environment by rulasg",
+        "public": false,
+        "closed": false,
+        "title": "rulasg-dev-700",
+        "id": "PVT_kwDOAlIw4c4BCe3V",
+        "readme": null,
+        "items": {
+          "pageInfo": {
+            "endCursor": null,
+            "hasNextPage": true
+          },
+          "totalCount": 28,
+          "nodes": []
+        },
+        "fields": {
+          "totalCount": 15,
+          "nodes": [
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-M",
+              "name": "Title",
+              "dataType": "TITLE"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-Q",
+              "name": "Assignees",
+              "dataType": "ASSIGNEES"
+            },
+            {
+              "__typename": "ProjectV2SingleSelectField",
+              "id": "PVTSSF_lADOAlIw4c4BCe3Vzg0rg-U",
+              "name": "Status",
+              "dataType": "SINGLE_SELECT",
+              "options": [
+                {
+                  "id": "f75ad846",
+                  "name": "Todo"
+                },
+                {
+                  "id": "47fc9ee4",
+                  "name": "In Progress"
+                },
+                {
+                  "id": "98236657",
+                  "name": "Done"
+                }
+              ]
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-Y",
+              "name": "Labels",
+              "dataType": "LABELS"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-c",
+              "name": "Linked pull requests",
+              "dataType": "LINKED_PULL_REQUESTS"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-g",
+              "name": "Milestone",
+              "dataType": "MILESTONE"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-k",
+              "name": "Repository",
+              "dataType": "REPOSITORY"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-s",
+              "name": "Reviewers",
+              "dataType": "REVIEWERS"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-w",
+              "name": "Parent issue",
+              "dataType": "PARENT_ISSUE"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-0",
+              "name": "Sub-issues progress",
+              "dataType": "SUB_ISSUES_PROGRESS"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhjU",
+              "name": "field-number",
+              "dataType": "NUMBER"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhko",
+              "name": "Body",
+              "dataType": "TEXT"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhlU",
+              "name": "AddComment",
+              "dataType": "TEXT"
+            },
+            {
+              "__typename": "ProjectV2SingleSelectField",
+              "id": "PVTSSF_lADOAlIw4c4BCe3Vzg0rhno",
+              "name": "field-singleselect",
+              "dataType": "SINGLE_SELECT",
+              "options": [
+                {
+                  "id": "7d96a925",
+                  "name": "option-1"
+                },
+                {
+                  "id": "cd02c585",
+                  "name": "option-2"
+                },
+                {
+                  "id": "6b66c93a",
+                  "name": "option-3"
+                }
+              ]
+            },
+            {
+              "__typename": "ProjectV2IterationField",
+              "id": "PVTIF_lADOAlIw4c4BCe3Vzg0rhqQ",
+              "name": "field-iteration",
+              "dataType": "ITERATION"
+            }
+          ],
+          "pageInfo": {
+            "endCursor": "MTU",
+            "hasNextPage": false
+          }
+        },
+        "owner": {
+          "__typename": "Organization",
+          "login": "octodemo"
+        }
+      }
+    }
+  }
+}

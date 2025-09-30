@@ -24,10 +24,10 @@ function Test_GetProjectFields_SUCCESS_AllFields{
     Assert-AreEqual -Presented $f.Name -Expected "Body"
     Assert-AreEqual -Presented $f.dataType -Expected "BODY"
 
-    # Comment
-    $f = $result | Where-Object { $_.Name -eq "Comment" }
-    Assert-AreEqual -Presented $f.Name -Expected "Comment"
-    Assert-AreEqual -Presented $f.dataType -Expected "COMMENT"
+    # AddComment
+    $f = $result | Where-Object { $_.Name -eq "AddComment" }
+    Assert-AreEqual -Presented $f.Name -Expected "AddComment"
+    Assert-AreEqual -Presented $f.dataType -Expected "ADDCOMMENT"
 
 }
 
@@ -36,9 +36,9 @@ function Test_GetProjectFields_Fail_Comments_Present{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164
+    $p = Get-Mock_Project_700 ; $owner = $p.Owner ; $projectNumber = $p.Number
 
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2-skipitems.json' -SkipItems
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName $p.projectFile_WrongField -SkipItems
 
     $hasthrow = $false
     try{
@@ -49,7 +49,7 @@ function Test_GetProjectFields_Fail_Comments_Present{
     }
     Assert-IsTrue -Condition $hasthrow
 
-    $errorMessage = "Set-ContentFields: [ Comment ] field already exists. Please remove or rename this field from the project"
+    $errorMessage = "Set-ContentFields: [ Body ] field already exists. Please remove or rename this field from the project"
     Assert-AreEqual -Expected $errorMessage -Presented $resultErrorMessage
 }
 

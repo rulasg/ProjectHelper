@@ -1,4 +1,4 @@
-function Test_Edit_Sync_ProjectItem_Comments_Issue {
+function Test_Edit_Sync_ProjectItem_AddComments_Issue {
     
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
@@ -14,11 +14,11 @@ function Test_Edit_Sync_ProjectItem_Comments_Issue {
     MockCallJson -Command "Invoke-AddComment -SubjectId $($i.contentId) -Comment ""New comment""" -filename "invoke-addissuecomment-$($i.contentId).json"
 
     # Act the edit part
-    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $i.id -FieldName "Comment" -Value $comment
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $i.id -FieldName "AddComment" -Value $comment
 
     # Assert the Edit part
     $staged = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
-    Assert-AreEqual -Expected $comment -Presented $staged.$($i.id).comment.Value
+    Assert-AreEqual -Expected $comment -Presented $staged.$($i.id).addcomment.Value
 
     # Act the sync part
     Sync-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber

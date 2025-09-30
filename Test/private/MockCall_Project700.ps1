@@ -12,6 +12,7 @@ function Get-Mock_Project_700 {
 
     $project.projectFile = "invoke-GitHubOrgProjectWithFields-octodemo-700.json"
     $project.projectFile_skipitems = "invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json"
+    $project.projectFile_WrongField = "invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems-WrongField.json"
 
     # Version of the project file modified manually to have two items with same id case sensitive
     # this is used to test case sensitivity of item ids in hashtables
