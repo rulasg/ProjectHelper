@@ -157,37 +157,51 @@ function Update-Issue {
     "Calling to update Issue Async[$Async] [$Id/$FieldId = ""$Value"" ]" | Write-MyHost
 
     if($FieldId -eq "addcomment"){
+        # ADD COMMENT
 
         if([string]::IsNullOrWhiteSpace($Value)){
             "Comment value is empty" | Write-MyWarning
             return $null, $null, "addComment"
-        } else {
-            $result = Invoke-MyCommand -Command 'AddComment' -Parameters @{
+        } 
+
+         $params =  @{
                 subjectid = $Id
                 comment   = $Value
-            }
+         }
+         
+        if ($Async) {
+            $params.projecthelper = $MODULE_PATH
+            $job = Start-MyJob -Command AddCommentAsync -Parameters $params
 
-            return $result, $null, "addComment"
         }
+        else {
+            $result = Invoke-MyCommand -Command AddComment -Parameters $params
+        }
+
+        $returnType = "addComment"
+    
+    } else {
+        # TITLE AND BODY
+        
+        $params = @{
+            id    = $Id
+            title = if ($FieldId -eq "title") { $Value } else { "" }
+            body  = if ($FieldId -eq "body") { $Value } else { "" }
+        }
+        
+        if ($Async) {
+            $params.projecthelper = $MODULE_PATH
+            $job = Start-MyJob -Command UpdateIssueAsync -Parameters $params
+            
+        }
+        else {
+            $result = Invoke-MyCommand -Command UpdateIssue -Parameters $params
+        }
+        
+        $returnType = "updateIssue"
     }
 
-    $params = @{
-        id    = $Id
-        title = if ($FieldId -eq "title") { $Value } else { "" }
-        body  = if ($FieldId -eq "body") { $Value } else { "" }
-    }
-
-    if ($Async) {
-        $params.projecthelper = $MODULE_PATH
-        $job = Start-MyJob -Command UpdateIssueAsync -Parameters $params
-
-    }
-    else {
-        $result = Invoke-MyCommand -Command UpdateIssue -Parameters $params
-    }
-
-
-    return $result, $job, "updateIssue"
+    return $result, $job, $returnType
 }
 
 function Update-PullRequest {
