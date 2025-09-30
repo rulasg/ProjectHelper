@@ -1,4 +1,37 @@
-function Test_GetProjectFields_SUCCESS{
+function Test_GetProjectFields_SUCCESS_AllFields{
+
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $p = Get-Mock_Project_700 ; $owner = $p.Owner ; $projectNumber = $p.Number
+    MockCall_GetProject -MockProject $p -SkipItems
+
+    $result = Get-ProjectFields -Owner $owner -ProjectNumber $projectNumber
+
+    Assert-Count -Expected $p.fields.totalCount -Presented $result
+
+    $result = $result | Sort-Object -Property Name
+
+    foreach ($expField in $p.fields.list){
+        $f = $result | Where-Object { $_.Name -eq $expField.Name }
+        
+        Assert-AreEqual -Presented $f.Name -Expected $expField.Name
+        Assert-AreEqual -Presented $f.dataType -Expected $expField.dataType
+    }
+
+    # Body
+    $f = $result | Where-Object { $_.Name -eq "Body" }
+    Assert-AreEqual -Presented $f.Name -Expected "Body"
+    Assert-AreEqual -Presented $f.dataType -Expected "BODY"
+
+    # Comment
+    $f = $result | Where-Object { $_.Name -eq "Comment" }
+    Assert-AreEqual -Presented $f.Name -Expected "Comment"
+    Assert-AreEqual -Presented $f.dataType -Expected "COMMENT"
+
+}
+
+function Test_GetProjectFields_Fail_Comments_Present{
 
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
@@ -7,36 +40,17 @@ function Test_GetProjectFields_SUCCESS{
 
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2-skipitems.json' -SkipItems
 
-    $result = Get-ProjectFields -Owner $owner -ProjectNumber $projectNumber
-
-    Assert-Count -Expected 19 -Presented $result
-
-    $result = $result | Sort-Object -Property Name
-
-    function AssertField($index, $expectedName, $expectedDataType, $expectedType){
-        Assert-AreEqual -Presented $result[$index].Name -Expected $expectedName
-        Assert-AreEqual -Presented $result[$index].dataType -Expected $expectedDataType
+    $hasthrow = $false
+    try{
+        $null = Get-ProjectFields -Owner $owner -ProjectNumber $projectNumber
+    } catch {
+        $hasthrow = $true
+        $resultErrorMessage = $_.Exception.Message
     }
+    Assert-IsTrue -Condition $hasthrow
 
-    AssertField -Index 0 -ExpectedName "Assignees"            -ExpectedDataType "ASSIGNEES"
-    AssertField -Index 1 -ExpectedName "Body"                -ExpectedDataType "BODY"
-    AssertField -Index 2 -ExpectedName "Comment"              -ExpectedDataType "TEXT"
-    AssertField -Index 3 -ExpectedName "End Date"             -ExpectedDataType "DATE"
-    AssertField -Index 4 -ExpectedName "Labels"               -ExpectedDataType "LABELS"
-    AssertField -Index 5 -ExpectedName "Linked pull requests" -ExpectedDataType "LINKED_PULL_REQUESTS"
-    AssertField -Index 6 -ExpectedName "Milestone"            -ExpectedDataType "MILESTONE"
-    AssertField -Index 7 -ExpectedName "Next Action Date"     -ExpectedDataType "DATE"
-    AssertField -Index 8 -ExpectedName "Priority"             -ExpectedDataType "SINGLE_SELECT"
-    AssertField -Index 9 -ExpectedName "Repository"           -ExpectedDataType "REPOSITORY"
-    AssertField -Index 10 -ExpectedName "Reviewers"            -ExpectedDataType "REVIEWERS"
-    AssertField -Index 11 -ExpectedName "Severity"            -ExpectedDataType "SINGLE_SELECT"
-    AssertField -Index 12 -ExpectedName "Start Date"          -ExpectedDataType "DATE"
-    AssertField -Index 13 -ExpectedName "Status"              -ExpectedDataType "SINGLE_SELECT"
-    AssertField -Index 14 -ExpectedName "TimeTracker"         -ExpectedDataType "NUMBER"
-    AssertField -Index 15 -ExpectedName "Title"               -ExpectedDataType "TITLE"
-    AssertField -Index 16 -ExpectedName "Tracked by"          -ExpectedDataType "TRACKED_BY"
-    AssertField -Index 17 -ExpectedName "Tracks"              -ExpectedDataType "TRACKS"
-    AssertField -Index 18 -ExpectedName "UserStories"         -ExpectedDataType "NUMBER"
+    $errorMessage = "Set-ContentFields: [ Comment ] field already exists. Please remove or rename this field from the project"
+    Assert-AreEqual -Expected $errorMessage -Presented $resultErrorMessage
 }
 
 function Test_GetProjectFields_SUCCESS_FilterByName{

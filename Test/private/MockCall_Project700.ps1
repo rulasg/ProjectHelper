@@ -32,6 +32,10 @@ function Get-Mock_Project_700 {
     $project.url = $pActual.url
 
     # Fields info
+    $project.fields = @{}
+    $project.fields = @{ totalCount = $pActual.fields.nodes.Count + 2 } # Extra two Content fields Body and Comments. Title is removed from Fields and added as Content Field.
+    $project.fields.list = $pActual.fields.nodes | Select-Object name, datatype
+
     $project.fieldtext = @{ id = $fieldtext.id ; name = $fieldtext.name }
     $project.fieldnumber = @{ id = $fieldnumber.id ; name = $fieldnumber.name }
     $project.fielddate = @{ id = $fielddate.id ; name = $fielddate.name }
