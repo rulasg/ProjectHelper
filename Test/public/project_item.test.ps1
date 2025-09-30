@@ -225,29 +225,6 @@ function Test_UpdateProjectDatabase_Fail_With_Staged{
 
 }
 
-
-function Test_SearchProjectItem_SUCCESS{
-
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
-    MockCall_GetProject_700
-
-    $p = Get-Mock_Project_700;  $owner = $p.owner ; $projectNumber = $p.number
-
-
-    "development", "96", "rulasg-dev-1" | ForEach-Object{
-
-        $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Filter $_ -IncludeDone
-
-        Assert-Count -Expected $p.searchInAnyField.$_.totalCount -Presented $result
-        
-        foreach ($r in $result) {
-            Assert-Contains -Expected $r.Title -Presented $p.searchInAnyField.$_.Titles
-        }
-    }
-}
-
 function Test_GetItemDirect_SUCCESS{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
@@ -302,7 +279,7 @@ function Test_ShowProjectItem_SUCCESS_Multiple{
     $p = Get-Mock_Project_700; $Owner = $p.owner; $ProjectNumber = $p.number
 
     # Arrange - get a few items using search-projectitem
-    $items = Search-ProjectItemByTitle -Owner $owner -ProjectNumber $projectNumber -Title $p.searchInTitle.titleFilter
+    $items = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Filter $p.searchInTitle.titleFilter
     $itemsCount = $items.Count
     Assert-Count -Expected $p.searchInTitle.totalCount -Presented $items
 

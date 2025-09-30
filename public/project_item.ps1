@@ -101,7 +101,8 @@ function Search-ProjectItem {
         [Parameter()][string]$ProjectNumber,
         [Parameter()][switch]$IncludeDone,
         [Parameter()][switch]$Force,
-        [Parameter()][switch]$PassThru
+        [Parameter()][switch]$PassThru,
+        [Parameter()][switch]$AnyField
     )
 
     if([string]::IsNullOrWhiteSpace($Attributes)){
@@ -116,7 +117,11 @@ function Search-ProjectItem {
     # return if #items is null
     if ($null -eq $items) { return $null }
 
-    $found = $items.Values | Where-Object { Test-ProjectItemIsLikeAnyField -Item $_ -Value $Filter }
+    if($AnyField){
+        $found = $items.Values | Where-Object { Test-ProjectItemIsLikeAnyField -Item $_ -Value $Filter }
+    } else {
+        $found = $items.Values | Where-Object { $_.Title -like "*$Filter*" -or $_.id -like "*$Filter*" }
+    }
 
     if($PassThru){
         $ret = $found
