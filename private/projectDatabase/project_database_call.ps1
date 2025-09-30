@@ -153,6 +153,21 @@ function Update-Issue {
 
     "Calling to update Issue Async[$Async] [$Id/$FieldId = ""$Value"" ]" | Write-MyHost
 
+    if($FieldId -eq "comment"){
+
+        if([string]::IsNullOrWhiteSpace($Value)){
+            "Comment value is empty" | Write-MyWarning
+            return $null, $null, "addComment"
+        } else {
+            $result = Invoke-MyCommand -Command 'AddIssueComment' -Parameters @{
+                subjectid = $Id
+                comment   = $Value
+            }
+
+            return $result, $null, "addComment"
+        }
+    }
+
     $params = @{
         id    = $Id
         title = if ($FieldId -eq "title") { $Value } else { "" }
