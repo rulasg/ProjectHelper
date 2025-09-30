@@ -212,11 +212,11 @@ function Set-ContentFields {
         name     = "Body"
     }
 
-    # Comments
-    # Check that Comment field does not exist
-    $fieldCommentId = $fields.Keys | Where-Object {$fields.$_.name -eq "Comment"}
+    # AddComments
+    # Check that AddComment field does not exist
+    $fieldCommentId = $fields.Keys | Where-Object {$fields.$_.name -eq "AddComment"}
     if($fieldCommentId){
-        throw "Set-ContentFields: [ Comment ] field already exists. Please remove or rename this field from the project"
+        throw "Set-ContentFields: [ AddComment ] field already exists. Please remove or rename this field from the project"
     }
     $fields.comments = @{
         id       = "addcomment"
