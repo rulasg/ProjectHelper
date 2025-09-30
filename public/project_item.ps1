@@ -247,39 +247,43 @@ function Edit-ProjectItem {
     param(
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
-        [Parameter(Position = 1)][string]$ItemId,
+        [Parameter(Mandatory, ValueFromPipeline, Position = 1)][string]$ItemId,
         [Parameter(Position = 2)][string]$FieldName,
         [Parameter(Position = 3)][string]$Value,
         [Parameter()][switch]$Force
     )
-    ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
 
-    # Force cache update
-    # Full sync if force. Skip items if not force
-    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems:$(-not $Force)
+    process{
 
-    # Find the actual value of the item. Item+Staged
-    # Ignore $dirty as we are changing the db we will always save
-     ($item, $dirty) = Resolve-ProjectItem -Database $db -ItemId $ItemId
-
-    # if the item is not found
-    if($null -eq $item){ "Item [$ItemId] not found" | Write-MyError; return $null}
-
-    # Value transformations
-    $valueTransformed = Convertto-ItemTransformedValue -Item $item -Value $Value
-
-    # Check if value is the same
-    if ( IsEqual -Object1:$item.$FieldName -Object2:$valueTransformed) {
-        "The value is the same, no need to stage it" | Write-Verbose
-        return
+        ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+        
+        # Force cache update
+        # Full sync if force. Skip items if not force
+        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems:$(-not $Force)
+        
+        # Find the actual value of the item. Item+Staged
+        # Ignore $dirty as we are changing the db we will always save
+        ($item, $dirty) = Resolve-ProjectItem -Database $db -ItemId $ItemId
+        
+        # if the item is not found
+        if($null -eq $item){ "Item [$ItemId] not found" | Write-MyError; return $null}
+        
+        # Value transformations
+        $valueTransformed = Convertto-ItemTransformedValue -Item $item -Value $Value
+        
+        # Check if value is the same
+        if ( IsEqual -Object1:$item.$FieldName -Object2:$valueTransformed) {
+            "The value is the same, no need to stage it" | Write-Verbose
+            return
+        }
+        
+        # save the new value
+        Save-ItemFieldValue $db $itemId $FieldName $valueTransformed
+        
+        # Commit changes to the database
+        Save-ProjectDatabaseSafe -Database $db
     }
-
-    # save the new value
-    Save-ItemFieldValue $db $itemId $FieldName $valueTransformed
-
-    # Commit changes to the database
-    Save-ProjectDatabaseSafe -Database $db
 
 } Export-ModuleMember -Function Edit-ProjectItem
 
@@ -287,17 +291,16 @@ function Add-ProjectItemDirect {
     [CmdletBinding()]
     [alias("Add-ProjectItem", "api")]
     param(
-        [Parameter(ValueFromPipeline, Position = 0)][string]$Url,
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
+        [Parameter(Mandatory, ValueFromPipeline, Position = 0)][string]$Url,
         [Parameter()][switch]$NoCache
     )
 
-    process {
-
+    begin{
         ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
         if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
-
+    
         # Get project id
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
         $projectId = $db.ProjectId
@@ -305,6 +308,9 @@ function Add-ProjectItemDirect {
             "Project ID not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError
             return $null
         }
+    }
+
+    process {
 
         # Get item id
         $contentId = Get-ContentIdFromUrl -Url $Url
