@@ -1,4 +1,3 @@
-Set-MyInvokeCommandAlias -Alias AddIssueComment -Command 'Invoke-AddIssueComment -SubjectId {subjectid} -Comment "{comment}"'
 
 function Add-IssuePullRequestCommentDirect {
     [CmdletBinding()]
@@ -27,7 +26,7 @@ function Add-IssuePullRequestCommentDirect {
         return $null
     }
 
-    $response = Invoke-MyCommand -Command 'AddIssueComment' -Parameters @{
+    $response = Invoke-MyCommand -Command 'AddComment' -Parameters @{
         subjectid = $item.contentId
         comment   = $Comment
     }

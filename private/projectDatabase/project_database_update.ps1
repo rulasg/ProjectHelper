@@ -219,10 +219,10 @@ function Set-ContentFields {
         throw "Set-ContentFields: [ Comment ] field already exists. Please remove or rename this field from the project"
     }
     $fields.comments = @{
-        id       = "comment"
-        dataType = "COMMENT"
+        id       = "addcomment"
+        dataType = "ADDCOMMENT"
         type     = "ContentField"
-        name     = "Comment"
+        name     = "AddComment"
     }
 
     return $Fields

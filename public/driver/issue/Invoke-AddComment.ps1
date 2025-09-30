@@ -1,4 +1,4 @@
-function Invoke-AddIssueComment {
+function Invoke-AddComment {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true)][string]$SubjectId,
@@ -49,7 +49,7 @@ function Invoke-AddIssueComment {
 
     # Return the field names
     return $response
-} Export-ModuleMember -Function Invoke-AddIssueComment
+} Export-ModuleMember -Function Invoke-AddComment
 
 # GraphQL query:
 # mutation CommentCreate($input:AddCommentInput!){addComment(input: $input){commentEdge{node{url}}}}

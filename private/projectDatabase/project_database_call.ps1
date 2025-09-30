@@ -10,6 +10,9 @@ Set-MyInvokeCommandAlias -Alias GitHub_UpdateProjectV2ItemFieldValueAsync -Comma
 Set-MyInvokeCommandAlias -Alias GitHub_ClearProjectV2ItemFieldValueAsync  -Command 'Import-Module {projecthelper} ; Invoke-GitHubClearItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid}'
 Set-MyInvokeCommandAlias -Alias GitHub_ClearProjectV2ItemFieldValue       -Command 'Invoke-GitHubClearItemValues -ProjectId {projectid} -ItemId {itemid} -FieldId {fieldid}'
 
+Set-MyInvokeCommandAlias -Alias AddComment      -Command 'Invoke-AddComment -SubjectId {subjectid} -Comment "{comment}"'
+Set-MyInvokeCommandAlias -Alias AddCommentAsync -Command 'Import-Module {projecthelper} ; Invoke-AddComment -SubjectId {subjectid} -Comment "{comment}"'
+
 function Update-ProjectItem {
     [CmdletBinding()]
     param(
@@ -153,13 +156,13 @@ function Update-Issue {
 
     "Calling to update Issue Async[$Async] [$Id/$FieldId = ""$Value"" ]" | Write-MyHost
 
-    if($FieldId -eq "comment"){
+    if($FieldId -eq "addcomment"){
 
         if([string]::IsNullOrWhiteSpace($Value)){
             "Comment value is empty" | Write-MyWarning
             return $null, $null, "addComment"
         } else {
-            $result = Invoke-MyCommand -Command 'AddIssueComment' -Parameters @{
+            $result = Invoke-MyCommand -Command 'AddComment' -Parameters @{
                 subjectid = $Id
                 comment   = $Value
             }

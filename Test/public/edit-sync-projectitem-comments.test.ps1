@@ -11,7 +11,7 @@ function Test_Edit_Sync_ProjectItem_Comments_Issue {
     MockCall_GetProject -MockProject $p -skipItems
     MockCall_GetItem  $i.id
 
-    MockCallJson -Command "Invoke-AddIssueComment -SubjectId $($i.contentId) -Comment ""New comment""" -filename "invoke-addissuecomment-$($i.contentId).json"
+    MockCallJson -Command "Invoke-AddComment -SubjectId $($i.contentId) -Comment ""New comment""" -filename "invoke-addissuecomment-$($i.contentId).json"
 
     # Act the edit part
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $i.id -FieldName "Comment" -Value $comment
