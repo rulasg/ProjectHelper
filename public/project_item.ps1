@@ -126,42 +126,42 @@ function Search-ProjectItem {
     if($PassThru){
         $ret = $found
     } else {
-
-        $ret = @($found | ForEach-Object {
-            $i = [pscustomobject]::new()
-            # return the issue with additional attributes
-            Add-Attributes  -SourceObject $_ -DestinationObject $i -Attributes $Attributes
-        })
-
+        $ret = $found | Show-ProjectItem -Attributes $Attributes
     }
 
     return $ret
 
 } Export-ModuleMember -Function Search-ProjectItem -Alias "spi"
 
-function Add-Attributes{
+
+function Show-ProjectItem{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][object]$SourceObject,
-        [Parameter(Position = 1)][object]$DestinationObject,
-        [Parameter(Position = 2)][string[]]$Attributes
+        [Parameter(ValueFromPipeline)][object]$Item,
+        [Parameter(Position = 1)][string[]]$Attributes
     )
 
-    # return if empty attributes
-    if([string]::IsNullOrWhiteSpace($Attributes)){
-        return $DestinationObject
+    begin {
+        if([string]::IsNullOrWhiteSpace($Attributes)){
+            $Attributes = @("id", "Title")
+        }
     }
 
-    foreach($a in $Attributes){
-        if( ! $SourceObject.$a){
-            continue
+    process{
+
+        $ret = [pscustomobject]::new()
+
+        foreach($a in $Attributes){
+            if( ! $Item.$a){
+                continue
+            }
+
+            $ret | Add-Member -MemberType NoteProperty -Name $a -Value $Item.$a -force
         }
 
-        $DestinationObject | Add-Member -MemberType NoteProperty -Name $a -Value $SourceObject.$a -force
+        return $ret
     }
-
-    return $DestinationObject
-}
+} Export-ModuleMember -Function Show-ProjectItem
 
 
 function Get-ProjectItems {
@@ -442,27 +442,27 @@ function Get-ProjectItemDirect {
     return $item
 } Export-ModuleMember -Function Get-ProjectItemDirect
 
-function Show-ProjectItem {
-    [CmdletBinding()]
-    param(
-        [Parameter(Position = 0)][string]$Owner,
-        [Parameter(Position = 1)][string]$ProjectNumber,
-        [Parameter(ValueFromPipeline)][object]$Item,
-        [Parameter()][string[]]$AdditionalFields
-    )
+# function Show-ProjectItem {
+#     [CmdletBinding()]
+#     param(
+#         [Parameter(Position = 0)][string]$Owner,
+#         [Parameter(Position = 1)][string]$ProjectNumber,
+#         [Parameter(ValueFromPipeline)][object]$Item,
+#         [Parameter()][string[]]$AdditionalFields
+#     )
 
-    begin {
-        $fields = Get-EnvironmentDisplayFields -Fields $AdditionalFields
+#     begin {
+#         $fields = Get-EnvironmentDisplayFields -Fields $AdditionalFields
 
-        $fields | Write-Verbose
-    } 
+#         $fields | Write-Verbose
+#     } 
 
-    process {
-        $ret = $item | Select-Object -Property $Fields
+#     process {
+#         $ret = $item | Select-Object -Property $Fields
 
-        return $ret
-    }
-} Export-ModuleMember -Function Show-ProjectItem
+#         return $ret
+#     }
+# } Export-ModuleMember -Function Show-ProjectItem
 
 
 function Test-ProjectItemIsLikeAnyField {

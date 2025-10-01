@@ -261,13 +261,21 @@ function Test_ShowProjectItem_SUCCESS{
 
     $item = Get-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $id
 
-    $result = $item | Show-ProjectItem -AdditionalFields "Status"
+    # Act 0
+    $result0 = $item | Show-ProjectItem
     
-    Assert-Count -Expected 1 -Presented $result
+    Assert-Count -Expected 1 -Presented $result0
 
-    Assert-AreEqual -Expected $id -Presented $result[0].id
-    Assert-AreEqual -Expected $title -Presented $result[0].Title
-    Assert-AreEqual -Expected $status -Presented $result[0].Status
+    Assert-AreEqual -Expected $id -Presented $result0[0].id
+    Assert-AreEqual -Expected $title -Presented $result0[0].Title
+
+    $result1 = $item | Show-ProjectItem -Attributes "id","Title","Status"
+    
+    Assert-Count -Expected 1 -Presented $result1
+
+    Assert-AreEqual -Expected $id -Presented $result1[0].id
+    Assert-AreEqual -Expected $title -Presented $result1[0].Title
+    Assert-AreEqual -Expected $status -Presented $result1[0].Status
 }
 
 function Test_ShowProjectItem_SUCCESS_Multiple{
@@ -279,16 +287,16 @@ function Test_ShowProjectItem_SUCCESS_Multiple{
     $p = Get-Mock_Project_700; $Owner = $p.owner; $ProjectNumber = $p.number
 
     # Arrange - get a few items using search-projectitem
-    $items = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Filter $p.searchInTitle.titleFilter
+    $items = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Filter $p.searchInTitle.titleFilter -PassThru
     $itemsCount = $items.Count
     Assert-Count -Expected $p.searchInTitle.totalCount -Presented $items
 
-    $result = $items | Show-ProjectItem -AdditionalFields "Status"
+    $result = $items | Show-ProjectItem -Attributes "id","url","Status"
 
     Assert-Count -Expected $itemsCount -Presented $result
 
     # Get properties of the first item to verify
-    $expectedProperties = @("id", "Title", "Status")
+    $expectedProperties = @("id","url","Status")
 
     # Verify all items have the same structure
     for ($i = 1; $i -lt $result.Count; $i++) {
