@@ -1,3 +1,6 @@
+
+Set-MyInvokeCommandAlias -Alias GetInvokeProjectInjectionFunctions -Command 'Invoke-ProjectInjectionFunctions'
+
 <#
 .SYNOPSIS
     Updates project items with injection functions.
@@ -35,8 +38,7 @@ function Update-ProjectItemsWithInjection{
     $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:(-not $SkipStagedCheck)
 
     # Get the injection functions list
-
-    $functions = Get-ProjectInjectionFunctions
+    $functions = Invoke-MyCommand GetInvokeProjectInjectionFunctions
 
     # Iterate through all the items in the project
     $start = Get-Date
@@ -46,7 +48,7 @@ function Update-ProjectItemsWithInjection{
     # Add extra info to result
     $result | Add-Member -NotePropertyName "Integrations" -NotePropertyValue $functions.count
     $result | Add-Member -NotePropertyName "Time" -NotePropertyValue $time
-    $result | Add-Member -NotePropertyName "IntegrationsName" -NotePropertyValue $functions.Name
+    $result | Add-Member -NotePropertyName "IntegrationsName" -NotePropertyValue $functions
 
 
     # Save result to global variable
@@ -57,12 +59,13 @@ function Update-ProjectItemsWithInjection{
 
 } Export-ModuleMember -Function Update-ProjectItemsWithInjection
 
-function Get-ProjectInjectionFunctions {
+function Invoke-ProjectInjectionFunctions {
     [CmdletBinding()]
     param()
 
+    $functions = 'Get-Command -Name "Invoke-ProjectInjection_*" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty name'
+    
     # Get all functions that start with Invoke-ProjectInjection_
-    $functions = Get-Command -Name "Invoke-ProjectInjection_*" -ErrorAction SilentlyContinue
 
     if ($functions) {
         return $functions
@@ -70,7 +73,7 @@ function Get-ProjectInjectionFunctions {
         Write-Host "No project injection functions found." -ForegroundColor Yellow
         return $null
     }
-} Export-ModuleMember -Function Get-ProjectInjectionFunctions
+} Export-ModuleMember -Function Invoke-ProjectInjectionFunctions
 
 
 <#.SYNOPSIS
@@ -99,8 +102,7 @@ function Get-ProjectInjectionFunctions {
 function Invoke-ProjectInjection {
     [CmdletBinding()]
     param (
-        [parameter(ValueFromPipeline)][System.Management.Automation.FunctionInfo] $FunctionInfo,
-        [Parameter()] [string] $FunctionName,
+        [parameter(Mandatory,ValueFromPipeline)][string] $FunctionName,
         [Parameter(Position = 0)] [string]$Owner,
         [Parameter(Position = 1)] [string]$ProjectNumber,
         [Parameter()] [switch] $ShowErrors
@@ -124,13 +126,6 @@ function Invoke-ProjectInjection {
         }
         else {
             $ErrorShow = 'SilentlyContinue'
-        }
-
-        if ($FunctionInfo) {
-            $FunctionName = $FunctionInfo.Name
-        } elseif (-not $FunctionName) {
-            Write-Error "FunctionName is required when FunctionInfo is not provided."
-            return
         }
 
         Write-Verbose -Message "Running [ $FunctionName ]"

@@ -63,6 +63,8 @@ function Test_UpdateProjectWithInjection{
         }
     }
 
+    MockCallToObject -Command 'Invoke-ProjectInjectionFunctions' -OutObject @("Invoke-ProjectInjection_1","Invoke-ProjectInjection_2")
+
     # Act
    $result = Update-ProjectItemsWithInjection -owner $Owner -ProjectNumber $ProjectNumber
 
@@ -131,6 +133,8 @@ function Test_UpdateProjectWithInjection_Failed_1{
 
         throw "Integration 2 failed"
     }
+
+     MockCallToObject -Command 'Invoke-ProjectInjectionFunctions' -OutObject @("Invoke-ProjectInjection_1","Invoke-ProjectInjection_2")
 
     # Act
    $result = Update-ProjectItemsWithInjection -Owner $Owner -ProjectNumber $ProjectNumber
