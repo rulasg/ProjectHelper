@@ -9,7 +9,7 @@
     The project number.
 .PARAMETER IncludeDoneItems
     If specified, includes items that are marked as done.
-.PARAMETER SkipProjectSync
+.PARAMETER SkipStagedCheck
     If specified, skips the project synchronization step.
 .EXAMPLE
     Update-ProjectItemsWithInjection -Owner "octodemo" -ProjectNumber 164
@@ -21,18 +21,18 @@ function Update-ProjectItemsWithInjection{
         [Parameter(Position = 0)] [string]$Owner,
         [Parameter(Position = 1)] [string]$ProjectNumber,
         [Parameter()] [switch]$IncludeDoneItems,
-        [Parameter()] [switch]$SkipProjectSync
+        [Parameter()] [switch]$SkipStagedCheck
     )
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    if((-not $SkipProjectSync) -AND (Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber)){
+    if((-not $SkipStagedCheck) -AND (Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber)){
         "Project has staged items, please Sync-ProjectItemStaged or Reset-ProjectItemStaged and try again" | Write-Error
         return
     }
 
     # Get the project
-    $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:(-not $SkipProjectSync)
+    $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:(-not $SkipStagedCheck)
 
     # Get the injection functions list
 
