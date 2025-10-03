@@ -24,7 +24,8 @@ function Write-MyVerbose {
     param(
         [Parameter(ValueFromPipeline)][string]$Message
     )
-    Write-Verbose -Message $message
+
+    Write-ToConsole $message -Color $VERBOSE_COLOR
 }
 
 function Write-MyHost {
