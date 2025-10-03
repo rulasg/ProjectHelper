@@ -1,3 +1,8 @@
+# Test Transcript helper functions
+# These functions help manage the transcript file during tests
+# and ensure it is cleaned up after use.
+
+
 $TEST_TRANSCRIPT_FILE = "test_transcript.log"
 
 function Start-MyTranscript {
