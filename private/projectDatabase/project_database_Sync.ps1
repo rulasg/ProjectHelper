@@ -50,8 +50,8 @@ function Sync-Project{
             # Staged has the display value.
             # Convert to the update value
             $value = $itemStaged.$fieldId.Value
-            $valueToSend = ConvertTo-FieldValue -Field $itemStaged.$fieldId.Field -Value $value
             $field = $itemStaged.$fieldId.Field
+            $valueToSend = ConvertTo-FieldValue -Field $field -Value $value
 
             $params = @{
                 Database = $db
