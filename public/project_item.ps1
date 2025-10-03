@@ -361,7 +361,7 @@ function Add-ProjectItemDirect {
 } Export-ModuleMember -Function Add-ProjectItemDirect -Alias "Add-ProjectItem", "api"
 
 function Remove-ProjectItemDirect {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
@@ -391,7 +391,11 @@ function Remove-ProjectItemDirect {
         }
 
         # Remove item from project
-        $response = Invoke-MyCommand -Command RemoveItemFromProject -Parameters @{ projectid = $projectId ; itemid = $ItemId }
+        if ($PSCmdlet.ShouldProcess($ItemId, "RRemove from project $Owner/$ProjectNumber")) {
+            $response = Invoke-MyCommand -Command RemoveItemFromProject -Parameters @{ projectid = $projectId ; itemid = $ItemId }
+        } else {
+            return $ItemId
+        }
         
         # check if the response is null
         if ($response.errors) {
