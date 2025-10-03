@@ -1,3 +1,11 @@
+# Include MyWrite.ps1
+# Provides Write-MyError, Write-MyWarning, Write-MyVerbose, Write-MyHost, Write-MyDebug
+# and Test-Verbose, Test-Debug functions for consistent logging and debugging output.
+# Use env variables ModuleHelper_VERBOSE and ModuleHelper_DEBUG to control verbosity and debug output.
+# Example: $env:ModuleHelper_DEBUG="all" or $env:ModuleHelper_DEBUG="Sync-Project"
+
+$ModuleRootPath = Get-ModuleRootPath -ModuleRootPath $ModuleRootPath
+$MODULE_NAME = (Get-ChildItem -Path $ModuleRootPath -Filter *.psd1 | Select-Object -First 1).BaseName
 
 $ERROR_COLOR = "Red"
 $WARNING_COLOR = "Yellow"
@@ -26,7 +34,9 @@ function Write-MyVerbose {
         [Parameter(ValueFromPipeline)][string]$Message
     )
 
-    Write-ToConsole $message -Color $VERBOSE_COLOR
+    if (Test-Verbose) {
+        Write-ToConsole $message -Color $VERBOSE_COLOR
+    }
 }
 
 function Write-MyHost {
@@ -46,16 +56,18 @@ function Write-MyDebug {
         [Parameter(Position = 2)][object]$Object
     )
 
-    if (Test-Debug -section $section) {
+    process{
 
+        if (Test-Debug -section $section) {
 
-        if ($Object) {
-            $objString = $Object | Get-ObjetString
-            $message = $message + " - " + $objString
+            if ($Object) {
+                $objString = $Object | Get-ObjetString
+                $message = $message + " - " + $objString
+            }
+            $timestamp = Get-Date -Format 'HH:mm:ss.fff'
+            "[$timestamp][D][$section] $message" | Write-ToConsole -Color $DEBUG_COLOR
         }
-        $timestamp = Get-Date -Format 'HH:mm:ss.fff'
-        "[$timestamp][D][$section] $message" | Write-ToConsole -Color $DEBUG_COLOR
-    } 
+    }
 }
 
 function Write-ToConsole {
@@ -68,12 +80,31 @@ function Write-ToConsole {
     Microsoft.PowerShell.Utility\Write-Host $message -ForegroundColor $Color -NoNewLine:$NoNewLine
 }
 
+
+function Test-Verbose {
+    param(
+        [Parameter(Position = 0)][string]$section
+    )
+
+    $moduleDebugVarName = $MODULE_NAME + "_VERBOSE"
+    $flag = [System.Environment]::GetEnvironmentVariable($moduleDebugVarName)
+
+    # Enable debug
+    if ([string]::IsNullOrWhiteSpace( $flag )) {
+        return $false
+    }
+
+    $trace = ($flag -like '*all*') -or ( $section -like "*$flag*")
+    return $trace
+}
+
 function Test-Debug {
     param(
         [Parameter(Position = 0)][string]$section
     )
 
-    $flag = $env:ProjectHelper_DEBUG
+    $moduleDebugVarName = $MODULE_NAME + "_DEBUG"
+    $flag = [System.Environment]::GetEnvironmentVariable($moduleDebugVarName)
 
     # Enable debug
     if ([string]::IsNullOrWhiteSpace( $flag )) {
