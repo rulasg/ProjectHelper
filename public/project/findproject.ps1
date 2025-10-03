@@ -40,8 +40,7 @@ function Find-Project{
         return $null
     } 
 
-    "[$($projects.Count)] projects found" | Write-MyHost
-
+    "[$($projects.Count)] projects found" | Write-MyVerbose
     return $projects
 
 } Export-ModuleMember -Function Find-Project
