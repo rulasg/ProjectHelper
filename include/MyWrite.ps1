@@ -1,6 +1,7 @@
 
 $ERROR_COLOR = "Red"
 $WARNING_COLOR = "Yellow"
+$VERBOSE_COLOR = "DarkYellow"
 $OUTPUT_COLOR = "DarkCyan"
 $DEBUG_COLOR = "DarkGray"
 
@@ -45,25 +46,15 @@ function Write-Debug {
         [Parameter(Position = 2)][object]$Object
     )
 
-    $flag = $env:ProjectHelper_DEBUG
+    if (Test-Debug -section $section) {
 
-    # Enable debug
-    if ([string]::IsNullOrWhiteSpace( $flag )) {
-        return
-    }
-
-    $trace = ($flag -like '*all*') -or ( $section -like "*$flag*")
-
-    # Write-Host $message -ForegroundColor $DEBUG_COLOR
-    if ($trace) {
 
         if ($Object) {
-            $objJson = $Object | ConvertTo-Json -Depth 10 -ErrorAction SilentlyContinue
-            $message = $message + " - " + $objJson
+            $objString = $Object | Get-ObjetString
+            $message = $message + " - " + $objString
         }
-
-        $message = "[DEBUG][$section] " + $message
-        Write-ToConsole $message -Color $DEBUG_COLOR
+        $timestamp = Get-Date -Format 'HH:mm:ss.fff'
+        "[$timestamp][D][$section] $message" | Write-ToConsole -Color $DEBUG_COLOR
     } 
 }
 
@@ -75,4 +66,39 @@ function Write-ToConsole {
 
     )
     Microsoft.PowerShell.Utility\Write-Host $message -ForegroundColor $Color -NoNewLine:$NoNewLine
+}
+
+function Test-Debug {
+    param(
+        [Parameter(Position = 0)][string]$section
+    )
+
+    $flag = $env:ProjectHelper_DEBUG
+
+    # Enable debug
+    if ([string]::IsNullOrWhiteSpace( $flag )) {
+        return $false
+    }
+
+    $trace = ($flag -like '*all*') -or ( $section -like "*$flag*")
+    return $trace
+}
+
+function Get-ObjetString {
+    param(
+        [Parameter(ValueFromPipeline, Position = 0)][object]$Object
+    )
+
+    process{
+
+        if ($null -eq $Object) {
+            return "null"
+        }
+        
+        if ($Object -is [string]) {
+            return $Object
+        }
+        
+        return $Object | ConvertTo-Json -Depth 10 -ErrorAction SilentlyContinue
+    }
 }
