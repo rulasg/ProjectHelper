@@ -159,7 +159,7 @@ function Invoke-GitHubUpdateItemValues{
         [string]$Type
     )
 
-    "ProjectId: $ProjectId, ItemId: $ItemId, FieldId: $FieldId, Value: $Value, Type: $Type" | Write-Debug -section "driver_gh"
+    "ProjectId: $ProjectId, ItemId: $ItemId, FieldId: $FieldId, Value: $Value, Type: $Type" | Write-MyDebug -section "driver_gh"
 
     # Use the environmentraviable
     $token = Get-GithubToken

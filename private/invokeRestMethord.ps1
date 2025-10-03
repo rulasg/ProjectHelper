@@ -20,9 +20,9 @@ function Invoke-RestMethod{
         $params.OutFile = $OutFile
     }
 
-    ">> $Method $Uri" | Write-Debug -section "invokeRestMethod" 
+    ">> $Method $Uri" | Write-MyDebug -section "invokeRestMethod" 
     $result = Microsoft.PowerShell.Utility\Invoke-RestMethod @params
-    "<< $Method $Uri" | Write-Debug -section "invokeRestMethod" 
+    "<< $Method $Uri" | Write-MyDebug -section "invokeRestMethod" 
 
 
     return $result

@@ -39,7 +39,7 @@ function Write-MyHost {
     Write-ToConsole $message -Color $OUTPUT_COLOR -NoNewLine:$NoNewLine
 }
 
-function Write-Debug {
+function Write-MyDebug {
     param(
         [Parameter(Position = 0)][string]$section,
         [Parameter(Position = 1, ValueFromPipeline)][string]$Message,
