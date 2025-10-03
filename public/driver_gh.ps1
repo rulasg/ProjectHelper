@@ -159,6 +159,8 @@ function Invoke-GitHubUpdateItemValues{
         [string]$Type
     )
 
+    "ProjectId: $ProjectId, ItemId: $ItemId, FieldId: $FieldId, Value: $Value, Type: $Type" | Write-Debug -section "driver_gh"
+
     # Use the environmentraviable
     $token = Get-GithubToken
     if(-not $token){
