@@ -14,7 +14,7 @@ function Get-ProjectItem {
     [CmdletBinding()]
     [Alias ("gpi")]
     param(
-        [Parameter(Mandatory, ValueFromPipeline, Position = 0)][string]$ItemId,
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)][Alias("id")][string]$ItemId,
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
         [Parameter()][switch]$Force
