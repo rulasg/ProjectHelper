@@ -57,6 +57,9 @@ function Sync-ProjectAsync {
             $value = $itemStaged.$fieldId.Value
             $field = $itemStaged.$fieldId.Field
 
+            # Staged has the display value. Convert to the update value
+            $valueToSend = ConvertTo-FieldValue -Field $field -Value $value
+
             $params = @{
                 Database      = $db
                 ItemId        = $itemId
@@ -64,7 +67,7 @@ function Sync-ProjectAsync {
                 FieldName     = $field.name
                 FieldType     = $field.type
                 FieldDataType = $field.dataType
-                Value         = $value
+                Value         = $valueToSend
             }
 
 

@@ -35,7 +35,5 @@ function Invoke-MyCommand{
         [Parameter(Position=1)][hashtable]$Parameters
     )
 
-    Write-Debug "[invoke] $Command" $Parameters
-
     return InvokeHelper\Invoke-MyCommand -Command $Command -Parameters $Parameters
 }

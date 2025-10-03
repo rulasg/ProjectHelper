@@ -4,12 +4,20 @@ query FindProject($afterProject:String $firstProject:Int! $login:String! $patter
       nodes {
         id
         title
+        shortDescription
+        readme
         number
         url
+        template
         createdAt
         updatedAt
         closedAt
-        
+        repositories(first: 100) {
+          nodes {
+            name
+            url
+          }
+        }
       }
     }
   }

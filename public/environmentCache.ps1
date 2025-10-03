@@ -33,9 +33,9 @@ function Reset-ProjectHelperEnvironment{
 function Set-ProjectHelperEnvironment{
     [CmdletBinding()]
     param(
-        [Parameter()][string]$Owner,
-        [Parameter()][string]$ProjectNumber,
-        [Parameter()][string[]]$DisplayFields
+        [Parameter(ValueFromPipelineByPropertyName)][string]$Owner,
+        [Parameter(ValueFromPipelineByPropertyName)][string]$ProjectNumber,
+        [Parameter(ValueFromPipelineByPropertyName)][string[]]$DisplayFields
     )
 
     if(! [string]::IsNullOrWhiteSpace($Owner)) {
