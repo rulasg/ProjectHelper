@@ -35,7 +35,7 @@ function Update-ProjectItemsBetweenProjects {
     [CmdletBinding()]
     param (
         [Parameter(Position = 0)][string]$SourceOwner,
-        [Parameter(Position = 1)][string]$SourceProjectNumber,
+        [Parameter(Mandatory,Position = 1)][string]$SourceProjectNumber,
         [Parameter(Position = 2)][string]$DestinationOwner,
         [Parameter(Position = 3)][string]$DestinationProjectNumber,
         [Parameter()][string]$FieldSlug,
@@ -44,17 +44,17 @@ function Update-ProjectItemsBetweenProjects {
         [Parameter()][switch]$NoRefreshSource
     )
 
+    # Get source project before destination to avoid project infor environment caching
+    ($SourceOwner,$SourceProjectNumber) = Get-OwnerAndProjectNumber -Owner $SourceOwner -ProjectNumber $SourceProjectNumber
+    if([string]::IsNullOrWhiteSpace($SourceOwner) -or [string]::IsNullOrWhiteSpace($SourceProjectNumber)){ "Source Owner and ProjectNumber are required" | Write-MyError; return $null}
+    # Use Force parameter unless NoRefreshSource is specified
+    $sourceProject = Get-Project -Owner $SourceOwner -ProjectNumber $SourceProjectNumber -Force:(-not $NoRefreshSource)
+
     # Get destination project for error handling and caching
     ($DestinationOwner,$DestinationProjectNumber) = Get-OwnerAndProjectNumber -Owner $DestinationOwner -ProjectNumber $DestinationProjectNumber
     if([string]::IsNullOrWhiteSpace($DestinationOwner) -or [string]::IsNullOrWhiteSpace($DestinationProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
     # Use Force parameter unless NoRefreshDestination is specified
     $destinationProject = Get-Project -Owner $DestinationOwner -ProjectNumber $DestinationProjectNumber -Force:(-not $NoRefreshDestination)
-
-    # Get source project for error handling and caching
-    ($SourceOwner,$SourceProjectNumber) = Get-OwnerAndProjectNumber -Owner $SourceOwner -ProjectNumber $SourceProjectNumber
-    if([string]::IsNullOrWhiteSpace($SourceOwner) -or [string]::IsNullOrWhiteSpace($SourceProjectNumber)){ "Source Owner and ProjectNumber are required" | Write-MyError; return $null}
-    # Use Force parameter unless NoRefreshSource is specified
-    $sourceProject = Get-Project -Owner $SourceOwner -ProjectNumber $SourceProjectNumber -Force:(-not $NoRefreshSource)
 
     # check if any of the projects are null
     if($null -eq $sourceProject -or $null -eq $destinationProject){
