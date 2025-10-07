@@ -126,7 +126,7 @@ function Search-ProjectItem {
     if($PassThru){
         $ret = $found
     } else {
-        $ret = $found | Show-ProjectItem -Attributes $Attributes
+        $ret = $found | Format-ProjectItem -Attributes $Attributes
     }
 
     # If Title is in attributes, sort by title
@@ -139,7 +139,7 @@ function Search-ProjectItem {
 } Export-ModuleMember -Function Search-ProjectItem -Alias "spi"
 
 
-function Show-ProjectItem{
+function Format-ProjectItem{
     [CmdletBinding()]
     param(
         [Parameter(ValueFromPipeline)][object]$Item,
@@ -166,7 +166,7 @@ function Show-ProjectItem{
 
         return $ret
     }
-} Export-ModuleMember -Function Show-ProjectItem
+} Export-ModuleMember -Function Format-ProjectItem
 
 
 function Get-ProjectItems {

@@ -262,14 +262,14 @@ function Test_ShowProjectItem_SUCCESS{
     $item = Get-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $id
 
     # Act 0
-    $result0 = $item | Show-ProjectItem
+    $result0 = $item | Format-ProjectItem
     
     Assert-Count -Expected 1 -Presented $result0
 
     Assert-AreEqual -Expected $id -Presented $result0[0].id
     Assert-AreEqual -Expected $title -Presented $result0[0].Title
 
-    $result1 = $item | Show-ProjectItem -Attributes "id","Title","Status"
+    $result1 = $item | Format-ProjectItem -Attributes "id","Title","Status"
     
     Assert-Count -Expected 1 -Presented $result1
 
@@ -291,7 +291,7 @@ function Test_ShowProjectItem_SUCCESS_Multiple{
     $itemsCount = $items.Count
     Assert-Count -Expected $p.searchInTitle.Titles.Count -Presented $items
 
-    $result = $items | Show-ProjectItem -Attributes "id","url","Status"
+    $result = $items | Format-ProjectItem -Attributes "id","url","Status"
 
     Assert-Count -Expected $itemsCount -Presented $result
 
