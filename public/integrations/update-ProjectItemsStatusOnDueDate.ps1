@@ -91,7 +91,6 @@ function Update-ProjectItemsStatusOnDueDate{
         [Parameter()][string]$StatusDone,
         [Parameter()][switch]$AnyStatus,
         [Parameter()][switch]$IncludeDoneItems,
-        [Parameter()][switch]$SkipStagedCheck,
         [Parameter()][switch]$Force
     )
 
@@ -99,11 +98,6 @@ function Update-ProjectItemsStatusOnDueDate{
 
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
-
-    if((-not $SkipStagedCheck) -AND (Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber)){
-        "Project has staged items, please Sync-ProjectItemStaged or Reset-ProjectItemStaged and try again" | Write-Error
-        return
-    }
 
     # Sync project if needed
     $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
