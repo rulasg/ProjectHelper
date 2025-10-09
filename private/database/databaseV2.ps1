@@ -1,4 +1,4 @@
-# Database driver to store the cache
+# Not using Include version as we moved away from the generic include version
 
 # Invoke to allow mockig the store path on testing
 Set-MyInvokeCommandAlias -Alias GetDatabaseStorePath -Command "Invoke-ProjectHelperGetDatabaseStorePath"
@@ -67,6 +67,8 @@ function Save-Database{
     )
 
     $path = Get-DatabaseFile -Key $Key
+
+    "Saving database to $path" | Write-MyDebug -Section Database
 
     $Database | ConvertTo-Json -Depth 10 | Set-Content $path
 }

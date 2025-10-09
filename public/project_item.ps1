@@ -95,7 +95,7 @@ function Search-ProjectItem {
     [CmdletBinding()]
     [Alias ("spi")]
     param(
-        [Parameter(Mandatory, Position = 0)] [string]$Filter,
+        [Parameter(Mandatory, Position = 0)] [string[]]$Filter,
         [Parameter(Position = 1)][string[]]$Attributes,
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
@@ -118,15 +118,20 @@ function Search-ProjectItem {
     if ($null -eq $items) { return $null }
 
     if($AnyField){
-        $found = $items.Values | Where-Object { Test-ProjectItemIsLikeAnyField -Item $_ -Value $Filter }
+        $found = $items.Values | Where-Object { Test-WhereLikeAnyField -Item $_ -Values $Filter }
     } else {
-        $found = $items.Values | Where-Object { $_.Title -like "*$Filter*" -or $_.id -like "*$Filter*" }
+        $found = $items.Values | Where-Object { Test-WhereLikeField -Item $_ -Fieldname "Title" -Values $Filter }
     }
 
     if($PassThru){
         $ret = $found
     } else {
-        $ret = $found | Show-ProjectItem -Attributes $Attributes
+        $ret = $found | Format-ProjectItem -Attributes $Attributes
+    }
+
+    # If Title is in attributes, sort by title
+    if($Attributes -contains "Title") {
+        $ret = $ret | Sort-Object -Property Title
     }
 
     return $ret
@@ -134,7 +139,7 @@ function Search-ProjectItem {
 } Export-ModuleMember -Function Search-ProjectItem -Alias "spi"
 
 
-function Show-ProjectItem{
+function Format-ProjectItem{
     [CmdletBinding()]
     param(
         [Parameter(ValueFromPipeline)][object]$Item,
@@ -161,7 +166,7 @@ function Show-ProjectItem{
 
         return $ret
     }
-} Export-ModuleMember -Function Show-ProjectItem
+} Export-ModuleMember -Function Format-ProjectItem
 
 
 function Get-ProjectItems {
@@ -278,7 +283,7 @@ function Edit-ProjectItem {
         $valueTransformed = Convertto-ItemTransformedValue -Item $item -Value $Value
         
         # Check if value is the same
-        if ( IsEqual -Object1:$item.$FieldName -Object2:$valueTransformed) {
+        if ( AreEqual -Object1:$item.$FieldName -Object2:$valueTransformed) {
             "The value is the same, no need to stage it" | Write-Verbose
             return
         }
@@ -365,7 +370,7 @@ function Remove-ProjectItemDirect {
     param(
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
-        [Parameter(Mandatory, ValueFromPipeline, Position = 0)][string]$ItemId,
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName,ValueFromPipeline, Position = 0)][Alias("Id")][string]$ItemId,
         [Parameter()][switch]$NoCache
     )
 
@@ -446,47 +451,52 @@ function Get-ProjectItemDirect {
     return $item
 } Export-ModuleMember -Function Get-ProjectItemDirect
 
-# function Show-ProjectItem {
-#     [CmdletBinding()]
-#     param(
-#         [Parameter(Position = 0)][string]$Owner,
-#         [Parameter(Position = 1)][string]$ProjectNumber,
-#         [Parameter(ValueFromPipeline)][object]$Item,
-#         [Parameter()][string[]]$AdditionalFields
-#     )
-
-#     begin {
-#         $fields = Get-EnvironmentDisplayFields -Fields $AdditionalFields
-
-#         $fields | Write-Verbose
-#     } 
-
-#     process {
-#         $ret = $item | Select-Object -Property $Fields
-
-#         return $ret
-#     }
-# } Export-ModuleMember -Function Show-ProjectItem
 
 
-function Test-ProjectItemIsLikeAnyField {
+function Test-WhereLikeAnyField {
     param(
         [Parameter(Mandatory, ValueFromPipeline)] [object]$Item,
-        [Parameter(Mandatory, Position = 0)][string]$Value
+        [Parameter(Mandatory, Position = 0)][string[]]$Values
     )
-    foreach ($key in $item.Keys) {
-        if ($item.$key -Like "*$Value*") {
-            "Found [$Value] in field [$key] in [$($item.$key)]" | Write-Verbose
-            return $true
+
+    process{
+
+        foreach ($key in $item.Keys) {
+            if( Test-WhereLikeField -Item $item -Fieldname $key -Values $Values ) {
+                return $true
+            }
         }
+        
+        return $false
     }
+}
 
-    return $false
+function Test-WhereLikeField {
+    param(
+        [Parameter(Mandatory,ValueFromPipeline)] [object]$Item,
+        [Parameter(Mandatory)][string]$FieldName,
+        [Parameter(Mandatory)][string[]]$Values,
+        [Parameter()][switch]$OR
+    )
 
+    process {
+
+        $title = $item.$FieldName
+
+        $foundCount = 0
+        
+        foreach ($v in $Values) {
+            if( $title -like "*$v*"){
+                $foundCount ++
+            }
+        }
+
+        return $foundCount -eq $Values.Count
+    }
 }
 
 
-function IsEqual {
+function AreEqual {
     param(
         [object]$Object1,
         [object]$Object2

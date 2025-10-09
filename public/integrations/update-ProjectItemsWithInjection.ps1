@@ -12,8 +12,8 @@ Set-MyInvokeCommandAlias -Alias GetInvokeProjectInjectionFunctions -Command 'Inv
     The project number.
 .PARAMETER IncludeDoneItems
     If specified, includes items that are marked as done.
-.PARAMETER SkipStagedCheck
-    If specified, skips the project synchronization step.
+.PARAMETER Force
+    If specified, forces a refresh of the project data from the server.
 .EXAMPLE
     Update-ProjectItemsWithInjection -Owner "octodemo" -ProjectNumber 164
     This will call all commands available called Invoke-ProjectInjection_* to update items in the project owned by "octodemo" with the project number 164.
@@ -24,18 +24,13 @@ function Update-ProjectItemsWithInjection{
         [Parameter(Position = 0)] [string]$Owner,
         [Parameter(Position = 1)] [string]$ProjectNumber,
         [Parameter()] [switch]$IncludeDoneItems,
-        [Parameter()] [switch]$SkipStagedCheck
+        [Parameter()] [switch]$Force
     )
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    if((-not $SkipStagedCheck) -AND (Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber)){
-        "Project has staged items, please Sync-ProjectItemStaged or Reset-ProjectItemStaged and try again" | Write-Error
-        return
-    }
-
     # Get the project
-    $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:(-not $SkipStagedCheck)
+    $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
     # Get the injection functions list
     $functions = Invoke-MyCommand GetInvokeProjectInjectionFunctions

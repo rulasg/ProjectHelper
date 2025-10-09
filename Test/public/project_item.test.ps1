@@ -262,14 +262,14 @@ function Test_ShowProjectItem_SUCCESS{
     $item = Get-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $id
 
     # Act 0
-    $result0 = $item | Show-ProjectItem
+    $result0 = $item | Format-ProjectItem
     
     Assert-Count -Expected 1 -Presented $result0
 
     Assert-AreEqual -Expected $id -Presented $result0[0].id
     Assert-AreEqual -Expected $title -Presented $result0[0].Title
 
-    $result1 = $item | Show-ProjectItem -Attributes "id","Title","Status"
+    $result1 = $item | Format-ProjectItem -Attributes "id","Title","Status"
     
     Assert-Count -Expected 1 -Presented $result1
 
@@ -289,9 +289,9 @@ function Test_ShowProjectItem_SUCCESS_Multiple{
     # Arrange - get a few items using search-projectitem
     $items = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Filter $p.searchInTitle.titleFilter -PassThru
     $itemsCount = $items.Count
-    Assert-Count -Expected $p.searchInTitle.totalCount -Presented $items
+    Assert-Count -Expected $p.searchInTitle.Titles.Count -Presented $items
 
-    $result = $items | Show-ProjectItem -Attributes "id","url","Status"
+    $result = $items | Format-ProjectItem -Attributes "id","url","Status"
 
     Assert-Count -Expected $itemsCount -Presented $result
 
@@ -305,5 +305,70 @@ function Test_ShowProjectItem_SUCCESS_Multiple{
         foreach ($prop in $expectedProperties) {
             Assert-Contains -Expected $prop -Presented $itemProps -Comment "Item $i should contain $prop property"
         }
+    }
+}
+
+function Test_WhereLikeField_SUCCESS{
+
+    Invoke-PrivateContext{
+
+        $item = @{
+            id = "1"
+            title = "This is a sample title for testing"
+        }
+        
+        # Test case 1: Single value match
+        $result = $item | Test-WhereLikeField -Fieldname "title" -Values "sample"
+        Assert-IsTrue -Condition $result
+        
+        # Test case 2: Multiple values match (AND logic)
+        $result = $item | Test-WhereLikeField -Fieldname "title" -Values "sample","testing"
+        Assert-IsTrue -Condition $result
+
+        # Test case 3: Multiple values no match (AND logic)
+        $result = $item | Test-WhereLikeField -Fieldname "title" -Values "sample","missing"
+        Assert-IsFalse -Condition $result
+
+        # Test case 4: No match
+        $result = $item | Test-WhereLikeField -Fieldname "title" -Values "absent"
+        Assert-IsFalse -Condition $result
+    }
+}
+
+function Test_WhereLikeAnyField_SUCCESS {
+    Invoke-PrivateContext {
+
+        # Factors under test:
+        # - Number of values (1 vs many)
+        # - Number of fields that contain ALL values (0 vs 1 vs >1)
+        # Implementation detail: AND match must occur within a single field.
+
+        $item = @{
+            id          = "1"
+            title       = "Sample Title with alpha beta"
+            description = "Feature notes include ALPHA"
+            notes       = "edge BETA value"
+        }
+
+        # 1. 1 value; present in exactly 1 field
+        $r = $item | Test-WhereLikeAnyField -Values "sample"
+        Assert-IsTrue -Condition $r -Comment "Single value present in one field"
+
+        # 2. 1 value; absent in all fields
+        $r = $item | Test-WhereLikeAnyField -Values "missing"
+        Assert-IsFalse -Condition $r -Comment "Single value absent"
+
+        # 3. 1 value; present in multiple fields (still True)
+        $r = $item | Test-WhereLikeAnyField -Values "beta"
+        Assert-IsTrue -Condition $r -Comment "Value present in multiple fields"
+
+        # 4. 2 values; both present in the SAME field (title) -> True
+        $r = $item | Test-WhereLikeAnyField -Values "alpha","beta"
+        Assert-IsTrue -Condition $r -Comment "Both values co-exist in one field"
+
+        # 5. 2 values; distributed across different fields (no single field has both) -> False
+        # 'alpha' (title/description), 'value' (notes)
+        $r = $item | Test-WhereLikeAnyField -Values "alpha","value"
+        Assert-IsFalse -Condition $r -Comment "Values split across fields; AND not satisfied"
     }
 }
