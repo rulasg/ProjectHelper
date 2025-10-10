@@ -12,9 +12,7 @@ function Invoke-AddComment {
     }
 
     # Define the GraphQL query with variables
-    $moduleroot = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent
-    $qlPath =  $moduleroot | Join-Path -ChildPath "graphql" -AdditionalChildPath "commentCreate.mutant"
-    $query = get-content -path $qlPath | Out-String
+    $query = Get-GraphQLString "commentCreate.mutant"
 
     # Define the headers for the request
     $headers = @{

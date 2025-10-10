@@ -29,9 +29,7 @@ function Invoke-UpdateIssue{
     }
 
     # Define the GraphQL query with variables
-    $public = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent
-    $qlPath =  $public | Join-Path -ChildPath "graphql" -AdditionalChildPath "updateIssue.mutant"
-    $mutation = get-content -path $qlPath | Out-String
+    $mutation =  Get-GraphQLString "updateIssue.mutant"
 
     # Define the headers for the request
     $headers = @{
