@@ -13,7 +13,7 @@ function Test_SearchProjectItem_SUCCESS_Title{
     # Act
     $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Filter $title
 
-    Assert-Count -Expected $p.searchInTitle.totalCount -Presented $result
+    Assert-Count -Expected $p.searchInTitle.Titles.Count -Presented $result
 
     $p.searchInTitle.Titles | ForEach-Object {
         Assert-Contains -Expected $_ -Presented $result.Title
