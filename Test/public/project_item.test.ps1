@@ -49,6 +49,28 @@ function Test_GetProjectItem_SUCCESS{
     Assert-AreEqual -Expected $newFieldTitleValue -Presented $result.$fieldTitle
 }
 
+function Test_GetProjectItem_Comments{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+    $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $projectNumber = $p.number
+    $i = $p.issue
+    $itemId = $i.id
+
+    MockCall_GetProject $p -Cache
+
+    #Act
+    $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
+
+    $c = $i.comments
+    Assert-Count -Expected $c.totalCount -Presented $result.comments
+    Assert-AreEqual -Expected $c.propertyCount -Presented $result.commentLast.Count
+    Assert-AreEqual -Expected $c.last.body -Presented $result.commentLast.body
+    Assert-AreEqual -Expected $c.last.author.login -Presented $result.commentLast.author
+    Assert-AreEqual -Expected $c.last.url -Presented $result.commentLast.url
+    Assert-AreEqual -Expected $c.last.createdAt -Presented $result.commentLast.createdAt
+    Assert-AreEqual -Expected $c.last.updatedAt -Presented $result.commentLast.updatedAt
+}
+
 
 function Test_EditProjetItems_SUCCESS{
     Reset-InvokeCommandMock
