@@ -55,31 +55,36 @@ function Get-Mock_Project_700 {
     $issue = $pActual.items.nodes | Where-Object { $_.content.title -eq "Issue for development" }
     $fss = $issue.fieldValues.nodes | Where-Object { $_.field.id -eq $($fieldsingleselect.id) }
     $project.issue = @{
-        id        = $issue.id
-        contentId = $issue.content.id
-        title     = $issue.content.title
-        repositoryName = $issue.content.repository.name
-        status    = ($issue.fieldValues.nodes | Where-Object { $_.field.name -eq "Status" }).name
-        fieldtext = ($issue.fieldValues.nodes | Where-Object { $_.field.id -eq $($fieldtext.id) }).text
+        id                = $issue.id
+        contentId         = $issue.content.id
+        title             = $issue.content.title
+        repositoryName    = $issue.content.repository.name
+        status            = ($issue.fieldValues.nodes | Where-Object { $_.field.name -eq "Status" }).name
+        fieldtext         = ($issue.fieldValues.nodes | Where-Object { $_.field.id -eq $($fieldtext.id) }).text
         fieldsingleselect = @{
-            name = $fss.name
-            optionId = ($fss.field.options | where-object {$_.name -eq $fss.name}).Id
+            name     = $fss.name
+            optionId = ($fss.field.options | where-object { $_.name -eq $fss.name }).Id
+        }
+        comments          = @{
+            totalCount = $issue.content.comments.totalCount
+            last       = $issue.content.comments.nodes[-1]
+            propertyCount = ($issue.content.comments.nodes[-1] | Get-Member -MemberType *Property).Count
         }
     }
-
+    
     # PullRequest for developer
     $pullRequest = $pActual.items.nodes | Where-Object { $_.content.title -eq "PullRequest for development" }
     $fss = $pullRequest.fieldValues.nodes | Where-Object { $_.field.id -eq $($fieldsingleselect.id) }
     $project.pullrequest = @{
-        id        = $pullRequest.id
-        contentId = $pullRequest.content.id
-        title     = $pullRequest.content.title
-        repositoryName = $pullRequest.content.repository.name
-        status    = ($pullRequest.fieldValues.nodes | Where-Object { $_.field.name -eq "Status" }).name
-        fieldtext = ($pullRequest.fieldValues.nodes | Where-Object { $_.field.id -eq $($fieldtext.id) }).text
+        id                = $pullRequest.id
+        contentId         = $pullRequest.content.id
+        title             = $pullRequest.content.title
+        repositoryName    = $pullRequest.content.repository.name
+        status            = ($pullRequest.fieldValues.nodes | Where-Object { $_.field.name -eq "Status" }).name
+        fieldtext         = ($pullRequest.fieldValues.nodes | Where-Object { $_.field.id -eq $($fieldtext.id) }).text
         fieldsingleselect = @{
-            name = $fss.name
-            optionId = ($fss.field.options | where-object {$_.name -eq $fss.name}).Id
+            name     = $fss.name
+            optionId = ($fss.field.options | where-object { $_.name -eq $fss.name }).Id
         }
     }
 
@@ -87,14 +92,14 @@ function Get-Mock_Project_700 {
     $draftIssue = $pActual.items.nodes | Where-Object { $_.content.title -eq "DraftIssue for development" }
     $fss = $draftIssue.fieldValues.nodes | Where-Object { $_.field.id -eq $($fieldsingleselect.id) }
     $project.draftissue = @{
-        id        = $draftIssue.id
-        contentId = $draftIssue.content.id
-        title     = $draftIssue.content.title
-        status    = ($draftIssue.fieldValues.nodes | Where-Object { $_.field.name -eq "Status" }).name
-        fieldtext = ($draftIssue.fieldValues.nodes | Where-Object { $_.field.id -eq $($fieldtext.id) }).text
+        id                = $draftIssue.id
+        contentId         = $draftIssue.content.id
+        title             = $draftIssue.content.title
+        status            = ($draftIssue.fieldValues.nodes | Where-Object { $_.field.name -eq "Status" }).name
+        fieldtext         = ($draftIssue.fieldValues.nodes | Where-Object { $_.field.id -eq $($fieldtext.id) }).text
         fieldsingleselect = @{
-            name = $fss.name
-            optionId = ($fss.field.options | where-object {$_.name -eq $fss.name}).Id
+            name     = $fss.name
+            optionId = ($fss.field.options | where-object { $_.name -eq $fss.name }).Id
         }
     }
 
@@ -102,8 +107,8 @@ function Get-Mock_Project_700 {
     $project.searchInTitle = @{}
     $project.searchInTitle.titleFilter = "development"
     $project.searchInTitle.Titles = $pActual.items.nodes.content.title | Where-Object { $_ -like "*development*" }
-    $project.searchInTitle.attributesDefault = @("Title","id")
-    $project.searchInTitle.attributes = @("Title","id","url","Status","field-text")
+    $project.searchInTitle.attributesDefault = @("Title", "id")
+    $project.searchInTitle.attributes = @("Title", "id", "url", "Status", "field-text")
 
     $project.searchInAnyField = @{}
     $project.searchInAnyField."development" = @{}
@@ -115,7 +120,7 @@ function Get-Mock_Project_700 {
         "PullRequest for development"
         "Create comprehensive .NET Web API development initialization documentation with 10 structured tasks"
         "DraftIssue for development"
-        )
+    )
     $project.searchInAnyField."development".totalCount = $project.searchInAnyField."development".Titles.Count
 
     $project.searchInAnyField."96" = @{}
@@ -143,9 +148,10 @@ function MockCall_GetProject_700 {
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
 
-    if( $SkipItems ){
+    if ( $SkipItems ) {
         $filename = $p.projectFile_skipitems
-    } else {
+    }
+    else {
         $filename = $p.projectFile
     }
 

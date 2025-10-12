@@ -1,14 +1,23 @@
-query($itemId: ID!) {
+query($itemId: ID ! $lastComments: Int=10) {
   node(id: $itemId) {
     ... on ProjectV2Item {
       id, type, fullDatabaseId,
       project{ id, url},
       content{__typename,
            ... on DraftIssue {id,body,title,updatedAt,createdAt},
-           ... on PullRequest{id,body,title,updatedAt,createdAt,number,url,state,repository{name,owner{login}}},
+           ... on PullRequest{id,body,title,updatedAt,createdAt,number,url,state,repository{name,owner{login}}
+             comments(last: $lastComments){
+                totalCount,
+                nodes{createdAt,updatedAt,url,body,fullDatabaseId,author{login}}
+             }
+           },
            ... on       Issue{id,body,title,updatedAt,createdAt,number,url,state,repository{name,owner{login}}
-          },
-      }
+             comments(last: $lastComments){
+                totalCount,
+                nodes{createdAt,updatedAt,url,body,fullDatabaseId,author{login}}
+             }
+           }
+        },
       fieldValues(first: 100){
            nodes{__typename,
            ... on ProjectV2ItemFieldDateValue{date,field{__typename,... on ProjectV2Field{id,name,dataType
@@ -92,7 +101,6 @@ query($itemId: ID!) {
             }
         }
       }
-
     }
   }
 }

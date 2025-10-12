@@ -19,6 +19,13 @@ function Convert-NodeItemToHash {
         $item.type = $NodeItem.content.__typename
         $item.body = $NodeItem.content.body
         $item.contentId = $NodeItem.content.id
+
+        # Comments
+        if ($NodeItem.content.comments.totalCount -gt 0) {
+            $item.comments = $NodeItem.content.comments.nodes | Convert-Comment
+            $item.commentLast = $item.comments[-1]
+        }
+
         # Title is stored in two places. in the content and as a field.
         # We will use the field value
         $item.number = $NodeItem.content.number
@@ -77,7 +84,7 @@ function Convert-NodeItemToHash {
     }
 }
 
-function Build-ItemPanelUrl{
+function Build-ItemPanelUrl {
     [CmdletBinding()]
     [OutputType([string])]
     param(
@@ -102,4 +109,26 @@ function Build-ItemPanelUrl{
     $finalUrl = $uriBuilder.ToString()
     
     return $finalUrl
-} 
+}
+
+function Convert-Comment {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory, Position = 0, ValueFromPipeline)][object]$CommentNode
+    )
+
+    process {
+        $comment = New-Object System.Collections.Hashtable
+        $comment.body = $CommentNode.body
+        $comment.id = $CommentNode.fullDatabaseId
+        $comment.url = $CommentNode.url
+        $comment.author = $CommentNode.author.login
+        $comment.createdAt = GetDateTime -DateTimeString $CommentNode.createdAt
+        $comment.updatedAt = GetDateTime -DateTimeString $CommentNode.updatedAt
+
+
+        $ret = [PsCustomObject]$comment
+
+        return $ret
+    }
+}
