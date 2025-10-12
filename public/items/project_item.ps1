@@ -168,7 +168,6 @@ function Format-ProjectItem{
     }
 } Export-ModuleMember -Function Format-ProjectItem
 
-
 function Get-ProjectItems {
     [CmdletBinding()]
     param(

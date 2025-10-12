@@ -60,9 +60,7 @@ function Invoke-FindProject{
     }
 
     # Define the GraphQL query with variables
-    $public = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent
-    $qlPath =  $public | Join-Path -ChildPath "graphql" -AdditionalChildPath "findProject.query"
-    $mutation = get-content -path $qlPath | Out-String
+    $mutation =  Get-GraphQLString "findProject.query"
 
     # Define the headers for the request
     $headers = @{

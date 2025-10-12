@@ -29,8 +29,7 @@ function Invoke-GitHubOrgProjectWithFields {
     }
 
     # Define the GraphQL query with variables
-    $qlPath =  $PSScriptRoot | Join-Path -ChildPath "graphql" -AdditionalChildPath "orgprojectwithfieldsAndItems.query"
-    $query = get-content -path $qlPath | Out-String
+    $query =  Get-GraphQLString "orgprojectwithfieldsAndItems.query"
 
     # Define the headers for the request
     $headers = @{
@@ -102,8 +101,9 @@ function InvokeGitHubOrgProject {
     }
 
     # Define the GraphQL query with variables
-    $qlPath =  $PSScriptRoot | Join-Path -ChildPath "graphql" -AdditionalChildPath $QueryFileName
-    $query = get-content -path $qlPath | Out-String
+    $query =  Get-GraphQLString $QueryFileName
+
+
 
     # Define the headers for the request
     $headers = @{
@@ -168,8 +168,9 @@ function Invoke-GitHubUpdateItemValues{
     }
 
     # Define the GraphQL query with variables
-    $qlPath =  $PSScriptRoot | Join-Path -ChildPath "graphql" -AdditionalChildPath "updateItemValues.mutant"
-    $mutation = get-content -path $qlPath | Out-String
+    $mutation = Get-GraphQLString "updateItemValues.mutant"
+
+
 
     # Define the headers for the request
     $headers = @{
@@ -241,8 +242,7 @@ function Invoke-GitHubClearItemValues{
     }
 
     # Define the GraphQL query with variables
-    $qlPath =  $PSScriptRoot | Join-Path -ChildPath "graphql" -AdditionalChildPath "clearItemValues.mutant"
-    $mutation = get-content -path $qlPath | Out-String
+    $mutation = Get-GraphQLString "clearItemValues.mutant"
 
     # Define the headers for the request
     $headers = @{
@@ -306,8 +306,7 @@ function Invoke-GetIssueOrPullRequest{
     }
 
     # Define the GraphQL query with variables
-    $qlPath =  $PSScriptRoot | Join-Path -ChildPath "graphql" -AdditionalChildPath "getIssueOrPullRequest.query"
-    $query = get-content -path $qlPath | Out-String
+    $query =  Get-GraphQLString "getIssueOrPullRequest.query"
 
     # Define the headers for the request
     $headers = @{
@@ -339,56 +338,6 @@ function Invoke-GetIssueOrPullRequest{
     return $response
 } Export-ModuleMember -Function Invoke-GetIssueOrPullRequest
 
-# function Invoke-GetIContentId {
-#     param(
-#         [Parameter(Mandatory)] [string] $Url
-#     )
-
-#     # Use the environmentraviable
-#     $token = Get-GithubToken
-#     if(-not $token){
-#         throw "GH Cli Auth Token not available. Run 'gh auth login' in your terminal."
-#     }
-
-#     # Define the GraphQL query with variables
-#     $qlPath =  $PSScriptRoot | Join-Path -ChildPath "graphql" -AdditionalChildPath "getContentId.query"
-#     $query = get-content -path $qlPath | Out-String
-
-#     # Define the headers for the request
-#     $headers = @{
-#         "Authorization" = "Bearer $token"
-#         "Content-Type" = "application/json"
-#     }
-
-#     # get owner, reponame and issue number from the URL
-#     $repoOwner, $repoName, [int] $issueNumber = Get-RepoOwnerNameNumberFromUrl -Url $Url
-
-#     # Define the variables for the request
-#     $variables = @{
-#         owner = $repoOwner
-#         name = $repoName
-#         number = $issueNumber
-#     }
-
-#     # Define the body for the request
-#     $body = @{
-#         query = $query
-#         variables = $variables
-#     } | ConvertTo-Json
-
-#     # Send the request
-#     $response = Invoke-RestMethod -Uri 'https://api.github.com/graphql' -Method Post -Body $body -Headers $headers
-
-#     # Check if here are errors
-#     if($response.errors){
-#         "[$($response.errors[0].type)] $($response.errors[0].message)" | Write-MyError
-#         return
-#     }
-
-#     # Return the field names
-#     return $response
-# } Export-ModuleMember -Function Invoke-GetIContentId
-
 <#
 .SYNOPSIS
 Adds an item to a GitHub project
@@ -410,8 +359,9 @@ function Invoke-AddItemToProject{
     }
 
     # Define the GraphQL query with variables
-    $qlPath =  $PSScriptRoot | Join-Path -ChildPath "graphql" -AdditionalChildPath "addItemToProject.mutant"
-    $mutation = get-content -path $qlPath | Out-String
+    $mutation = Get-GraphQLString "addItemToProject.mutant"
+
+
 
     # Define the headers for the request
     $headers = @{
@@ -469,8 +419,7 @@ function Invoke-RemoveItemFromProject{
     }
 
     # Define the GraphQL query with variables
-    $qlPath =  $PSScriptRoot | Join-Path -ChildPath "graphql" -AdditionalChildPath "removeItemFromProject.mutant"
-    $mutation = get-content -path $qlPath | Out-String
+    $mutation = Get-GraphQLString "removeItemFromProject.mutant"
 
     # Define the headers for the request
     $headers = @{
@@ -527,3 +476,24 @@ function Get-GithubToken{
 
     return $token
 }
+
+function Get-GraphQLString{
+    param(
+        [Parameter(Mandatory, Position = 0)] [string]$FileName
+    )
+
+    Write-MyDebug -section "driver_gh" -message "Getting GraphQL string from file: $FileName"
+
+    $local = $PSScriptRoot
+    $public = $local | Split-Path -Parent
+
+    $path = $public | Join-Path -ChildPath "graphql" -AdditionalChildPath $FileName
+
+    if(! (Test-Path -Path $path)){
+        throw "GraphQL file not found at path: $path"
+    }
+
+    $content = get-content -path $path | Out-String
+
+    return $content
+} 

@@ -131,7 +131,7 @@ function Write-HostPrompt {
         }
 
         # Default color to White if not specified
-        Write-Host @params
+        Microsoft.PowerShell.Utility\Write-Host @params
 
     }
 } Export-ModuleMember -Function Write-HostPrompt

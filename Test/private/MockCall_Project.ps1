@@ -228,7 +228,7 @@ function Add-ItemsToMock {
 
     # Items
     $project.items = @{}
-    $project.items.totalCount = $pActual.items.totalcount
+    $project.items.totalCount = $pActual.items.nodes.count
     $project.items.doneCount = 6 # too complicated to read from structure
 
     # Issues to find

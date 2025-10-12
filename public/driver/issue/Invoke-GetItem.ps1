@@ -11,9 +11,9 @@ function Invoke-GetItem {
     }
 
     # Define the GraphQL query with variables
-    $moduleroot = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent
-    $qlPath =  $moduleroot | Join-Path -ChildPath "graphql" -AdditionalChildPath "getProjectV2Item.query"
-    $query = get-content -path $qlPath | Out-String
+
+    $query =  Get-GraphQLString "getProjectV2Item.query"
+
 
     # Define the headers for the request
     $headers = @{

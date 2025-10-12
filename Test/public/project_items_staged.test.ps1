@@ -979,7 +979,7 @@ function Test_Sync_ProjectDatabaseAsync_ClearValues{
 
     Start-MyTranscript
     $result = Sync-ProjectItemStagedAsync -Owner $Owner -ProjectNumber $ProjectNumber
-    $transcript = Stop-MyTranscript
+    $transcript = Stop-MyTranscript2
 
     # Return true
     Assert-IsTrue -Condition $result
@@ -1070,4 +1070,23 @@ function Test_Sync_ProjectDatabase_ClearValues{
     $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
     Assert-StringIsNullOrEmpty -Presented $item1.$fieldComment1
     Assert-StringIsNullOrEmpty -Presented $item1.$fieldPriority1
+}
+
+# For some reason Stop-MyTranscript is failing calling Export-MyTranscript for one test.
+# Merging both functions here to avoid the issue for this test.
+function Stop-MyTranscript2 {
+
+    $null = Stop-Transcript
+
+    $transcriptContent = Get-Content -Path $TEST_TRANSCRIPT_FILE
+    Remove-Item -Path $TEST_TRANSCRIPT_FILE
+
+    $i = 0..($transcriptContent.Count - 1) | Where-Object { $transcriptContent[$_] -eq "**********************" }
+
+    $firstLine = $i[1] + 1
+    $lastLine = $i[2] - 1
+
+    $ret = $transcriptContent[$firstLine..$lastLine]
+
+    return $ret
 }
