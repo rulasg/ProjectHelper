@@ -17,8 +17,31 @@ function Start-MyTranscript {
 }
 
 function Stop-MyTranscript {
-    Stop-Transcript
+    
+    $null = Stop-Transcript
+
     $transcriptContent = Get-Content -Path $TEST_TRANSCRIPT_FILE
     Remove-Item -Path $TEST_TRANSCRIPT_FILE
-    return $transcriptContent
+
+    $ret = Export-MyTranscript -transcriptContent $transcriptContent
+
+    return $ret
 }
+
+function Export-MyTranscript {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory, Position = 0)]
+        [string[]]$transcriptContent
+    )
+
+    $i = 0..($transcriptContent.Count - 1) | Where-Object { $transcriptContent[$_] -eq "**********************" }
+
+    $firstLine = $i[1] + 1
+    $lastLine = $i[2] - 1
+
+    $retlist = $transcriptContent[$firstLine..$lastLine]
+        
+    return $retlist
+}
+
