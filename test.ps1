@@ -71,7 +71,7 @@ function Import-RequiredModule{
     )
 
     process{
-        # Powershell module manifest does not allow versions with prerelease tags on them.
+        # Powershell module manifest does not allow versions with prerelease tags on them. 
         # Powershell modle manifest does not allow to add a arbitrary field to specify prerelease versions.
         # Valid value (ModuleName, ModuleVersion, RequiredVersion, GUID)
         # There is no way to specify a prerelease required module.
@@ -91,7 +91,7 @@ function Import-RequiredModule{
             $AllowPrerelease = ($AllowPrerelease -or ($null -ne $V[1]))
         }
 
-        $module = Import-Module $ModuleName -PassThru -ErrorAction SilentlyContinue -RequiredVersion:$semVer
+        $module = Import-Module $ModuleName -PassThru -ErrorAction SilentlyContinue -MinimumVersion:$semVer
 
         if ($null -eq $module) {
             "Installing module Name[{0}] Version[{1}] AllowPrerelease[{2}]" -f $ModuleName, $ModuleVersion, $AllowPrerelease | Write-Host -ForegroundColor DarkGray
