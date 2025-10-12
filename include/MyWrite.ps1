@@ -77,7 +77,12 @@ function Write-ToConsole {
         [Parameter()][switch]$NoNewLine
 
     )
-    Microsoft.PowerShell.Utility\Write-Host $message -ForegroundColor $Color -NoNewLine:$NoNewLine
+    if([string]::IsNullOrWhiteSpace($Color)){
+        Microsoft.PowerShell.Utility\Write-Host $message -NoNewLine:$NoNewLine
+    } else {
+        Microsoft.PowerShell.Utility\Write-Host $message -ForegroundColor:$Color -NoNewLine:$NoNewLine
+    }
+
 }
 
 
