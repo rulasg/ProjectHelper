@@ -46,3 +46,4 @@ jobs:
           }
 
           ./deploy.ps1 -VersionTag $tag -NugetApiKey $env:NUGETAPIKEY
+

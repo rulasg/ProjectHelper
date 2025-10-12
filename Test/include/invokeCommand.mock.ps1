@@ -73,13 +73,19 @@ function MockCallAsync{
 function MockCallJson{
     param(
         [Parameter(Position=0)][string] $command,
-        [Parameter(Position=1)][string] $filename
+        [Parameter(Position=1)][string] $filename,
+        [Parameter()][switch] $AsHashtable
 
     )
 
     Assert-MockFileNotfound $fileName
+    $asHashTableString = $AsHashtable ? '$true' : '$false'
 
-    Set-InvokeCommandMock -Alias $command -Command "Get-MockFileContentJson -filename $filename"
+    $commandstr ='Get-MockFileContentJson -filename {filename} -AsHashtable:{asHashTableString}'
+    $commandstr = $commandstr -replace "{asHashTableString}", $asHashTableString
+    $commandstr = $commandstr -replace "{filename}", $filename
+
+    Set-InvokeCommandMock -Alias $command -Command $commandstr
 }
 
 function MockCallJsonAsync{
@@ -122,12 +128,13 @@ function Get-MockFileContent{
 
 function Get-MockFileContentJson{
     param(
-        [parameter(Mandatory,Position=0)][string] $fileName
+        [parameter(Mandatory,Position=0)][string] $fileName,
+        [Parameter()][switch] $AsHashtable
     )
 
     Assert-MockFileNotfound $FileName
 
-    $content = Get-MockFileContent -fileName $filename | ConvertFrom-Json
+    $content = Get-MockFileContent -fileName $filename | ConvertFrom-Json -AsHashtable:$AsHashtable -Depth 100
 
     return $content
 } Export-ModuleMember -Function Get-MockFileContentJson
@@ -248,3 +255,6 @@ function Assert-MockFileNotfound{
         throw "File not found or wrong case name. Expected[ $filename ] - Found[$( $file.name )]"
     }
 }
+
+
+

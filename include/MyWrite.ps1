@@ -1,6 +1,6 @@
 # Include MyWrite.ps1
 # Provides Write-MyError, Write-MyWarning, Write-MyVerbose, Write-MyHost, Write-MyDebug
-# and Test-Verbose, Test-Debug functions for consistent logging and debugging output.
+# and Test-MyVerbose, Test-MyDebug functions for consistent logging and debugging output.
 # Use env variables ModuleHelper_VERBOSE and ModuleHelper_DEBUG to control verbosity and debug output.
 # Example: $env:ModuleHelper_DEBUG="all" or $env:ModuleHelper_DEBUG="Sync-Project"
 
@@ -14,6 +14,8 @@ $OUTPUT_COLOR = "DarkCyan"
 $DEBUG_COLOR = "DarkGray"
 
 function Write-MyError {
+    [CmdletBinding()]
+    [Alias("Write-Error")]
     param(
         [Parameter(Mandatory, ValueFromPipeline)][string]$Message
     )
@@ -22,6 +24,8 @@ function Write-MyError {
 }
 
 function Write-MyWarning {
+    [CmdletBinding()]
+    [Alias("Write-Warning")]
     param(
         [Parameter(Mandatory, ValueFromPipeline)][string]$Message
     )
@@ -30,26 +34,32 @@ function Write-MyWarning {
 }
 
 function Write-MyVerbose {
+    [CmdletBinding()]
+    [Alias("Write-Verbose")]
     param(
         [Parameter(ValueFromPipeline)][string]$Message
     )
 
-    if (Test-Verbose) {
+    if (Test-MyVerbose) {
         Write-ToConsole $message -Color $VERBOSE_COLOR
     }
 }
 
 function Write-MyHost {
+    [CmdletBinding()]
+    [Alias("Write-Host")]
     param(
         [Parameter(ValueFromPipeline)][string]$Message,
-        #NoNewLine
+        [Parameter()][string]$ForegroundColor = $OUTPUT_COLOR,
         [Parameter()][switch]$NoNewLine
     )
     # Write-Host $message -ForegroundColor $OUTPUT_COLOR
-    Write-ToConsole $message -Color $OUTPUT_COLOR -NoNewLine:$NoNewLine
+    Write-ToConsole $message -Color $ForegroundColor -NoNewLine:$NoNewLine
 }
 
 function Write-MyDebug {
+    [CmdletBinding()]
+    [Alias("Write-Debug")]
     param(
         [Parameter(Position = 0)][string]$section,
         [Parameter(Position = 1, ValueFromPipeline)][string]$Message,
@@ -58,7 +68,7 @@ function Write-MyDebug {
 
     process{
 
-        if (Test-Debug -section $section) {
+        if (Test-MyDebug -section $section) {
 
             if ($Object) {
                 $objString = $Object | Get-ObjetString
@@ -86,7 +96,7 @@ function Write-ToConsole {
 }
 
 
-function Test-Verbose {
+function Test-MyVerbose {
     param(
         [Parameter(Position = 0)][string]$section
     )
@@ -94,7 +104,6 @@ function Test-Verbose {
     $moduleDebugVarName = $MODULE_NAME + "_VERBOSE"
     $flag = [System.Environment]::GetEnvironmentVariable($moduleDebugVarName)
 
-    # Enable debug
     if ([string]::IsNullOrWhiteSpace( $flag )) {
         return $false
     }
@@ -103,7 +112,33 @@ function Test-Verbose {
     return $trace
 }
 
-function Test-Debug {
+function Set-ModuleNameVerbose{
+    param(
+        [Parameter(Position = 0)][string]$section
+    )
+
+    if( [string]::IsNullOrWhiteSpace( $section )) {
+        $flag = "all"
+    } else {
+        $flag = $section
+    }
+
+    $moduleDebugVarName = $MODULE_NAME + "_VERBOSE"
+    [System.Environment]::SetEnvironmentVariable($moduleDebugVarName, $flag)
+}
+Rename-Item -path Function:Set-ModuleNameVerbose -NewName "Set-$($MODULE_NAME)Verbose"
+Export-ModuleMember -Function "Set-$($MODULE_NAME)Verbose"
+
+function Clear-ModuleNameVerbose{
+    param()
+
+    $moduleDebugVarName = $MODULE_NAME + "_VERBOSE"
+    [System.Environment]::SetEnvironmentVariable($moduleDebugVarName, $null)
+}
+Rename-Item -path Function:Clear-ModuleNameVerbose -NewName "Clear-$($MODULE_NAME)Verbose"
+Export-ModuleMember -Function "Clear-$($MODULE_NAME)Verbose"
+
+function Test-MyDebug {
     param(
         [Parameter(Position = 0)][string]$section
     )
@@ -119,6 +154,32 @@ function Test-Debug {
     $trace = ($flag -like '*all*') -or ( $section -like "*$flag*")
     return $trace
 }
+
+function Set-ModuleNameDebug{
+    param(
+        [Parameter(Position = 0)][string]$section
+    )
+
+    if( [string]::IsNullOrWhiteSpace( $section )) {
+        $flag = "all"
+    } else {
+        $flag = $section
+    }
+
+    $moduleDebugVarName = $MODULE_NAME + "_DEBUG"
+    [System.Environment]::SetEnvironmentVariable($moduleDebugVarName, $flag)
+}
+Rename-Item -path Function:Set-ModuleNameDebug -NewName "Set-$($MODULE_NAME)Debug"
+Export-ModuleMember -Function "Set-$($MODULE_NAME)Debug"
+
+function Clear-ModuleNameDebug{
+    param()
+
+    $moduleDebugVarName = $MODULE_NAME + "_DEBUG"
+    [System.Environment]::SetEnvironmentVariable($moduleDebugVarName, $null)
+}
+Rename-Item -path Function:Clear-ModuleNameDebug -NewName "Clear-$($MODULE_NAME)Debug"
+Export-ModuleMember -Function "Clear-$($MODULE_NAME)Debug"
 
 function Get-ObjetString {
     param(
@@ -138,3 +199,6 @@ function Get-ObjetString {
         return $Object | ConvertTo-Json -Depth 10 -ErrorAction SilentlyContinue
     }
 }
+
+
+

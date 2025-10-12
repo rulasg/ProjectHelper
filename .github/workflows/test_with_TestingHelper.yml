@@ -43,3 +43,4 @@ jobs:
           { "All test passed" | Write-Verbose -verbose ; exit 0 } 
           else 
           { "Not all tests passed" | Write-Verbose -verbose ; exit 1 }
+

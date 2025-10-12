@@ -108,4 +108,4 @@ function Open-File {
             Write-Error "Failed to open file: $_"
         }
     }
-} Export-ModuleMember -Function 'Open-File'
+}
