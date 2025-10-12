@@ -52,6 +52,19 @@ function Show-ProjectItem{
         addJumpLine ; "--- Body ---" | write Cyan ; addJumpLine
         $item.body | write -Color Gray
 
+        addJumpLine
+
+        # LastCommment
+        if($item.commentLast){
+            $l = $item.commentLast
+            addJumpLine ; "--- Last Comment ---" | write Cyan ; addJumpLine
+            $l.author | write -Color DarkGray -PreFix "By: " ; addSpace
+            $l.updatedAt | write -Color DarkGray -PreFix "At: "
+            addJumpLine
+
+            $item.commentLast.body | write -Color Gray
+        }
+
         # End of item
         addJumpLine ; "------------" | write Cyan ; addJumpLine
 
