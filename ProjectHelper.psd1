@@ -51,7 +51,10 @@ Description = 'Work with GitHub Projects from powershell'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-RequiredModules = @(@{ModuleName="InvokeHelper"; ModuleVersion="1.2.4"})
+# RequiredModules = @(@{ModuleName="InvokeHelper"; ModuleVersion="1.2.4"})
+RequiredModules = @(
+    @{ModuleName = 'InvokeHelper'; ModuleVersion = '1.2.4'; Guid = '84797838-5d01-4312-9d6b-4fbe7d7d0b2b'}
+)
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
