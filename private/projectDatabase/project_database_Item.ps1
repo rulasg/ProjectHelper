@@ -28,9 +28,48 @@ function Get-Item{
         }
 
         # Add the item id if not present
+        # This will happen if we have edited items 
+        # not downloading the item from server
         $ret.id = $ret.id ?? $ItemId
 
         return $ret
+    }
+}
+
+function Find-Item {
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][object[]]$Database,
+        [Parameter(ValueFromPipeline, Position = 1)][string]$FieldName,
+        [Parameter(Position = 2)][string]$Value
+    )
+
+    process {
+        
+        $found = @()
+        foreach($item in $Database.items.Values){
+            $item = Get-Item -Database $Database -ItemId $item.id
+
+            if($item.$FieldName -eq $Value){
+                $found += $item
+            }
+
+        }
+        return $found
+    }
+}
+
+function Test-Item{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][object[]]$Database,
+        [Parameter(ValueFromPipeline, Position = 1)][string]$Url
+    )
+
+    process{
+        $item = Find-Item -Database $Database -FieldName "urlContent" -Value $Url
+
+        return $item.Count -ne 0
     }
 }
 

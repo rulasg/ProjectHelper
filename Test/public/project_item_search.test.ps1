@@ -1,4 +1,22 @@
-function Test_SearchProjectItem_SUCCESS_Title{
+# call Search-ProjectItem with no parameters will return all the items
+function Test_SearchProjectItem_SUCCESS_NoParameters {
+
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    MockCall_GetProject_700
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+
+    # Act
+    $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -IncludeDone
+
+    Assert-Count -Expected $p.items.totalCount -Presented $result
+}
+
+    
+
+function Test_SearchProjectItem_SUCCESS_DefaultTitle{
 
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
@@ -19,6 +37,40 @@ function Test_SearchProjectItem_SUCCESS_Title{
         Assert-Contains -Expected $_ -Presented $result.Title
     }
 }
+
+function Test_SearchProjectItem_SUCCESS_FieldName_Like{
+
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    MockCall_GetProject_700
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $p = $p.searchInFieldName.Like
+
+    # Act
+    $result = Search-ProjectItem -Filter $p.Filter -FieldName $p.FieldName  -IncludeDone -Owner $owner -ProjectNumber $projectNumber
+
+    Assert-Count -Expected $p.Count -Presented $result
+}
+
+function Test_SearchProjectItem_SUCCESS_FieldName_Exact{
+
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    MockCall_GetProject_700
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $p = $p.searchInFieldName.Exact
+
+    # Act
+    $result = Search-ProjectItem -Filter $p.Filter -FieldName $p.FieldName -Exact  -IncludeDone -Owner $owner -ProjectNumber $projectNumber
+
+
+    Assert-Count -Expected $p.Count -Presented $result
+}
+
 
 function Test_SearchProjectItem_SUCCESS_AnyField{
 

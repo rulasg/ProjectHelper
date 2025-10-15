@@ -58,6 +58,7 @@ function Get-Mock_Project_700 {
         id                = $issue.id
         contentId         = $issue.content.id
         title             = $issue.content.title
+        url               = $issue.content.url
         repositoryName    = $issue.content.repository.name
         status            = ($issue.fieldValues.nodes | Where-Object { $_.field.name -eq "Status" }).name
         fieldtext         = ($issue.fieldValues.nodes | Where-Object { $_.field.id -eq $($fieldtext.id) }).text
@@ -103,13 +104,36 @@ function Get-Mock_Project_700 {
         }
     }
 
-    # Search tests
+    # searchIn Title like
     $project.searchInTitle = @{}
     $project.searchInTitle.titleFilter = "development"
     $project.searchInTitle.Titles = $pActual.items.nodes.content.title | Where-Object { $_ -like "*development*" }
     $project.searchInTitle.attributesDefault = @("Title", "id")
     $project.searchInTitle.attributes = @("Title", "id", "url", "Status", "field-text")
 
+    # SearchIn FieldName
+    $fieldName = "field-text"
+    $fnValues = ( $pActual.items.nodes.fieldValues.nodes | Where-Object {$_.Field.Name -eq "field-text"}).text
+    # $fnValues = $pActual.items.nodes | Where-Object {$_.fieldValues.nodes.text -eq "text2"}
+    $project.searchInFieldName = @{}
+    
+    # searchIn FieldName Like
+    $fn = "xt3"
+    $project.searchInFieldName.Like = @{
+        FieldName = $fieldName
+        Filter = $fn
+        Count = ($fnValues | Where-Object { $_ -like "*$fn*" }).Count
+    }
+
+    # SearchIn fieldName Exact
+    $fn = "text2"
+    $project.searchInFieldName.Exact = @{
+        FieldName = $fieldName
+        Filter = $fn
+        Count = ($fnValues | Where-Object { $_ -eq $fn }).Count
+    }
+
+    # searchIn Any Field Like
     $project.searchInAnyField = @{}
     $project.searchInAnyField."development" = @{}
     $project.searchInAnyField."development".Titles = @(
