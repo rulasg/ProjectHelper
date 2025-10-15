@@ -4019,7 +4019,7 @@
                 "id": "I_kwDOPrRnkc7KkwSq",
                 "body": "Body of issue for development",
                 "title": "Issue for development",
-                "updatedAt": "2025-09-30T05:42:49Z",
+                "updatedAt": "2025-10-15T21:30:02Z",
                 "createdAt": "2025-09-09T14:01:17Z",
                 "number": 26,
                 "url": "https://github.com/octodemo/rulasg-dev-1/issues/26",
@@ -4035,9 +4035,9 @@
                   "nodes": [
                     {
                       "createdAt": "2025-09-23T17:51:06Z",
-                      "updatedAt": "2025-09-23T17:51:06Z",
+                      "updatedAt": "2025-10-15T21:29:45Z",
                       "url": "https://github.com/octodemo/rulasg-dev-1/issues/26#issuecomment-3324995787",
-                      "body": "sample comment 1",
+                      "body": "Sample comment 1",
                       "fullDatabaseId": "3324995787",
                       "author": {
                         "login": "rulasg"
@@ -4045,9 +4045,9 @@
                     },
                     {
                       "createdAt": "2025-09-24T08:29:13Z",
-                      "updatedAt": "2025-09-24T08:29:13Z",
+                      "updatedAt": "2025-10-15T21:29:55Z",
                       "url": "https://github.com/octodemo/rulasg-dev-1/issues/26#issuecomment-3327194303",
-                      "body": "commetn added",
+                      "body": "Sample comment 2",
                       "fullDatabaseId": "3327194303",
                       "author": {
                         "login": "rulasg"
@@ -4055,9 +4055,9 @@
                     },
                     {
                       "createdAt": "2025-09-30T05:42:49Z",
-                      "updatedAt": "2025-09-30T05:42:49Z",
+                      "updatedAt": "2025-10-15T21:30:02Z",
                       "url": "https://github.com/octodemo/rulasg-dev-1/issues/26#issuecomment-3350059109",
-                      "body": "New comment",
+                      "body": "Sample comment 3",
                       "fullDatabaseId": "3350059109",
                       "author": {
                         "login": "rulasg"
