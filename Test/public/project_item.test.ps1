@@ -71,6 +71,27 @@ function Test_GetProjectItem_Comments{
     Assert-AreEqual -Expected $c.last.updatedAt -Presented $result.commentLast.updatedAt
 }
 
+function Test_TestProjectItem_Success{
+    
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+    $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $projectNumber = $p.number
+    MockCall_GetProject $p -Cache
+
+    $i = $p.issue
+    $itemId = $i.id
+
+    # success
+    $result = Test-ProjectItem -Url $i.url -Owner $owner -ProjectNumber $projectNumber
+    Assert-IsTrue -Condition $result
+
+    # Not found
+
+    $result = Test-ProjectItem -Url "https://github.com/octodemo/Project-700/issues/999"
+    Assert-IsFalse -Condition $result
+
+}
+
 
 function Test_EditProjetItems_SUCCESS{
     Reset-InvokeCommandMock

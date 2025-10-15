@@ -66,10 +66,10 @@ function Get-ProjectItem {
 #     Save-ProjectDatabaseSafe -Database $db
 # }
 
-function Remove-ProjectItem {
+function Test-ProjectItem {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory, ValueFromPipeline, Position = 0)][string]$ItemId,
+        [Parameter(Mandatory, ValueFromPipeline, Position = 0)][string]$Url,
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber
     )
@@ -77,19 +77,23 @@ function Remove-ProjectItem {
     begin {
         ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
         if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
-    
-        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
     }
 
     process {
-        Remove-Item $db $itemId
+
+        $params = @{
+            Owner = $Owner
+            ProjectNumber = $ProjectNumber
+        }
+
+        $item = Search-ProjectItem -Filter $Url -FieldName "urlContent" @params
+
+        $ret = -not [string]::IsNullOrEmpty($item)
+
+        return $ret
     }
 
-    end {
-        Save-ProjectDatabaseSafe -Database $db
-    }
-
-}
+} Export-ModuleMember -Function Test-ProjectItem
 
 function Search-ProjectItem {
     [CmdletBinding()]
@@ -102,7 +106,10 @@ function Search-ProjectItem {
         [Parameter()][switch]$IncludeDone,
         [Parameter()][switch]$Force,
         [Parameter()][switch]$PassThru,
-        [Parameter()][switch]$AnyField
+        [Parameter()][string]$FieldName,
+        [Parameter()][switch]$AnyField,
+        [Parameter()][switch]$Exact
+
     )
 
     if([string]::IsNullOrWhiteSpace($Attributes)){
@@ -118,9 +125,25 @@ function Search-ProjectItem {
     if ($null -eq $items) { return $null }
 
     if($AnyField){
+        if($Exact){
+            # Exact match in any field
+            $found = $items.Values | Where-Object { Test-WhereExactAnyField -Item $_ -Values $Filter -OR }
+        } else {
+            # Like match in any field
+            $found = $items.Values | Where-Object { Test-WhereLikeAnyField -Item $_ -Values $Filter }
+        }
         $found = $items.Values | Where-Object { Test-WhereLikeAnyField -Item $_ -Values $Filter }
     } else {
-        $found = $items.Values | Where-Object { Test-WhereLikeField -Item $_ -Fieldname "Title" -Values $Filter }
+        # Default to "Title as the single field to search"
+        $FieldName = [string]::IsNullOrWhiteSpace($FieldName) ? "Title" : $FieldName
+
+        if($Exact){
+            # Pick just the first value a in Exact fielname there is only one match Fieldname value
+            $found = $items.Values | Where-Object { Test-WhereExactField -Item $_ -Fieldname $FieldName -Value $Filter[0] }
+        } else {
+            $found = $items.Values | Where-Object { Test-WhereLikeField -Item $_ -Fieldname $FieldName -Values $Filter }
+        }
+
     }
 
     if($PassThru){
@@ -137,7 +160,6 @@ function Search-ProjectItem {
     return $ret
 
 } Export-ModuleMember -Function Search-ProjectItem -Alias "spi"
-
 
 function Format-ProjectItem{
     [CmdletBinding()]
@@ -322,7 +344,7 @@ function Add-ProjectItemDirect {
     process {
 
         # Get item id
-        $contentId = Get-ContentIdFromUrl -Url $Url
+        $contentId = Get-ContentIdFromUrlDirect -Url $Url
         if (-not $contentId) {
             "Content ID not found for URL [$Url]" | Write-MyError
             return $null
@@ -470,6 +492,24 @@ function Test-WhereLikeAnyField {
     }
 }
 
+function Test-WhereExactAnyField {
+    param(
+        [Parameter(Mandatory, ValueFromPipeline)] [object]$Item,
+        [Parameter(Mandatory, Position = 0)][string]$Value
+    )
+
+    process{
+
+        foreach ($key in $item.Keys) {
+            if( Test-WhereExactField -Item $item -Fieldname $key -Value $Value ) {
+                return $true
+            }
+        }
+        
+        return $false
+    }
+}
+
 function Test-WhereLikeField {
     param(
         [Parameter(Mandatory,ValueFromPipeline)] [object]$Item,
@@ -480,17 +520,36 @@ function Test-WhereLikeField {
 
     process {
 
-        $title = $item.$FieldName
+        $itemValue = $item.$FieldName
 
         $foundCount = 0
         
         foreach ($v in $Values) {
-            if( $title -like "*$v*"){
+            if( $itemValue -like "*$v*"){
                 $foundCount ++
             }
         }
 
         return $foundCount -eq $Values.Count
+    }
+}
+
+function Test-WhereExactField {
+    param(
+        [Parameter(Mandatory,ValueFromPipeline)] [object]$Item,
+        [Parameter(Mandatory)][string]$FieldName,
+        [Parameter(Mandatory)][string]$Value,
+        [Parameter()][switch]$OR
+    )
+
+    process {
+
+        $itemValue = $item.$FieldName
+
+        $ret = $itemValue -eq $Value
+
+        return $ret
+
     }
 }
 
