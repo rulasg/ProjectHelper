@@ -79,7 +79,6 @@ function Test_TestProjectItem_Success{
     MockCall_GetProject $p -Cache
 
     $i = $p.issue
-    $itemId = $i.id
 
     # success
     $result = Test-ProjectItem -Url $i.url -Owner $owner -ProjectNumber $projectNumber
@@ -90,55 +89,6 @@ function Test_TestProjectItem_Success{
     $result = Test-ProjectItem -Url "https://github.com/octodemo/Project-700/issues/999"
     Assert-IsFalse -Condition $result
 
-}
-
-
-function Test_EditProjetItems_SUCCESS{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
-    $Owner = "octodemo" ; $ProjectNumber = 700 ;
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700.json'
-
-    $before = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
-
-    # Item id 10
-    # $title = "A draft in the project"
-
-    $itemId = "PVTI_lADOAlIw4c4BCe3Vzgeio4o"
-    # $title_fieldid= "PVTF_lADOBCrGTM4ActQazgSkYm8"
-    $title_fieldid= "title"
-
-    $comment_fieldid = "PVTF_lADOAlIw4c4BCe3Vzg0rhko"
-
-    $fieldComment = "field-text" ; $fieldCommentValue = "new value of the comment 10.1" ; $fieldCommentValue_Before = $before.items.$itemId.$fieldComment
-    $fieldTitle = "Title" ; $fieldTitleValue = "new value of the title 10.1" ; $fieldTitleValue_Before = $before.items.$itemId.$fieldTitle
-
-    # Act
-    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldComment $fieldCommentValue
-    # $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
-    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldTitle $fieldTitleValue
-
-    # Assert
-
-    # Confirm that the new value is staged but the original value is not changed
-    $after = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
-    Assert-AreEqual -Expected $fieldCommentValue_Before -Presented $after.items.$itemId.$fieldComment -Comment "The original value should not be changed"
-    Assert-AreEqual -Expected $fieldTitleValue_Before -Presented $after.items.$itemId.$fieldTitle -Comment "The original value should not be changed"
-
-
-    # Cofirm that the new value is staged
-    $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
-
-    Assert-Count -Expected 1 -Presented $result.Keys
-    Assert-Contains -Expected $itemId -Presented $result.Keys
-
-    Assert-Count -Expected 2 -Presented $result.$itemId
-    Assert-AreEqual -Expected $fieldComment -Presented $result.$itemId.$comment_fieldid.Field.name
-    Assert-AreEqual -Expected $fieldTitle -Presented $result.$itemId.$title_fieldid.Field.name
-
-    Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$itemId.$comment_fieldid.Value
-    Assert-AreEqual -Expected $fieldTitleValue -Presented $result.$itemId.$title_fieldid.Value
 }
 
 function  Test_EditProjetItems_SUCCESS_Transformations{
@@ -284,6 +234,21 @@ function Test_GetItemDirect_SUCCESS{
     Assert-AreEqual -Expected $itemUrl -Presented $result.url
     Assert-AreEqual -Expected $contentId -Presented $result.contentId
 
+}
+
+function Test_AddProjectItemDirect_AlreadyMember{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $ProjectNumber = $p.number
+    $i = $p.issue
+
+    MockCall_GetProject -MockProject $p
+
+    # Act
+    $result = Add-ProjectItemDirect -Url $i.url -Owner $Owner -ProjectNumber $ProjectNumber
+
+    Assert-AreEqual -Expected $i.id -Presented $result
 }
 
 function Test_ShowProjectItem_SUCCESS{

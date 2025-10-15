@@ -68,6 +68,7 @@ function Get-ProjectItem {
 
 function Test-ProjectItem {
     [CmdletBinding()]
+    [Alias ("tpi")]
     param(
         [Parameter(Mandatory, ValueFromPipeline, Position = 0)][string]$Url,
         [Parameter()][string]$Owner,
@@ -77,23 +78,18 @@ function Test-ProjectItem {
     begin {
         ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
         if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+
+        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
     }
 
     process {
 
-        $params = @{
-            Owner = $Owner
-            ProjectNumber = $ProjectNumber
-        }
-
-        $item = Search-ProjectItem -Filter $Url -FieldName "urlContent" @params
-
-        $ret = -not [string]::IsNullOrEmpty($item)
-
+        $ret = Test-Item -Database $db -Url $Url
+        
         return $ret
     }
 
-} Export-ModuleMember -Function Test-ProjectItem
+} Export-ModuleMember -Function Test-ProjectItem -Alias "tpi"
 
 function Search-ProjectItem {
     [CmdletBinding()]
@@ -124,11 +120,10 @@ function Search-ProjectItem {
     # return if #items is null
     if ($null -eq $items) { return $null }
 
-    if($Filter -eq $null -or $Filter.Count -eq 0){
+    if($null -eq $Filter -or $Filter.Count -eq 0){
         $found = $items.Values
     } else {
 
-        
         if($AnyField){
             if($Exact){
                 # Exact match in any field
@@ -347,6 +342,11 @@ function Add-ProjectItemDirect {
     }
 
     process {
+
+        if(Test-ProjectItem -Url $Url -Owner $Owner -ProjectNumber $ProjectNumber){
+            $item = Search-ProjectItem -Filter $Url -FieldName "urlContent" -IncludeDone -Owner $Owner -ProjectNumber $ProjectNumber -PassThru
+            return $item.id
+        }
 
         # Get item id
         $contentId = Get-ContentIdFromUrlDirect -Url $Url
