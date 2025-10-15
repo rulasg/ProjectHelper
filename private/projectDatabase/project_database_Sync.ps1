@@ -85,23 +85,3 @@ function Sync-Project{
 
     return $db
 }
-
-function Remove-ItemStaged{
-    [CmdletBinding()]
-    param(
-        [Parameter(Position = 0)][object]$Database,
-        [Parameter(Position = 1)][string]$ItemId,
-        [Parameter(Position = 2)][string]$FieldId
-    )
-
-    $db = $Database
-
-    if ($db.Staged.$ItemId.$FieldId) {
-        $db.Staged.$ItemId.Remove($FieldId)
-    }
-
-    # If no more fields in item remove item
-    if ($db.Staged.$ItemId.Count -eq 0) {
-        $db.Staged.Remove($ItemId)
-    }
-}
