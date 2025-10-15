@@ -99,7 +99,7 @@ function Search-ProjectItem {
     [CmdletBinding()]
     [Alias ("spi")]
     param(
-        [Parameter(Mandatory, Position = 0)] [string[]]$Filter,
+        [Parameter(Position = 0)] [string[]]$Filter,
         [Parameter(Position = 1)][string[]]$Attributes,
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
@@ -124,26 +124,31 @@ function Search-ProjectItem {
     # return if #items is null
     if ($null -eq $items) { return $null }
 
-    if($AnyField){
-        if($Exact){
-            # Exact match in any field
-            $found = $items.Values | Where-Object { Test-WhereExactAnyField -Item $_ -Values $Filter -OR }
-        } else {
-            # Like match in any field
-            $found = $items.Values | Where-Object { Test-WhereLikeAnyField -Item $_ -Values $Filter }
-        }
-        $found = $items.Values | Where-Object { Test-WhereLikeAnyField -Item $_ -Values $Filter }
+    if($Filter -eq $null -or $Filter.Count -eq 0){
+        $found = $items.Values
     } else {
-        # Default to "Title as the single field to search"
-        $FieldName = [string]::IsNullOrWhiteSpace($FieldName) ? "Title" : $FieldName
 
-        if($Exact){
-            # Pick just the first value a in Exact fielname there is only one match Fieldname value
-            $found = $items.Values | Where-Object { Test-WhereExactField -Item $_ -Fieldname $FieldName -Value $Filter[0] }
+        
+        if($AnyField){
+            if($Exact){
+                # Exact match in any field
+                $found = $items.Values | Where-Object { Test-WhereExactAnyField -Item $_ -Values $Filter -OR }
+            } else {
+                # Like match in any field
+                $found = $items.Values | Where-Object { Test-WhereLikeAnyField -Item $_ -Values $Filter }
+            }
+            $found = $items.Values | Where-Object { Test-WhereLikeAnyField -Item $_ -Values $Filter }
         } else {
-            $found = $items.Values | Where-Object { Test-WhereLikeField -Item $_ -Fieldname $FieldName -Values $Filter }
+            # Default to "Title as the single field to search"
+            $FieldName = [string]::IsNullOrWhiteSpace($FieldName) ? "Title" : $FieldName
+            
+            if($Exact){
+                # Pick just the first value a in Exact fielname there is only one match Fieldname value
+                $found = $items.Values | Where-Object { Test-WhereExactField -Item $_ -Fieldname $FieldName -Value $Filter[0] }
+            } else {
+                $found = $items.Values | Where-Object { Test-WhereLikeField -Item $_ -Fieldname $FieldName -Values $Filter }
+            }
         }
-
     }
 
     if($PassThru){

@@ -1,3 +1,21 @@
+# call Search-ProjectItem with no parameters will return all the items
+function Test_SearchProjectItem_SUCCESS_NoParameters {
+
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    MockCall_GetProject_700
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+
+    # Act
+    $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -IncludeDone
+
+    Assert-Count -Expected $p.items.totalCount -Presented $result
+}
+
+    
+
 function Test_SearchProjectItem_SUCCESS_DefaultTitle{
 
     Reset-InvokeCommandMock
