@@ -24,9 +24,7 @@ function Get-ProjectItem {
         ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
         if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
     
-    
-        # Get Item from Project database
-        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems
 
         if(! $db){ "Project not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError; return $null}
 

@@ -14,8 +14,19 @@ function Get-Item{
 
         # Check if is staged
         if($database.Staged.$ItemId){
+
+            
             # Update ret with all staged fields values
             foreach($fieldKey in $database.Staged.$ItemId.keys){
+
+                $value = $database.Staged.$ItemId.$fieldKey.Value
+
+                if($fieldKey -eq "AddComment"){
+                    Set-LastComment -Database $database -Item $ret -comment $value
+                    continue
+                }
+
+                # Get fieldname
                 $fieldname = $database.Staged.$ItemId.$fieldKey.Field.name
                 # Make type conversions to string
                 $ret.$fieldname = $database.Staged.$ItemId.$fieldKey.Value
@@ -34,6 +45,29 @@ function Get-Item{
 
         return $ret
     }
+}
+
+function Set-LastComment{
+    [CmdletBinding()]
+    [OutputType([string])]
+    param(
+        [Parameter(Position = 0)][object[]]$Database,
+        [Parameter(ValueFromPipeline, Position = 1)][hashtable]$Item,
+        [Parameter()][string]$comment
+    )
+
+    $commentobj = @{
+        body = $comment
+    }
+
+    # init comments array if needed
+    if($null -eq $Item.comments){
+        $Item.comments = @()
+    }
+
+    # Update commentLast field
+    $Item.commentLast = $commentobj
+    $Item.comments += $commentobj
 }
 
 function Find-Item {
@@ -117,6 +151,11 @@ function Set-ItemValue{
 
     $item = $db | AddHashLink items | AddHashLink $ItemId
 
+    # Special case for comments
+    if($FieldName -eq "AddComment"){
+        Set-LastComment -Database $db -Item $item -comment $Value
+    }
+
     $item.$FieldName = $Value
 }
 
@@ -145,6 +184,26 @@ function Get-ItemStaged{
 
         return $ret
 
+    }
+}
+
+function Remove-ItemStaged{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][object]$Database,
+        [Parameter(Position = 1)][string]$ItemId,
+        [Parameter(Position = 2)][string]$FieldId
+    )
+
+    $db = $Database
+
+    if ($db.Staged.$ItemId.$FieldId) {
+        $db.Staged.$ItemId.Remove($FieldId)
+    }
+
+    # If no more fields in item remove item
+    if ($db.Staged.$ItemId.Count -eq 0) {
+        $db.Staged.Remove($ItemId)
     }
 }
 
