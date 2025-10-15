@@ -16,7 +16,10 @@ function Test_GetProjectItem_SUCCESS{
     $itemFieldCommentValue = $projectFieldCommentValue + " updated"
 
     # allow get project
-    MockCall_GetProject_700
+    MockCall_GetProject -MockProject $p -cache
+    MockCall_GetProject -MockProject $p -SkipItems
+
+    MockCall_GetItem -ItemId $itemId
 
     # Even if id is in project we make a direct call when with Force
     MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-$itemId-updated.json"
@@ -256,11 +259,12 @@ function Test_ShowProjectItem_SUCCESS{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    MockCall_GetProject_700
-
     $p = Get-Mock_Project_700; $Owner = "octodemo" ; $ProjectNumber = 700
-
     $i = $p.issue
+    
+    MockCall_GetProject -MockProject $p -SkipItems
+    MockCall_GetItem -ItemId $i.id
+
     $id = $i.Id
     $title = $i.title
     $status = $i.status
