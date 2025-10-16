@@ -147,6 +147,52 @@ function Test_EditProjectItems_SameValue{
     Assert-Count -Expected 0 -Presented $result.Keys
 }
 
+function Test_ResetProjectItem_SUCCESS{
+
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $item = $p.issue ; $itemId = $item.id
+    $f1 = $p.fieldtext.name ; $f1Value = "Any value" ;
+    $f2 = $p.fieldnumber.name ; $f2Value = 99 ;
+    MockCall_GetProject $p -SkipItems
+    MockCall_GetItem $itemId
+
+    Set-ProjectHelperEnvironment -Owner $owner -ProjectNumber $projectNumber
+
+    # Confirm actual values
+    $actualItem = Get-ProjectItem $itemId
+    $f1Actual = $actualItem.$f1
+    $f2Actual = $actualItem.$f2
+
+    # Edit values
+    Edit-ProjectItem -ItemId $itemId -fieldname $f1 -Value $f1Value
+    Edit-ProjectItem -ItemId $itemId -fieldname $f2 -Value $f2Value
+
+    # confirm that the vaules have changed as changes are staged
+    $changed = Get-ProjectItem $itemId
+    Assert-AreEqual -Expected $f1Value -Presented $changed.$f1
+    Assert-AreEqual -Expected $f2Value -Presented $changed.$f2
+
+    # Act - reset F1
+    Reset-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId -FieldName $f1
+    
+    $reset1 = Get-ProjectItem $itemId
+    Assert-AreEqual -Expected $f1Actual -Presented $reset1.$f1
+    Assert-AreEqual -Expected $f2Value -Presented $reset1.$f2
+    
+    # Act Reset F2
+    
+    Reset-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId -FieldName $f2
+    $reset2 = Get-ProjectItem $itemId
+    Assert-AreEqual -Expected $f1Actual -Presented $reset2.$f1
+    Assert-AreEqual -Expected $f2Actual -Presented $reset2.$f2
+
+
+
+}
+
 function Test_EditProjectItems_Direct{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot

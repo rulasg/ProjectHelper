@@ -316,6 +316,35 @@ function Edit-ProjectItem {
 
 } Export-ModuleMember -Function Edit-ProjectItem
 
+function Reset-ProjectItem {
+    [CmdletBinding()]
+    param(
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter(Mandatory, ValueFromPipeline, Position = 1)][string]$ItemId,
+        [Parameter(Position = 2)][string]$FieldName
+    )
+
+    process{
+
+        ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+        
+        # Force cache update
+        # Full sync if force. Skip items if not force
+        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems:$(-not $Force)
+        
+        $field = Get-Field $db $FieldName
+
+        # save the new value
+        Remove-ItemStaged $db $itemId $field.id
+        
+        # Commit changes to the database
+        Save-ProjectDatabaseSafe -Database $db
+    }
+
+} Export-ModuleMember -Function Reset-ProjectItem
+
 function Add-ProjectItemDirect {
     [CmdletBinding()]
     [alias("Add-ProjectItem", "api")]
