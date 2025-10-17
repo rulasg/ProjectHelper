@@ -198,11 +198,14 @@ function Remove-ItemStaged{
     $db = $Database
 
     if ($db.Staged.$ItemId.$FieldId) {
+        # Remove value
         $db.Staged.$ItemId.Remove($FieldId)
-    }
+        
+        # If no more fields in item remove item
+        if ($db.Staged.$ItemId.Count -eq 0) { $db.Staged.Remove($ItemId)}
 
-    # If no more fields in item remove item
-    if ($db.Staged.$ItemId.Count -eq 0) {
+    } else {
+        # remove item
         $db.Staged.Remove($ItemId)
     }
 }

@@ -333,12 +333,23 @@ function Reset-ProjectItem {
         # Force cache update
         # Full sync if force. Skip items if not force
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems:$(-not $Force)
-        
-        $field = Get-Field $db $FieldName
 
-        # save the new value
-        Remove-ItemStaged $db $itemId $field.id
-        
+        # Remove staged
+        if([string]::IsNullOrWhiteSpace($FieldName)){
+            # Remove all staged changes for the item
+            Remove-ItemStaged $db $ItemId
+        } else {
+            #Remove just the field staged change
+            $field = Get-Field $db $FieldName
+            if([string]::IsNullOrWhiteSpace($field)){
+                # Field not found
+                throw "Field [$FieldName] not found in project"
+            } else {
+
+                Remove-ItemStaged $db $ItemId $FieldName
+            }
+        }
+
         # Commit changes to the database
         Save-ProjectDatabaseSafe -Database $db
     }
