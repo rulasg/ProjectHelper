@@ -46,6 +46,7 @@ function Test-ProjectItemStaged{
 function Sync-ProjectItemStaged{
     [CmdletBinding()]
     [OutputType([hashtable])]
+    [Alias("pcommit")]
     param(
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber
@@ -62,7 +63,7 @@ function Sync-ProjectItemStaged{
 
    return $result
 
-} Export-ModuleMember -Function Sync-ProjectItemStaged
+} Export-ModuleMember -Function Sync-ProjectItemStaged -Alias pcommit
 
 <#.SYNOPSIS
     Commits SAved changes in the DB to the project asynchronously
