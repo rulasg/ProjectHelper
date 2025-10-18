@@ -47,23 +47,6 @@ function Get-ProjectItem {
 
 } Export-ModuleMember -Function Get-ProjectItem -Alias "gpi"
 
-# function Set-ProjectItem {
-#     [CmdletBinding()]
-#     param(
-#         [Parameter(Mandatory, ValueFromPipeline, Position = 0)][object]$Item,
-#         [Parameter()][string]$Owner,
-#         [Parameter()][string]$ProjectNumber
-#     )
-#     ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-#     if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
-#
-#     $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
-#
-#     Set-Item $db $item
-#
-#     Save-ProjectDatabaseSafe -Database $db
-# }
-
 function Test-ProjectItem {
     [CmdletBinding()]
     [Alias ("tpi")]
@@ -435,7 +418,7 @@ function Remove-ProjectItemDirect {
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName,ValueFromPipeline, Position = 0)][Alias("Id")][string]$ItemId,
-        [Parameter()][switch]$NoCache
+        [Parameter()][switch]$Force
     )
 
     begin {
@@ -454,31 +437,39 @@ function Remove-ProjectItemDirect {
 
     process {
 
-        if (-not $projectId) {
-            "Project ID not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError
+        try{
+            if (-not $projectId) {
+                "Project ID not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError
+                return $null
+            }
+
+            # Remove item from project
+            if ($PSCmdlet.ShouldProcess($ItemId, "RRemove from project $Owner/$ProjectNumber")) {
+                $response = Invoke-MyCommand -Command RemoveItemFromProject -Parameters @{ projectid = $projectId ; itemid = $ItemId }
+            } else {
+                # Fake execution return ItemId
+                return $ItemId
+            }
+            
+            # check if FAILED
+            if ($response.errors -or ($response.data.deleteProjectV2Item.deletedItemId -ne $ItemId)) {
+                "Some issue removing [$ItemId] from project" | Write-MyError
+
+                if($Force){
+                    "Force flag is set, removing item from cache anyway" | Write-Verbose
+                    Remove-Item $db $ItemId
+                    Save-ProjectDatabaseSafe -Database $db
+                    return $null
+                }
+            }
+            
+            $ret = $response.data.deleteProjectV2Item.deletedItemId
+        }
+        catch {
+            "Item [$ItemId] not found in project [$Owner/$ProjectNumber]" | Write-MyWarning
             return
         }
-
-        # Remove item from project
-        if ($PSCmdlet.ShouldProcess($ItemId, "RRemove from project $Owner/$ProjectNumber")) {
-            $response = Invoke-MyCommand -Command RemoveItemFromProject -Parameters @{ projectid = $projectId ; itemid = $ItemId }
-        } else {
-            return $ItemId
-        }
-        
-        # check if the response is null
-        if ($response.errors) {
-            "[$($response.errors[0].type)] $($response.errors[0].message)" | Write-MyError
-            return $null
-        }
-        
-        if ($response.data.deleteProjectV2Item.deletedItemId -ne $ItemId) {
-            "Some issue removing [$ItemId] from project" | Write-MyError
-            return $null
-        }
-        
-        $ret = $response.data.deleteProjectV2Item.deletedItemId
-
+            
         # Remove item from cache
         "Removing item [$ItemId] from cache" | Write-Verbose
         Remove-Item $db $ItemId
