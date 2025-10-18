@@ -328,8 +328,8 @@ function Reset-ProjectItem {
                 # Field not found
                 throw "Field [$FieldName] not found in project"
             } else {
-
-                Remove-ItemStaged $db $ItemId $FieldName
+                "Removing staged field [$FieldId] for item [$ItemId] in project [$($db.ProjectId)]" | Write-MyDebug
+                Remove-ItemStaged $db $ItemId $field.id
             }
         }
 
