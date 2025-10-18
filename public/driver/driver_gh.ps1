@@ -59,7 +59,7 @@ function Invoke-GitHubOrgProjectWithFields {
 
     # Check if here are errors
     if($response.errors){
-        "[$($response.errors[0].type)] $($response.errors[0].message)" | Write-MyError
+        getErrrorString -Errors $response.errors | Write-MyError
         return
     }
 
@@ -133,7 +133,7 @@ function InvokeGitHubOrgProject {
 
     # Check if here are errors
     if($response.errors){
-        "[$($response.errors[0].type)] $($response.errors[0].message)" | Write-MyError
+        getErrrorString -Errors $response.errors | Write-MyError
         return
     }
 
@@ -208,7 +208,7 @@ function Invoke-GitHubUpdateItemValues{
     # Check if here are errors
     if($response.errors){
         $response.errors | ForEach-Object {
-            "RESPONSE Type[$($_.type)] $($_.message)" | Write-MyError
+            getErrrorString -Errors $response.errors | Write-MyError
         }
         return $null
     }
@@ -277,7 +277,7 @@ function Invoke-GitHubClearItemValues{
     # Check if here are errors
     if($response.errors){
         $response.errors | ForEach-Object {
-            "RESPONSE Type[$($_.type)] $($_.message)" | Write-MyError
+            getErrrorString -Errors $response.errors | Write-MyError
         }
         return $null
     }
@@ -330,7 +330,7 @@ function Invoke-GetIssueOrPullRequest{
 
     # Check if here are errors
     if($response.errors){
-        "[$($response.errors[0].type)] $($response.errors[0].message)" | Write-MyError
+        getErrrorString -Errors $response.errors | Write-MyError
         return
     }
 
@@ -389,7 +389,7 @@ function Invoke-AddItemToProject{
     # Check if here are errors
     if($response.errors){
         $response.errors | ForEach-Object {
-            "RESPONSE Type[$($_.type)] $($_.message)" | Write-MyError
+            getErrrorString -Errors $response.errors | Write-MyError
         }
         return $null
     }
@@ -447,7 +447,7 @@ function Invoke-RemoveItemFromProject{
     # Check if here are errors
     if($response.errors){
         $response.errors | ForEach-Object {
-            "RESPONSE Type[$($_.type)] $($_.message)" | Write-MyError
+            getErrrorString -Errors $response.errors | Write-MyError
         }
         return $null
     }
@@ -456,6 +456,21 @@ function Invoke-RemoveItemFromProject{
     return $response
 } Export-ModuleMember -Function Invoke-RemoveItemFromProject
 
+function getErrrorString{
+    param(
+        [Parameter(Mandatory=$true)] [object]$Errors
+    )
+
+    $errString = ""
+    foreach($err in $Errors){
+        $errString += "[$($err.path)] [$($err.type)] $($err.message) ||"
+    }
+    # remove last ||
+    if($errString.EndsWith("||")){
+        $errString = $errString.Substring(0, $errString.Length - 2)
+    }
+    return $errString
+}
 
 <#
 .SYNOPSIS
