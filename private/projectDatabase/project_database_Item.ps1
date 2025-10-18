@@ -187,26 +187,34 @@ function Get-ItemStaged{
     }
 }
 
-function Remove-ItemValueStaged{
+function Remove-ItemStaged{
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0)][object]$Database,
-        [Parameter(Position = 1)][string]$ItemId,
-        [Parameter(Position = 2)][string]$FieldId
+        [Parameter(Mandatory,Position = 0)][object]$Database,
+        [Parameter(Mandatory,Position = 1)][string]$ItemId
     )
 
     $db = $Database
 
-    if([string]::IsNullOrEmpty($FieldId)){
-        # remove item
-        if($db.Staged.$ItemId) {
-            "Removing staged item [$ItemId] in project [$($db.ProjectId)]" | Write-MyDebug
-            $db.Staged.Remove($ItemId)
-        } else {
-            "Item [$ItemId] not staged in project [$($db.ProjectId)]" | Write-MyWarning
-        }
-        return
+    # remove item
+    if($db.Staged.$ItemId) {
+        "Removing staged item [$ItemId] in project [$($db.ProjectId)]" | Write-MyDebug
+        $db.Staged.Remove($ItemId)
+    } else {
+        "Item [$ItemId] not staged in project [$($db.ProjectId)]" | Write-MyWarning
     }
+    return
+}
+
+function Remove-ItemValueStaged{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory,Position = 0)][object]$Database,
+        [Parameter(Mandatory,Position = 1)][string]$ItemId,
+        [Parameter(Mandatory,Position = 2)][string]$FieldId
+    )
+
+    $db = $Database
 
     # remove field from item
 
