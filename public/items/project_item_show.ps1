@@ -2,7 +2,7 @@ function Show-ProjectItem{
     [CmdletBinding()]
     [Alias("shpi")]
     param(
-        [Parameter(ValueFromPipeline)][string]$ItemId,
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)][Alias("id")][string]$ItemId,
         [Parameter()][array[]]$FieldsToShow
     )
 
