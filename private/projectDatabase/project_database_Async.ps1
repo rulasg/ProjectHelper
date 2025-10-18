@@ -100,7 +100,7 @@ function Sync-ProjectAsync {
         "Saving [$($call.projectId)/$($call.itemId)/$($call.FieldId) ($($call.FieldName)) = ""$($call.Value)"" ] ..." | Write-MyHost
 
         Set-ItemValue -Database $db -ItemId $call.itemId -FieldName $call.fieldName -Value $call.Value
-        Remove-ItemStaged -Database $db -ItemId $call.itemId -FieldId $call.FieldId
+        Remove-ItemValueStaged -Database $db -ItemId $call.itemId -FieldId $call.FieldId
     }
 
     "Done" | Write-MyHost

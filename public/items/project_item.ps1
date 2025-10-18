@@ -320,7 +320,7 @@ function Reset-ProjectItem {
         # Remove staged
         if([string]::IsNullOrWhiteSpace($FieldName)){
             # Remove all staged changes for the item
-            Remove-ItemStaged $db $ItemId
+            Remove-ItemValueStaged $db $ItemId
         } else {
             #Remove just the field staged change
             $field = Get-Field $db $FieldName
@@ -329,7 +329,7 @@ function Reset-ProjectItem {
                 throw "Field [$FieldName] not found in project"
             } else {
                 "Removing staged field [$FieldId] for item [$ItemId] in project [$($db.ProjectId)]" | Write-MyDebug
-                Remove-ItemStaged $db $ItemId $field.id
+                Remove-ItemValueStaged $db $ItemId $field.id
             }
         }
 

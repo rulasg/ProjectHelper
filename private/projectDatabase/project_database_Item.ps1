@@ -187,7 +187,7 @@ function Get-ItemStaged{
     }
 }
 
-function Remove-ItemStaged{
+function Remove-ItemValueStaged{
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][object]$Database,

@@ -77,7 +77,7 @@ function Sync-Project{
             Set-ItemValue -Database $db -ItemId $call.itemId -FieldName $call.FieldName -Value $value
 
             # remove staged item field
-            Remove-ItemStaged -Database $db -ItemId $itemId -FieldId $fieldId
+            Remove-ItemValueStaged -Database $db -ItemId $itemId -FieldId $fieldId
 
             "Done" | Write-MyHost
         }
