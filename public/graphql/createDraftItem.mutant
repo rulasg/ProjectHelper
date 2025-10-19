@@ -1,0 +1,5 @@
+mutation CreateDraftItem($input:AddProjectV2DraftIssueInput! $lastComments: Int=5 ){
+    addProjectV2DraftIssue(input:$input){
+        projectItem {{projectv2item}}
+    }
+}

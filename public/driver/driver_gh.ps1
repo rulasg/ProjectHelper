@@ -499,16 +499,56 @@ function Get-GraphQLString{
 
     Write-MyDebug -section "driver_gh" -message "Getting GraphQL string from file: $FileName"
 
+    $path = getmockfilepath -FileName $FileName
+
+    $content = get-content -path $path | Out-String
+
+    $content = Expand-GraphQLString -GraphQLString $content
+
+    return $content
+}
+
+function getmockfilepath{
+    param(
+        [Parameter(Mandatory, Position = 0)] [string]$FileName
+    )
+
     $local = $PSScriptRoot
     $public = $local | Split-Path -Parent
 
     $path = $public | Join-Path -ChildPath "graphql" -AdditionalChildPath $FileName
 
+    # Verify that the file exists
     if(! (Test-Path -Path $path)){
         throw "GraphQL file not found at path: $path"
     }
 
-    $content = get-content -path $path | Out-String
+    return $path
+}
 
-    return $content
-} 
+function Expand-GraphQLString{
+    param(
+        [Parameter(Mandatory, Position = 0)] [string]$GraphQLString
+    )
+
+    $tags = [regex]::Matches($GraphQLString,'\{\{(\w+)\}\}') | ForEach-Object { $_.Groups[1].Value }
+
+    # If no tags found, return the original string
+    if($tags.Count -eq 0){
+        return $GraphQLString
+    }
+
+    $content = $GraphQLString
+
+    foreach($tag in $tags){
+        $path = getmockfilepath -FileName "_$tag.tag"
+        $tagContent = Get-Content -Path $path | Out-String
+
+        $content = $content -replace "\{\{$tag\}\}", $tagContent
+    }
+
+    # loop back to expand nested tags
+    $ret = Expand-GraphQLString -GraphQLString $content
+
+    return $ret
+}
