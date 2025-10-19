@@ -1,0 +1,37 @@
+{
+  "data": {
+    "addProjectV2DraftIssue": {
+      "projectItem": {
+        "id": "PVTI_lADOAlIw4c4BCe3VzggDT7s",
+        "type": "DRAFT_ISSUE",
+        "fullDatabaseId": "134434747",
+        "project": {
+          "id": "PVT_kwDOAlIw4c4BCe3V",
+          "url": "https://github.com/orgs/octodemo/projects/700"
+        },
+        "content": {
+          "__typename": "DraftIssue",
+          "id": "DI_lADOAlIw4c4BCe3VzgJ29YM",
+          "body": "Body of draftissue",
+          "title": "DraftIssue created for test ",
+          "updatedAt": "2025-10-19T10:50:07Z",
+          "createdAt": "2025-10-19T10:50:07Z"
+        },
+        "fieldValues": {
+          "nodes": [
+            {
+              "__typename": "ProjectV2ItemFieldTextValue",
+              "text": "DraftIssue created for test ",
+              "field": {
+                "__typename": "ProjectV2Field",
+                "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-M",
+                "name": "Title",
+                "dataType": "TITLE"
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
