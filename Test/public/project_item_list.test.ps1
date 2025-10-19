@@ -17,7 +17,7 @@ function Test_GetProjetItemList_SUCCESS{
     $randomItem = $result.$($i.Id)
 
     Assert-AreEqual -Presented $randomItem.Title        -Expected "Issue for development"
-    Assert-AreEqual -Presented $randomItem.body         -Expected "Body of issue for development" 
+    Assert-AreEqual -Presented $randomItem.Body         -Expected "Body of issue for development" 
     Assert-AreEqual -Presented $randomItem.state        -Expected "OPEN"
     Assert-AreEqual -Presented $randomItem.id           -Expected "PVTI_lADOAlIw4c4BCe3Vzgeio4o"
     Assert-AreEqual -Presented $randomItem.type         -Expected "Issue"
