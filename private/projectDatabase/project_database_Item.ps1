@@ -28,7 +28,6 @@ function Get-Item{
 
                 # Get fieldname
                 $fieldname = $database.Staged.$ItemId.$fieldKey.Field.name
-                # Make type conversions to string
                 $ret.$fieldname = $database.Staged.$ItemId.$fieldKey.Value
             }
         }

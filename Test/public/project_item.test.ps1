@@ -74,6 +74,44 @@ function Test_GetProjectItem_Comments{
     Assert-AreEqual -Expected $c.last.updatedAt -Presented $result.commentLast.updatedAt
 }
 
+function Test_GetProjectItem_Staged_Title{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+    $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $projectNumber = $p.number
+    $i = $p.issue
+    $itemId = $i.id
+
+    MockCall_GetProject $p -Cache
+
+    # Act - stage a change
+    $newTitle = "Staged title change"
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId -FieldName "Title" -Value $newTitle
+
+    # Act get item
+    $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
+
+    Assert-AreEqual -Expected $newTitle -Presented $result.Title
+}
+
+function Test_GetProjectItem_Staged_Body{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+    $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $projectNumber = $p.number
+    $i = $p.issue
+    $itemId = $i.id
+
+    MockCall_GetProject $p -Cache
+
+    # Act - stage a change
+    $newBody = "Staged body change"
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId -FieldName "Body" -Value $newBody
+
+    # Act get item
+    $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
+
+    Assert-AreEqual -Expected $newBody -Presented $result.Body
+}
+
 function Test_TestProjectItem_Success{
     
     Reset-InvokeCommandMock

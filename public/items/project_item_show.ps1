@@ -50,7 +50,7 @@ function Show-ProjectItem{
         
         # Body
         addJumpLine ; "--- Body ---" | write Cyan ; addJumpLine
-        $item.body | write -Color Gray
+        $item.Body | write -Color Gray
 
         addJumpLine
 
