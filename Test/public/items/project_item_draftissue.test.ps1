@@ -12,7 +12,7 @@ function Test_NewProjectDraftIssue {
     MockCallJson -Command "Invoke-CreateDraftItem -ProjectId $($p.id) -Title ""$title"" -Body ""$body""" -FileName "invoke-createDraftItem.json"
 
     # Act
-    $draftIssueId = New-ProjectDraftIssue -Owner $owner -ProjectNumber $projectNumber -Title $title -Body $body
+    $draftIssueId = New-ProjectDraftIssueDirect -Owner $owner -ProjectNumber $projectNumber -Title $title -Body $body
 
 
     $item = Get-ProjectItem -ItemId $draftIssueId
