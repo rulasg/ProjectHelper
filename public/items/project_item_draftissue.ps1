@@ -2,7 +2,7 @@
 Set-MyInvokeCommandAlias -Alias createDraftItem -Command 'Invoke-CreateDraftItem -ProjectId {projectid} -Title "{title}" -Body "{body}"'
 
 
-function New-ProjectDraftIssue {
+function New-ProjectDraftIssueDirect {
     [CmdletBinding()]
     param (
         [Parameter()][string]$Owner,
@@ -51,4 +51,4 @@ function New-ProjectDraftIssue {
         return $null
     }
 
-} Export-ModuleMember -Function New-ProjectDraftIssue
+} Export-ModuleMember -Function New-ProjectDraftIssueDirect
