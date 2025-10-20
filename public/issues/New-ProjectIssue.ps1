@@ -4,16 +4,11 @@ Set-MyInvokeCommandAlias -Alias CreateIssue -Command 'Invoke-CreateIssue -Reposi
 function New-ProjectIssueDirect {
     [CmdletBinding()]
     param (
-        # owner
-        # [Parameter(Mandatory, Position = 0)][string]$ProjectOwner,
-        # [Parameter(Mandatory, Position = 0)][string]$ProjectNumber,
         [Parameter(Mandatory, Position = 1)][string]$RepoOwner,
         [Parameter(Mandatory, Position = 2)][string]$RepoName,
         [Parameter(Mandatory, Position = 3)][string]$Title,
         [Parameter(Position = 4)][string]$Body
     )
-
-    # $ProjectOwner,$ProjectNumber = Get-ProjectOwnerAndNumber -ProjectOwner $ProjectOwner -ProjectNumber $ProjectNumber
 
     $repo = Get-Repository -Owner $RepoOwner -Name $RepoName
 
@@ -32,7 +27,7 @@ function New-ProjectIssueDirect {
         return $null
     }
 
-    # TODO: Consider ading the issue to the project
+    # TODO: Consider adding the issue to the project
 
     $ret = $issue.url
 
