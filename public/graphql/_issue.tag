@@ -1,1 +1,1 @@
-{ id, url }
+{ title,body,number,url,id}
