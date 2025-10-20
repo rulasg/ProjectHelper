@@ -89,8 +89,13 @@ function Search-ProjectItem {
 
     )
 
-    if([string]::IsNullOrWhiteSpace($Attributes)){
-        $Attributes = @("id", "Title")
+    # if $attributes does not contain "Title" add it at the front
+    if(-not ($Attributes -contains "Title")){
+        $Attributes = @("Title") + $Attributes
+    }
+    # if $attributes does not contain "id" add it at the front
+    if(-not ($Attributes -contains "id")){
+        $Attributes = @("id") + $Attributes
     }
 
     ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
@@ -378,12 +383,6 @@ function Add-ProjectItemDirect {
 
         # Add item to project
         $response = Invoke-MyCommand -Command AddItemToProject -Parameters @{ projectid = $projectId ; contentid = $contentId }
-
-        # check if the response is null
-        if ($response.errors) {
-            "[$($response.errors[0].type)] $($response.errors[0].message)" | Write-MyError
-            return $null
-        }
 
         $item = $response.data.addProjectV2ItemById.item
 
