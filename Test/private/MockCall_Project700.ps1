@@ -13,6 +13,7 @@ function Get-Mock_Project_700 {
     $project.projectFile = "invoke-GitHubOrgProjectWithFields-octodemo-700.json"
     $project.projectFile_skipitems = "invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json"
     $project.projectFile_WrongField = "invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems-WrongField.json"
+    $project.repofile = "invoke-repository-rulasg-dev-1.json"
 
     # Version of the project file modified manually to have two items with same id case sensitive
     # this is used to test case sensitivity of item ids in hashtables
@@ -25,6 +26,12 @@ function Get-Mock_Project_700 {
     $fieldnumber = $pActual.fields.nodes | Where-Object { $_.name -eq "field-number" }
     $fielddate = $pActual.fields.nodes | Where-Object { $_.name -eq "field-date" }
     $fieldsingleselect = $pActual.fields.nodes | Where-Object { $_.name -eq "field-singleselect" }
+
+    # Repository Info
+    $content = Get-MockFileContentJson -fileName $project.repofile -AsHashtable
+    $project.repository = $content.data.repository
+    $project.repository.owner = $content.data.repository.owner.login
+    $project.repository.Remove("parent")
 
     # Project info
     $project.id = $pActual.id

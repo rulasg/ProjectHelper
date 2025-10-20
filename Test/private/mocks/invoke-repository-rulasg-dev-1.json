@@ -1,0 +1,14 @@
+{
+  "data": {
+    "repository": {
+      "id": "R_kgDOPrRnkQ",
+      "name": "rulasg-dev-1",
+      "owner": {
+        "login": "octodemo"
+      },
+      "hasIssuesEnabled": true,
+      "description": "development repo 1",
+      "parent": null
+    }
+  }
+}
