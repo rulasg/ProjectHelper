@@ -1,0 +1,5 @@
+mutation IssueCreate($input: CreateIssueInput!) {
+    createIssue(input: $input) {
+      issue {{issue}}
+    }
+  }

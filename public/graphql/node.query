@@ -1,0 +1,8 @@
+
+
+query node($itemId:ID!) {
+    node(id:$itemId) {
+        __typename
+        id
+    }
+}

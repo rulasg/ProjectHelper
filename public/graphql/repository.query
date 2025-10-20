@@ -1,0 +1,16 @@
+fragment repo on Repository {
+    id
+    name
+    owner { login }
+    hasIssuesEnabled
+    description
+  }
+
+  query RepositoryInfo($owner: String!, $name: String!) {
+    repository(owner: $owner, name: $name) {
+      ...repo
+      parent {
+        ...repo
+      }
+    }
+  }
