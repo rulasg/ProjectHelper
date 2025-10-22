@@ -19,7 +19,8 @@ function Invoke-GitHubOrgProjectWithFields {
         [Parameter(Mandatory=$false)] [string]$afterFields = $null,
         [Parameter(Mandatory=$false)] [int]$firstFields = 100,
         [Parameter(Mandatory=$false)] [string]$afterItems = $null,
-        [Parameter(Mandatory=$false)] [int]$firstItems = 100
+        [Parameter(Mandatory=$false)] [int]$firstItems = 100,
+        [Parameter(Mandatory=$false)] [int]$lastComments = 1
     )
 
     # Use the environmentraviable
@@ -46,6 +47,7 @@ function Invoke-GitHubOrgProjectWithFields {
         afterItems = $afterItems
         firstFields = $firstFields
         firstItems = $firstItems
+        lastComments = $lastComments
     }
 
     # Define the body for the request
