@@ -22,8 +22,9 @@ function Convert-NodeItemToHash {
 
         # Comments
         if ($NodeItem.content.comments.totalCount -gt 0) {
+            $item.commentCount = $NodeItem.content.comments.totalCount
             $item.comments = $NodeItem.content.comments.nodes | Convert-Comment
-            $item.commentLast = $item.comments[-1]
+            $item.commentLast = $item.comments ? $item.comments[-1] : $null
         }
 
         # Title is stored in two places. in the content and as a field.
