@@ -1,10 +1,23 @@
+
+Set-MyinvokeCommandAlias -Alias ShowInEditor -Command '"{content}" | code -w - '
+
 function Show-ProjectItem{
     [CmdletBinding()]
     [Alias("shpi")]
     param(
+        [Parameter()][string]$Owner,
+        [Parameter()][int]$ProjectNumber,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)][Alias("id")][string]$ItemId,
-        [Parameter()][array[]]$FieldsToShow
+        [Parameter()][array[]]$FieldsToShow,
+        [Parameter()][switch]$OpenInEditor
     )
+
+    begin{
+
+        $Owner,$ProjectNumber = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+
+        Start-WriteBuffer
+    }
 
     process {
 
@@ -49,7 +62,7 @@ function Show-ProjectItem{
         addJumpLine
         
         # Body
-        addJumpLine ; "--- Body ---" | write Cyan ; addJumpLine
+        addJumpLine ; "--------- Body ---------" | write Cyan ; addJumpLine
         $item.Body | write -Color Gray
 
         addJumpLine
@@ -57,7 +70,8 @@ function Show-ProjectItem{
         # LastCommment
         if($item.commentLast){
             $l = $item.commentLast
-            addJumpLine ; "--- Last Comment ---" | write Cyan ; addJumpLine
+            $c = $item.commentCount.ToString().PadLeft(2, '0')
+            addJumpLine ; "--- Last Comment [$c/$c] ---" | write Cyan ; addJumpLine
             $l.author | write -Color DarkGray -PreFix "By: " ; addSpace
             $l.updatedAt | write -Color DarkGray -PreFix "At: "
             addJumpLine
@@ -69,7 +83,19 @@ function Show-ProjectItem{
         addJumpLine ; "------------" | write Cyan ; addJumpLine
 
         # ID at the end
-        $item.id | write -Color DarkGray
+        $item.id | write -Color DarkGray ; addJumpLine
+    }
+
+    end{
+        if($OpenInEditor){
+            $buffer = Stop-WriteBuffer
+
+            $params = @{
+                content = $buffer | ConvertTo-InvokeParameterString
+            }
+
+            Invoke-MyCommand -Command ShowInEditor -Parameters $params
+        }
     }
 } Export-ModuleMember -Function Show-ProjectItem -Alias("shpi")
 
@@ -99,7 +125,7 @@ function write{
 
         if([string]::IsNullOrWhiteSpace($text)){
 
-            if([string]::IsNullOrWhiteSpace($DefaultValue)){
+            if([string]::IsNullOrEmpty($DefaultValue)){
                 $DefaultValue = "(empty)"
             }
             $text = $DefaultValue
@@ -115,14 +141,19 @@ function write{
         
 
         $text | Write-ToConsole -Color:$color -NoNewLine
+        $text | Write-ToBuffer -NoNewLine
     }
 }
+
 function addJumpLine{
     Write-ToConsole -Color White
+    Write-ToBuffer
 }
 function addSpace{
     " " | Write-ToConsole -Color Cyan -NoNewline
+    " " | Write-ToBuffer -NoNewline
 }
+
 function ShowAttribLine{
     param(
         [array]$AttributesToShow,
@@ -136,7 +167,8 @@ function ShowAttribLine{
         $color = $_.Color
         $prefix = $_.Prefix
         $BetweenQuotes = $_.BetweenQuotes
-        
+        $DefaultValue = $_.DefaultValue ?? "<$name>"
+
         $value = $item.$name
 
         if(!$isfirst){
@@ -145,6 +177,40 @@ function ShowAttribLine{
             $isfirst = $false
         }
 
-        $value | write $color -PreFix $prefix -BetweenQuotes:$BetweenQuotes -DefaultValue "<$name>"
+        $value | write $color -PreFix $prefix -BetweenQuotes:$BetweenQuotes -DefaultValue $DefaultValue
     }
+}
+
+function Start-WriteBuffer{
+    "Starting Write Buffer" | Write-MyDebug -section "WriteBuffer"
+    $script:outputBuffer = ""
+}
+function Stop-WriteBuffer{
+    $buffer  = $script:outputBuffer
+    
+    $script:outputBuffer = $null
+    
+    "Stopping Write Buffer [$($buffer.Count)] Lines" | Write-MyDebug -section "WriteBuffer"
+
+    return $buffer
+}
+function Write-ToBuffer {
+    param(
+        [Parameter(ValueFromPipeline, Position = 0)][string]$Message,
+        [Parameter()][switch]$NoNewLine
+    )
+
+    if($null -ne $script:outputBuffer){
+        "Writing to buffer" | Write-MyDebug -section "WriteBuffer"
+        
+        $script:outputBuffer += $Message
+
+        if(-not $NoNewLine){
+            $script:outputBuffer += "`n"
+        }
+
+    } else {
+        "No output buffer defined" | Write-MyDebug -section "WriteBuffer"
+    }
+
 }
