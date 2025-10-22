@@ -70,8 +70,10 @@ function Get-Mock_Project_700 {
     $fss = $issue.fieldValues.nodes | Where-Object { $_.field.id -eq $($fieldsingleselect.id) }
     $project.issue = @{
         id                = $issue.id
+        number            = $issue.content.number
         contentId         = $issue.content.id
         title             = $issue.content.title
+        body              = $issue.content.body
         url               = $issue.content.url
         repositoryName    = $issue.content.repository.name
         status            = ($issue.fieldValues.nodes | Where-Object { $_.field.name -eq "Status" }).name
