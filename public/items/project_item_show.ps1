@@ -1,4 +1,3 @@
-
 Set-MyinvokeCommandAlias -Alias ShowInEditor -Command '"{content}" | code -w - '
 
 function Show-ProjectItem{
@@ -9,6 +8,7 @@ function Show-ProjectItem{
         [Parameter()][int]$ProjectNumber,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)][Alias("id")][string]$ItemId,
         [Parameter()][array[]]$FieldsToShow,
+        [Parameter()][switch]$AllComments,
         [Parameter()][switch]$OpenInEditor
     )
 
@@ -16,7 +16,9 @@ function Show-ProjectItem{
 
         $Owner,$ProjectNumber = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
 
-        Start-WriteBuffer
+        if($OpenInEditor){
+            Start-WriteBuffer
+        }
     }
 
     process {
@@ -41,7 +43,7 @@ function Show-ProjectItem{
         # title bar
         # ($item.RepositoryOwner + "/") | write -Color Cyan
         # ($item.RepositoryName) | write -Color Cyan
-        $item.number | write -Color Cyan -PreFix "#"
+        $item.number | write -Color Cyan -PreFix "# "
         addSpace
         $item.Title | write -Color Yellow -BetweenQuotes
         
@@ -50,11 +52,13 @@ function Show-ProjectItem{
         # URL
         $item.url | write -Color White
 
+        addJumpLine
+        
         # Fields by line
         if($FieldsToShow){
             addJumpLine
+
             foreach($line in $FieldsToShow){
-                addJumpLine
                 ShowAttribLine -AttributesToShow $line -Item $item
             }
         }
@@ -62,42 +66,54 @@ function Show-ProjectItem{
         addJumpLine
         
         # Body
-        addJumpLine ; "--------- Body ---------" | write Cyan ; addJumpLine
+        "Body" | writeHeader
         $item.Body | write -Color Gray
 
-        addJumpLine
+        # Comments
+        if($AllComments){
+            # All comments
+            $count = 0
+            $orderFirst = $item.commentsTotalCount - $item.comments.Count
 
-        # LastCommment
-        if($item.commentLast){
-            $l = $item.commentLast
-            $c = $item.commentCount.ToString().PadLeft(2, '0')
-            addJumpLine ; "--- Last Comment [$c/$c] ---" | write Cyan ; addJumpLine
-            $l.author | write -Color DarkGray -PreFix "By: " ; addSpace
-            $l.updatedAt | write -Color DarkGray -PreFix "At: "
-            addJumpLine
+            foreach($c in $item.comments){
+                $count++
+                $order = $orderFirst + $count
 
-            $item.commentLast.body | write -Color Gray
+                writeComment -Comment $c -order $order -item $item
+            }
+        } else {
+            # LastCommment
+            if($item.commentLast){
+                writeComment -Comment $item.commentLast -order $item.commentsTotalCount -item $item
+            }
         }
 
-        # End of item
-        addJumpLine ; "------------" | write Cyan ; addJumpLine
-
-        # ID at the end
+        # Id at the end
+        writeHeader1
         $item.id | write -Color DarkGray ; addJumpLine
     }
 
     end{
         if($OpenInEditor){
-            $buffer = Stop-WriteBuffer
-
-            $params = @{
-                content = $buffer | ConvertTo-InvokeParameterString
-            }
-
-            Invoke-MyCommand -Command ShowInEditor -Parameters $params
+            Stop-WriteBuffer | Open-InEditor
         }
     }
 } Export-ModuleMember -Function Show-ProjectItem -Alias("shpi")
+
+function Open-InEditor{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)][string]$Content
+    )
+
+    process {
+        $params = @{
+            content = $Content | ConvertTo-InvokeParameterString
+        }
+
+        Invoke-MyCommand -Command ShowInEditor -Parameters $params
+    }
+} Export-ModuleMember -Function Open-InEditor
 
 function getStatusColor{
     param(
@@ -112,12 +128,120 @@ function getStatusColor{
     }
 }
 
+function writeHeader1{
+    # [Alias("writeHeader")]
+    param(
+        [Parameter(ValueFromPipeline, Position=0)][string]$Text
+    )
+
+    addJumpLine ;
+    if(-not [string]::IsNullOrWhiteSpace($Text)){
+        $Text | write Cyan
+    }
+    addJumpLine
+    "------------" | write Cyan
+    addJumpLine
+
+}
+
+function writeHeader2{
+    [Alias("writeHeader")]
+    param(
+        [Parameter(ValueFromPipeline, Position=0)][string]$Text,
+        [Parameter()][string]$Author,
+        [Parameter()][string]$UpdatedAt
+    )
+
+    $color = "Cyan"
+    $subcolor = "DarkGray"
+
+    $Text = [string]::IsNullOrWhiteSpace($Text) ? " " : $Text
+
+    "## $Text" | write $color
+
+    addJumpLine
+
+    write -Color $subcolor -Text ">"
+
+    if(-not [string]::IsNullOrWhiteSpace($Author)){
+        addSpace
+        $Author | write -Color $subcolor -PreFix "By: "
+    }
+    if(-not [string]::IsNullOrWhiteSpace($updatedAt)){
+        addSpace
+        $updatedAt | write -Color $subcolor -PreFix "At: "
+    }
+
+    addJumpLine
+
+}
+
+function writeComment1{
+    param(
+        [object]$Comment,
+        [int]$order,
+        [object]$item
+    )
+
+    process {
+        "Processing Comment by $($Comment.author.login)" | Write-Verbose
+
+        $header = "Comment [$order/$($item.commentsTotalCount)]"
+        
+        if($order -eq $item.commentsTotalCount) {$header += " Last"}
+
+        addJumpLine
+        addJumpLine
+        $header | write Cyan
+        
+        addSpace
+
+        # $Comment.author | write -Color DarkGray -PreFix "By: " ; addSpace
+
+        $Comment.author | write -Color DarkGray -PreFix "<" -SuFix ">" ; addSpace
+        $Comment.updatedAt | write -Color DarkGray -PreFix "At: "
+        addJumpLine
+        "------------" | write Cyan
+
+        # addSpace ; addSpace
+        
+        addJumpLine
+        $Comment.body | write -Color Gray
+    }
+}
+function writeComment2{
+    [alias("writeComment")]
+    param(
+        [object]$Comment,
+        [int]$order,
+        [object]$item
+    )
+
+    process {
+
+        $header = "Comment [$order/$($item.commentsTotalCount)]"
+        
+        if($order -eq $item.commentsTotalCount) {$header += " Last"}
+
+        addJumpLine
+        
+        writeHeader $header -Author $Comment.author -UpdatedAt $Comment.updatedAt
+        
+        addJumpLine
+        
+        $Comment.body | write -Color Gray
+
+        addJumpLine
+    }
+}
+
 function write{
     param(
         [Parameter(Position = 1)][string]$color,
         [Parameter(Position = 2,ValueFromPipeline)][string]$text,
         [Parameter()][switch]$BetweenQuotes,
         [Parameter()][string]$PreFix,
+        [Parameter()][string]$SuFix,
         [Parameter()][string]$DefaultValue
 
     )
@@ -138,6 +262,10 @@ function write{
         if($PreFix){
             $text = $PreFix + $text
         }
+
+        if($SuFix){
+            $text = $text + $SuFix
+        }
         
 
         $text | Write-ToConsole -Color:$color -NoNewLine
@@ -145,8 +273,10 @@ function write{
     }
 }
 
+$script:addJumpLine = 0
 function addJumpLine{
-    Write-ToConsole -Color White
+    Write-ToConsole -Color DarkGray -Message "- $((($script:addJumpLine)++)) -"
+    # Write-ToConsole -Color DarkGray
     Write-ToBuffer
 }
 function addSpace{
@@ -167,9 +297,14 @@ function ShowAttribLine{
         $color = $_.Color
         $prefix = $_.Prefix
         $BetweenQuotes = $_.BetweenQuotes
-        $DefaultValue = $_.DefaultValue ?? "<$name>"
+        $DefaultValue = $_.DefaultValue ?? "[$name]"
+        $HideIfEmpty = $_.HideIfEmpty
 
         $value = $item.$name
+
+        if($HideIfEmpty -and [string]::IsNullOrEmpty($value)){
+            return
+        }
 
         if(!$isfirst){
             " | " | write Gray
@@ -179,6 +314,7 @@ function ShowAttribLine{
 
         $value | write $color -PreFix $prefix -BetweenQuotes:$BetweenQuotes -DefaultValue $DefaultValue
     }
+    addJumpLine
 }
 
 function Start-WriteBuffer{
