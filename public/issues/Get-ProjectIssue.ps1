@@ -1,21 +1,21 @@
 
-Set-MyInvokeCommandAlias -Alias GetIssueOrPullRequest -Command 'Invoke-GetIssueOrPullRequest -Url {url}'
-
 function Get-ProjectIssue {
     [CmdletBinding()]
     param (
-        # url
-        [Parameter(Mandatory,Position=0)][string]$Url
+        [Parameter(Position=0)][string]$Url
     )
 
-    $params = @{
-        url = $Url
+    # Check the cache of the default project
+
+    $owner,$projectNumber = Get-OwnerAndProjectNumber
+
+    $cache = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -FieldName "url" -Filter $Url -Exact
+
+    if( $cache ) {
+        return $cache
     }
-    
-    $response = Invoke-MyCommand -Command GetIssueOrPullRequest -Parameters $params
 
-    $resource = $response.data.resource
+    $issue = Get-ProjectIssueDirect -Url $Url
 
-    return $resource
-
+    return $issue
 } Export-ModuleMember -Function Get-ProjectIssue
