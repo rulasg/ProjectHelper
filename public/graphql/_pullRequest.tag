@@ -1,1 +1,1 @@
-{title,body,number,url,id}
+{title,body,number,url,id,repository{id,nameWithOwner}}
