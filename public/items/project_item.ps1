@@ -413,11 +413,14 @@ function Add-ProjectItemDirect {
 
 function Remove-ProjectItemDirect {
     [CmdletBinding(SupportsShouldProcess)]
+    [Alias ("rpi")]
     param(
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName,ValueFromPipeline, Position = 0)][Alias("Id")][string]$ItemId,
+        [Parameter()][switch]$DeleteIssue,
         [Parameter()][switch]$Force
+        
     )
 
     begin {
@@ -435,8 +438,19 @@ function Remove-ProjectItemDirect {
     }
 
     process {
+        
+        $item = Get-Item $db $ItemId
+        
+        if (-not $item) {
+            "Item [$ItemId] not found in project [$Owner/$ProjectNumber]" | Write-MyHost
+            return $null
+        }
+        
+        $itemId = $item.id
+        $itemUrl = $item.url
 
         try{
+
             if (-not $projectId) {
                 "Project ID not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError
                 return $null
@@ -447,7 +461,7 @@ function Remove-ProjectItemDirect {
                 $response = Invoke-MyCommand -Command RemoveItemFromProject -Parameters @{ projectid = $projectId ; itemid = $ItemId }
             } else {
                 # Fake execution return ItemId
-                return $ItemId
+                return $itemUrl
             }
             
             # check if FAILED
@@ -458,26 +472,52 @@ function Remove-ProjectItemDirect {
                     "Force flag is set, removing item from cache anyway" | Write-Verbose
                     Remove-Item $db $ItemId
                     Save-ProjectDatabaseSafe -Database $db
-                    return $null
+                    return $itemUrl
                 }
             }
             
-            $ret = $response.data.deleteProjectV2Item.deletedItemId
+            $result = $response.data.deleteProjectV2Item.deletedItemId
+
+            if($result -ne $ItemId){
+                throw "Item [$ItemId] not removed from project properly"
+            }
         }
         catch {
-            "Item [$ItemId] not found in project [$Owner/$ProjectNumber]" | Write-MyWarning
-            return
+            throw "Error remvoving item [$ItemId] from project: $_" 
         }
-            
+
         # Remove item from cache
         "Removing item [$ItemId] from cache" | Write-Verbose
         Remove-Item $db $ItemId
         Save-ProjectDatabaseSafe -Database $db
 
-        return $ret
+        if (! $DeleteIssue){
+            return $itemUrl
+        }
+
+        # Remove issue
+        if($item.type -eq "Issue") {
+            "Deleting issue associated to item [$ItemId]" | Write-Verbose
+            $item = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $ItemId -Force
+            if ($item -and $item.urlContent) {
+                try {
+                    Remove-ProjectIssueDirect -Url $item.url
+                }
+                catch {
+                    "Issue associated to item [$ItemId] could not be deleted: $_" | Write-MyWarning
+                }
+            }
+            else {
+                "No issue associated to item [$ItemId]" | Write-MyWarning
+            }
+        } else {
+            "Item [$ItemId] is not an Issue, skipping issue deletion" | Write-MyHost
+        }
+
+        return $itemUrl
     }
 
-} Export-ModuleMember -Function Remove-ProjectItemDirect
+} Export-ModuleMember -Function Remove-ProjectItemDirect -Alias "rpi"
 
 function Get-ProjectItemDirect {
     [CmdletBinding()]
