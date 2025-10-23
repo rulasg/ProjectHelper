@@ -22,7 +22,7 @@ function Convert-NodeItemToHash {
 
         # Comments
         if ($NodeItem.content.comments.totalCount -gt 0) {
-            $item.commentCount = $NodeItem.content.comments.totalCount
+            $item.commentsTotalCount = $NodeItem.content.comments.totalCount
             $item.comments = $NodeItem.content.comments.nodes | Convert-Comment
             $item.commentLast = $item.comments ? $item.comments[-1] : $null
         }

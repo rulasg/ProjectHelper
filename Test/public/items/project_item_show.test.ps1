@@ -60,3 +60,53 @@ function Get-Test_Write_Sucess_Factors {
         @{ Color = "Cyan"; Text = "   "; BetweenQuotes = $true; PreFix = "WhiteSpace2: "; ; ExpectedText = 'WhiteSpace2: "(empty)"' }
     )
 } Export-ModuleMember -Function Get-Test_Write_Sucess_Factors, Test_Write_Sucess
+
+function Test_ShowProjectItem_SUCESS{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+    
+    $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $ProjectNumber = $p.number
+    $i = $p.issue
+    MockCall_GetProject $p -skipItems
+    MockCall_GetItem $i.Id
+
+    Start-MyTranscript
+    $result = $i.id | Show-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -AllComments
+    $tt = Stop-MyTranscript
+
+    Assert-IsNull -Object $result
+
+    Assert-Contains -Presented $tt -Expected "# $($i.number)"
+    Assert-Contains -Presented $tt -Expected """$($i.title)"""
+    Assert-Contains -Presented $tt -Expected "$($i.url)"
+    Assert-Contains -Presented $tt -Expected "$($i.status)"
+    Assert-Contains -Presented $tt -Expected "$($i.Body)"
+
+    Assert-Contains -Presented $tt -Expected "By: $($i.comments.last.author.login)"
+    Assert-Contains -Presented $tt -Expected "At: $($i.comments.last.updatedAt)"
+    Assert-Contains -Presented $tt -Expected $i.comments.last.body
+    
+    Assert-Contains -Presented $tt -Expected $i.id
+}
+
+function Test_OpenInEditor{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+    
+    $text = "Sample Text for Editor"
+
+    $command = '"{content}" | code -w - '
+    $command = $command -replace '\{content\}', $text
+
+    MockCallToNull -Command $command
+
+    Invoke-PrivateContext{
+
+         $text = "Sample Text for Editor"
+
+        $result = Open-InEditor -Content $text
+
+        Assert-IsNull -Object $result
+    }
+    
+}
