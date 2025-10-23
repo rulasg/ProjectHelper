@@ -27,6 +27,10 @@ function Convert-NodeItemToHash {
             $item.commentLast = $item.comments ? $item.comments[-1] : $null
         }
 
+        if($NodeItem.content.subIssues.totalCount -gt 0){
+            $item.subIssues = $NodeItem.content.subIssues.nodes
+        }
+
         # Title is stored in two places. in the content and as a field.
         # We will use the field value
         $item.number = $NodeItem.content.number
