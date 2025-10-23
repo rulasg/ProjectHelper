@@ -71,12 +71,12 @@ function Test_ShowProjectItem_SUCESS{
     MockCall_GetItem $i.Id
 
     Start-MyTranscript
-    $result = $i.id | Show-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber
+    $result = $i.id | Show-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -AllComments
     $tt = Stop-MyTranscript
 
     Assert-IsNull -Object $result
 
-    Assert-Contains -Presented $tt -Expected "#$($i.number)"
+    Assert-Contains -Presented $tt -Expected "# $($i.number)"
     Assert-Contains -Presented $tt -Expected """$($i.title)"""
     Assert-Contains -Presented $tt -Expected "$($i.url)"
     Assert-Contains -Presented $tt -Expected "$($i.status)"
@@ -87,4 +87,26 @@ function Test_ShowProjectItem_SUCESS{
     Assert-Contains -Presented $tt -Expected $i.comments.last.body
     
     Assert-Contains -Presented $tt -Expected $i.id
+}
+
+function Test_OpenInEditor{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+    
+    $text = "Sample Text for Editor"
+
+    $command = '"{content}" | code -w - '
+    $command = $command -replace '\{content\}', $text
+
+    MockCallToNull -Command $command
+
+    Invoke-PrivateContext{
+
+         $text = "Sample Text for Editor"
+
+        $result = Open-InEditor -Content $text
+
+        Assert-IsNull -Object $result
+    }
+    
 }
