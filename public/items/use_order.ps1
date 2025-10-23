@@ -3,16 +3,17 @@ function Use-Order {
     [Alias("uo")]
     param(
         [Parameter(Position = 0)][int]$Ordinal = -1,
-        [Parameter(ValueFromPipeline)][array]$List
+        [Parameter(ValueFromPipeline)][array]$List,
+        [Parameter()][switch]$OpenInEditor
     )
 
     begin {
         $finallist = @()
+        $i = 0
     }
     process {
         $newList = @()
         foreach ($item in $List) {
-            if ($null -eq $i) { $i = 0 }
             # Rebuild object so "#" is the first property
             $props = [ordered]@{ '#' = $i }
             foreach($p in $item.PSObject.Properties){
@@ -28,7 +29,7 @@ function Use-Order {
     end {
         if ($Ordinal -gt -1) {
             $itemId = $finallist[$Ordinal].id
-            Show-SalesProjectItem -Item $itemId
+            Show-ProjectItem -Item $itemId -OpenInEditor:$OpenInEditor
         }
         else {
             $finalList | Format-Table -AutoSize
