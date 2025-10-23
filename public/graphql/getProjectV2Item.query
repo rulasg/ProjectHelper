@@ -11,11 +11,15 @@ query($itemId: ID ! $lastComments: Int=10) {
                 nodes{createdAt,updatedAt,url,body,fullDatabaseId,author{login}}
              }
            },
-           ... on       Issue{id,body,title,updatedAt,createdAt,number,url,state,repository{name,owner{login}}
+           ... on Issue{id,body,title,updatedAt,createdAt,number,url,state,repository{name,owner{login}}
              comments(last: $lastComments){
                 totalCount,
                 nodes{createdAt,updatedAt,url,body,fullDatabaseId,author{login}}
-             }
+             },
+            subIssues(first: 100){
+                totalCount,
+                nodes {{issuemini}}
+            }
            }
         },
       fieldValues(first: 100){
