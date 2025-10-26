@@ -63,14 +63,16 @@ function Get-Mock_Project_700 {
 
     # issueToCreateAddAndRemove
     $id = "I_kwDOPrRnkc7T2Al2"
-    $project.issueToCreateAddAndRemove=@{
+    $itemId ="PVTI_lADOAlIw4c4BCe3VzggVZH8"
+    $project.issueToCreateAddAndRemove= @{
         id = $id
         number = 46
         url = "https://github.com/octodemo/rulasg-dev-1/issues/46"
         getIssueOrPullRequestMockFile = "invoke-getissueorpullrequest-46.json"
-        itemId ="PVTI_lADOAlIw4c4BCe3VzggVZH8"
+        itemId = $itemId
         addIssueToOProjectMockFile = "invoke-additemtoproject-$($project.id)-$id.json"
         createIssueMockfile = "invoke-createissue-$($project.repo.id).json"
+        removeIssueFromProjectMockFile = "invoke-removeitemfromproject-$($project.id)-$itemId.json"
     }
 
     # Issues to find
