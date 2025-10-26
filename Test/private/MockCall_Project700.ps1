@@ -29,9 +29,15 @@ function Get-Mock_Project_700 {
 
     # Repository Info
     $repoContent = Get-MockFileContentJson -fileName $project.repofile -AsHashtable
-    $project.repository = $repoContent.data.repository
-    $project.repository.owner = $repoContent.data.repository.owner.login
-    $project.repository.Remove('parent')
+    $project.repo = @{
+        id = $repoContent.data.repository.id
+        owner = $repoContent.data.repository.owner.login
+        name = $repoContent.data.repository.name
+        nameWithOwner = $repoContent.data.repository.nameWithOwner
+        getRepoMockFile = $project.repofile
+        object = $repoContent.data.repository
+    }
+    $project.repo.object.Remove('parent')
 
     # Project info
     $project.id = $pActual.id
@@ -54,13 +60,17 @@ function Get-Mock_Project_700 {
     $project.items.totalCount = $pActual.items.nodes.count
     $project.items.doneCount = 6 # too complicated to read from structure
 
-    # Create issue in repo
-    $project.createIssueInRepo = @{
-        name = $project.repository.name
-        owner = $project.repository.owner
-        id = $project.repository.id
-        issueUrl = "https://github.com/octodemo/rulasg-dev-1/issues/30"
+    # issueToCreateAddAndRemove
+    $id = "I_kwDOPrRnkc7T2Al2"
+    $project.issueToCreateAddAndRemove=@{
+        url = "https://github.com/octodemo/rulasg-dev-1/issues/46"
+        id = $id
+        number = 46
+        itemId ="PVTI_lADOAlIw4c4BCe3VzggVZH8"
+        addIssueToOProjectMockFile = "invoke-additemtoproject-$($project.id)-$id.json"
+        createIssueMockfile = "invoke-createissue-$($project.repo.id).json"
     }
+
     # Issues to find
     $project.issueToFind = @{}
     $project.issueToFind.Ids = ($pActual.items.nodes | Where-Object { $_.content.title -eq "Issue to find" }).Id
