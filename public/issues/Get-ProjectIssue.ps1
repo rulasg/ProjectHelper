@@ -8,11 +8,6 @@ function Get-ProjectIssueDirect {
     )
 
     # Check the project cache of the default project
-    $owner,$projectNumber = Get-OwnerAndProjectNumber
-    $cache = Get-ProjectItemByUrl -Owner $owner -ProjectNumber $projectNumber -Url $Url
-    if( $cache ) { return $cache }
-
-    # Find project
     $params = @{
         url = $Url
     }
@@ -34,21 +29,47 @@ function Get-ProjectIssueDirect {
 } Export-ModuleMember -Function Get-ProjectIssueDirect
 
 function Get-ProjectIssue {
-    param(
-        [Parameter(Position = 0)][string]$Url
+    [CmdletBinding()]
+    param (
+        [Parameter(Position=0)][string]$Url,
+        [Parameter()][switch]$Force
     )
 
-    # Check the cache of the default project
-
+    # Check the project cache of the default project
     $owner,$projectNumber = Get-OwnerAndProjectNumber
-
-    $cache = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -fieldName "url" -fieldValue $Url -ExactMatch
-
-    if( $cache ) {
-        return $cache
+    $item = Get-ProjectItemByUrl -Owner $owner -ProjectNumber $projectNumber -Url $Url -Force:$Force
+    if( $item ) { 
+        $issue = $item | Convert-ItemToIssue
+        return $issue
     }
 
+    # Not in cache. Get Direct
     $issue = Get-ProjectIssueDirect -Url $Url
 
-    return $issue
+    # TODO: update the cache if issue is an item of the project
+    # This will required or transform Issue to Item or create a new issue database
+
+    return $issue   
+
 } Export-ModuleMember -Function Get-ProjectIssue
+
+function Convert-ItemToIssue {
+    param(
+        [Parameter(Mandatory,ValueFromPipeline)][object]$Item
+    )
+
+    process {
+
+        $issue = @{
+            __typename = "Issue"
+            id         = $Item.contentId
+            title      = $Item.Title
+            body       = $Item.Body
+            number     = $Item.number
+            url        = $Item.urlContent
+            repository = $Item.Repository
+        }
+        return $issue
+    }
+
+}
