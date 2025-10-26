@@ -114,7 +114,7 @@ function Test-Item{
     )
 
     process{
-        $item = Get-ItemByUrl -Database $Database -Value $Url
+        $item = Get-ItemByUrl -Database $Database -Url $Url
 
         return $item.Count -ne 0
     }
