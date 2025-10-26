@@ -1,0 +1,6 @@
+mutation SubIssueAdd($input: AddSubIssueInput!) {
+    addSubIssue(input: $input) {
+      issue {{issue}},
+      subIssue {{issue}}
+    }
+  }

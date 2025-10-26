@@ -14,5 +14,4 @@ function Test_GetProjectIssue{
     Assert-AreEqual -Expected $i.contentId -Presented $result.id
     Assert-AreEqual -Expected $i.title -Presented $result.title
     Assert-AreEqual -Expected $i.url -Presented $result.url
-
 }
