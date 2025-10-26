@@ -1,1 +1,1 @@
-{id,name,owner{login}}
+{id,url}
