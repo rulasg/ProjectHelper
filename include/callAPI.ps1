@@ -13,7 +13,7 @@ function Invoke-GraphQL {
         [Parameter()] [string]$OutFile
     )
 
-    ">>>" | Write-MyVerbose
+    ">>>" | writedebug
 
     $ApiHost = Get-ApiHost -ApiHost:$ApiHost
     $token = Get-ApiToken -Token:$Token -ApiHost:$ApiHost
@@ -35,21 +35,21 @@ function Invoke-GraphQL {
         } | ConvertTo-Json -Depth 100
     
         # Trace request
-        "[[QUERY]]" | Write-MyVerbose
-        $Query | Write-MyVerbose
+        "[[QUERY]]" | writedebug
+        $Query | writedebug
     
-        "[[VARIABLES]]" | Write-MyVerbose
-        $Variables | ConvertTo-Json -Depth 100 | Write-MyVerbose
+        "[[VARIABLES]]" | writedebug
+        $Variables | ConvertTo-Json -Depth 100 | writedebug
     
         # Send the request
         $start = Get-Date
-        ">>> Invoke-RestMethod - $apiUri" | Write-MyVerbose
+        ">>> Invoke-RestMethod - $apiUri" | writedebug
         $response = Invoke-RestMethod -Uri $apiUri -Method Post -Body $body -Headers $headers -OutFile $OutFile
-        "<<< Invoke-RestMethod - $apiUri [ $(((Get-Date) - $start).TotalSeconds) seconds]" | Write-MyVerbose
+        "<<< Invoke-RestMethod - $apiUri [ $(((Get-Date) - $start).TotalSeconds) seconds]" | writedebug
     
         # Trace response
-        "[[RESPONSE]]" | Write-MyVerbose
-        $response | ConvertTo-Json -Depth 100 | Write-MyVerbose
+        "[[RESPONSE]]" | writedebug
+        $response | ConvertTo-Json -Depth 100 | writedebug
     
         if($response.errors){
             throw "GraphQL query return errors - Error: $($response.errors.message)"
@@ -71,7 +71,7 @@ function Invoke-RestAPI {
         [Parameter()] [string]$PageSize = 30
     )
 
-    ">>>" | Write-MyVerbose
+    ">>>" | writedebug
 
     $ApiHost = Get-ApiHost -ApiHost "$ApiHost"
     $token = Get-ApiToken -ApiHost "$ApiHost"
@@ -95,10 +95,10 @@ function Invoke-RestAPI {
     
         # Send the request
         $start = Get-Date
-        ">>> Invoke-RestMethod - $url" | Write-MyVerbose
+        ">>> Invoke-RestMethod - $url" | writedebug
         $response = Invoke-RestMethod -Uri $url -Method Get -Headers $headers -ResponseHeadersVariable responseHeaders
 
-        $responseHeaders | Write-MyVerbose
+        $responseHeaders | writedebug
 
         # Process paging
         if($responseHeaders.link){$paging=$true}
@@ -111,7 +111,7 @@ function Invoke-RestAPI {
 
             if($nextUrl){
                 $nextUrl = $matches[1]
-                ">>> Invoke-RestMethod - $nextUrl" | Write-MyVerbose
+                ">>> Invoke-RestMethod - $nextUrl" | writedebug
                 $nextResponse = Invoke-RestMethod -Uri $nextUrl -Method Get -Headers $headers -ResponseHeadersVariable responseHeaders
                 $response += $nextResponse
                 $paging = $null -ne $responseHeaders.link
@@ -120,11 +120,11 @@ function Invoke-RestAPI {
             }
         }
 
-        "<<< Invoke-RestMethod - $url [ $(((Get-Date) - $start).TotalSeconds) seconds]" | Write-MyVerbose
+        "<<< Invoke-RestMethod - $url [ $(((Get-Date) - $start).TotalSeconds) seconds]" | writedebug
     
         # Trace response
-        "[[RESPONSE]]" | Write-MyVerbose
-        $response | ConvertTo-Json -Depth 100 | Write-MyVerbose
+        "[[RESPONSE]]" | writedebug
+        $response | ConvertTo-Json -Depth 100 | writedebug
 
 
         return $response
@@ -146,17 +146,17 @@ function Get-ApiHost {
     )
 
     if(![string]::IsNullOrWhiteSpace($ApiHost)){
-        "ApiHost provided" | Write-MyVerbose
+        "ApiHost provided" | writedebug
         return $ApiHost
     }
 
     $envValue = Get-EnvVariable -Name $ENV_VAR_HOST_NAME
     if(![string]::IsNullOrWhiteSpace($envValue)){
-        "Host from env $envValue" | Write-MyVerbose
+        "Host from env $envValue" | writedebug
         return $envValue
     }
 
-    "Default host $DEFAULT_GH_HOST" | Write-MyVerbose
+    "Default host $DEFAULT_GH_HOST" | writedebug
     return $DEFAULT_GH_HOST
 } Export-ModuleMember -Function Get-ApiHost
 
@@ -182,7 +182,7 @@ function Get-ApiToken {
 
     $envValue = Get-EnvVariable -Name $ENV_VAR_TOKEN_NAME
     if(![string]::IsNullOrWhiteSpace($envValue)){
-        "Token from env" | Write-MyVerbose
+        "Token from env" | writedebug
         return $envValue
     }
 
@@ -190,7 +190,7 @@ function Get-ApiToken {
         host = $ApiHost
     }
 
-    "Token from GetToken for host [$ApiHost]" | Write-MyVerbose
+    "Token from GetToken for host [$ApiHost]" | writedebug
     $result = Invoke-MyCommand -Command "GetToken" -Parameters $params
 
     if(-Not $result){
@@ -216,3 +216,15 @@ function Get-EnvVariable{
     return $ret
 }
 
+####################################################################################################
+
+function writedebug{
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline)][string]$Message
+    )
+
+    process{
+        Write-MyDebug $Message -Section "api"
+    }
+}

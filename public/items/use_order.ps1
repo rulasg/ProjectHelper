@@ -4,7 +4,8 @@ function Use-Order {
     param(
         [Parameter(Position = 0)][int]$Ordinal = -1,
         [Parameter(ValueFromPipeline)][array]$List,
-        [Parameter()][switch]$OpenInEditor
+        [Parameter()][switch]$OpenInEditor,
+        [Parameter()][switch]$OpenInBrowser
     )
 
     begin {
@@ -29,7 +30,16 @@ function Use-Order {
     end {
         if ($Ordinal -gt -1) {
             $itemId = $finallist[$Ordinal].id
-            Show-ProjectItem -Item $itemId -OpenInEditor:$OpenInEditor
+
+            
+            if($OpenInBrowser){
+                # Open
+                $item = Get-ProjectItem -ItemId $itemId
+                Open-Url $($item.url)
+            } else {
+                # Show
+                Show-ProjectItem -Item $itemId -OpenInEditor:$OpenInEditor
+            }
         }
         else {
             $finalList | Format-Table -AutoSize

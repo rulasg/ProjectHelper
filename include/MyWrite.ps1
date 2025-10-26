@@ -143,13 +143,17 @@ function Test-MyDebug {
         [Parameter(Position = 0)][string]$section
     )
 
+    # Get the module debug environment variable
     $moduleDebugVarName = $MODULE_NAME + "_DEBUG"
     $flag = [System.Environment]::GetEnvironmentVariable($moduleDebugVarName)
 
-    # Enable debug
+    # check if debugging is enabled
     if ([string]::IsNullOrWhiteSpace( $flag )) {
         return $false
     }
+
+    $flag = $flag.ToLower()
+    $section = $section.ToLower()
 
     $trace = ($flag -like '*all*') -or ( $section -like "*$flag*")
     return $trace

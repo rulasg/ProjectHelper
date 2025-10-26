@@ -9,18 +9,9 @@ function Get-ContentIdFromUrlDirect{
         [Parameter(Mandatory,Position = 0)][string]$Url
     )
 
-    $params = @{
-        url = $Url
-    }
+    $issue = Get-ProjectIssue -Url $url
 
-    $response = Invoke-MyCommand -Command GetIssueOrPullRequest -Parameters $params
-
-    if($response.data.resource){
-        $ret = $response.data.resource.id
-    } else {
-        "Resource not found for URL [$Url]" | Write-MyError
-        $ret = $null
-    }
+    $ret = $issue.id
 
     return $ret
 } Export-ModuleMember -Function Get-ContentIdFromUrlDirect

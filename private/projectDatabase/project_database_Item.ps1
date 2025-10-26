@@ -92,7 +92,7 @@ function Find-Item {
     }
 }
 
-function Test-Item{
+function Get-ItemByUrl{
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][object[]]$Database,
@@ -101,6 +101,20 @@ function Test-Item{
 
     process{
         $item = Find-Item -Database $Database -FieldName "urlContent" -Value $Url
+
+        return $item
+    }
+}
+
+function Test-Item{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][object[]]$Database,
+        [Parameter(ValueFromPipeline, Position = 1)][string]$Url
+    )
+
+    process{
+        $item = Get-ItemByUrl -Database $Database -Url $Url
 
         return $item.Count -ne 0
     }

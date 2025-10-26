@@ -1,21 +1,32 @@
 
-Set-MyInvokeCommandAlias -Alias GetIssueOrPullRequest -Command 'Invoke-GetIssueOrPullRequest -Url {url}'
-
 function Get-ProjectIssue {
     [CmdletBinding()]
     param (
-        # url
-        [Parameter(Mandatory,Position=0)][string]$Url
+        [Parameter(Position=0)][string]$Url
     )
 
+    # Check the project cache of the default project
+    $owner,$projectNumber = Get-OwnerAndProjectNumber
+    $cache = Get-ProjectItemByUrl -Owner $owner -ProjectNumber $projectNumber -Url $Url
+    if( $cache ) { return $cache }
+
+    # Find project
     $params = @{
         url = $Url
     }
-    
+
     $response = Invoke-MyCommand -Command GetIssueOrPullRequest -Parameters $params
 
-    $resource = $response.data.resource
+    if($response.data.resource){
+        $ret = $response.data.resource
+    } else {
+        "Resource not found for URL [$Url]" | Write-MyError
+        $ret = $null
+    }
 
-    return $resource
+    # TODO: update the cache if issue is an item of the project
+    # This will required or transform Issue to Item or create a new issue database
+
+    return $ret
 
 } Export-ModuleMember -Function Get-ProjectIssue
