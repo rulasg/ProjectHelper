@@ -33,6 +33,9 @@ function Get-ProjectItem {
     }
 
     process {
+
+        if(!$db){ return }
+
         $item, $dirty = Resolve-ProjectItem -Database $db -ItemId $ItemId -Force:$Force
 
         return $item
@@ -46,6 +49,44 @@ function Get-ProjectItem {
     }
 
 } Export-ModuleMember -Function Get-ProjectItem -Alias "gpi"
+
+function Get-ProjectItemByUrl{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory, ValueFromPipeline, Position = 0)][string]$Url,
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter()][switch]$Force
+    )
+
+    begin {
+        ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+    
+        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems
+
+        if(! $db){ "Project not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError; return $null}
+    }
+
+    process {
+
+        if(!$db){ return }
+
+        $item = Get-ItemByUrl -Database $db -Url $Url
+
+        # TODO: Create a Resolve-ProjectItemByUrl so that we can udpate the Project
+        # if item is not cached but exists in projects.
+        # This function depends on the capacity to retreive items by filter
+        # Project API has just been updated to allow search project items
+
+        if(-not $item){
+            "Item not found for URL [$Url]" | Write-MyError
+            return $null
+        }
+
+        return $item
+    }
+}
 
 function Test-ProjectItem {
     [CmdletBinding()]
@@ -149,6 +190,7 @@ function Search-ProjectItem {
 
 function Format-ProjectItem{
     [CmdletBinding()]
+    [Alias("fpi")]
     param(
         [Parameter(ValueFromPipeline)][object]$Item,
         [Parameter(Position = 1)][string[]]$Attributes
@@ -174,7 +216,7 @@ function Format-ProjectItem{
 
         return $ret
     }
-} Export-ModuleMember -Function Format-ProjectItem
+} Export-ModuleMember -Function Format-ProjectItem -Alias "fpi"
 
 function Get-ProjectItems {
     [CmdletBinding()]
