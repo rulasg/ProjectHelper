@@ -19,8 +19,8 @@ function Invoke-CreateIssue {
     $variables = @{
         input = @{
             repositoryId    = $RepositoryId
-            title           = $Title
-            body            = $Body
+            title           = $Title | ConvertTo-InvokeParameterString
+            body            = $Body | ConvertTo-InvokeParameterString
             
             #projectIds      = $ProjectIds
             # assigneeIds     = $AssigneeIds
