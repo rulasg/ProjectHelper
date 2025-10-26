@@ -7,8 +7,8 @@ function Test_AddProjectSubIssue_SUCCESS{
 
 
     $parent  = $p.Issue
-    $i0 = $p.subIssues[0]
-    $i1 = $p.subIssues[1]
+    $i0 = $p.subIssuesToAdd[0]
+    $i1 = $p.subIssuesToAdd[1]
     
     MockCall_GetProject $p -Cache
 
@@ -51,5 +51,19 @@ function Test_AddProjectSubIssue_FAIL_ALREADY_HAS_PARENT {
 
 function Test_GetProjectSubIssue_SUCCESS {
 
-    Assert-NotImplemented
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $p = Get-Mock_Project_700 ; $owner = $p.Owner ; $projectNumber = $p.Number
+    $i = $p.subIssueToShow
+    
+    MockCall_GetProject $p -SkipItems
+    MockCallJson -Command "Invoke-GetItem -ItemId $($i.id)" -File "invoke-getitem-$($i.id).json"
+
+    $result  = Get-ProjectItem -ItemId $i.id -Owner $owner -ProjectNumber $projectNumber -Force
+
+    Assert-Count -Expected 3 -Presented $result.subIssues
+    $i.subIssues | ForEach-Object {
+        Assert-Contains -Expected $_.contentId -Presented $result.subIssues.id
+    }
 }

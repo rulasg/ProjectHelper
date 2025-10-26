@@ -120,18 +120,24 @@ function Get-Mock_Project_700 {
         }
     }
 
+
+    # SubIssue to show
+    $project.subIssueToShow = @{
+        id = "PVTI_lADOAlIw4c4BCe3Vzgec8p8"
+        subIssues = @(
+            @{ contentId = "I_kwDOPrRnkc7KJAtI" ; title = "Set up database integration with Entity Framework Core" ; url = "https://github.com/octodemo/rulasg-dev-1/issues/8" },
+            @{ contentId = "I_kwDOPrRnkc7KJQ3G" ; title = "Implement background processing with message queue" ; url = "https://github.com/octodemo/rulasg-dev-1/issues/17" },
+            @{ contentId = "I_kwDOPrRnkc7KJQwB" ; title = "Implement health checks and monitoring" ; url = "https://github.com/octodemo/rulasg-dev-1/issues/14" }
+        )
+    }
+
+
     # SubIssue
-    $project.subIssues = $pActual.items.nodes | Where-Object { $_.content.title -like "Implement API*" } | ForEach-Object{
+    $project.subIssuesToAdd = $pActual.items.nodes | Where-Object { $_.content.title -like "Implement API*" } | ForEach-Object{
         @{ contentId = $_.content.Id ; url = $_.content.url ; title = $_.content.title ; addSubIssueMockfile = "invoke-addSubIssue-$($project.issue.contentId)-$($_.content.number).json" }
     }
-    
-    # @{
-    #     subissue1 = @{ contentId = "I_kwDOPrRnkc7KJAq7" ; url ="https://github.com/octodemo/rulasg-dev-1/issues/7"}
-    #     subissue2 = @{ contentId = "I_kwDOPrRnkc7KJAyT" ; url ="https://github.com/octodemo/rulasg-dev-1/issues/10"}
-    #     addMockFile1 ="invoke-addSubIssue-$($issue.id)-44.json"
-    #     addMockFile2 ="invoke-addSubIssue-I_kwDOPrRnkc7TMLtb-45.json"
-    # }
 
+    
     # searchIn Title like
     $project.searchInTitle = @{}
     $project.searchInTitle.titleFilter = "development"
