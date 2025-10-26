@@ -81,12 +81,12 @@ function Get-ProjectItemByUrl{
 
         if(-not $item){
             "Item not found for URL [$Url]" | Write-MyError
-            return $null
+            return
         }
 
         return $item
     }
-}
+} Export-ModuleMember -Function Get-ProjectItemByUrl
 
 function Test-ProjectItem {
     [CmdletBinding()]
@@ -402,17 +402,19 @@ function Add-ProjectItemDirect {
     
         # Get project id
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
-        $projectId = $db.ProjectId
-        if (-not $projectId) {
+        if ( ! $db) {
             "Project ID not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError
             return $null
+        } else {
+            $projectId = $db.ProjectId
         }
     }
 
     process {
 
-        if(Test-ProjectItem -Url $Url -Owner $Owner -ProjectNumber $ProjectNumber){
-            $item = Search-ProjectItem -Filter $Url -FieldName "urlContent" -IncludeDone -Owner $Owner -ProjectNumber $ProjectNumber -PassThru
+        if(Test-Item $db $Url){
+            $item = Get-ItemByUrl $db $url
+            # return the id as if has been aded
             return $item.id
         }
 
@@ -460,7 +462,6 @@ function Remove-ProjectItemDirect {
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName,ValueFromPipeline, Position = 0)][Alias("Id")][string]$ItemId,
-        [Parameter()][switch]$DeleteIssue,
         [Parameter()][switch]$Force
         
     )
@@ -474,29 +475,24 @@ function Remove-ProjectItemDirect {
         if ($db) {
             $projectId = $db.ProjectId
         }
-        else {
-            throw "Project not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]"
-        }
     }
 
     process {
+
+        # With no Project Id we ned to abort
+        if( ! $projectId ){ return }
         
         $item = Get-Item $db $ItemId
         
         if (-not $item) {
             "Item [$ItemId] not found in project [$Owner/$ProjectNumber]" | Write-MyHost
-            return $null
+            return
         }
         
         $itemId = $item.id
         $itemUrl = $item.url
 
         try{
-
-            if (-not $projectId) {
-                "Project ID not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError
-                return $null
-            }
 
             # Remove item from project
             if ($PSCmdlet.ShouldProcess($ItemId, "RRemove from project $Owner/$ProjectNumber")) {
@@ -533,33 +529,70 @@ function Remove-ProjectItemDirect {
         Remove-Item $db $ItemId
         Save-ProjectDatabaseSafe -Database $db
 
-        if (! $DeleteIssue){
-            return $itemUrl
-        }
-
-        # Remove issue
-        if($item.type -eq "Issue") {
-            "Deleting issue associated to item [$ItemId]" | Write-Verbose
-            $item = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $ItemId -Force
-            if ($item -and $item.urlContent) {
-                try {
-                    Remove-ProjectIssueDirect -Url $item.url
-                }
-                catch {
-                    "Issue associated to item [$ItemId] could not be deleted: $_" | Write-MyWarning
-                }
-            }
-            else {
-                "No issue associated to item [$ItemId]" | Write-MyWarning
-            }
-        } else {
-            "Item [$ItemId] is not an Issue, skipping issue deletion" | Write-MyHost
-        }
-
         return $itemUrl
     }
 
-} Export-ModuleMember -Function Remove-ProjectItemDirect -Alias "rpi"
+} Export-ModuleMember -Function Remove-ProjectItemDirect
+
+function Remove-ProjectItem {
+    [CmdletBinding(SupportsShouldProcess)]
+    [Alias ("rpi")]
+    param(
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName,ValueFromPipeline, Position = 0)][Alias("Id")][string]$ItemId,
+        [Parameter()][switch]$DeleteIssue,
+        [Parameter()][switch]$Force
+        
+    )
+
+    process {
+
+        # Get item to delete issue later
+        if( ! $DeleteIssue){
+            # Remove item from project
+            $itemUrl = Remove-ProjectItemDirect -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $ItemId -Force:$Force
+            return $itemUrl
+        }
+        
+        # Find Item to remove
+        $item = Get-ProjectItem -ItemId $ItemId
+
+        if( ! $item){
+            "Item [$ItemId] not found, cannot delete issue" | Write-MyWarning
+            return $false
+        }
+
+        # Remove issue associated with the item
+        # If DraftIssue when it´s already delete when removed from project 
+        # If PullRequest. PR can not be deleted
+        if($item.type -ne "Issue") {
+            "Item [$ItemId] is not an Issue, skipping issue deletion" | Write-MyHost
+            return $itemUrl
+        }
+
+        "Deleting issue associated to item [$ItemId]" | Write-Verbose
+        if ($item.urlContent) {
+            try {
+                $result = Remove-IssueDirect -Url $item.url
+            } catch {
+                "Issue associated to item [$ItemId] could not be deleted: $_" | Write-MyWarning
+                return $false
+            }
+        } else {
+            "No issue associated to item [$ItemId]" | Write-MyWarning
+        }
+
+        if($result){
+            "Issue associated to item [$ItemId] deleted successfully" | Write-Verbose
+            return $true
+        } else {
+            "Issue associated to item [$ItemId] could not be deleted properly" | Write-MyWarning
+            return $false
+        }
+    }
+
+} Export-ModuleMember -Function Remove-ProjectItem -Alias "rpi"
 
 function Get-ProjectItemDirect {
     [CmdletBinding()]
