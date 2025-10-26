@@ -9,7 +9,7 @@ function Get-ContentIdFromUrlDirect{
         [Parameter(Mandatory,Position = 0)][string]$Url
     )
 
-    $issue = Get-ProjectIssue -Url $url
+    $issue = Get-ProjectIssueDirect -Url $url
 
     $ret = $issue.id
 
