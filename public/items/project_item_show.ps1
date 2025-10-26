@@ -223,15 +223,14 @@ function writeComment2{
         
         if($order -eq $item.commentsTotalCount) {$header += " Last"}
 
-        addJumpLine
+        addJumpLine -message "Start Comment"
         
         writeHeader $header -Author $Comment.author -UpdatedAt $Comment.updatedAt
         
-        addJumpLine
+        addJumpLine -message "Header Done"
         
         $Comment.body | write -Color Gray
 
-        addJumpLine
     }
 }
 
@@ -268,20 +267,29 @@ function write{
         }
         
 
-        $text | Write-ToConsole -Color:$color -NoNewLine
-        $text | Write-ToBuffer -NoNewLine
+        $text | writetoconsole -Color:$color -NoNewLine
+
     }
 }
 
-$script:addJumpLine = 0
-function addJumpLine{
-    Write-ToConsole -Color DarkGray -Message "- $((($script:addJumpLine)++)) -"
-    # Write-ToConsole -Color DarkGray
-    Write-ToBuffer
+$DEBUG_SECTION_SHOWPROJECTITEM = "showprojectitem"
+function addJumpLine($message){
+    $text = (Test-MyDebug -section $DEBUG_SECTION_SHOWPROJECTITEM) ? "[$message⏎]" : ""
+    $text | writetoconsole -Color Blue
 }
 function addSpace{
-    " " | Write-ToConsole -Color Cyan -NoNewline
-    " " | Write-ToBuffer -NoNewline
+    $text = (Test-MyDebug -section $DEBUG_SECTION_SHOWPROJECTITEM) ? "[●]" : " "
+    $text | writetoconsole -Color Green -NoNewLine
+}
+
+function writetoconsole{
+    param(
+        [Parameter(ValueFromPipeline)][string]$Color,
+        [Parameter(ValueFromPipeline, Position = 0)][string]$Message,
+        [Parameter()][switch]$NoNewLine
+    )
+    $Message | Write-ToConsole -Color $Color -NoNewLine:$NoNewLine
+    $Message | Write-ToBuffer -NoNewLine:$NoNewLine
 }
 
 function ShowAttribLine{
