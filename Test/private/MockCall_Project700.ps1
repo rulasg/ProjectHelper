@@ -40,7 +40,6 @@ function Get-Mock_Project_700 {
     $project.repo.object.Remove('parent')
     $project.repo.object.owner = $repoContent.data.repository.owner.login
     
-
     # Project info
     $project.id = $pActual.id
     $project.owner = $pActual.owner.login
@@ -65,9 +64,10 @@ function Get-Mock_Project_700 {
     # issueToCreateAddAndRemove
     $id = "I_kwDOPrRnkc7T2Al2"
     $project.issueToCreateAddAndRemove=@{
-        url = "https://github.com/octodemo/rulasg-dev-1/issues/46"
         id = $id
         number = 46
+        url = "https://github.com/octodemo/rulasg-dev-1/issues/46"
+        getIssueOrPullRequestMockFile = "invoke-getissueorpullrequest-46.json"
         itemId ="PVTI_lADOAlIw4c4BCe3VzggVZH8"
         addIssueToOProjectMockFile = "invoke-additemtoproject-$($project.id)-$id.json"
         createIssueMockfile = "invoke-createissue-$($project.repo.id).json"
