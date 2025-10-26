@@ -120,6 +120,18 @@ function Get-Mock_Project_700 {
         }
     }
 
+    # SubIssue
+    $project.subIssues = $pActual.items.nodes | Where-Object { $_.content.title -like "Implement API*" } | ForEach-Object{
+        @{ contentId = $_.content.Id ; url = $_.content.url ; title = $_.content.title ; addSubIssueMockfile = "invoke-addSubIssue-$($project.issue.contentId)-$($_.content.number).json" }
+    }
+    
+    # @{
+    #     subissue1 = @{ contentId = "I_kwDOPrRnkc7KJAq7" ; url ="https://github.com/octodemo/rulasg-dev-1/issues/7"}
+    #     subissue2 = @{ contentId = "I_kwDOPrRnkc7KJAyT" ; url ="https://github.com/octodemo/rulasg-dev-1/issues/10"}
+    #     addMockFile1 ="invoke-addSubIssue-$($issue.id)-44.json"
+    #     addMockFile2 ="invoke-addSubIssue-I_kwDOPrRnkc7TMLtb-45.json"
+    # }
+
     # searchIn Title like
     $project.searchInTitle = @{}
     $project.searchInTitle.titleFilter = "development"

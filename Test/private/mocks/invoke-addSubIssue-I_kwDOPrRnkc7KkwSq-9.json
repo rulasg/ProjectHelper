@@ -1,0 +1,28 @@
+{
+  "data": {
+    "addSubIssue": {
+      "issue": {
+        "title": "Issue for development",
+        "body": "Body of issue for development",
+        "number": 26,
+        "url": "https://github.com/octodemo/rulasg-dev-1/issues/26",
+        "id": "I_kwDOPrRnkc7KkwSq",
+        "repository": {
+          "id": "R_kgDOPrRnkQ",
+          "nameWithOwner": "octodemo/rulasg-dev-1"
+        }
+      },
+      "subIssue": {
+        "title": "Implement API authentication and authorization",
+        "body": "## Description\nSet up authentication and authorization mechanisms for the Web API using JWT, OAuth, or Identity.\n\n## Tasks\n- [ ] Configure authentication middleware\n- [ ] Implement JWT token generation and validation\n- [ ] Set up authorization policies\n- [ ] Add role-based access control\n- [ ] Secure endpoints with appropriate attributes\n- [ ] Create user authentication endpoints (login, register)\n\n## Acceptance Criteria\n- Authentication works for protected endpoints\n- JWT tokens are properly generated and validated\n- Role-based permissions are enforced\n- User identity is accessible in controllers\n- Auth configuration follows security best practices",
+        "number": 9,
+        "url": "https://github.com/octodemo/rulasg-dev-1/issues/9",
+        "id": "I_kwDOPrRnkc7KJAvo",
+        "repository": {
+          "id": "R_kgDOPrRnkQ",
+          "nameWithOwner": "octodemo/rulasg-dev-1"
+        }
+      }
+    }
+  }
+}
