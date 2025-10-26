@@ -38,6 +38,8 @@ function Get-Mock_Project_700 {
         object = $repoContent.data.repository
     }
     $project.repo.object.Remove('parent')
+    $project.repo.object.owner = $repoContent.data.repository.owner.login
+    
 
     # Project info
     $project.id = $pActual.id

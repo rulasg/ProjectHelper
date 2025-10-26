@@ -4,15 +4,17 @@ function Test_GetRepository{
     Mock_DatabaseRoot
     
     $p = Get-Mock_Project_700 ;
-    $r = $p.repository
+    $r = $p.repo
+    $ro = $p.repo.object
+
     
     MockCallJson -Command "Invoke-Repository -Owner $($r.owner) -Name $($r.name)" -FileName $p.repoFile
 
     $result = Get-Repository -Owner $r.owner -Name $r.name
 
     #Assert
-    foreach ( $key in $r.Keys ){
-        Assert-AreEqual -Expected:$r.$key -Presented:$result.$key
+    foreach ( $key in $ro.Keys ){
+        Assert-AreEqual -Expected:$ro.$key -Presented:$result.$key
     }
 
     # Assert repo cache created
