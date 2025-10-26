@@ -24,8 +24,8 @@ function Invoke-CreateDraftItem{
     $variables = @{
         input = @{
             projectId = $ProjectId
-            title = $Title
-            body = $Body
+            title = $Title | ConvertTo-InvokeParameterString
+            body = $Body | ConvertTo-InvokeParameterString
         }
     }
 

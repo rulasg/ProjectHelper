@@ -3,24 +3,62 @@ function Test_NewProjectIssueDirect{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $p = Get-Mock_Project_700 ;
-    $r = $p.createIssueInRepo
+    $p = Get-Mock_Project_700 
+    $r = $p.repo 
+    $i = $p.issueToCreateAddAndRemove
 
-    $title = "Test Issue from New-ProjectIssueDirect"
-    $body = "This is a test issue created by New-ProjectIssueDirect test"
-    $command = "Invoke-CreateIssue -RepositoryId $($r.id) -Title ""$title"" -Body ""$body"""
+    $issueTitle = "Random value title"
+    $issueBody = "Random value body"
+    $mockfilename = $i.createIssueMockfile
+    
+    # MockCall_GetProject $p
+    MockCallJson -Command "Invoke-Repository -Owner $($r.owner) -Name $($r.name)" -FileName $r.getRepoMockFile
+    MockCallJson -Command "Invoke-CreateIssue -RepositoryId $($r.id) -Title ""$issueTitle"" -Body ""$issueBody""" -FileName $mockfilename
 
-    MockCallJson -Command "Invoke-Repository -Owner $($r.owner) -Name $($r.name)" -FileName $p.repoFile
-    MockCallJson -command $command -FileName "invoke-createissue-$($r.id).json"
+    $params = @{
+        RepoOwner = $r.owner
+        RepoName  = $r.name
+        Title     = $issueTitle
+        Body      = $issueBody
+    }
 
-
-     $result = New-ProjectIssueDirect -RepoOwner $r.owner -RepoName $r.name -Title "Test Issue from New-ProjectIssueDirect" -Body "This is a test issue created by New-ProjectIssueDirect test"
-
-    # Invoke-CreateIssue -RepositoryId $result.Id -Title "Test Issue from New-ProjectIssueDirect" -Body "This is a test issue created by New-ProjectIssueDirect test" -ProjectIds @($p.id)
+    $result = New-ProjectIssueDirect @params
 
     # Assert
-    Assert-AreEqual -Expected $r.issueUrl -Presented $result
+    Assert-AreEqual -Expected $i.url -Presented $result
 
 }
 
-test
+function Test_NewProjectIssue{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $r = $p.repo
+    $i = $p.issueToCreateAddAndRemove
+    $issueTitle = "Random value title"
+    $issueBody = "Random value body"
+    $mockfilenameCreate = "invoke-createissue-$($r.id).json"
+    $mockfilenameGet = "invoke-getissueorpullrequest-$($i.number).json"
+
+    MockCall_GetProject $p
+    MockCallJson -Command "Invoke-Repository -Owner $($r.owner) -Name $($r.name)" -FileName $r.getRepoMockFile
+    MockCallJson -Command "Invoke-CreateIssue -RepositoryId $($r.id) -Title ""$issueTitle"" -Body ""$issueBody""" -FileName $mockfilenameCreate
+    MockCallJson -Command "Invoke-GetIssueOrPullRequest -Url $($i.url)" -fileName $mockfilenameGet
+    MockCallJson -Command "Invoke-AddItemToProject -ProjectId $($p.id) -ContentId $($i.id)" -fileName $i.addIssueToOProjectMockFile
+
+    # Create issue
+    $params = @{
+        ProjectOwner = $owner
+        ProjectNumber = $projectNumber
+        RepoOwner = $r.owner
+        RepoName  = $r.name
+        Title     = $issueTitle
+        Body      = $issueBody
+    }
+    
+    $result = New-ProjectIssue @params
+
+    Assert-AreEqual -Expected $result -Presented $i.itemId
+}
+

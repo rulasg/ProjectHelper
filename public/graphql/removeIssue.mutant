@@ -1,0 +1,5 @@
+mutation IssueDelete($input:DeleteIssueInput!){
+    deleteIssue(input: $input){
+        repository{{repository}}
+    }
+}

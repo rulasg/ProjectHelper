@@ -2,8 +2,15 @@
   "data": {
     "createIssue": {
       "issue": {
-        "id": "I_kwDOPrRnkc7Sj4N0",
-        "url": "https://github.com/octodemo/rulasg-dev-1/issues/30"
+        "title": "kkk",
+        "body": "",
+        "number": 46,
+        "url": "https://github.com/octodemo/rulasg-dev-1/issues/46",
+        "id": "I_kwDOPrRnkc7T2Al2",
+        "repository": {
+          "id": "R_kgDOPrRnkQ",
+          "nameWithOwner": "octodemo/rulasg-dev-1"
+        }
       }
     }
   }

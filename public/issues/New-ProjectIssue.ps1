@@ -12,6 +12,11 @@ function New-ProjectIssueDirect {
 
     $repo = Get-Repository -Owner $RepoOwner -Name $RepoName
 
+    if( ! $repo ) {
+        "Repository $RepoOwner/$RepoName not found" | Write-MyError
+        return $null
+    }
+
     $params = @{
         repoid = $repo.id
         title        = $Title | ConvertTo-InvokeParameterString

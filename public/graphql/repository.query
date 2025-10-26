@@ -1,10 +1,4 @@
-fragment repo on Repository {
-    id
-    name
-    owner { login }
-    hasIssuesEnabled
-    description
-  }
+fragment repo on Repository {{repository}}
 
   query RepositoryInfo($owner: String!, $name: String!) {
     repository(owner: $owner, name: $name) {

@@ -44,12 +44,12 @@ function Invoke-UpdateIssue{
 
     # Title can not be empty
     if(-not [string]::IsNullOrWhiteSpace($Title)){
-        $variables.input.title = $Title
-    }
+        $variables.input.title = $Title | ConvertTo-InvokeParameterString
+    } 
 
     # This will avoid to empty the body
     if(-not [string]::IsNullOrWhiteSpace($Body)){
-        $variables.input.body = $Body
+        $variables.input.body = $Body | ConvertTo-InvokeParameterString
     }
 
     # Check if variables are is empty
