@@ -14,7 +14,7 @@ function Reset-DatabaseStore{
     [CmdletBinding()]
     param()
 
-        $databaseRoot = Invoke-MyCommand -Command GetDatabaseStorePath
+        $databaseRoot = Get-DatabaseStore
 
         Microsoft.PowerShell.Management\Remove-Item -Path $databaseRoot -Recurse -Force -ErrorAction SilentlyContinue
 
@@ -26,9 +26,13 @@ function Get-DatabaseStore{
     [CmdletBinding()]
     param()
 
-        $databaseRoot = Invoke-MyCommand -Command GetDatabaseStorePath
+        if($script:databaseRoot){
+            return $script:databaseRoot
+        }
 
-        return $databaseRoot
+        $script:databaseRoot = Invoke-MyCommand -Command GetDatabaseStorePath
+
+        return $script:databaseRoot
 
 } Export-ModuleMember -Function Get-DatabaseStore
 
@@ -79,7 +83,7 @@ function Get-DatabaseFile{
         [Parameter(Position = 0)][string]$Key
     )
 
-    $databaseRoot = Invoke-MyCommand -Command GetDatabaseStorePath
+    $databaseRoot = Get-DatabaseStore
 
     $path = $databaseRoot | Join-Path -ChildPath "$Key.json"
 
