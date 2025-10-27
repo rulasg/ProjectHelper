@@ -142,7 +142,8 @@ function Search-ProjectItem {
     ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
     
-    $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -ExcludeDone:$(-not $IncludeDone)
+    # Get items as hashtable for later queries
+    $items = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -IncludeDone:$IncludeDone -AsHashtable
 
     # return if #items is null
     if ($null -eq $items) { return $null }
@@ -224,20 +225,46 @@ function Get-ProjectItems {
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
         [Parameter()][switch]$IncludeDone,
-        [Parameter()][switch]$Force
+        [Parameter()][switch]$Force,
+        [Parameter()][switch]$AsHashtable
     )
 
     ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
 
-    $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -ExcludeDone:$(-not $IncludeDone)
+    try {
+        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+    }
+    catch {
+        "Failed to get project [$owner/$ProjectNumber]: $_" | Write-MyError
+        return
+    }
+
+    # Check if $db is null
+    if($null -eq $db){ "Project not found. Check owner and projectnumber" | Write-MyError ; return }
+
+    $itemKeys = $db.items.Keys
+
+    $items = $itemKeys | ForEach-Object { Get-Item $db $_ }
+
+    # exclude done items if needed
+    if(! $IncludeDone){
+        $items = $items | Where-Object { $_.Status -ne "Done" }
+    }
 
     # return if #items is null
-    if ($null -eq $items) { return $null }
+    if ($null -eq $items) { return }
 
-    $ret = @($items.Values | ForEach-Object { 
+    if($AsHashtable){
+        $ret = New-HashTable
+        foreach($item in $items){
+            $ret[$item.id] = $item
+        }
+    } else {
+        $ret = @($items | ForEach-Object {
             [PSCustomObject]$_
-        } )
+        })
+    }
 
     return $ret
 
