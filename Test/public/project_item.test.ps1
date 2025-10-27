@@ -326,7 +326,7 @@ function Test_UpdateProjectDatabase_Fail_With_Staged{
     $tt = Stop-MyTranscript
 
     Assert-IsNull -Object $result
-    $message = "Error: Can not get item list with Force [True]; There are unsaved changes. Restore changes with Reset-ProjectItemStaged or sync projects with Sync-ProjectItemStaged first and try again"
+    $message = "Error: Failed to get project [octodemo/700]: There are unsaved changes. Restore changes with Reset-ProjectItemStaged or sync projects with Sync-ProjectItemStaged first and try again"
     Assert-Contains -Expected $message -Presented $tt
 
     # Reset the staged changes
