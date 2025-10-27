@@ -14,25 +14,25 @@ function Reset-DatabaseStore{
     [CmdletBinding()]
     param()
 
-        $databaseRoot = Get-DatabaseStore
+    $databaseRoot = Get-DatabaseStore -Force
 
-        Microsoft.PowerShell.Management\Remove-Item -Path $databaseRoot -Recurse -Force -ErrorAction SilentlyContinue
+    Microsoft.PowerShell.Management\Remove-Item -Path $databaseRoot -Recurse -Force -ErrorAction SilentlyContinue
 
-        New-Item -Path $databaseRoot -ItemType Directory
+    New-Item -Path $databaseRoot -ItemType Directory
 
 } Export-ModuleMember -Function Reset-DatabaseStore
 
 function Get-DatabaseStore{
     [CmdletBinding()]
-    param()
+    param(
+        [switch] $Force
+    )
 
-        if($script:databaseRoot){
-            return $script:databaseRoot
-        }
-
+    if ($Force -or -Not $script:databaseRoot) {
         $script:databaseRoot = Invoke-MyCommand -Command GetDatabaseStorePath
+    }
 
-        return $script:databaseRoot
+    return $script:databaseRoot
 
 } Export-ModuleMember -Function Get-DatabaseStore
 
