@@ -138,9 +138,9 @@ function Invoke-ProjectInjectionOnDueDate {
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -ExcludeDone:$(-Not $IncludeDoneItems)
+    $items = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber -IncludeDone:$IncludeDoneItems
 
-    foreach($item in $items.Values){
+    foreach($item in $items){
 
         function EditItem($FieldName,$Value){
             $params = @{

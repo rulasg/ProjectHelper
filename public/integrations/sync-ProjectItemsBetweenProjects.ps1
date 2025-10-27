@@ -66,10 +66,10 @@ function Update-ProjectItemsBetweenProjects {
     $FieldsList = $sourceProject.fields.Values.name
 
     # Get source project items
-    $sourceItems = Get-ProjectItemList -Owner $SourceOwner -ProjectNumber $SourceProjectNumber -ExcludeDone:$(-not $IncludeDoneItems)
+    $sourceItems = Get-ProjectItems -Owner $SourceOwner -ProjectNumber $SourceProjectNumber -IncludeDone:$IncludeDoneItems
 
     # Process each item in the source project
-    foreach($sourceItem in $sourceItems.Values){
+    foreach($sourceItem in $sourceItems){
         # Find matching item in destination project
         # Use URL
         # By the moment we are not going to sync Drafts as they belong to single project and therefore no matching is possible

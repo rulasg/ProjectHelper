@@ -38,7 +38,7 @@ Gets all items from project 1 excluding those with status "Done".
 function Get-ProjectItemList{
     [CmdletBinding()]
     [OutputType([string[]])]
-    [Obsolete("Get-ProjectItemList is deprecated. Use Get-ProjectItems instead.")]
+    [Obsolete("Use Get-ProjectItems instead.")]
     param(
         [Parameter(Position = 0)] [string]$Owner,
         [Parameter(Position = 1)] [string]$ProjectNumber,

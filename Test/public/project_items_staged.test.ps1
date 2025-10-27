@@ -885,7 +885,6 @@ function Test_TestProjectItemStaged {
 
     # Project is cached
     MockCall_GetProject_700 -Cache
-    $null = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
     $result = Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-IsFalse -Condition $result
 

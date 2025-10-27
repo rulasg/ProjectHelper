@@ -11,7 +11,7 @@ function Test_GetProject_Paging_SUCCESS{
 
     Assert-NotNull -Presented $result
 
-    $presented = Get-ProjectItemList -Owner $owner -ProjectNumber $projectNumber
+    $presented = Get-ProjectItems -Owner $owner -ProjectNumber $projectNumber -IncludeDone
     $fields = Get-ProjectFields -Owner $owner -ProjectNumber $projectNumber
 
     Assert-Count -Expected 332 -Presented $presented

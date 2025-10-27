@@ -44,7 +44,7 @@ function Test_SearchProjectItem_PassThru_SUCCESS {
     Assert-Count -Expected $expected -Presented $shown
 
     # Compare one item type difference
-    Assert-IsTrue -Condition ($raw[0] -is [hashtable])
+    Assert-IsTrue -Condition ($raw[0] -is [pscustomobject])
     Assert-IsTrue -Condition ($shown[0] -is [pscustomobject])
     Assert-Count -Expected $attributes.Count -Presented $($shown[0].PSObject.Properties.Name)
 
