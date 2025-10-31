@@ -1,4 +1,4 @@
-function Test_GetProjetItemList_SUCCESS{
+function Test_GetProjetItems_SUCCESS{
 
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
@@ -50,16 +50,14 @@ function Test_GetProjetItemList_SUCCESS{
     Assert-Count -Expected $itemsCount -Presented $result
 }
 
-function Test_GetProjetItemList_FAIL{
+function Test_GetProjetItems_FAIL{
 
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
-    $Owner = "SomeOrg" ; $ProjectNumber = 164 ; $itemsCount = 12
+    $Owner = "SomeOrg" ; $ProjectNumber = 164
 
-    MockCall_GitHubOrgProjectWithFields_Null  -Owner $owner -ProjectNumber $projectNumber
-
-    Mock_DatabaseRoot
+    MockCall_GitHubOrgProjectWithFields_Null -Owner $owner -ProjectNumber $projectNumber
 
     # Start the transcript
 
