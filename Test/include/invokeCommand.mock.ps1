@@ -3,6 +3,9 @@
 #
 # This includes help commands to mock invokes in a test module
 #
+# Set $env:TraceInvokeMockFilePath to trave Invoke dependencies
+# "traceInvoke.log" | %{touch $_ ;  $env:TraceInvokeMockFilePath = $_ | Resolve-Path}
+#
 # THIS INCLUDE REQURED module.helper.ps1
 if(-not $MODULE_NAME){ throw "Missing MODULE_NAME varaible initialization. Check for module.helerp.ps1 file." }
 if(-not $MODULE_ROOT_PATH){ throw "Missing MODULE_ROOT_PATH varaible initialization. Check for module.helerp.ps1 file." }
@@ -14,6 +17,28 @@ $MOCK_PATH = $testRootPath | Join-Path -ChildPath 'private' -AdditionalChildPath
 $MODULE_INVOKATION_TAG = "$($MODULE_NAME)Module"
 $MODULE_INVOKATION_TAG_MOCK = "$($MODULE_INVOKATION_TAG)_Mock"
 
+function Trace-InvokeCommandAlias{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory,Position=0)][string]$Alias
+    )
+
+    $filePath = $env:TraceInvokeMockFilePath
+
+    if(! $filePath){ return }
+
+    if(! (Test-Path $filePath)) {return}
+
+    $content = Get-Content $filePath
+
+    $content = $content ?? @()
+
+    if($content.Contains($Alias)) { return}
+
+    $alias | Out-File $filePath -Append
+
+}
+
 function Set-InvokeCommandMock{
     [CmdletBinding()]
     param(
@@ -22,6 +47,8 @@ function Set-InvokeCommandMock{
     )
 
     InvokeHelper\Set-InvokeCommandAlias -Alias $Alias -Command $Command -Tag $MODULE_INVOKATION_TAG_MOCK
+
+    Trace-InvokeCommandAlias $alias
 }
 
 function Reset-InvokeCommandMock{
@@ -255,6 +282,8 @@ function Assert-MockFileNotfound{
         throw "File not found or wrong case name. Expected[ $filename ] - Found[$( $file.name )]"
     }
 }
+
+
 
 
 
