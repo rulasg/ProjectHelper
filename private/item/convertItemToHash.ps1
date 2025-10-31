@@ -8,6 +8,9 @@ function Convert-NodeItemToHash {
         "Processing Item $($NodeItem.id) - $($NodeItem.content.title)" | Write-Verbose
 
         $item = New-Object System.Collections.Hashtable
+
+        $item.cachedAt = Get-Date
+
         $item.id = $NodeItem.id
         $item.databaseId = $NodeItem.fullDatabaseId
 
