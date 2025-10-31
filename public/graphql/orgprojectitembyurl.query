@@ -1,0 +1,8 @@
+query OrgProjectItemByUrl($login:String! $number:Int! $url:String!){
+    organization(login: $login){
+        projectV2(number: $number){
+            item(url: $url)
+                {{item}}
+        }
+    }
+}
