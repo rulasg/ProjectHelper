@@ -1,6 +1,6 @@
-query OrgProjectWithFields( $afterFields:String! $afterItems:String! $lastComments: Int=10 $firstFields:Int!$firstItems:Int!$login:String!$number:Int!){organization(login: $login){
+query OrgProjectWithFields( $afterFields:String! $afterItems:String! $lastComments: Int=10 $firstFields:Int!$firstItems:Int!$login:String!$number:Int! $query:String=""){organization(login: $login){
     projectV2(number: $number){number,url,shortDescription,public,closed,title,id,readme,
-    items(first: $firstItems, after: $afterItems){
+    items(first: $firstItems, after: $afterItems, query:$query){
         pageInfo{endCursor,hasNextPage},
         totalCount,
         nodes{

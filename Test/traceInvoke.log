@@ -66,3 +66,10 @@ Get-Date -Format yyyy-MM-dd
 Invoke-ProjectInjectionFunctions
 Get-SfAccount "https://some.com/1234/viuew"
 Get-SfAccount "https://some.com/4321/viuew"
+Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 700 -afterFields "" -afterItems "" -firstItems 0 -query ""
+Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 700 -afterFields "" -afterItems "" -query ""
+Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 625 -afterFields "" -afterItems "" -firstItems 0 -query ""
+Invoke-GitHubOrgProjectWithFields -Owner SomeOrg -ProjectNumber 164 -afterFields "" -afterItems "" -firstItems 0 -query ""
+Invoke-GitHubOrgProjectWithFields -Owner SomeOrg -ProjectNumber 164 -afterFields "" -afterItems "" -query ""
+Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 625 -afterFields "" -afterItems "" -query ""
+Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 626 -afterFields "" -afterItems "" -query ""
