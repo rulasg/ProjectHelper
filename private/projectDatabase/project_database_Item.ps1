@@ -64,9 +64,15 @@ function Set-LastComment{
         $Item.comments = @()
     }
 
+    # Check if it has just one
+    if($Item.comments -is [hashtable]){
+        $Item.comments = @($Item.comments) + $commentobj
+    } else {
+        $Item.comments += ($commentobj)
+    }
+
     # Update commentLast field
     $Item.commentLast = $commentobj
-    $Item.comments += $commentobj
 }
 
 function Find-Item {
