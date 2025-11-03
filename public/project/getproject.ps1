@@ -3,7 +3,6 @@ function Get-Project {
     param(
         [Parameter()][string]$Owner,
         [Parameter()][int]$ProjectNumber,
-        [Parameter()][string]$Query,
         [Parameter()][switch]$SkipItems,
         [Parameter()][switch]$Force
     )
@@ -14,7 +13,7 @@ function Get-Project {
     }
 
     if ($Force -or -Not (Test-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber)) {
-        $result = Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Query $query -SkipItems:$SkipItems
+        $result = Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems
         if ( ! $result) { return }
     }
 

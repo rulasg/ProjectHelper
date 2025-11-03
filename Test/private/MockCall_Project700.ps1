@@ -18,6 +18,7 @@ function Get-Mock_Project_700 {
     # Version of the project file modified manually to have two items with same id case sensitive
     # this is used to test case sensitivity of item ids in hashtables
     $project.projectFile_caseSensitive = "invoke-GitHubOrgProjectWithFields-octodemo-700-caseSensitive.json"
+    $project.projectFile_singleItem = "invoke-GitHubOrgProjectWithFields-octodemo-700-singleItem.json"
 
     $content = Get-MockFileContentJson -FileName $project.projectFile
     $pActual = $content.data.organization.projectV2
