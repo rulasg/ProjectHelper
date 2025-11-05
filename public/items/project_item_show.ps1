@@ -38,7 +38,7 @@ function Show-ProjectItem{
         }
         
         # Before all
-        addJumpLine
+        addJumpLine -message "Header Start"
 
         # title bar
         # ($item.RepositoryOwner + "/") | write -Color Cyan
@@ -47,27 +47,28 @@ function Show-ProjectItem{
         addSpace
         $item.Title | write -Color Yellow -BetweenQuotes
         
-        addJumpLine
+        addJumpLine -message "Header End"
         
         # URL
         $item.url | write -Color White
 
-        addJumpLine
+        addJumpLine -message "End Url"
         
         # Fields by line
         if($FieldsToShow){
-            addJumpLine
+            addJumpLine -message "Fields Before"
 
             foreach($line in $FieldsToShow){
                 ShowAttribLine -AttributesToShow $line -Item $item
             }
         }
 
-        addJumpLine
+        addJumpLine -message "Fields After"
         
         # Body
         "Body" | writeHeader
         $item.Body | write -Color Gray
+        addJumpLine -message "Body End"
 
         # Comments
         if($AllComments){
@@ -227,9 +228,11 @@ function writeComment2{
         
         writeHeader $header -Author $Comment.author -UpdatedAt $Comment.updatedAt
         
-        addJumpLine -message "Header Done"
+        addJumpLine -message "Body Start"
         
         $Comment.body | write -Color Gray
+
+        addJumpLine -message "Body End"
 
     }
 }
@@ -345,16 +348,12 @@ function Write-ToBuffer {
     )
 
     if($null -ne $script:outputBuffer){
-        "Writing to buffer" | Write-MyDebug -section "WriteBuffer"
-        
+
         $script:outputBuffer += $Message
 
         if(-not $NoNewLine){
             $script:outputBuffer += "`n"
         }
-
-    } else {
-        "No output buffer defined" | Write-MyDebug -section "WriteBuffer"
     }
 
 }
