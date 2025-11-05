@@ -105,6 +105,7 @@ function ConvertFrom-SingleSelect{
     )
     process{
 
+        # Clear the value of field
         if([string]::IsNullOrEmpty($Value)){
             return $null
         }
@@ -134,6 +135,12 @@ function ConvertTo-SingleSelect{
         [Parameter(ValueFromPipeline)][string]$Value
     )
     process{
+
+        # Clear the value of field
+        if([string]::IsNullOrEmpty($Value)){
+            return $null
+        }
+
         $ret = $Field.options.$Value
         return $ret
     }
@@ -223,6 +230,12 @@ function ConvertTo-Number {
         [Parameter(ValueFromPipeline)][string]$Value
     )
     process {
+
+        # Clear the value of field
+        if([string]::IsNullOrWhiteSpace($Value)){
+            return $null
+        }
+
         $regex = [regex]"^[^\d-]*(-?(?:\d|(?<=\d)\.(?=\d{3}))+(?:,\d+)?|-?(?:\d|(?<=\d),(?=\d{3}))+(?:\.\d+)?)[^\d]*$"
 
         # Get the numeric part from the string
