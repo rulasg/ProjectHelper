@@ -88,7 +88,7 @@ function Update-ProjectDatabase {
     Save-ProjectV2toDatabase $projectV2 -Items $items -Fields $fields
 
     return $true
-}
+} Export-ModuleMember -Function Update-ProjectDatabase
 
 <#
 .SYNOPSIS
