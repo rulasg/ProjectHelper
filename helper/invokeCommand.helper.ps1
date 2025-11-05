@@ -28,7 +28,7 @@ function Invoke-MyCommand{
         [Parameter(Position=1)][hashtable]$Parameters
     )
 
-    Write-MyDebug "[invoke] $Command" $Parameters
+    Write-MyDebug "invoke" $Command $Parameters
 
     return InvokeHelper\Invoke-MyCommand -Command $Command -Parameters $Parameters
 }

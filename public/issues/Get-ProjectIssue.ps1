@@ -37,7 +37,7 @@ function Get-ProjectIssue {
 
     # Check the project cache of the default project
     $owner,$projectNumber = Get-OwnerAndProjectNumber
-    $item = Get-ProjectItemByUrl -Owner $owner -ProjectNumber $projectNumber -Url $Url -Force:$Force
+    $item = Get-ProjectItemByUrl -Owner $owner -ProjectNumber $projectNumber -Url $Url -PassThru -Force:$Force
     if( $item ) { 
         $issue = $item | Convert-ItemToIssue
         return $issue

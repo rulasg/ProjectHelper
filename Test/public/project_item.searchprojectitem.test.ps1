@@ -44,7 +44,7 @@ function Test_SearchProjectItem_PassThru_SUCCESS {
     Assert-Count -Expected $expected -Presented $shown
 
     # Compare one item type difference
-    Assert-IsTrue -Condition ($raw[0] -is [hashtable])
+    Assert-IsTrue -Condition ($raw[0] -is [pscustomobject])
     Assert-IsTrue -Condition ($shown[0] -is [pscustomobject])
     Assert-Count -Expected $attributes.Count -Presented $($shown[0].PSObject.Properties.Name)
 
@@ -111,8 +111,8 @@ function Test_SearchProjectItem_AND_Filter_SUCCESS {
     MockCall_GetProject $p -Cache
 
     $i = $p.issue 
-    $str = '"Title": "{title}",' -replace "{title}",$i.title
-    $newStr = '"Title": "{title} UniqueSearchAlpha UniqueSearchBeta",' -replace "{title}",$i.title
+    $str = '"{title}"' -replace '{title}',$i.title
+    $newStr = '"{title} UniqueSearchAlpha UniqueSearchBeta"' -replace '{title}',$i.title
 
     # Add content to the title of a file
     $dbpathh = Invoke-MyCommand -Command "Invoke-ProjectHelperGetDatabaseStorePath" | Join-Path -ChildPath octodemo_700.json

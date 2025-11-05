@@ -295,7 +295,7 @@ function Test_EditProjectItems_Direct{
 
 function Test_UpdateProjectDatabase_Fail_With_Staged{
     # When changes are staged list update should fail.
-    # As Update-ProjectDatabase is a private function, we will test it through the public function Get-ProjectItemList with Force
+    # As Update-ProjectDatabase is a private function, we will test it through the public function Get-ProjectItems with Force
 
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
@@ -309,7 +309,7 @@ function Test_UpdateProjectDatabase_Fail_With_Staged{
     MockCall_GetItem -ItemId $itemId
 
     # Act empty as their is nothing staged yet
-    $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force
+    $result = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber -Force -IncludeDone
     Assert-Count -Expected $itemsCount -Presented $result
 
     # arrange modifyt to add staged
@@ -322,18 +322,18 @@ function Test_UpdateProjectDatabase_Fail_With_Staged{
 
     # This call should fail as there are staged changes
     Start-MyTranscript
-    $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force
+    $result = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber -Force -IncludeDone
     $tt = Stop-MyTranscript
 
     Assert-IsNull -Object $result
-    $message = "Error: Can not get item list with Force [True]; There are unsaved changes. Restore changes with Reset-ProjectItemStaged or sync projects with Sync-ProjectItemStaged first and try again"
+    $message = "Error: Failed to get project [octodemo/700]: There are unsaved changes. Restore changes with Reset-ProjectItemStaged or sync projects with Sync-ProjectItemStaged first and try again"
     Assert-Contains -Expected $message -Presented $tt
 
     # Reset the staged changes
     Reset-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
     $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
     Assert-Count -Expected 0 -Presented $result.Keys
-    $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force
+    $result = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber -Force -IncludeDone
     Assert-Count -Expected $itemsCount -Presented $result
 
 }

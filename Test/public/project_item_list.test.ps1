@@ -10,11 +10,11 @@ function Test_GetProjetItemList_SUCCESS{
     MockCall_GetProject_700
 
     # Act
-    $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
+    $result = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber -IncludeDone
 
     Assert-Count -Expected $itemsCount -Presented $result
 
-    $randomItem = $result.$($i.Id)
+    $randomItem = $result | Where-Object {$_.id -eq $i.id}
 
     Assert-AreEqual -Presented $randomItem.Title        -Expected "Issue for development"
     Assert-AreEqual -Presented $randomItem.Body         -Expected "Body of issue for development" 
@@ -45,7 +45,7 @@ function Test_GetProjetItemList_SUCCESS{
     Mock_DatabaseRoot -NotReset
 
     # Can call without mock because it will use the database information
-    $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
+    $result = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber -IncludeDone
 
     Assert-Count -Expected $itemsCount -Presented $result
 }
@@ -65,7 +65,7 @@ function Test_GetProjetItemList_FAIL{
 
     # Run the command
     Start-MyTranscript
-    $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
+    $result = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber -IncludeDone
     $tt = Stop-MyTranscript
 
     # Capture the standard output
@@ -86,13 +86,13 @@ function Test_ProjectItemList_ExcludeDone{
 
     MockCall_GetProject_700
 
-    $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber
+    $result = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber -IncludeDone
 
-    Assert-AreEqual -Expected $itemsCount -Presented $result.Keys.Count
+    Assert-AreEqual -Expected $itemsCount -Presented $result.Count
 
-    $result = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -ExcludeDone
+    $result = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber
 
-    Assert-AreEqual -Expected ($itemsCount - $itemsDone) -Presented $result.Keys.Count
+    Assert-AreEqual -Expected ($itemsCount - $itemsDone) -Presented $result.Count
 }
 
 

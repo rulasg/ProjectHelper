@@ -52,11 +52,13 @@ function Get-ProjectItem {
 
 function Get-ProjectItemByUrl{
     [CmdletBinding()]
+    [Alias ("gpiu")]
     param(
         [Parameter(Mandatory, ValueFromPipeline, Position = 0)][string]$Url,
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
-        [Parameter()][switch]$Force
+        [Parameter()][switch]$Force,
+        [Parameter()][switch]$PassThru
     )
 
     begin {
@@ -74,19 +76,25 @@ function Get-ProjectItemByUrl{
 
         $item = Get-ItemByUrl -Database $db -Url $Url
 
-        # TODO: Create a Resolve-ProjectItemByUrl so that we can udpate the Project
-        # if item is not cached but exists in projects.
+        # TODO: Create a Resolve-ProjectItemByUrl - Depend on function to get item from project remote by url
+        # Get-ItemByUrl only check cache so we need a function that will retreive item from project remote 
+        # and update the project cache.
         # This function depends on the capacity to retreive items by filter
         # Project API has just been updated to allow search project items
 
         if(-not $item){
-            "Item not found for URL [$Url]" | Write-MyError
+            # "Item not found for URL [$Url]" | Write-MyError
             return
         }
 
-        return $item
+        if($PassThru){
+            $ret = $item
+        } else {
+            $ret = Format-ProjectItem -Item $item -Attributes @("id", "Title")
+        }
+        return $ret
     }
-} Export-ModuleMember -Function Get-ProjectItemByUrl
+} Export-ModuleMember -Function Get-ProjectItemByUrl -Alias "gpiu"
 
 function Test-ProjectItem {
     [CmdletBinding()]
@@ -142,7 +150,8 @@ function Search-ProjectItem {
     ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
     
-    $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -ExcludeDone:$(-not $IncludeDone)
+    # Get items as hashtable for later queries
+    $items = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -IncludeDone:$IncludeDone -AsHashtable
 
     # return if #items is null
     if ($null -eq $items) { return $null }
@@ -224,20 +233,46 @@ function Get-ProjectItems {
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
         [Parameter()][switch]$IncludeDone,
-        [Parameter()][switch]$Force
+        [Parameter()][switch]$Force,
+        [Parameter()][switch]$AsHashtable
     )
 
     ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
 
-    $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -ExcludeDone:$(-not $IncludeDone)
+    try {
+        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+    }
+    catch {
+        "Failed to get project [$owner/$ProjectNumber]: $_" | Write-MyError
+        return
+    }
+
+    # Check if $db is null
+    if($null -eq $db){ "Project not found. Check owner and projectnumber" | Write-MyError ; return }
+
+    $itemKeys = $db.items.Keys
+
+    $items = $itemKeys | ForEach-Object { Get-Item $db $_ }
+
+    # exclude done items if needed
+    if(! $IncludeDone){
+        $items = $items | Where-Object { $_.Status -ne "Done" }
+    }
 
     # return if #items is null
-    if ($null -eq $items) { return $null }
+    if ($null -eq $items) { return }
 
-    $ret = @($items.Values | ForEach-Object { 
+    if($AsHashtable){
+        $ret = New-HashTable
+        foreach($item in $items){
+            $ret[$item.id] = $item
+        }
+    } else {
+        $ret = @($items | ForEach-Object {
             [PSCustomObject]$_
-        } )
+        })
+    }
 
     return $ret
 
@@ -571,10 +606,10 @@ function Remove-ProjectItem {
             return $itemUrl
         }
 
-        "Deleting issue associated to item [$ItemId]" | Write-Verbose
+        "Deleting issue associated to item [$ItemId]" | Write-MyDebug
         if ($item.urlContent) {
             try {
-                $result = Remove-IssueDirect -Url $item.url
+                $result = Remove-IssueDirect -Url $item.urlContent
             } catch {
                 "Issue associated to item [$ItemId] could not be deleted: $_" | Write-MyWarning
                 return $false

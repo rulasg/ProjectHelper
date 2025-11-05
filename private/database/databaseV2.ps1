@@ -6,41 +6,45 @@ Set-MyInvokeCommandAlias -Alias GetDatabaseStorePath -Command "Invoke-ProjectHel
 $DATABASE_ROOT = [System.Environment]::GetFolderPath('UserProfile') | Join-Path -ChildPath ".helpers" -AdditionalChildPath $MODULE_NAME, "databaseCache"
 
 # Create the database root if it does not exist
-if(-Not (Test-Path $DATABASE_ROOT)){
+if (-Not (Test-Path $DATABASE_ROOT)) {
     New-Item -Path $DATABASE_ROOT -ItemType Directory
 }
 
-function Reset-DatabaseStore{
+function Reset-DatabaseStore {
     [CmdletBinding()]
     param()
 
-        $databaseRoot = Invoke-MyCommand -Command GetDatabaseStorePath
+    $databaseRoot = Get-DatabaseStore -Force
 
-        Microsoft.PowerShell.Management\Remove-Item -Path $databaseRoot -Recurse -Force -ErrorAction SilentlyContinue
+    Microsoft.PowerShell.Management\Remove-Item -Path $databaseRoot -Recurse -Force -ErrorAction SilentlyContinue
 
-        New-Item -Path $databaseRoot -ItemType Directory
+    New-Item -Path $databaseRoot -ItemType Directory
 
 } Export-ModuleMember -Function Reset-DatabaseStore
 
-function Get-DatabaseStore{
+function Get-DatabaseStore {
     [CmdletBinding()]
-    param()
+    param(
+        [switch] $Force
+    )
 
-        $databaseRoot = Invoke-MyCommand -Command GetDatabaseStorePath
+    if ($Force -or -Not $script:databaseRoot) {
+        $script:databaseRoot = Invoke-MyCommand -Command GetDatabaseStorePath
+    }
 
-        return $databaseRoot
+    return $script:databaseRoot
 
 } Export-ModuleMember -Function Get-DatabaseStore
 
-function Get-Database{
+function Get-Database {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$Key
     )
 
-    $path =  Get-DatabaseFile $Key
+    $path = Get-DatabaseFile $Key
 
-    if(-Not (Test-Path $path)){
+    if (-Not (Test-Path $path)) {
         return $null
     }
 
@@ -49,17 +53,17 @@ function Get-Database{
     return $ret
 }
 
-function Reset-Database{
+function Reset-Database {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$Key
     )
-    $path =  Get-DatabaseFile -Key $Key
+    $path = Get-DatabaseFile -Key $Key
     Microsoft.PowerShell.Management\Remove-Item -Path $path -Force -ErrorAction SilentlyContinue
     return
 }
 
-function Save-Database{
+function Save-Database {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$Key,
@@ -73,20 +77,20 @@ function Save-Database{
     $Database | ConvertTo-Json -Depth 10 | Set-Content $path
 }
 
-function Get-DatabaseFile{
+function Get-DatabaseFile {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$Key
     )
 
-    $databaseRoot = Invoke-MyCommand -Command GetDatabaseStorePath
+    $databaseRoot = Get-DatabaseStore
 
     $path = $databaseRoot | Join-Path -ChildPath "$Key.json"
 
     return $path
 }
 
-function Invoke-ProjectHelperGetDatabaseStorePath{
+function Invoke-ProjectHelperGetDatabaseStorePath {
     [CmdletBinding()]
     param()
 

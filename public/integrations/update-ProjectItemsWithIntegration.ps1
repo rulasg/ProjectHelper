@@ -48,9 +48,9 @@ function Invoke-ProjectInjectionWithIntegration{
     ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    $items = Get-ProjectItemList -Owner $Owner -ProjectNumber $ProjectNumber -ExcludeDone:$(-not $IncludeDoneItems)
+    $items = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber -IncludeDone:$IncludeDoneItems
 
-    foreach($item in $items.Values){
+    foreach($item in $items){
 
         # Skip if the item does not have the integration field
         if(-not $item.$IntegrationField){
