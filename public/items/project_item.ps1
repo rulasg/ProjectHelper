@@ -52,11 +52,13 @@ function Get-ProjectItem {
 
 function Get-ProjectItemByUrl{
     [CmdletBinding()]
+    [Alias ("gpiu")]
     param(
         [Parameter(Mandatory, ValueFromPipeline, Position = 0)][string]$Url,
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
-        [Parameter()][switch]$Force
+        [Parameter()][switch]$Force,
+        [Parameter()][switch]$PassThru
     )
 
     begin {
@@ -74,19 +76,25 @@ function Get-ProjectItemByUrl{
 
         $item = Get-ItemByUrl -Database $db -Url $Url
 
-        # TODO: Create a Resolve-ProjectItemByUrl so that we can udpate the Project
-        # if item is not cached but exists in projects.
+        # TODO: Create a Resolve-ProjectItemByUrl - Depend on function to get item from project remote by url
+        # Get-ItemByUrl only check cache so we need a function that will retreive item from project remote 
+        # and update the project cache.
         # This function depends on the capacity to retreive items by filter
         # Project API has just been updated to allow search project items
 
         if(-not $item){
-            "Item not found for URL [$Url]" | Write-MyError
+            # "Item not found for URL [$Url]" | Write-MyError
             return
         }
 
-        return $item
+        if($PassThru){
+            $ret = $item
+        } else {
+            $ret = Format-ProjectItem -Item $item -Attributes @("id", "Title")
+        }
+        return $ret
     }
-} Export-ModuleMember -Function Get-ProjectItemByUrl
+} Export-ModuleMember -Function Get-ProjectItemByUrl -Alias "gpiu"
 
 function Test-ProjectItem {
     [CmdletBinding()]
@@ -598,10 +606,10 @@ function Remove-ProjectItem {
             return $itemUrl
         }
 
-        "Deleting issue associated to item [$ItemId]" | Write-Verbose
+        "Deleting issue associated to item [$ItemId]" | Write-MyDebug
         if ($item.urlContent) {
             try {
-                $result = Remove-IssueDirect -Url $item.url
+                $result = Remove-IssueDirect -Url $item.urlContent
             } catch {
                 "Issue associated to item [$ItemId] could not be deleted: $_" | Write-MyWarning
                 return $false
