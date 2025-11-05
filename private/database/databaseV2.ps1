@@ -30,6 +30,7 @@ function Get-DatabaseStore {
 
     if ($Force -or -Not $script:databaseRoot) {
         $script:databaseRoot = Invoke-MyCommand -Command GetDatabaseStorePath
+        "Using DatabaseStore path: $script:databaseRoot" | Write-MyDebug -Section DatabaseStore
     }
 
     return $script:databaseRoot
