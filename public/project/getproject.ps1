@@ -84,8 +84,8 @@ function Open-Project{
 function Set-Project {
     [CmdletBinding()]
     param(
-        [Parameter()][string]$Owner,
-        [Parameter(ValueFromPipeline,Position=1)][int]$ProjectNumber
+        [Parameter(ValueFromPipelineByPropertyName, Position = 0)][string]$Owner,
+        [Parameter(ValueFromPipelineByPropertyName, Position = 1)][string]$ProjectNumber
     )
 
     process {
