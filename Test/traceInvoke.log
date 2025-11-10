@@ -73,3 +73,4 @@ Invoke-GitHubOrgProjectWithFields -Owner SomeOrg -ProjectNumber 164 -afterFields
 Invoke-GitHubOrgProjectWithFields -Owner SomeOrg -ProjectNumber 164 -afterFields "" -afterItems "" -query ""
 Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 625 -afterFields "" -afterItems "" -query ""
 Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 626 -afterFields "" -afterItems "" -query ""
+Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 700 -afterFields "" -afterItems "" -query "field-text:text1"

@@ -136,7 +136,6 @@ function Get-Mock_Project_700 {
         }
     }
 
-
     # SubIssue to show
     $project.subIssueToShow = @{
         id = "PVTI_lADOAlIw4c4BCe3Vzgec8p8"
@@ -147,12 +146,24 @@ function Get-Mock_Project_700 {
         )
     }
 
-
     # SubIssue
     $project.subIssuesToAdd = $pActual.items.nodes | Where-Object { $_.content.title -like "Implement API*" } | ForEach-Object{
         @{ contentId = $_.content.Id ; url = $_.content.url ; title = $_.content.title ; addSubIssueMockfile = "invoke-addSubIssue-$($project.issue.contentId)-$($_.content.number).json" }
     }
 
+    # Get Project with query
+
+    $project.getProjectWithQuery = @{
+        # query = "for development"
+        query = 'field-text:text1'
+        fieldName = "field-text"
+        fieldValueActual = "text1"
+        fieldValueNew = "text1_updated"
+        stringToReplaceFrom = '"field-text": "text1"'
+        stringToReplaceTo = '"field-text": "text1_updated"'
+        getProjectWithQueryMockFile = "invoke-GitHubOrgProjectWithFields-octodemo-700-query-field-text.json"
+        totalCount = 7
+    }
     
     # searchIn Title like
     $project.searchInTitle = @{}
