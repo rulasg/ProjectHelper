@@ -108,17 +108,14 @@ function Test_SearchProjectItem_AND_Filter_SUCCESS {
     Mock_DatabaseRoot
     
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $cacheFileName = $p.cacheFileName
     MockCall_GetProject $p -Cache
+    $i = $p.issue
 
-    $i = $p.issue 
     $str = '"{title}"' -replace '{title}',$i.title
     $newStr = '"{title} UniqueSearchAlpha UniqueSearchBeta"' -replace '{title}',$i.title
+    Update-Mock_DatabaseFileWithReplace -FileName $cacheFileName -SearchString $str -ReplaceString $newStr
 
-    # Add content to the title of a file
-    $dbpathh = Invoke-MyCommand -Command "Invoke-ProjectHelperGetDatabaseStorePath" | Join-Path -ChildPath octodemo_700.json
-    $content = Get-Content $dbpathh
-    $content = $content -replace $str,$newStr
-    $content | Set-Content $dbpathh
 
     # Act
     $found = Search-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Filter "UniqueSearchAlpha","UniqueSearchBeta"
