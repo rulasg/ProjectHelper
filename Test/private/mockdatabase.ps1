@@ -1,5 +1,5 @@
-
 $folderName = "test_database_path"
+
 function Mock_DatabaseRoot([switch]$NotReset){
 
     # Check if the database path exists
@@ -23,3 +23,9 @@ function Get-Mock_DatabaseRootPath{
 
 }
 
+function Update-Mock_DatabaseFileWithReplace([string]$FileName, [string]$SearchString, [string]$ReplaceString){
+    $dbpath = Get-Mock_DatabaseRootPath | Join-Path -ChildPath $FileName
+    $content = Get-Content $dbpath
+    $content = $content -replace $SearchString, $ReplaceString
+    $content | Set-Content $dbpath
+}
