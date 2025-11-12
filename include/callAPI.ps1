@@ -61,7 +61,7 @@ function Invoke-GraphQL {
         throw New-Object system.Exception("Error calling GraphQL",$_.Exception)
 
     }
-} Export-ModuleMember -Function Invoke-GraphQL
+}
 
 function Invoke-RestAPI {
     param(
@@ -132,7 +132,7 @@ function Invoke-RestAPI {
     catch {
         throw
     }
-} Export-ModuleMember -Function Invoke-RestAPI
+}
 
 ####################################################################################################
 
@@ -158,7 +158,7 @@ function Get-ApiHost {
 
     "Default host $DEFAULT_GH_HOST" | writedebug
     return $DEFAULT_GH_HOST
-} Export-ModuleMember -Function Get-ApiHost
+}
 
 
 ####################################################################################################
@@ -198,7 +198,7 @@ function Get-ApiToken {
     }
 
     return $result
-} Export-ModuleMember -Function Get-ApiToken
+}
 
 ####################################################################################################
 
