@@ -21,7 +21,7 @@ function Get-User{
 
     # Check cache
     $cache = Get-Database -Key $key
-    if($force -or ($null -ne $cache)){
+    if(-Not $Force -And ($null -ne $cache)){
         return $cache
     }
 
@@ -30,6 +30,13 @@ function Get-User{
      # Cache
      Save-Database -Key "user-$Handle" -Database $result
 
-     return $result
+     $ret = [PSCustomObject]@{
+        Id = $result.node_id
+        Name = $result.Name
+        Email = $result.Email
+        Login = $result.Login
+     }
+
+     return $ret
 
 } Export-ModuleMember -Function Get-User
