@@ -7,7 +7,11 @@
             nodes{createdAt,updatedAt,url,body,fullDatabaseId,author{login}}
         }
     },
-    ... on Issue{id,body,title,updatedAt,createdAt,number,url,state,repository{name,owner{login}}
+    ... on Issue{
+        id,body,title,updatedAt,createdAt,number,url,state,repository{name,owner{login}}
+        assignees(first:100){
+            nodes{{user}}
+        }
         comments(last: $lastComments){
             totalCount,
             nodes{createdAt,updatedAt,url,body,fullDatabaseId,author{login}}

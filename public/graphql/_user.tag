@@ -1,1 +1,1 @@
-{login}
+{id,name,login,email}
