@@ -74,3 +74,7 @@ Invoke-GitHubOrgProjectWithFields -Owner SomeOrg -ProjectNumber 164 -afterFields
 Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 625 -afterFields "" -afterItems "" -query ""
 Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 626 -afterFields "" -afterItems "" -query ""
 Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 700 -afterFields "" -afterItems "" -query "field-text:text1"
+Invoke-GetUser -Handle rulasg
+Invoke-UpdateProjectV2Collaborators -ProjectId PVT_kwDOAlIw4c4BCe3V -collaborators "MDQ6VXNlcjY4ODQ0MDg=" -Role "WRITER"
+Invoke-GetUser -Handle rauldibildos
+Invoke-UpdateProjectV2Collaborators -ProjectId PVT_kwDOAlIw4c4BCe3V -collaborators "MDQ6VXNlcjY4ODQ0MDg= U_kgDOC_E3gw" -Role "WRITER"

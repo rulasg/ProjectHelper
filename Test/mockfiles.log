@@ -182,5 +182,25 @@
   {
     "FileName": "invoke-GitHubOrgProjectWithFields-octodemo-700-query-field-text.json",
     "Command": "Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 700 -afterFields \"\" -afterItems \"\" -query \"field-text:text1\""
+  },
+  {
+    "FileName": "invoke-GetUser-rulasg.json",
+    "Command": "Invoke-GetUser -Handle rulasg"
+  },
+  {
+    "FileName": "invoke-UpdateProjectV2Collaborators-MDQ6VXNlcjY4ODQ0MDg=.json",
+    "Command": "Invoke-UpdateProjectV2Collaborators -ProjectId PVT_kwDOAlIw4c4BCe3V -collaborators \"MDQ6VXNlcjY4ODQ0MDg=\" -Role \"WRITER\""
+  },
+  {
+    "FileName": "invoke-GetUser-rauldibildos.json",
+    "Command": "Invoke-GetUser -Handle rauldibildos"
+  },
+  {
+    "FileName": "invoke-UpdateProjectV2Collaborators-MDQ6VXNlcjY4ODQ0MDg=.json",
+    "Command": "Invoke-UpdateProjectV2Collaborators -ProjectId PVT_kwDOAlIw4c4BCe3V -collaborators \"MDQ6VXNlcjY4ODQ0MDg= U_kgDOC_E3gw\" -Role \"WRITER\""
+  },
+  {
+    "FileName": "invoke-UpdateProjectV2Collaborators-MDQ6VXNlcjY4ODQ0MDg=.json",
+    "Command": "Invoke-UpdateProjectV2Collaborators -ProjectId PVT_kwDOAlIw4c4BCe3V -collaborators \"\" -Role \"WRITER\""
   }
 ]
