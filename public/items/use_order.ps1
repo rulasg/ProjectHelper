@@ -5,7 +5,7 @@ function Use-Order {
         [Parameter(Position = 0)][int]$Ordinal = -1,
         [Parameter(ValueFromPipeline)][array]$List,
         [Parameter()][switch]$OpenInEditor,
-        [Parameter()][switch]$OpenInBrowser
+        [Parameter()][Alias("w")][switch]$OpenInBrowser
     )
 
     begin {
