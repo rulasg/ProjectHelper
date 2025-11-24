@@ -171,11 +171,11 @@ function writeHeader2{
 
     if(-not [string]::IsNullOrWhiteSpace($Author)){
         addSpace
-        $Author | write -Color $subcolor -PreFix "By: "
+        $Author | write -Color $subcolor -PreFix "By:[" -SuFix "]"
     }
     if(-not [string]::IsNullOrWhiteSpace($updatedAt)){
         addSpace
-        $updatedAt | write -Color $subcolor -PreFix "At: "
+        $updatedAt | write -Color $subcolor -PreFix "At:[" -SuFix "]"
     }
 
     addJumpLine -message "Header 2 End "
