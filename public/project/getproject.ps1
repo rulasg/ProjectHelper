@@ -49,8 +49,8 @@ function Get-ProjectId {
 function Open-Project{
     [CmdletBinding()]
     param(
-        [Parameter()][string]$Owner,
-        [Parameter()][int]$ProjectNumber
+        [Parameter(ValueFromPipelineByPropertyName)][string]$Owner,
+        [Parameter(ValueFromPipelineByPropertyName)][int]$ProjectNumber
     )
 
     ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
