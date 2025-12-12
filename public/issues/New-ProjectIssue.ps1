@@ -3,11 +3,13 @@ Set-MyInvokeCommandAlias -Alias CreateIssue -Command 'Invoke-CreateIssue -Reposi
 
 function New-ProjectIssueDirect {
     [CmdletBinding()]
+    [Alias("New-Issue")]
     param (
         [Parameter(Mandatory, Position = 1)][string]$RepoOwner,
         [Parameter(Mandatory, Position = 2)][string]$RepoName,
         [Parameter(Mandatory, Position = 3)][string]$Title,
-        [Parameter(Position = 4)][string]$Body
+        [Parameter(Position = 4)][string]$Body,
+        [Parameter()][switch]$OpenOnCreation
     )
 
     $repo = Get-Repository -Owner $RepoOwner -Name $RepoName
@@ -35,9 +37,13 @@ function New-ProjectIssueDirect {
 
     $ret = $issue.url
 
+    if( $OpenOnCreation ) {
+        Open-Url $ret
+    }
+
     return $ret
 
-} Export-ModuleMember -Function New-ProjectIssueDirect
+} Export-ModuleMember -Function New-ProjectIssueDirect -Alias New-Issue
 
 function New-ProjectIssue {
     [CmdletBinding()]
