@@ -63,7 +63,7 @@ function Get-ProjectItemByUrl{
 
     begin {
         ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { return $null }
     
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems
 
