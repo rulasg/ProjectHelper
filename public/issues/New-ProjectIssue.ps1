@@ -30,10 +30,8 @@ function New-ProjectIssueDirect {
     $issue = $response.data.createIssue.issue
 
     if ( ! $issue ) {
-        throw "Issue not created properlly"
+        throw "Issue not created properly"
     }
-
-    # TODO: Consider adding the issue to the project
 
     $ret = $issue.url
 
