@@ -22,13 +22,16 @@ function Get-User{
     # Check cache
     $cache = Get-Database -Key $key
     if(-Not $Force -And ($null -ne $cache)){
-        return $cache
+        Write-MyDebug "Get-User: User found in cache" -Section "Get-User"
+        $result = $cache
+
+    } else {
+        Write-MyDebug "Get-User: User retreived" -Section "Get-User"
+        $result = Invoke-MyCommand -Command "getUser" -Parameters @{handle=$Handle}
+        
+        # Cache
+        Save-Database -Key "user-$Handle" -Database $result
     }
-
-     $result = Invoke-MyCommand -Command "getUser" -Parameters @{handle=$Handle}
-
-     # Cache
-     Save-Database -Key "user-$Handle" -Database $result
 
      $ret = [PSCustomObject]@{
         Id = $result.node_id
