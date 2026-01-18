@@ -14,7 +14,8 @@
 
 [CmdletBinding()]
 param (
-    [Parameter()][switch]$ShowTestErrors
+    [Parameter()][switch]$ShowTestErrors,
+    [Parameter()][string]$TestName
 )
 
 function Set-TestName{
@@ -28,7 +29,7 @@ function Set-TestName{
     )
 
     process{
-        $global:TestName = $TestName
+        $global:TestNameVar = $TestName
     }
 }
 
@@ -40,7 +41,7 @@ function Get-TestName{
     )
 
     process{
-        $global:TestName
+        $global:TestNameVar
     }
 }
 
@@ -52,7 +53,7 @@ function Clear-TestName{
     param (
     )
 
-    $global:TestName = $null
+    $global:TestNameVar = $null
 }
 
 function Import-RequiredModule{
@@ -137,8 +138,9 @@ Import-RequiredModule "TestingHelper" -AllowPrerelease
 # Install and Load Module dependencies
 Get-RequiredModule | Import-RequiredModule -AllowPrerelease
 
-if($TestName){
-    Invoke-TestingHelper -TestName $TestName -ShowTestErrors:$ShowTestErrors
-} else {
-    Invoke-TestingHelper -ShowTestErrors:$ShowTestErrors
-}
+# Resolve scoped tests
+$TestName = [string]::IsNullOrWhiteSpace($TestName) ? $global:TestNameVar : $TestName
+
+# Call TestingHelper to run the tests
+Invoke-TestingHelper -TestName $TestName -ShowTestErrors:$ShowTestErrors
+
