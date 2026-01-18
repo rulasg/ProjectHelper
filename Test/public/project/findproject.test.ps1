@@ -1,7 +1,7 @@
 function Test_FindProject_SUCCESS {
 
     Reset-InvokeCommandMock
-    Enable-InvokeCommandAliasModule
+    # Enable-InvokeCommandAliasModule
 
     $owner = "github"
 
