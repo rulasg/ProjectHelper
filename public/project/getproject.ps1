@@ -42,6 +42,12 @@ function Update-Project{
 
     $ret = Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems -Query $Query
 
+    # Check if we did a full projectupdate
+    if([string]::IsNullOrEmpty($Query)){
+        # Reset recent to today
+        Set-EnvItem_Last_RecentUpdate_Today -Owner $Owner -ProjectNumber $ProjectNumber
+    }
+
     return $ret
 } Export-ModuleMember -Function Update-Project
 
