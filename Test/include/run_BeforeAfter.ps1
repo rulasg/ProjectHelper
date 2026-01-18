@@ -16,6 +16,8 @@ function Run_AfterAll{
 
 function Run_BeforeEach{
     Write-Verbose "Run_BeforeEach"
+
+   Reset_Test_Mock
 }
 
 function Run_AfterEach{
