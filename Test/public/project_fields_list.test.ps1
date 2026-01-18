@@ -63,7 +63,7 @@ function Test_GetProjectFields_SUCCESS_FilterByName{
     # title refrence with differnt case and spaces
     $filter = "Title"
 
-        MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2-skipitems.json' -SkipItems
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2-skipitems.json' -SkipItems
 
     $result = Get-ProjectFields -Owner $owner -ProjectNumber $projectNumber -Name $filter
 

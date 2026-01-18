@@ -162,7 +162,7 @@ function Test_EditProjectItems_SameValue{
     Mock_DatabaseRoot
 
     $Owner = "octodemo" ; $ProjectNumber = 700
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700.json'
+    MockCall_GetProject_700
 
     $prj = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
     #$actualtitle = $prj.items.$itemId."Title"
@@ -271,7 +271,7 @@ function Test_EditProjectItems_Direct{
     $Owner = "octodemo" ; $ProjectNumber = 700
 
     # No sync of project with items allowed just with skipitems
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json' -skipitems
+    MockCall_GetProject_700 -skipItems
 
     $itemId = "PVTI_lADOAlIw4c4BCe3Vzgeio4o"
     $fieldComment = "field-text" ; $fieldCommentValue = "new value of the comment 10.1"

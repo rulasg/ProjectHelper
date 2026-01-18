@@ -91,7 +91,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue_NotCached {
     Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename invoke-getitem-$itemId1.json" -Alias "Invoke-GetItem -ItemId $itemId1"
 
     # Mock get-project
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json' -skipItems
+    MockCall_GetProject_700 -skipItems
 
     # Edit fields
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
@@ -191,7 +191,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_PullRequest_NotCached
     Set-InvokeCommandMock -Command "Import-Module $moduleTestPath ; Get-MockFileContentJson -filename invoke-getitem-$itemId1.json" -Alias "Invoke-GetItem -ItemId $itemId1"
 
     # Mock get-project
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json' -skipItems
+    MockCall_GetProject_700 -skipItems
 
     # Edit fields
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
@@ -290,7 +290,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_DraftIssue_NotCached 
     Set-InvokeCommandMock -Command "Import-Module $moduleTestPath ; Get-MockFileContentJson -filename invoke-getitem-$itemId1.json" -Alias "Invoke-GetItem -ItemId $itemId1"
 
     # Mock get-project
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json' -skipItems
+    MockCall_GetProject_700 -skipItems
 
     # Edit fields
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
@@ -324,7 +324,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue {
     $Owner = "octodemo" ; $ProjectNumber = 700
 
     # Mock this call to cache the project in the test
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700.json'
+    MockCall_GetProject_700
     
     $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force
     $projectId = $project.ProjectId
@@ -394,7 +394,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue {
     }
 
     # Mock get-project
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json' -skipItems
+    MockCall_GetProject_700 -skipItems
 
     # Edit fields
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
@@ -428,7 +428,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_PullRequest {
     $Owner = "octodemo" ; $ProjectNumber = 700
 
     # Cache project (with items) so it is stored locally
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700.json'
+    MockCall_GetProject_700
     $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force
     $projectId = $project.ProjectId
 
@@ -494,7 +494,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_PullRequest {
     }
 
     # Mock project (skip items)
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json' -skipItems
+    MockCall_GetProject_700 -skipItems
 
     # Stage edits (order similar to Issue/DraftIssue tests)
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
@@ -527,7 +527,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_DraftIssue {
     $Owner = "octodemo" ; $ProjectNumber = 700
 
     # Cache project (with items) so it is stored locally
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700.json'
+    MockCall_GetProject_700
     $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force
     $projectId = $project.ProjectId
 
@@ -593,7 +593,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_DraftIssue {
     }
 
     # Mock project (skip items)
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json' -skipItems
+    MockCall_GetProject_700 -skipItems
 
     # Stage edits (order similar to Issue test)
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
