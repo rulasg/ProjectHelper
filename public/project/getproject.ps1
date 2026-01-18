@@ -13,7 +13,7 @@ function Get-Project {
     }
 
     if ($Force -or -Not (Test-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber)) {
-        $result = Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems
+        $result = Update-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems
         if ( ! $result) { return }
     }
 
@@ -25,6 +25,25 @@ function Get-Project {
 
     return $prj
 } Export-ModuleMember -Function Get-Project
+
+function Update-Project{
+    [CmdletBinding()]
+    param(
+        [Parameter()][string]$Owner,
+        [Parameter()][int]$ProjectNumber,
+        [parameter()][string]$Query,
+        [Parameter()][switch]$SkipItems
+    )
+
+    ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) {
+        throw "Owner and ProjectNumber are required on Update-Project"
+    }
+
+    $ret = Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems -Query $Query
+
+    return $ret
+} Export-ModuleMember -Function Update-Project
 
 function Get-ProjectId {
     [CmdletBinding()]

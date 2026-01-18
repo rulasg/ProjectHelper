@@ -1,4 +1,50 @@
-function Test_GetProject_With_Query_Success{
+function Test_UpdateProject_Success{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    # enable-invokeCommandAliasModule
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $cacheFileName = Get-Mock_DatabaseRootPath | Join-Path -ChildPath $p.cacheFileName
+
+    MockCall_GetProject $p
+
+    $result = Update-Project -Owner $owner -ProjectNumber $projectNumber
+
+    Assert-IsTrue $result
+
+    Assert-ItemExist -Path $cacheFileName
+
+    $result = Get-Project -Owner $owner -ProjectNumber $projectNumber
+
+    Assert-Count -Expected $p.items.totalCount -Presented $result.items
+    Assert-Count -Expected $p.fields.totalCount -Presented $result.fields
+}
+
+function Test_UpdateProject_SkipItems_Success{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    # enable-invokeCommandAliasModule
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $cacheFileName = Get-Mock_DatabaseRootPath | Join-Path -ChildPath $p.cacheFileName
+
+    MockCall_GetProject $p -SkipItems
+
+    $result = Update-Project -Owner $owner -ProjectNumber $projectNumber -SkipItems
+
+    Assert-IsTrue $result
+
+    Assert-ItemExist -Path $cacheFileName
+
+    $result = Get-Project -Owner $owner -ProjectNumber $projectNumber
+
+    Assert-Count -Expected 0 -Presented $result.items
+    Assert-Count -Expected $p.fields.totalCount -Presented $result.fields
+}
+
+function Test_UpdateProject_With_Query_Success{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
@@ -8,11 +54,10 @@ function Test_GetProject_With_Query_Success{
     $query = $p.getProjectWithQuery.query
     $fileName = $p.getProjectWithQuery.getProjectWithQueryMockFile
     $totalCount = $p.getProjectWithQuery.totalCount
-    $i = $p.issue
     
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -Query $query -FileName $fileName
 
-    $result = Update-ProjectDatabase -Owner $owner -ProjectNumber $projectNumber -Query $query
+    $result = Update-Project -Owner $owner -ProjectNumber $projectNumber -Query $query
 
     Assert-IsTrue $result
 
@@ -21,7 +66,7 @@ function Test_GetProject_With_Query_Success{
     Assert-Count -Expected $totalCount -Presented $result.items
 }
 
-function Test_GetProject_With_Query_Success_Update{
+function Test_UpdateProject_With_Query_Success_Update{
     Reset-InvokeCommandMock
     Mock_DatabaseRoot
 
@@ -54,7 +99,7 @@ function Test_GetProject_With_Query_Success_Update{
 
 
     # Act - Should replace new value back to actual
-    $result = Update-ProjectDatabase -Owner $owner -ProjectNumber $projectNumber -Query $query
+    $result = Update-Project -Owner $owner -ProjectNumber $projectNumber -Query $query
 
     # Assert confirm field-text value is back to actual
     Assert-IsTrue $result
