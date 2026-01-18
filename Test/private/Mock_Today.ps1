@@ -1,7 +1,7 @@
 function Get-Mock_Today{
     $ret = @{
-        today = "2024-06-30"
-        # today = "2025-03-15"
+        # today = "2024-06-30"
+        today = "2025-03-15"
     }
 
     return $ret
