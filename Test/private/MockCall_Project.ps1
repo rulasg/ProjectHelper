@@ -214,6 +214,8 @@ function MockCall_GetProject {
     }
 
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName $filename -SkipItems:$SkipItems
+    Mock_Today
+
  
     if ($Cache) {
         $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems
