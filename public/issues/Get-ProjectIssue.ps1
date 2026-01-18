@@ -35,7 +35,9 @@ function Get-ProjectIssue {
         [Parameter()][switch]$Force
     )
 
-    # Check the project cache of the default project
+    # Check the active project cache just in case is there.
+    # We could try to check all cached projects but that could be 
+    # Challenging as we are not user of the cache status for that item
     $owner,$projectNumber = Get-OwnerAndProjectNumber
     $item = Get-ProjectItemByUrl -Owner $owner -ProjectNumber $projectNumber -Url $Url -PassThru -Force:$Force
     if( $item ) { 
@@ -49,7 +51,7 @@ function Get-ProjectIssue {
     # TODO: update the cache if issue is an item of the project
     # This will required or transform Issue to Item or create a new issue database
 
-    return $issue   
+    return $issue
 
 } Export-ModuleMember -Function Get-ProjectIssue
 
