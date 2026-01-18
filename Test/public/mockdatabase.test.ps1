@@ -1,6 +1,4 @@
 function Test_UpdateMock_DatabaseFileWithReplace{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $cacheFileName = $p.cacheFileName

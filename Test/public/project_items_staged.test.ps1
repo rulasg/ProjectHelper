@@ -1,7 +1,5 @@
 
 function Test_SyncProjectItemsStaged_NoStaged {
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ;
     # $itemsCount = 12 ; $fieldsCount = 18
@@ -16,8 +14,6 @@ function Test_SyncProjectItemsStaged_NoStaged {
 }
 
 function Test_SyncProjectItemsStaged_SUCCESS_Number{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $Owner = "octodemo" ; $ProjectNumber = 700
     $projectId = "PVT_kwDOAlIw4c4BCe3V"
@@ -84,8 +80,6 @@ function Test_SyncProjectItemsStaged_SUCCESS_Number{
 }
 
 function Test_SyncProjectItemsStaged_SUCCESS_Date{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $Owner = "octodemo" ; $ProjectNumber = 700
     $projectId = "PVT_kwDOAlIw4c4BCe3V"
@@ -149,8 +143,6 @@ function Test_SyncProjectItemsStaged_SUCCESS_Date{
 }
 
 function Test_SyncProjectItemsStaged_SUCCESS_SingleSelect{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
 
@@ -231,8 +223,6 @@ function Test_SyncProjectItemsStaged_SUCCESS_SingleSelect{
 }
 
 function Test_SyncProjectItemsStaged_SUCCESS_Content_Issue_NotCached {
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $Owner = "octodemo" ; $ProjectNumber = 700
     $projectId = "PVT_kwDOAlIw4c4BCe3V"
@@ -324,8 +314,6 @@ function Test_SyncProjectItemsStaged_SUCCESS_Content_Issue_NotCached {
 }
 
 function Test_SyncProjectItemsStaged_SUCCESS_Content_PullRequest_NotCached {
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $Owner = "octodemo" ; $ProjectNumber = 700
     $projectId = "PVT_kwDOAlIw4c4BCe3V"
@@ -417,8 +405,6 @@ function Test_SyncProjectItemsStaged_SUCCESS_Content_PullRequest_NotCached {
 }
 
 function Test_SyncProjectItemsStaged_SUCCESS_Content_DraftIssue_NotCached {
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $Owner = "octodemo" ; $ProjectNumber = 700
     $projectId = "PVT_kwDOAlIw4c4BCe3V"
@@ -509,8 +495,6 @@ function Test_SyncProjectItemsStaged_SUCCESS_Content_DraftIssue_NotCached {
 }
 
 function Test_SyncProjectItemsStaged_SUCCESS_Content_Issue {
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $Owner = "octodemo" ; $ProjectNumber = 700
 
@@ -520,8 +504,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_Content_Issue {
     $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force
     $projectId = $project.ProjectId
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot -NotReset
+    Reset_Test_Mock -NoResetDatabase
 
     # project item issue
     $itemId1 = "PVTI_lADOAlIw4c4BCe3Vzgeio4o"
@@ -603,8 +586,6 @@ function Test_SyncProjectItemsStaged_SUCCESS_Content_Issue {
 }
 
 function Test_SyncProjectItemsStaged_SUCCESS_Content_PullRequest {
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $Owner = "octodemo" ; $ProjectNumber = 700
 
@@ -614,8 +595,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_Content_PullRequest {
     $project   = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force
     $projectId = $project.ProjectId
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot -NotReset
+    Reset_Test_Mock -NoResetDatabase
 
     # project item pull request
     $itemId1    = "PVTI_lADOAlIw4c4BCe3VzgeioBY"
@@ -694,8 +674,6 @@ function Test_SyncProjectItemsStaged_SUCCESS_Content_PullRequest {
 }
 
 function Test_SyncProjectItemsStaged_SUCCESS_Content_DraftIssue {
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $Owner = "octodemo" ; $ProjectNumber = 700
 
@@ -704,8 +682,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_Content_DraftIssue {
     $project   = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force
     $projectId = $project.ProjectId
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot -NotReset
+    Reset_Test_Mock -NoResetDatabase
 
     # project item draft issue
     $itemId1     = "PVTI_lADOAlIw4c4BCe3Vzgeiodc"
@@ -788,8 +765,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_Content_DraftIssue {
 
 function Test_ShowProjectItemsStaged {
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
+
 
     MockCall_GetProject_700
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
@@ -869,8 +845,7 @@ function Test_ShowProjectItemsStaged {
 
 function Test_TestProjectItemStaged {
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
+
 
     $p = Get-Mock_Project_700 ; $Owner = $p.Owner ; $ProjectNumber = $p.Number
     $i = $p.issue
@@ -933,8 +908,6 @@ function Test_SyncProjectItemsStagedAsync_debug {
 }
 
 function Test_Sync_ProjectDatabaseAsync_ClearValues{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $moduleRootPath = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent | Convert-Path
 
@@ -1006,8 +979,6 @@ function Test_Sync_ProjectDatabaseAsync_ClearValues{
 }
 
 function Test_Sync_ProjectDatabase_ClearValues{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $p = Get-Mock_Project_700 ; $Owner = $p.Owner ; $ProjectNumber = $p.Number
     $i = $p.issue

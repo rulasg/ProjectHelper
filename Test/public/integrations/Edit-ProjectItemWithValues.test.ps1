@@ -1,8 +1,6 @@
 function Test_EditProjectItemWithValues_Integration {
 
     # Assert-SkipTest
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $owner = "octodemo"
     $projectNumber = "625"

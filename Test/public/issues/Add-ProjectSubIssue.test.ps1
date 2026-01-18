@@ -1,8 +1,5 @@
 function Test_AddProjectSubIssue_SUCCESS{
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     $p = Get-Mock_Project_700 ; $owner = $p.Owner ; $projectNumber = $p.Number
 
 
@@ -50,9 +47,6 @@ function Test_AddProjectSubIssue_FAIL_ALREADY_HAS_PARENT {
 }
 
 function Test_GetProjectSubIssue_SUCCESS {
-
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $p = Get-Mock_Project_700 ; $owner = $p.Owner ; $projectNumber = $p.Number
     $i = $p.subIssueToShow

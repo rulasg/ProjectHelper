@@ -1,7 +1,6 @@
 function Test_GetProjetItems_SUCCESS{
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
+
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $i = $p.issue
@@ -52,8 +51,7 @@ function Test_GetProjetItems_SUCCESS{
 
 function Test_GetProjetItems_FAIL{
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
+
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164
 
@@ -74,8 +72,6 @@ function Test_GetProjetItems_FAIL{
 }
 
 function Test_ProjectItemList_ExcludeDone{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $i = $p.issue

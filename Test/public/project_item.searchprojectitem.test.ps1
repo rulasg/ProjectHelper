@@ -1,8 +1,7 @@
 # Tests for Search-ProjectItem
 
 function Test_SearchProjectItem_Basic_SUCCESS {
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
+
     MockCall_GetProject_700
 
     $p = Get-Mock_Project_700
@@ -24,8 +23,7 @@ function Test_SearchProjectItem_Basic_SUCCESS {
 }
 
 function Test_SearchProjectItem_PassThru_SUCCESS {
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
+
     MockCall_GetProject_700
 
     $p = Get-Mock_Project_700
@@ -51,8 +49,7 @@ function Test_SearchProjectItem_PassThru_SUCCESS {
 }
 
 function Test_SearchProjectItem_SortByTitle_SUCCESS {
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
+
     MockCall_GetProject_700
 
     $p = Get-Mock_Project_700
@@ -70,8 +67,7 @@ function Test_SearchProjectItem_SortByTitle_SUCCESS {
 }
 
 function Test_SearchProjectItem_CustomAttributes_SUCCESS {
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
+
     MockCall_GetProject_700
 
     $p = Get-Mock_Project_700
@@ -91,8 +87,7 @@ function Test_SearchProjectItem_CustomAttributes_SUCCESS {
 }
 
 function Test_SearchProjectItem_NoMatch {
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
+
     MockCall_GetProject_700
 
     $p = Get-Mock_Project_700
@@ -104,9 +99,7 @@ function Test_SearchProjectItem_NoMatch {
 }
 
 function Test_SearchProjectItem_AND_Filter_SUCCESS {
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-    
+
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $cacheFileName = $p.cacheFileName
     MockCall_GetProject $p -Cache

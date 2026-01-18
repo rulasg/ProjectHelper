@@ -1,8 +1,5 @@
 function Test_GetProjecthelperPrompt {
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     $owner = "octodemo"
     $projectNumber = "625"
     $s = $ProjecthelperPromoptSettings

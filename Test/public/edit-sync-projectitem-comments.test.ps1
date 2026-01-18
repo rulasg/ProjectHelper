@@ -1,7 +1,4 @@
 function Test_Edit_Sync_ProjectItem_AddComments_Issue {
-    
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $i = $p.issue

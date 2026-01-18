@@ -1,7 +1,5 @@
 function Test_UpdateProject_SetsRecentUpdateToday_WhenQueryIsNull{
     # Arrange
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $today = (Get-Mock_Today).today
@@ -22,8 +20,6 @@ function Test_UpdateProject_SetsRecentUpdateToday_WhenQueryIsNull{
 
 function Test_UpdateProjectRecent_FirstCAll_SetRecentUpdate_toToday{
     # Arrange
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
     Mock_Today
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
@@ -48,19 +44,14 @@ function Test_UpdateProjectRecent_FirstCAll_SetRecentUpdate_toToday{
 function Test_UpdateProjectRecent_UpdateBasedOn_SetRecentUpdate{
     # Arrange
     
-    Reset-InvokeCommandMock
-    $today = (Get-Mock_Today).today
-    MockCallToString -Command "Get-Date -Format yyyy-MM-dd" -OutString $today
-    
     # Cache project
-    Mock_DatabaseRoot
     MockCall_GetProject_700 -Cache
     
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot -NotReset
-    MockCallToString -Command "Get-Date -Format yyyy-MM-dd" -OutString $today
+    # Reset Mocks to ensure no mocks functions left from caching project
+    Reset_Test_Mock -NoResetDatabase
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $today = (Get-Mock_Today).today
     $query  = "updated:<$today"
     # not real query just a mock file with some items reply
     $fileName = $p.getProjectWithQuery.getProjectWithQueryMockFile

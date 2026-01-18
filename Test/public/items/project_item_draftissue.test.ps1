@@ -1,8 +1,5 @@
 function Test_NewProjectDraftIssue {
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     MockCall_GetProject -MockProject $p
 

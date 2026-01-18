@@ -1,7 +1,5 @@
 
 function Test_GetProjectItem_SUCCESS{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $projectNumber = $p.number
     $i = $p.draftissue
@@ -53,8 +51,7 @@ function Test_GetProjectItem_SUCCESS{
 }
 
 function Test_GetProjectItem_Comments{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
+
     $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $projectNumber = $p.number
     $i = $p.issue
     $itemId = $i.id
@@ -75,8 +72,7 @@ function Test_GetProjectItem_Comments{
 }
 
 function Test_GetProjectItem_Staged_Title{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
+
     $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $projectNumber = $p.number
     $i = $p.issue
     $itemId = $i.id
@@ -94,8 +90,7 @@ function Test_GetProjectItem_Staged_Title{
 }
 
 function Test_GetProjectItem_Staged_Body{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
+
     $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $projectNumber = $p.number
     $i = $p.issue
     $itemId = $i.id
@@ -113,9 +108,7 @@ function Test_GetProjectItem_Staged_Body{
 }
 
 function Test_TestProjectItem_Success{
-    
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
+
     $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $projectNumber = $p.number
     MockCall_GetProject $p -Cache
 
@@ -133,8 +126,6 @@ function Test_TestProjectItem_Success{
 }
 
 function  Test_EditProjetItems_SUCCESS_Transformations{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $ProjectNumber = $p.number
     MockCall_GetProject -MockProject $p -Cache
@@ -158,8 +149,6 @@ function  Test_EditProjetItems_SUCCESS_Transformations{
 }
 
 function Test_EditProjectItems_SameValue{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $Owner = "octodemo" ; $ProjectNumber = 700
     MockCall_GetProject_700
@@ -187,8 +176,7 @@ function Test_EditProjectItems_SameValue{
 
 function Test_ResetProjectItem_Value_SUCCESS{
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
+
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $item = $p.issue ; $itemId = $item.id
@@ -230,8 +218,7 @@ function Test_ResetProjectItem_Value_SUCCESS{
 
 function Test_ResetProjectItem_SUCCESS{
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
+
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $item = $p.issue ; $itemId = $item.id
@@ -265,8 +252,6 @@ function Test_ResetProjectItem_SUCCESS{
 }
 
 function Test_EditProjectItems_Direct{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $Owner = "octodemo" ; $ProjectNumber = 700
 
@@ -297,8 +282,7 @@ function Test_UpdateProjectDatabase_Fail_With_Staged{
     # When changes are staged list update should fail.
     # As Update-ProjectDatabase is a private function, we will test it through the public function Get-ProjectItems with Force
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
+
 
     MockCall_GetProject_700
     $p = Get-Mock_Project_700 ; $Owner = $p.Owner ; $ProjectNumber = $p.Number
@@ -339,9 +323,7 @@ function Test_UpdateProjectDatabase_Fail_With_Staged{
 }
 
 function Test_GetItemDirect_SUCCESS{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-    
+
     $itemId = "PVTI_lADNJr_OADU3Ys4GAgVO"
     $itemUrl = "https://github.com/github/sales/issues/11742"
     $contentId ="I_kwDOAFbrpM6s_fNK"
@@ -357,8 +339,6 @@ function Test_GetItemDirect_SUCCESS{
 }
 
 function Test_AddProjectItemDirect_AlreadyMember{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $ProjectNumber = $p.number
     $i = $p.issue
@@ -373,8 +353,7 @@ function Test_AddProjectItemDirect_AlreadyMember{
 
 function Test_ShowProjectItem_SUCCESS{
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
+
 
     $p = Get-Mock_Project_700; $Owner = "octodemo" ; $ProjectNumber = 700
     $i = $p.issue
@@ -409,8 +388,7 @@ function Test_ShowProjectItem_SUCCESS{
 
 function Test_ShowProjectItem_SUCCESS_Multiple{
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
+
 
     MockCall_GetProject_700
     $p = Get-Mock_Project_700; $Owner = $p.owner; $ProjectNumber = $p.number

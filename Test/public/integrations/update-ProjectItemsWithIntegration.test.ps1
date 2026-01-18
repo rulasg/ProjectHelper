@@ -1,8 +1,5 @@
 function Test_UpdateProjectWithIntegration{
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     $mp = Get-Mock_Project_625 ; $owner = $mp.owner ; $projectNumber = $mp.number
     Mockcall_GetProject -MockProject $mp
     $p = $mp.updateWithIntegration

@@ -1,8 +1,5 @@
 function Test_GetProjectIssue{
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $projectNumber = $p.number
     $i = $p.issue
 

@@ -1,7 +1,5 @@
 
 function Test_AddComment_SUCCESS_Using_Cache{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $p = Get-Mock_Project_700 ; $owner = $p.Owner ; $projectNumber = $p.Number
     $i = $p.Issue
@@ -23,8 +21,6 @@ function Test_AddComment_SUCCESS_Using_Cache{
 }
 
 function Test_AddComment_SUCCESS_Using_Direct{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $p = Get-Mock_Project_700 
     $i = $p.Issue
@@ -44,8 +40,6 @@ function Test_AddComment_SUCCESS_Using_Direct{
 }
 
 function Test_AddComment_SUCCESS_Using_Direct_PR{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $p = Get-Mock_Project_700 
     $i = $p.PullRequest

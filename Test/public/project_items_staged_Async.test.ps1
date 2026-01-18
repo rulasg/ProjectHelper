@@ -1,8 +1,5 @@
 function Test_SyncProjectItemsStaged_Async_NoStaged {
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ;
     # $itemsCount = 12 ; $fieldsCount = 18
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
@@ -16,9 +13,6 @@ function Test_SyncProjectItemsStaged_Async_NoStaged {
 }
 
 function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue_NotCached {
-
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $modulePath = $MODULE_PATH | split-path -Parent
     $moduleTestPath = Join-Path -Path $modulePath -ChildPath 'Test'
@@ -115,9 +109,6 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue_NotCached {
 }
 
 function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_PullRequest_NotCached {
-
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $modulePath = $MODULE_PATH | Split-Path -Parent
     $moduleTestPath = Join-Path -Path $modulePath -ChildPath 'Test'
@@ -216,9 +207,6 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_PullRequest_NotCached
 
 function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_DraftIssue_NotCached {
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     $modulePath = $MODULE_PATH | Split-Path -Parent
     $moduleTestPath = Join-Path -Path $modulePath -ChildPath 'Test'
 
@@ -315,9 +303,6 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_DraftIssue_NotCached 
 
 function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue {
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     $modulePath = $MODULE_PATH | split-path -Parent
     $moduleTestPath = Join-Path -Path $modulePath -ChildPath 'Test'
 
@@ -329,8 +314,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue {
     $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force
     $projectId = $project.ProjectId
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot -NotReset
+    Reset_Test_Mock -NoResetDatabase
 
     # project item issue
     $itemId1 = "PVTI_lADOAlIw4c4BCe3Vzgeio4o"
@@ -419,9 +403,6 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue {
 
 function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_PullRequest {
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     $modulePath = $MODULE_PATH | Split-Path -Parent
     $moduleTestPath = Join-Path -Path $modulePath -ChildPath 'Test'
 
@@ -433,8 +414,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_PullRequest {
     $projectId = $project.ProjectId
 
     # Reset mocks keeping DB
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot -NotReset
+    Reset_Test_Mock -NoResetDatabase
 
     # Pull request item
     $itemId1 = "PVTI_lADOAlIw4c4BCe3VzgeioBY"
@@ -518,9 +498,6 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_PullRequest {
 
 function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_DraftIssue {
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     $modulePath = $MODULE_PATH | Split-Path -Parent
     $moduleTestPath = Join-Path -Path $modulePath -ChildPath 'Test'
 
@@ -532,8 +509,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_DraftIssue {
     $projectId = $project.ProjectId
 
     # Reset mocks keeping DB
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot -NotReset
+    Reset_Test_Mock -NoResetDatabase
 
     # Draft issue item
     $itemId1 = "PVTI_lADOAlIw4c4BCe3Vzgeiodc"
@@ -643,9 +619,6 @@ function Test_SyncProjectItemsStaged_Async_debug {
 
 function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue_AddComment {
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     $modulePath = $MODULE_PATH | split-path -Parent
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
@@ -677,9 +650,6 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue_AddComment {
 }
 
 function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_PullRequest_AddComment {
-
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $modulePath = $MODULE_PATH | split-path -Parent
 

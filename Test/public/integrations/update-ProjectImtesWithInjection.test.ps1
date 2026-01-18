@@ -2,9 +2,6 @@
 
 function Test_UpdateProjectWithInjection{
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     # https://github.com/orgs/octodemo/projects/625/views/1
 
     $mp = Get-Mock_Project_625 ; $owner = $mp.owner ; $projectNumber = $mp.number
@@ -87,9 +84,6 @@ function Test_UpdateProjectWithInjection{
 
 function Test_UpdateProjectWithInjection_Failed_1{
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     # https://github.com/orgs/octodemo/projects/625/views/1
 
     $mp = Get-Mock_Project_625 ; $owner = $mp.owner ; $projectNumber = $mp.number
@@ -165,9 +159,6 @@ function Test_UpdateProjectWithInjection_Failed_1{
 
 function Test_InvokeProjectInjection{
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     $owner = "octodemo"
     $projectNumber = "625"
 
@@ -210,10 +201,7 @@ function Test_InvokeProjectInjection{
 
 function Test_InvokeProjectInjection_Fail{
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
-        $owner = "octodemo"
+    $owner = "octodemo"
     $projectNumber = "625"
 
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-$owner-$projectNumber-skipitems.json" -SkipItems
