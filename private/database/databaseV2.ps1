@@ -54,6 +54,19 @@ function Get-Database {
     return $ret
 }
 
+function Test-Database {
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][string]$Key
+    )
+
+    $path = Get-DatabaseFile -Key $Key
+
+    $ret = Test-Path $path
+
+    return $ret
+}
+
 function Reset-Database {
     [CmdletBinding()]
     param(

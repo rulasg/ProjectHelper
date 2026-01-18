@@ -8,9 +8,8 @@ function Test-ProjectDatabase{
     )
 
     $key = Get-DatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
-    $prj = Get-Database -Key $key
 
-    $ret = $null -ne $prj
+    $ret = Test-Database -Key $key
 
     return $ret
 }
@@ -49,6 +48,10 @@ function Get-ProjectFromDatabase{
 
     $key = Get-DatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
     $prj = Get-Database -Key $key
+
+    if($null -eq $prj){
+        return $null
+    }
 
     $prj.fields = $prj.fields | Copy-MyHashTable
     $prj.items  = $prj.items  | Copy-MyHashTable

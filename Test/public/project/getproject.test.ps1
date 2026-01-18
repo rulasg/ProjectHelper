@@ -28,6 +28,7 @@ function Test_GetProject_With_Query_Success_Update{
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $cacheFileName = $p.cacheFileName
     $q = $p.getProjectWithQuery
+    $query = $q.query
     $fieldName = $q.FieldName
     $fieldValueActual = $q.FieldValueActual
     $fieldValueNew = $q.FieldValueNew
@@ -35,14 +36,22 @@ function Test_GetProject_With_Query_Success_Update{
 
     MockCall_GetProject $p -Cache
 
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -Query $query -FileName $q.getProjectWithQueryMockFile
+
     # update field-text to a new value from Actual to check if it´s updated when calling Update-ProjectDatabase with a query
     Update-Mock_DatabaseFileWithReplace -Filename $cacheFileName -SearchString $q.stringToReplaceFrom -ReplaceString $q.stringToReplaceTo
 
     # Assert the arrangement
+    ## Ni items with old value
     $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -FieldName $fieldName -Filter $fieldValueActual -Exact -IncludeDone
     Assert-Count -Expected 0 -Presented $result
+    ## Correct items with new value
     $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -FieldName $fieldName -Filter $fieldValueNew -Exact -IncludeDone
     Assert-Count -Expected $totalCount -Presented $result
+    ## Confirm total number of items
+    $prj = Get-Project -Owner $owner -ProjectNumber $projectNumber
+    Assert-Count -Expected $p.items.totalCount -Presented $prj.items
+
 
     # Act - Should replace new value back to actual
     $result = Update-ProjectDatabase -Owner $owner -ProjectNumber $projectNumber -Query $query
@@ -52,4 +61,8 @@ function Test_GetProject_With_Query_Success_Update{
 
     $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -FieldName $fieldName -Filter $fieldValueActual -Exact -IncludeDone
     Assert-Count -Expected $totalCount -Presented $result
+
+    ## Confirm total number of items
+    $prj = Get-Project -Owner $owner -ProjectNumber $projectNumber
+    Assert-Count -Expected $p.items.totalCount -Presented $prj.items
 }

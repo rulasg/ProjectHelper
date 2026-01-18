@@ -84,6 +84,20 @@ function Update-ProjectDatabase {
     # Add content fields
     $fields = $fields | Set-ContentFields
 
+    # If query is set we are updating just a few items from the database.
+    # update just this items
+    if( -Not [string]::IsNullOrEmpty($Query)){
+        $actualprj = Get-ProjectFromDatabase -Owner $Owner -ProjectNumber $ProjectNumber
+
+        # Check if project has no items or the project is not cached yet
+        $actualItems = $actualprj.items ?? $(New-HashTable)
+
+        foreach($itemKey in $items.Keys){
+            $actualItems.$itemKey = $items.$itemKey
+        }
+        $items = $actualItems
+    }
+
     # Save ProjectV2 object to ProjectDatabase
     Save-ProjectV2toDatabase $projectV2 -Items $items -Fields $fields
 
