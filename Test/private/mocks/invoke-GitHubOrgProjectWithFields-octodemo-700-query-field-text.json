@@ -1,0 +1,1310 @@
+{
+  "data": {
+    "organization": {
+      "projectV2": {
+        "number": 700,
+        "url": "https://github.com/orgs/octodemo/projects/700",
+        "shortDescription": "Project used as development environment by rulasg",
+        "public": false,
+        "closed": false,
+        "title": "rulasg-dev-700",
+        "id": "PVT_kwDOAlIw4c4BCe3V",
+        "readme": null,
+        "items": {
+          "pageInfo": {
+            "endCursor": "Y3Vyc29yOnYyOpK5MDAwMDAwMDAuMDM4NDYxNTM4NDYxNTM4NM4HoqAW",
+            "hasNextPage": false
+          },
+          "totalCount": 7,
+          "nodes": [
+            {
+              "id": "PVTI_lADOAlIw4c4BCe3Vzgec8pY",
+              "fullDatabaseId": "127726230",
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
+              "content": {
+                "__typename": "Issue",
+                "id": "I_kwDOPrRnkc7KJA25",
+                "body": "## Description\nConfigure unit, integration, and API testing infrastructure for the Web API project.\n\n## Tasks\n- [ ] Set up test project with appropriate framework (xUnit, NUnit, MSTest)\n- [ ] Configure mocking library (Moq, NSubstitute)\n- [ ] Create base classes for different test types\n- [ ] Set up test database for integration tests\n- [ ] Implement API endpoint tests\n- [ ] Configure code coverage reporting\n- [ ] Set up continuous testing in CI/CD\n\n## Acceptance Criteria\n- Unit tests for service and business logic\n- Integration tests for database operations\n- API tests for endpoint functionality\n- Test configuration is environment-independent\n- Code coverage reports are generated",
+                "title": "Set up testing infrastructure",
+                "updatedAt": "2025-09-07T09:46:59Z",
+                "createdAt": "2025-09-07T08:27:12Z",
+                "number": 12,
+                "url": "https://github.com/octodemo/rulasg-dev-1/issues/12",
+                "state": "OPEN",
+                "repository": {
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
+                },
+                "comments": {
+                  "totalCount": 0,
+                  "nodes": []
+                }
+              },
+              "fieldValues": {
+                "nodes": [
+                  {
+                    "__typename": "ProjectV2ItemFieldRepositoryValue",
+                    "repository": {
+                      "url": "https://github.com/octodemo/rulasg-dev-1"
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-k",
+                      "name": "Repository",
+                      "dataType": "REPOSITORY"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldLabelValue",
+                    "labels": {
+                      "nodes": [
+                        {
+                          "name": "testing"
+                        },
+                        {
+                          "name": "quality"
+                        }
+                      ]
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-Y",
+                      "name": "Labels",
+                      "dataType": "LABELS"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldMilestoneValue",
+                    "milestone": {
+                      "title": "Milestone 3: Quality and Deployment",
+                      "description": "Testing, documentation, and deployment pipeline setup",
+                      "dueOn": "2025-10-18T00:00:00Z"
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-g",
+                      "name": "Milestone",
+                      "dataType": "MILESTONE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Set up testing infrastructure",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-M",
+                      "name": "Title",
+                      "dataType": "TITLE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldNumberValue",
+                    "number": 66.0,
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhjU",
+                      "name": "field-number",
+                      "dataType": "NUMBER"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "option-3",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4BCe3Vzg0rhno",
+                      "name": "field-singleselect",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "7d96a925",
+                          "name": "option-1"
+                        },
+                        {
+                          "id": "cd02c585",
+                          "name": "option-2"
+                        },
+                        {
+                          "id": "6b66c93a",
+                          "name": "option-3"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "text1",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhko",
+                      "name": "field-text",
+                      "dataType": "TEXT"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldDateValue",
+                    "date": "2025-09-27",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhlU",
+                      "name": "field-date",
+                      "dataType": "DATE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "Todo",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4BCe3Vzg0rg-U",
+                      "name": "Status",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "f75ad846",
+                          "name": "Todo"
+                        },
+                        {
+                          "id": "47fc9ee4",
+                          "name": "In Progress"
+                        },
+                        {
+                          "id": "98236657",
+                          "name": "Done"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldIterationValue",
+                    "title": "field-iteration 1",
+                    "startDate": "2025-09-07",
+                    "duration": 14,
+                    "field": {
+                      "__typename": "ProjectV2IterationField",
+                      "id": "PVTIF_lADOAlIw4c4BCe3Vzg0rhqQ",
+                      "name": "field-iteration",
+                      "dataType": "ITERATION"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PVTI_lADOAlIw4c4BCe3Vzgec8ps",
+              "fullDatabaseId": "127726235",
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
+              "content": {
+                "__typename": "Issue",
+                "id": "I_kwDOPrRnkc7KJAq7",
+                "body": "## Description\nSet up Dependency Injection (DI) to handle service registration and lifecycle management for the API.\n\n## Tasks\n- [ ] Configure built-in DI container in Program.cs/Startup.cs\n- [ ] Register services with appropriate lifetimes (Singleton, Scoped, Transient)\n- [ ] Implement service interfaces and their implementations\n- [ ] Set up options pattern for configuration objects\n- [ ] Document service dependencies\n\n## Acceptance Criteria\n- All services properly registered in DI container\n- Services have appropriate lifetime scopes\n- Service interfaces follow SOLID principles\n- Dependencies are properly injected into controllers",
+                "title": "Configure Dependency Injection and services",
+                "updatedAt": "2025-09-07T09:46:24Z",
+                "createdAt": "2025-09-07T08:26:06Z",
+                "number": 7,
+                "url": "https://github.com/octodemo/rulasg-dev-1/issues/7",
+                "state": "OPEN",
+                "repository": {
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
+                },
+                "comments": {
+                  "totalCount": 0,
+                  "nodes": []
+                }
+              },
+              "fieldValues": {
+                "nodes": [
+                  {
+                    "__typename": "ProjectV2ItemFieldUserValue",
+                    "users": {
+                      "nodes": [
+                        {
+                          "login": "rauldibildos"
+                        }
+                      ]
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-Q",
+                      "name": "Assignees",
+                      "dataType": "ASSIGNEES"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldRepositoryValue",
+                    "repository": {
+                      "url": "https://github.com/octodemo/rulasg-dev-1"
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-k",
+                      "name": "Repository",
+                      "dataType": "REPOSITORY"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldLabelValue",
+                    "labels": {
+                      "nodes": [
+                        {
+                          "name": "setup"
+                        },
+                        {
+                          "name": "architecture"
+                        }
+                      ]
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-Y",
+                      "name": "Labels",
+                      "dataType": "LABELS"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldMilestoneValue",
+                    "milestone": {
+                      "title": "Milestone 1: Project Setup",
+                      "description": "Initial project setup and basic infrastructure",
+                      "dueOn": "2025-09-20T00:00:00Z"
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-g",
+                      "name": "Milestone",
+                      "dataType": "MILESTONE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Configure Dependency Injection and services",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-M",
+                      "name": "Title",
+                      "dataType": "TITLE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "option-2",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4BCe3Vzg0rhno",
+                      "name": "field-singleselect",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "7d96a925",
+                          "name": "option-1"
+                        },
+                        {
+                          "id": "cd02c585",
+                          "name": "option-2"
+                        },
+                        {
+                          "id": "6b66c93a",
+                          "name": "option-3"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "text1",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhko",
+                      "name": "field-text",
+                      "dataType": "TEXT"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldDateValue",
+                    "date": "2025-09-05",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhlU",
+                      "name": "field-date",
+                      "dataType": "DATE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "Todo",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4BCe3Vzg0rg-U",
+                      "name": "Status",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "f75ad846",
+                          "name": "Todo"
+                        },
+                        {
+                          "id": "47fc9ee4",
+                          "name": "In Progress"
+                        },
+                        {
+                          "id": "98236657",
+                          "name": "Done"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldIterationValue",
+                    "title": "field-iteration 3",
+                    "startDate": "2025-10-05",
+                    "duration": 14,
+                    "field": {
+                      "__typename": "ProjectV2IterationField",
+                      "id": "PVTIF_lADOAlIw4c4BCe3Vzg0rhqQ",
+                      "name": "field-iteration",
+                      "dataType": "ITERATION"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PVTI_lADOAlIw4c4BCe3Vzgec8p0",
+              "fullDatabaseId": "127726237",
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
+              "content": {
+                "__typename": "Issue",
+                "id": "I_kwDOPrRnkc7KJAm8",
+                "body": "## Description\nCreate controllers and endpoints for the Web API to handle HTTP requests.\n\n## Tasks\n- [ ] Create a base controller class with common functionality\n- [ ] Implement CRUD controllers for main resources\n- [ ] Add appropriate routing attributes\n- [ ] Implement proper HTTP status code responses\n- [ ] Document endpoints using XML comments for Swagger/OpenAPI\n\n## Acceptance Criteria\n- Controllers properly handle GET, POST, PUT, DELETE operations\n- Routes follow RESTful principles\n- Appropriate HTTP status codes are returned\n- Controller methods have XML documentation",
+                "title": "Implement API endpoints and controllers",
+                "updatedAt": "2025-09-07T09:46:41Z",
+                "createdAt": "2025-09-07T08:25:44Z",
+                "number": 5,
+                "url": "https://github.com/octodemo/rulasg-dev-1/issues/5",
+                "state": "OPEN",
+                "repository": {
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
+                },
+                "comments": {
+                  "totalCount": 0,
+                  "nodes": []
+                }
+              },
+              "fieldValues": {
+                "nodes": [
+                  {
+                    "__typename": "ProjectV2ItemFieldUserValue",
+                    "users": {
+                      "nodes": [
+                        {
+                          "login": "rauldibildos"
+                        }
+                      ]
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-Q",
+                      "name": "Assignees",
+                      "dataType": "ASSIGNEES"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldRepositoryValue",
+                    "repository": {
+                      "url": "https://github.com/octodemo/rulasg-dev-1"
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-k",
+                      "name": "Repository",
+                      "dataType": "REPOSITORY"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldLabelValue",
+                    "labels": {
+                      "nodes": [
+                        {
+                          "name": "feature"
+                        },
+                        {
+                          "name": "api-design"
+                        }
+                      ]
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-Y",
+                      "name": "Labels",
+                      "dataType": "LABELS"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldMilestoneValue",
+                    "milestone": {
+                      "title": "Milestone 2: Core Functionality",
+                      "description": "Implementation of core API features and data handling",
+                      "dueOn": "2025-10-04T00:00:00Z"
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-g",
+                      "name": "Milestone",
+                      "dataType": "MILESTONE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Implement API endpoints and controllers",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-M",
+                      "name": "Title",
+                      "dataType": "TITLE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "option-1",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4BCe3Vzg0rhno",
+                      "name": "field-singleselect",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "7d96a925",
+                          "name": "option-1"
+                        },
+                        {
+                          "id": "cd02c585",
+                          "name": "option-2"
+                        },
+                        {
+                          "id": "6b66c93a",
+                          "name": "option-3"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "text1",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhko",
+                      "name": "field-text",
+                      "dataType": "TEXT"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldDateValue",
+                    "date": "2025-09-29",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhlU",
+                      "name": "field-date",
+                      "dataType": "DATE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "Todo",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4BCe3Vzg0rg-U",
+                      "name": "Status",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "f75ad846",
+                          "name": "Todo"
+                        },
+                        {
+                          "id": "47fc9ee4",
+                          "name": "In Progress"
+                        },
+                        {
+                          "id": "98236657",
+                          "name": "Done"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldIterationValue",
+                    "title": "field-iteration 2",
+                    "startDate": "2025-09-21",
+                    "duration": 14,
+                    "field": {
+                      "__typename": "ProjectV2IterationField",
+                      "id": "PVTIF_lADOAlIw4c4BCe3Vzg0rhqQ",
+                      "name": "field-iteration",
+                      "dataType": "ITERATION"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PVTI_lADOAlIw4c4BCe3VzgedAIE",
+              "fullDatabaseId": "127729793",
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
+              "content": {
+                "__typename": "DraftIssue",
+                "id": "DI_lADOAlIw4c4BCe3VzgJwMMA",
+                "body": "Draft roadmap for implementing comprehensive API security including authentication mechanisms review, authorization strategy, data encryption approach, API key management, and security monitoring.",
+                "title": "Security Implementation Roadmap",
+                "updatedAt": "2025-09-07T10:07:24Z",
+                "createdAt": "2025-09-07T10:07:24Z"
+              },
+              "fieldValues": {
+                "nodes": [
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Security Implementation Roadmap",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-M",
+                      "name": "Title",
+                      "dataType": "TITLE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldNumberValue",
+                    "number": 84.0,
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhjU",
+                      "name": "field-number",
+                      "dataType": "NUMBER"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "option-3",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4BCe3Vzg0rhno",
+                      "name": "field-singleselect",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "7d96a925",
+                          "name": "option-1"
+                        },
+                        {
+                          "id": "cd02c585",
+                          "name": "option-2"
+                        },
+                        {
+                          "id": "6b66c93a",
+                          "name": "option-3"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "text1",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhko",
+                      "name": "field-text",
+                      "dataType": "TEXT"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldDateValue",
+                    "date": "2025-09-11",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhlU",
+                      "name": "field-date",
+                      "dataType": "DATE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "In Progress",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4BCe3Vzg0rg-U",
+                      "name": "Status",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "f75ad846",
+                          "name": "Todo"
+                        },
+                        {
+                          "id": "47fc9ee4",
+                          "name": "In Progress"
+                        },
+                        {
+                          "id": "98236657",
+                          "name": "Done"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldIterationValue",
+                    "title": "field-iteration 2",
+                    "startDate": "2025-09-21",
+                    "duration": 14,
+                    "field": {
+                      "__typename": "ProjectV2IterationField",
+                      "id": "PVTIF_lADOAlIw4c4BCe3Vzg0rhqQ",
+                      "name": "field-iteration",
+                      "dataType": "ITERATION"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PVTI_lADOAlIw4c4BCe3VzgedAIc",
+              "fullDatabaseId": "127729799",
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
+              "content": {
+                "__typename": "DraftIssue",
+                "id": "DI_lADOAlIw4c4BCe3VzgJwMME",
+                "body": "Draft plan for containerizing the API and setting up deployment infrastructure including Docker containerization, Kubernetes orchestration, and CI/CD pipeline configuration.",
+                "title": "Containerization and Deployment Strategy",
+                "updatedAt": "2025-09-07T10:07:40Z",
+                "createdAt": "2025-09-07T10:07:40Z"
+              },
+              "fieldValues": {
+                "nodes": [
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Containerization and Deployment Strategy",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-M",
+                      "name": "Title",
+                      "dataType": "TITLE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "option-1",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4BCe3Vzg0rhno",
+                      "name": "field-singleselect",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "7d96a925",
+                          "name": "option-1"
+                        },
+                        {
+                          "id": "cd02c585",
+                          "name": "option-2"
+                        },
+                        {
+                          "id": "6b66c93a",
+                          "name": "option-3"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "text1",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhko",
+                      "name": "field-text",
+                      "dataType": "TEXT"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldDateValue",
+                    "date": "2025-09-07",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhlU",
+                      "name": "field-date",
+                      "dataType": "DATE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "Done",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4BCe3Vzg0rg-U",
+                      "name": "Status",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "f75ad846",
+                          "name": "Todo"
+                        },
+                        {
+                          "id": "47fc9ee4",
+                          "name": "In Progress"
+                        },
+                        {
+                          "id": "98236657",
+                          "name": "Done"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldIterationValue",
+                    "title": "field-iteration 2",
+                    "startDate": "2025-09-21",
+                    "duration": 14,
+                    "field": {
+                      "__typename": "ProjectV2IterationField",
+                      "id": "PVTIF_lADOAlIw4c4BCe3Vzg0rhqQ",
+                      "name": "field-iteration",
+                      "dataType": "ITERATION"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PVTI_lADOAlIw4c4BCe3VzgedAWU",
+              "fullDatabaseId": "127730021",
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
+              "content": {
+                "__typename": "Issue",
+                "id": "I_kwDOPrRnkc7KJQ0r",
+                "body": "## Description\nImplement rate limiting and throttling for the API to prevent abuse and ensure fair usage.\n\n## Tasks\n- [ ] Add rate limiting middleware (e.g., AspNetCoreRateLimit)\n- [ ] Configure client-based rate limits\n- [ ] Implement endpoint-specific throttling rules\n- [ ] Set up IP-based rate limiting\n- [ ] Add rate limit information to response headers\n- [ ] Configure response handling for rate-limited requests\n- [ ] Document rate limiting policy for API consumers\n\n## Acceptance Criteria\n- Rate limiting prevents excessive requests from single clients\n- Different limits can be applied based on client identity\n- Rate limit headers are included in API responses\n- Appropriate status codes (429 Too Many Requests) are returned\n- Rate limiting policy is clearly documented",
+                "title": "Configure rate limiting and throttling",
+                "updatedAt": "2025-09-07T10:24:55Z",
+                "createdAt": "2025-09-07T09:49:32Z",
+                "number": 16,
+                "url": "https://github.com/octodemo/rulasg-dev-1/issues/16",
+                "state": "CLOSED",
+                "repository": {
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
+                },
+                "comments": {
+                  "totalCount": 0,
+                  "nodes": []
+                }
+              },
+              "fieldValues": {
+                "nodes": [
+                  {
+                    "__typename": "ProjectV2ItemFieldRepositoryValue",
+                    "repository": {
+                      "url": "https://github.com/octodemo/rulasg-dev-1"
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-k",
+                      "name": "Repository",
+                      "dataType": "REPOSITORY"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldLabelValue",
+                    "labels": {
+                      "nodes": [
+                        {
+                          "name": "api-design"
+                        },
+                        {
+                          "name": "security"
+                        }
+                      ]
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-Y",
+                      "name": "Labels",
+                      "dataType": "LABELS"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldMilestoneValue",
+                    "milestone": {
+                      "title": "Milestone 2: Core Functionality",
+                      "description": "Implementation of core API features and data handling",
+                      "dueOn": "2025-10-04T00:00:00Z"
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-g",
+                      "name": "Milestone",
+                      "dataType": "MILESTONE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "Configure rate limiting and throttling",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-M",
+                      "name": "Title",
+                      "dataType": "TITLE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldNumberValue",
+                    "number": 77.0,
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhjU",
+                      "name": "field-number",
+                      "dataType": "NUMBER"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "option-2",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4BCe3Vzg0rhno",
+                      "name": "field-singleselect",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "7d96a925",
+                          "name": "option-1"
+                        },
+                        {
+                          "id": "cd02c585",
+                          "name": "option-2"
+                        },
+                        {
+                          "id": "6b66c93a",
+                          "name": "option-3"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "text1",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhko",
+                      "name": "field-text",
+                      "dataType": "TEXT"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldDateValue",
+                    "date": "2025-09-21",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhlU",
+                      "name": "field-date",
+                      "dataType": "DATE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "Done",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4BCe3Vzg0rg-U",
+                      "name": "Status",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "f75ad846",
+                          "name": "Todo"
+                        },
+                        {
+                          "id": "47fc9ee4",
+                          "name": "In Progress"
+                        },
+                        {
+                          "id": "98236657",
+                          "name": "Done"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldIterationValue",
+                    "title": "field-iteration 2",
+                    "startDate": "2025-09-21",
+                    "duration": 14,
+                    "field": {
+                      "__typename": "ProjectV2IterationField",
+                      "id": "PVTIF_lADOAlIw4c4BCe3Vzg0rhqQ",
+                      "name": "field-iteration",
+                      "dataType": "ITERATION"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PVTI_lADOAlIw4c4BCe3VzgeioBY",
+              "fullDatabaseId": "128098326",
+              "project": {
+                "id": "PVT_kwDOAlIw4c4BCe3V",
+                "number": 700,
+                "title": "rulasg-dev-700",
+                "url": "https://github.com/orgs/octodemo/projects/700"
+              },
+              "content": {
+                "__typename": "PullRequest",
+                "id": "PR_kwDOPrRnkc6nndcE",
+                "body": "",
+                "title": "PullRequest for development",
+                "updatedAt": "2025-09-24T08:56:12Z",
+                "createdAt": "2025-09-09T13:56:05Z",
+                "number": 25,
+                "url": "https://github.com/octodemo/rulasg-dev-1/pull/25",
+                "state": "OPEN",
+                "repository": {
+                  "name": "rulasg-dev-1",
+                  "owner": {
+                    "login": "octodemo"
+                  }
+                },
+                "comments": {
+                  "totalCount": 3,
+                  "nodes": [
+                    {
+                      "createdAt": "2025-09-24T08:56:12Z",
+                      "updatedAt": "2025-09-24T08:56:12Z",
+                      "url": "https://github.com/octodemo/rulasg-dev-1/pull/25#issuecomment-3327293422",
+                      "body": "sample comment 1",
+                      "fullDatabaseId": "3327293422",
+                      "author": {
+                        "login": "rulasg"
+                      }
+                    }
+                  ]
+                }
+              },
+              "fieldValues": {
+                "nodes": [
+                  {
+                    "__typename": "ProjectV2ItemFieldUserValue",
+                    "users": {
+                      "nodes": [
+                        {
+                          "login": "rulasg"
+                        }
+                      ]
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-Q",
+                      "name": "Assignees",
+                      "dataType": "ASSIGNEES"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldRepositoryValue",
+                    "repository": {
+                      "url": "https://github.com/octodemo/rulasg-dev-1"
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-k",
+                      "name": "Repository",
+                      "dataType": "REPOSITORY"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldMilestoneValue",
+                    "milestone": {
+                      "title": "Milestone 1: Project Setup",
+                      "description": "Initial project setup and basic infrastructure",
+                      "dueOn": "2025-09-20T00:00:00Z"
+                    },
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-g",
+                      "name": "Milestone",
+                      "dataType": "MILESTONE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "PullRequest for development",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-M",
+                      "name": "Title",
+                      "dataType": "TITLE"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "Todo",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4BCe3Vzg0rg-U",
+                      "name": "Status",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "f75ad846",
+                          "name": "Todo"
+                        },
+                        {
+                          "id": "47fc9ee4",
+                          "name": "In Progress"
+                        },
+                        {
+                          "id": "98236657",
+                          "name": "Done"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldNumberValue",
+                    "number": 111.0,
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhjU",
+                      "name": "field-number",
+                      "dataType": "NUMBER"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldTextValue",
+                    "text": "text1",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhko",
+                      "name": "field-text",
+                      "dataType": "TEXT"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                    "name": "option-1",
+                    "field": {
+                      "__typename": "ProjectV2SingleSelectField",
+                      "id": "PVTSSF_lADOAlIw4c4BCe3Vzg0rhno",
+                      "name": "field-singleselect",
+                      "dataType": "SINGLE_SELECT",
+                      "options": [
+                        {
+                          "id": "7d96a925",
+                          "name": "option-1"
+                        },
+                        {
+                          "id": "cd02c585",
+                          "name": "option-2"
+                        },
+                        {
+                          "id": "6b66c93a",
+                          "name": "option-3"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldIterationValue",
+                    "title": "field-iteration 1",
+                    "startDate": "2025-09-07",
+                    "duration": 14,
+                    "field": {
+                      "__typename": "ProjectV2IterationField",
+                      "id": "PVTIF_lADOAlIw4c4BCe3Vzg0rhqQ",
+                      "name": "field-iteration",
+                      "dataType": "ITERATION"
+                    }
+                  },
+                  {
+                    "__typename": "ProjectV2ItemFieldDateValue",
+                    "date": "2025-09-01",
+                    "field": {
+                      "__typename": "ProjectV2Field",
+                      "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhlU",
+                      "name": "field-date",
+                      "dataType": "DATE"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "fields": {
+          "totalCount": 15,
+          "nodes": [
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-M",
+              "name": "Title",
+              "dataType": "TITLE"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-Q",
+              "name": "Assignees",
+              "dataType": "ASSIGNEES"
+            },
+            {
+              "__typename": "ProjectV2SingleSelectField",
+              "id": "PVTSSF_lADOAlIw4c4BCe3Vzg0rg-U",
+              "name": "Status",
+              "dataType": "SINGLE_SELECT",
+              "options": [
+                {
+                  "id": "f75ad846",
+                  "name": "Todo"
+                },
+                {
+                  "id": "47fc9ee4",
+                  "name": "In Progress"
+                },
+                {
+                  "id": "98236657",
+                  "name": "Done"
+                }
+              ]
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-Y",
+              "name": "Labels",
+              "dataType": "LABELS"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-c",
+              "name": "Linked pull requests",
+              "dataType": "LINKED_PULL_REQUESTS"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-g",
+              "name": "Milestone",
+              "dataType": "MILESTONE"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-k",
+              "name": "Repository",
+              "dataType": "REPOSITORY"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-s",
+              "name": "Reviewers",
+              "dataType": "REVIEWERS"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-w",
+              "name": "Parent issue",
+              "dataType": "PARENT_ISSUE"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rg-0",
+              "name": "Sub-issues progress",
+              "dataType": "SUB_ISSUES_PROGRESS"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhjU",
+              "name": "field-number",
+              "dataType": "NUMBER"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhko",
+              "name": "field-text",
+              "dataType": "TEXT"
+            },
+            {
+              "__typename": "ProjectV2Field",
+              "id": "PVTF_lADOAlIw4c4BCe3Vzg0rhlU",
+              "name": "field-date",
+              "dataType": "DATE"
+            },
+            {
+              "__typename": "ProjectV2SingleSelectField",
+              "id": "PVTSSF_lADOAlIw4c4BCe3Vzg0rhno",
+              "name": "field-singleselect",
+              "dataType": "SINGLE_SELECT",
+              "options": [
+                {
+                  "id": "7d96a925",
+                  "name": "option-1"
+                },
+                {
+                  "id": "cd02c585",
+                  "name": "option-2"
+                },
+                {
+                  "id": "6b66c93a",
+                  "name": "option-3"
+                }
+              ]
+            },
+            {
+              "__typename": "ProjectV2IterationField",
+              "id": "PVTIF_lADOAlIw4c4BCe3Vzg0rhqQ",
+              "name": "field-iteration",
+              "dataType": "ITERATION"
+            }
+          ],
+          "pageInfo": {
+            "endCursor": "MTU",
+            "hasNextPage": false
+          }
+        },
+        "owner": {
+          "__typename": "Organization",
+          "login": "octodemo"
+        }
+      }
+    }
+  }
+}

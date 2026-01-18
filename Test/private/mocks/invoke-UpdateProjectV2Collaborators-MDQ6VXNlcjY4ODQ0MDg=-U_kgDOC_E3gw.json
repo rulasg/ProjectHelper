@@ -1,0 +1,38 @@
+{
+  "data": {
+    "updateProjectV2Collaborators": {
+      "collaborators": {
+        "totalCount": 2,
+        "nodes": [
+          {
+            "__typename": "User",
+            "id": "MDQ6VXNlcjY4ODQ0MDg=",
+            "name": "Raúl (Dibildos) González",
+            "login": "rulasg",
+            "email": "rulasg@github.com"
+          },
+          {
+            "__typename": "User",
+            "id": "U_kgDOC_E3gw",
+            "name": "Raúl Dibildos",
+            "login": "rauldibildos",
+            "email": "rauldibildos@gmail.com"
+          }
+        ]
+      }
+    }
+  },
+  "extensions": {
+    "warnings": [
+      {
+        "type": "DEPRECATION",
+        "message": "The id MDQ6VXNlcjY4ODQ0MDg= is deprecated. Update your cache to use the next_global_id from the data payload.",
+        "data": {
+          "legacy_global_id": "MDQ6VXNlcjY4ODQ0MDg=",
+          "next_global_id": "U_kgDOAGkMOA"
+        },
+        "link": "https://docs.github.com"
+      }
+    ]
+  }
+}

@@ -1,0 +1,113 @@
+function Test_UpdateProject_Success{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    # enable-invokeCommandAliasModule
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $cacheFileName = Get-Mock_DatabaseRootPath | Join-Path -ChildPath $p.cacheFileName
+
+    MockCall_GetProject $p
+
+    $result = Update-Project -Owner $owner -ProjectNumber $projectNumber
+
+    Assert-IsTrue $result
+
+    Assert-ItemExist -Path $cacheFileName
+
+    $result = Get-Project -Owner $owner -ProjectNumber $projectNumber
+
+    Assert-Count -Expected $p.items.totalCount -Presented $result.items
+    Assert-Count -Expected $p.fields.totalCount -Presented $result.fields
+}
+
+function Test_UpdateProject_SkipItems_Success{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    # enable-invokeCommandAliasModule
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $cacheFileName = Get-Mock_DatabaseRootPath | Join-Path -ChildPath $p.cacheFileName
+
+    MockCall_GetProject $p -SkipItems
+
+    $result = Update-Project -Owner $owner -ProjectNumber $projectNumber -SkipItems
+
+    Assert-IsTrue $result
+
+    Assert-ItemExist -Path $cacheFileName
+
+    $result = Get-Project -Owner $owner -ProjectNumber $projectNumber
+
+    Assert-Count -Expected 0 -Presented $result.items
+    Assert-Count -Expected $p.fields.totalCount -Presented $result.fields
+}
+
+function Test_UpdateProject_With_Query_Success{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    # enable-invokeCommandAliasModule
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $query = $p.getProjectWithQuery.query
+    $fileName = $p.getProjectWithQuery.getProjectWithQueryMockFile
+    $totalCount = $p.getProjectWithQuery.totalCount
+    
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -Query $query -FileName $fileName
+
+    $result = Update-Project -Owner $owner -ProjectNumber $projectNumber -Query $query
+
+    Assert-IsTrue $result
+
+    $result = Get-Project -Owner $owner -ProjectNumber $projectNumber
+
+    Assert-Count -Expected $totalCount -Presented $result.items
+}
+
+function Test_UpdateProject_With_Query_Success_Update{
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $cacheFileName = $p.cacheFileName
+    $q = $p.getProjectWithQuery
+    $query = $q.query
+    $fieldName = $q.FieldName
+    $fieldValueActual = $q.FieldValueActual
+    $fieldValueNew = $q.FieldValueNew
+    $totalCount = $q.totalCount
+
+    MockCall_GetProject $p -Cache
+
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -Query $query -FileName $q.getProjectWithQueryMockFile
+
+    # update field-text to a new value from Actual to check if it´s updated when calling Update-ProjectDatabase with a query
+    Update-Mock_DatabaseFileWithReplace -Filename $cacheFileName -SearchString $q.stringToReplaceFrom -ReplaceString $q.stringToReplaceTo
+
+    # Assert the arrangement
+    ## Ni items with old value
+    $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -FieldName $fieldName -Filter $fieldValueActual -Exact -IncludeDone
+    Assert-Count -Expected 0 -Presented $result
+    ## Correct items with new value
+    $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -FieldName $fieldName -Filter $fieldValueNew -Exact -IncludeDone
+    Assert-Count -Expected $totalCount -Presented $result
+    ## Confirm total number of items
+    $prj = Get-Project -Owner $owner -ProjectNumber $projectNumber
+    Assert-Count -Expected $p.items.totalCount -Presented $prj.items
+
+
+    # Act - Should replace new value back to actual
+    $result = Update-Project -Owner $owner -ProjectNumber $projectNumber -Query $query
+
+    # Assert confirm field-text value is back to actual
+    Assert-IsTrue $result
+
+    $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -FieldName $fieldName -Filter $fieldValueActual -Exact -IncludeDone
+    Assert-Count -Expected $totalCount -Presented $result
+
+    ## Confirm total number of items
+    $prj = Get-Project -Owner $owner -ProjectNumber $projectNumber
+    Assert-Count -Expected $p.items.totalCount -Presented $prj.items
+}

@@ -1,0 +1,12 @@
+mutation UpdateCollaborationUpdate($input:UpdateProjectV2CollaboratorsInput!){
+    updateProjectV2Collaborators(input: $input){
+        collaborators(first:100) {
+            totalCount,
+            nodes{
+                __typename
+                ... on User {{user}}
+                ...on Team {{team}}
+            }
+        }
+    }
+}

@@ -44,7 +44,9 @@ function Invoke-GraphQL {
         # Send the request
         $start = Get-Date
         ">>> Invoke-RestMethod - $apiUri" | writedebug
-        $response = Invoke-RestMethod -Uri $apiUri -Method Post -Body $body -Headers $headers -OutFile $OutFile
+        if([string]::IsNullOrWhiteSpace($OutFile))
+             { $response = Invoke-RestMethod -Uri $apiUri -Method Post -Body $body -Headers $headers }
+        else { $response = Invoke-RestMethod -Uri $apiUri -Method Post -Body $body -Headers $headers -OutFile $OutFile }
         "<<< Invoke-RestMethod - $apiUri [ $(((Get-Date) - $start).TotalSeconds) seconds]" | writedebug
     
         # Trace response
@@ -58,10 +60,12 @@ function Invoke-GraphQL {
         return $response
     }
     catch {
+        "[[THROW]]" | writedebug
+        $_.Exception.Message | ConvertTo-Json -Depth 100 | writedebug
         throw New-Object system.Exception("Error calling GraphQL",$_.Exception)
 
     }
-} Export-ModuleMember -Function Invoke-GraphQL
+}
 
 function Invoke-RestAPI {
     param(
@@ -132,7 +136,7 @@ function Invoke-RestAPI {
     catch {
         throw
     }
-} Export-ModuleMember -Function Invoke-RestAPI
+}
 
 ####################################################################################################
 
@@ -158,7 +162,7 @@ function Get-ApiHost {
 
     "Default host $DEFAULT_GH_HOST" | writedebug
     return $DEFAULT_GH_HOST
-} Export-ModuleMember -Function Get-ApiHost
+}
 
 
 ####################################################################################################
@@ -198,7 +202,7 @@ function Get-ApiToken {
     }
 
     return $result
-} Export-ModuleMember -Function Get-ApiToken
+}
 
 ####################################################################################################
 

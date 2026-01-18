@@ -43,6 +43,10 @@ function New-ProjectDraftIssueDirect {
 
         }
 
+        if( $OpenOnCreation ) {
+            Open-Url $item.url
+        }
+
         return $ret
 
     }

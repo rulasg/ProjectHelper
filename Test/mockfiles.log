@@ -150,5 +150,57 @@
   {
     "FileName": "invoke-GitHubOrgProjectWithFields-octodemo-626.json",
     "Command": "Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 626 -afterFields \"\" -afterItems \"\""
+  },
+  {
+    "Command": "Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 700 -afterFields \"\" -afterItems \"\" -firstItems 0 -query \"\"",
+    "FileName": "invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json"
+  },
+  {
+    "Command": "Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 700 -afterFields \"\" -afterItems \"\" -query \"\"",
+    "FileName": "invoke-GitHubOrgProjectWithFields-octodemo-700.json"
+  },
+  {
+    "Command": "Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 625 -afterFields \"\" -afterItems \"\" -firstItems 0 -query \"\"",
+    "FileName": "invoke-GitHubOrgProjectWithFields-octodemo-625.2-skipitems.json"
+  },
+  {
+    "Command": "Invoke-GitHubOrgProjectWithFields -Owner SomeOrg -ProjectNumber 164 -afterFields \"\" -afterItems \"\" -firstItems 0 -query \"\"",
+    "FileName": "projectV2-skipitems.json"
+  },
+  {
+    "Command": "Invoke-GitHubOrgProjectWithFields -Owner SomeOrg -ProjectNumber 164 -afterFields \"\" -afterItems \"\" -query \"\"",
+    "FileName": "projectV2.json"
+  },
+  {
+    "Command": "Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 625 -afterFields \"\" -afterItems \"\" -query \"\"",
+    "FileName": "invoke-GitHubOrgProjectWithFields-octodemo-625.json"
+  },
+  {
+    "Command": "Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 626 -afterFields \"\" -afterItems \"\" -query \"\"",
+    "FileName": "invoke-GitHubOrgProjectWithFields-octodemo-626.json"
+  },
+  {
+    "FileName": "invoke-GitHubOrgProjectWithFields-octodemo-700-query-field-text.json",
+    "Command": "Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 700 -afterFields \"\" -afterItems \"\" -query \"field-text:text1\""
+  },
+  {
+    "FileName": "invoke-GetUser-rulasg.json",
+    "Command": "Invoke-GetUser -Handle rulasg"
+  },
+  {
+    "FileName": "invoke-UpdateProjectV2Collaborators-MDQ6VXNlcjY4ODQ0MDg=.json",
+    "Command": "Invoke-UpdateProjectV2Collaborators -ProjectId PVT_kwDOAlIw4c4BCe3V -collaborators \"MDQ6VXNlcjY4ODQ0MDg=\" -Role \"WRITER\""
+  },
+  {
+    "FileName": "invoke-GetUser-rauldibildos.json",
+    "Command": "Invoke-GetUser -Handle rauldibildos"
+  },
+  {
+    "FileName": "invoke-UpdateProjectV2Collaborators-MDQ6VXNlcjY4ODQ0MDg=.json",
+    "Command": "Invoke-UpdateProjectV2Collaborators -ProjectId PVT_kwDOAlIw4c4BCe3V -collaborators \"MDQ6VXNlcjY4ODQ0MDg= U_kgDOC_E3gw\" -Role \"WRITER\""
+  },
+  {
+    "FileName": "invoke-UpdateProjectV2Collaborators-MDQ6VXNlcjY4ODQ0MDg=.json",
+    "Command": "Invoke-UpdateProjectV2Collaborators -ProjectId PVT_kwDOAlIw4c4BCe3V -collaborators \"\" -Role \"WRITER\""
   }
 ]

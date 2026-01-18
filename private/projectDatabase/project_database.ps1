@@ -8,9 +8,8 @@ function Test-ProjectDatabase{
     )
 
     $key = Get-DatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
-    $prj = Get-Database -Key $key
 
-    $ret = $null -ne $prj
+    $ret = Test-Database -Key $key
 
     return $ret
 }
@@ -50,6 +49,10 @@ function Get-ProjectFromDatabase{
     $key = Get-DatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
     $prj = Get-Database -Key $key
 
+    if($null -eq $prj){
+        return $null
+    }
+
     $prj.fields = $prj.fields | Copy-MyHashTable
     $prj.items  = $prj.items  | Copy-MyHashTable
     $prj.Staged = $prj.Staged | Copy-MyHashTable
@@ -72,8 +75,9 @@ function Save-ProjectV2toDatabase{
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][object]$ProjectV2,
-        [Parameter(Position = 1)][Object[]]$Items,
-        [Parameter(Position = 2)][Object[]]$Fields
+        [Parameter(Position = 1)][hashtable]$Items,
+        [Parameter(Position = 2)][Object[]]$Fields,
+        [Parameter()][switch]$ItemsUpdate
     )
 
     $owner = $ProjectV2.owner.login
@@ -92,7 +96,17 @@ function Save-ProjectV2toDatabase{
     $db.owner            = $owner
     $db.number           = $projectnumber
 
-    $db.items = $items
+    if($ItemsUpdate){
+        # Update each of the items to avoid replacing all
+        foreach ($item in $items.Values){
+            Set-Item $db $item
+        }
+    } else {
+        # Add items
+        $db.items = $Items
+    }
+
+    # Update fields
     $db.fields = $fields
 
     # This is the only Save.ProjectDatabase that should not be called with -Safe

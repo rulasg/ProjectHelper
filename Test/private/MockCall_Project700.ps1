@@ -18,6 +18,7 @@ function Get-Mock_Project_700 {
     # Version of the project file modified manually to have two items with same id case sensitive
     # this is used to test case sensitivity of item ids in hashtables
     $project.projectFile_caseSensitive = "invoke-GitHubOrgProjectWithFields-octodemo-700-caseSensitive.json"
+    $project.projectFile_singleItem = "invoke-GitHubOrgProjectWithFields-octodemo-700-singleItem.json"
 
     $content = Get-MockFileContentJson -FileName $project.projectFile
     $pActual = $content.data.organization.projectV2
@@ -45,6 +46,7 @@ function Get-Mock_Project_700 {
     $project.owner = $pActual.owner.login
     $project.number = $pActual.number
     $project.url = $pActual.url
+    $project.cacheFileName = "$($pActual.owner.login)_$($pActual.number).json"
 
     # Fields info
     $project.fields = @{}
@@ -134,7 +136,6 @@ function Get-Mock_Project_700 {
         }
     }
 
-
     # SubIssue to show
     $project.subIssueToShow = @{
         id = "PVTI_lADOAlIw4c4BCe3Vzgec8p8"
@@ -145,12 +146,24 @@ function Get-Mock_Project_700 {
         )
     }
 
-
     # SubIssue
     $project.subIssuesToAdd = $pActual.items.nodes | Where-Object { $_.content.title -like "Implement API*" } | ForEach-Object{
         @{ contentId = $_.content.Id ; url = $_.content.url ; title = $_.content.title ; addSubIssueMockfile = "invoke-addSubIssue-$($project.issue.contentId)-$($_.content.number).json" }
     }
 
+    # Get Project with query
+
+    $project.getProjectWithQuery = @{
+        # query = "for development"
+        query = 'field-text:text1'
+        fieldName = "field-text"
+        fieldValueActual = "text1"
+        fieldValueNew = "text1_updated"
+        stringToReplaceFrom = '"field-text": "text1"'
+        stringToReplaceTo = '"field-text": "text1_updated"'
+        getProjectWithQueryMockFile = "invoke-GitHubOrgProjectWithFields-octodemo-700-query-field-text.json"
+        totalCount = 7
+    }
     
     # searchIn Title like
     $project.searchInTitle = @{}

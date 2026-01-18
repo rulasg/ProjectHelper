@@ -1,6 +1,6 @@
 # We need to invoke a call back to allow the mock of this call on testing
-Set-MyInvokeCommandAlias -Alias GitHubOrgProjectWithFields          -Command 'Invoke-GitHubOrgProjectWithFields -Owner {owner} -ProjectNumber {projectnumber} -afterFields "{afterFields}" -afterItems "{afterItems}"'
-Set-MyInvokeCommandAlias -Alias GitHubOrgProjectWithFieldsSkipItems -Command 'Invoke-GitHubOrgProjectWithFields -Owner {owner} -ProjectNumber {projectnumber} -afterFields "{afterFields}" -afterItems "{afterItems}" -firstItems 0'
+Set-MyInvokeCommandAlias -Alias GitHubOrgProjectWithFields          -Command 'Invoke-GitHubOrgProjectWithFields -Owner {owner} -ProjectNumber {projectnumber} -afterFields "{afterFields}" -afterItems "{afterItems}" -query "{query}"'
+Set-MyInvokeCommandAlias -Alias GitHubOrgProjectWithFieldsSkipItems -Command 'Invoke-GitHubOrgProjectWithFields -Owner {owner} -ProjectNumber {projectnumber} -afterFields "{afterFields}" -afterItems "{afterItems}" -firstItems 0 -query "{query}"'
 
 function Update-ProjectDatabase {
     [CmdletBinding()]
@@ -8,11 +8,12 @@ function Update-ProjectDatabase {
     param(
         [Parameter()][string]$Owner,
         [Parameter()][int]$ProjectNumber,
+        [Parameter()][string]$Query,
         [Parameter()][switch]$SkipItems,
         [Parameter()][switch]$Force
     )
 
-    $params = @{ owner = $Owner ; projectnumber = $ProjectNumber ; afterFields = "" ; afterItems = "" }
+    $params = @{ owner = $Owner ; projectnumber = $ProjectNumber ; afterFields = "" ; afterItems = "" ; query = "$query" }
 
     # This means that the ProjectNumber has a empty string value
     if($ProjectNumber -eq 0){
@@ -83,11 +84,25 @@ function Update-ProjectDatabase {
     # Add content fields
     $fields = $fields | Set-ContentFields
 
+    # If query is set we are updating just a few items from the database.
+    # update just this items
+    if( -Not [string]::IsNullOrEmpty($Query)){
+        $actualprj = Get-ProjectFromDatabase -Owner $Owner -ProjectNumber $ProjectNumber
+
+        # Check if project has no items or the project is not cached yet
+        $actualItems = $actualprj.items ?? $(New-HashTable)
+
+        foreach($itemKey in $items.Keys){
+            $actualItems.$itemKey = $items.$itemKey
+        }
+        $items = $actualItems
+    }
+
     # Save ProjectV2 object to ProjectDatabase
     Save-ProjectV2toDatabase $projectV2 -Items $items -Fields $fields
 
     return $true
-}
+} Export-ModuleMember -Function Update-ProjectDatabase
 
 <#
 .SYNOPSIS

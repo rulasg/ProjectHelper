@@ -30,6 +30,7 @@ function Get-DatabaseStore {
 
     if ($Force -or -Not $script:databaseRoot) {
         $script:databaseRoot = Invoke-MyCommand -Command GetDatabaseStorePath
+        "Using DatabaseStore path: $script:databaseRoot" | Write-MyDebug -Section DatabaseStore
     }
 
     return $script:databaseRoot
@@ -49,6 +50,19 @@ function Get-Database {
     }
 
     $ret = Get-Content $path | ConvertFrom-Json -Depth 10 -AsHashtable
+
+    return $ret
+}
+
+function Test-Database {
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][string]$Key
+    )
+
+    $path = Get-DatabaseFile -Key $Key
+
+    $ret = Test-Path $path
 
     return $ret
 }

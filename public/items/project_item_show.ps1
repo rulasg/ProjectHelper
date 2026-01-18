@@ -9,7 +9,8 @@ function Show-ProjectItem{
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)][Alias("id")][string]$ItemId,
         [Parameter()][array[]]$FieldsToShow,
         [Parameter()][switch]$AllComments,
-        [Parameter()][switch]$OpenInEditor
+        [Parameter()][switch]$OpenInEditor,
+        [Parameter()][Alias("W")][switch]$OpenInWebBrowser
     )
 
     begin{
@@ -24,6 +25,10 @@ function Show-ProjectItem{
     process {
 
         $item = Get-ProjectItem -ItemId $ItemId
+
+        if($OpenInWebBrowser){
+            Open-Url -Url $item.url
+        }
 
         if($null -eq $item){
             "Item not found" | Write-MyError
@@ -91,7 +96,7 @@ function Show-ProjectItem{
 
         # Id at the end
         writeHeader1
-        $item.id | write -Color DarkGray ; addJumpLine
+        $item.id | write -Color DarkGray ; addJumpLine -message "Id End"
     }
 
     end{
@@ -135,13 +140,13 @@ function writeHeader1{
         [Parameter(ValueFromPipeline, Position=0)][string]$Text
     )
 
-    addJumpLine ;
+    addJumpLine -message "Header 1 Start "
     if(-not [string]::IsNullOrWhiteSpace($Text)){
         $Text | write Cyan
+        addJumpLine -message "Header 1 End Line"
     }
-    addJumpLine
     "------------" | write Cyan
-    addJumpLine
+    addJumpLine -message "Header 1 End "
 
 }
 
@@ -160,20 +165,20 @@ function writeHeader2{
 
     "## $Text" | write $color
 
-    addJumpLine
+    addJumpLine -message "Header 2 before subinfo "
 
     write -Color $subcolor -Text ">"
 
     if(-not [string]::IsNullOrWhiteSpace($Author)){
         addSpace
-        $Author | write -Color $subcolor -PreFix "By: "
+        $Author | write -Color $subcolor -PreFix "By:[" -SuFix "]"
     }
     if(-not [string]::IsNullOrWhiteSpace($updatedAt)){
         addSpace
-        $updatedAt | write -Color $subcolor -PreFix "At: "
+        $updatedAt | write -Color $subcolor -PreFix "At:[" -SuFix "]"
     }
 
-    addJumpLine
+    addJumpLine -message "Header 2 End "
 
 }
 
@@ -191,8 +196,8 @@ function writeComment1{
         
         if($order -eq $item.commentsTotalCount) {$header += " Last"}
 
-        addJumpLine
-        addJumpLine
+        addJumpLine -message "Comment 1 Start"
+        addJumpLine -message "Comment 1 before header"
         $header | write Cyan
         
         addSpace
@@ -201,12 +206,12 @@ function writeComment1{
 
         $Comment.author | write -Color DarkGray -PreFix "<" -SuFix ">" ; addSpace
         $Comment.updatedAt | write -Color DarkGray -PreFix "At: "
-        addJumpLine
+        addJumpLine -message "Comment End header"
         "------------" | write Cyan
 
         # addSpace ; addSpace
         
-        addJumpLine
+        addJumpLine -message "Comment 1 before body"
         $Comment.body | write -Color Gray
     }
 }
@@ -224,15 +229,15 @@ function writeComment2{
         
         if($order -eq $item.commentsTotalCount) {$header += " Last"}
 
-        addJumpLine -message "Start Comment"
+        addJumpLine -message "Comment 2 Start"
         
         writeHeader $header -Author $Comment.author -UpdatedAt $Comment.updatedAt
         
-        addJumpLine -message "Body Start"
+        addJumpLine -message "Comment 2 Body Start"
         
         $Comment.body | write -Color Gray
 
-        addJumpLine -message "Body End"
+        addJumpLine -message "Comment 2 Body End"
 
     }
 }
@@ -302,6 +307,7 @@ function ShowAttribLine{
     )
 
     $isfirst = $true
+    $isAdded = $false
 
     $AttributesToShow | ForEach-Object {
         $name = $_.Name
@@ -324,8 +330,13 @@ function ShowAttribLine{
         }
 
         $value | write $color -PreFix $prefix -BetweenQuotes:$BetweenQuotes -DefaultValue $DefaultValue
+
+        $isAdded = $true
     }
-    addJumpLine
+
+    if($isAdded){
+        addJumpLine -message "Attributes Line End "
+    }
 }
 
 function Start-WriteBuffer{

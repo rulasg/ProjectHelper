@@ -3,6 +3,7 @@ function MockCall_GitHubOrgProjectWithFields {
     Param(
         [string]$Owner,
         [string]$ProjectNumber,
+        [string]$Query,
         [string]$FileName,
         [switch]$SkipItems
     )
@@ -14,6 +15,7 @@ function MockCall_GitHubOrgProjectWithFields {
     $cmd = $cmd -replace '{projectnumber}', $ProjectNumber
     $cmd = $cmd -replace '{afterFields}', ""
     $cmd = $cmd -replace '{afterItems}', ""
+    $cmd = $cmd -replace '{query}', $query
 
     # Check if filename contains "skipitems" and throw error if it doesn't
     if ( $SkipItems -and $FileName -notlike '*skipitems*') {
@@ -34,6 +36,8 @@ function MockCall_GitHubOrgProjectWithFields_Null {
     $cmd = $cmd -replace '{projectnumber}', $ProjectNumber
     $cmd = $cmd -replace '{afterFields}', ""
     $cmd = $cmd -replace '{afterItems}', ""
+    $cmd = $cmd -replace '{query}', ""
+
 
     MockCalltoNull -Command $cmd
 }

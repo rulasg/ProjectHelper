@@ -82,8 +82,8 @@ function Test_ShowProjectItem_SUCESS{
     Assert-Contains -Presented $tt -Expected "$($i.status)"
     Assert-Contains -Presented $tt -Expected "$($i.Body)"
 
-    Assert-Contains -Presented $tt -Expected "By: $($i.comments.last.author.login)"
-    Assert-Contains -Presented $tt -Expected "At: $($i.comments.last.updatedAt)"
+    Assert-Contains -Presented $tt -Expected "By:[$($i.comments.last.author.login)]"
+    Assert-Contains -Presented $tt -Expected "At:[$($i.comments.last.updatedAt)]"
     Assert-Contains -Presented $tt -Expected $i.comments.last.body
     
     Assert-Contains -Presented $tt -Expected $i.id

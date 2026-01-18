@@ -14,29 +14,15 @@ Set-MyinvokeCommandAlias -Alias GetToken -Command "gh auth token"
 #>
 function Invoke-GitHubOrgProjectWithFields {
     param(
-        [Parameter(Mandatory=$true)] [string]$Owner,
-        [Parameter(Mandatory=$true)] [string]$ProjectNumber,
-        [Parameter(Mandatory=$false)] [string]$afterFields = $null,
-        [Parameter(Mandatory=$false)] [int]$firstFields = 100,
-        [Parameter(Mandatory=$false)] [string]$afterItems = $null,
-        [Parameter(Mandatory=$false)] [int]$firstItems = 100,
-        [Parameter(Mandatory=$false)] [int]$lastComments = 1
+        [Parameter(Mandatory)] [string]$Owner,
+        [Parameter(Mandatory)] [string]$ProjectNumber,
+        [Parameter()] [string]$Query = "",
+        [Parameter()] [string]$afterFields = $null,
+        [Parameter()] [int]$firstFields = 100,
+        [Parameter()] [string]$afterItems = $null,
+        [Parameter()] [int]$firstItems = 100,
+        [Parameter()] [int]$lastComments = 1
     )
-
-    # Use the environmentraviable
-    $token = Get-GithubToken
-    if(-not $token){
-        throw "GH Cli Auth Token not available. Run 'gh auth login' in your terminal."
-    }
-
-    # Define the GraphQL query with variables
-    $query =  Get-GraphQLString "orgprojectwithfieldsAndItems.query"
-
-    # Define the headers for the request
-    $headers = @{
-        "Authorization" = "Bearer $token"
-        "Content-Type" = "application/json"
-    }
 
     # Define the variables for the request
     [int]$pn = $ProjectNumber
@@ -48,22 +34,11 @@ function Invoke-GitHubOrgProjectWithFields {
         firstFields = $firstFields
         firstItems = $firstItems
         lastComments = $lastComments
-    }
-
-    # Define the body for the request
-    $body = @{
         query = $query
-        variables = $variables
-    } | ConvertTo-Json
+    }
 
     # Send the request
-    $response = Invoke-RestMethod -Uri 'https://api.github.com/graphql' -Method Post -Body $body -Headers $headers
-
-    # Check if here are errors
-    if($response.errors){
-        getErrrorString -Errors $response.errors | Write-MyError
-        return
-    }
+    $response = Invoke-GraphQL -Variables $variables -Query (Get-GraphQLString "orgprojectwithfieldsAndItems.query")
 
     # Return the field names
     return $response
