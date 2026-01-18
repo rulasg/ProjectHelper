@@ -12,10 +12,9 @@ function Update-ProjectRecent{
 
     # Get Last update date
     $last = Get-EnvItem_Last_RecentUpdate -Owner $Owner -ProjectNumber $ProjectNumber
+    $query = ($null -eq $last) ? $null : "updated:<$last"
 
-    $Query = "updated:<$last"
-
-    $ret = Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems -Query $Query
+    $ret = Update-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems -Query $Query
 
     if($result){
         Set-EnvItem_Last_RecentUpdate_Today -Owner $Owner -ProjectNumber $ProjectNumber
