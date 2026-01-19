@@ -1,8 +1,5 @@
 function Test_UpdateProjectItemStatusOnDueDate {
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     # Mock calling Toda
     MockCallToString -Command "Get-Date -Format yyyy-MM-dd" -OutString "2025-03-15"
 

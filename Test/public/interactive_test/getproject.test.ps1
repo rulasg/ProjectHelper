@@ -1,6 +1,4 @@
 function Test_Get_Project_ItemId_Equal_Case_Sensitive {
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
 

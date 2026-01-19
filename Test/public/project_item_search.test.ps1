@@ -1,9 +1,6 @@
 # call Search-ProjectItem with no parameters will return all the items
 function Test_SearchProjectItem_SUCCESS_NoParameters {
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     MockCall_GetProject_700
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
@@ -17,9 +14,6 @@ function Test_SearchProjectItem_SUCCESS_NoParameters {
     
 
 function Test_SearchProjectItem_SUCCESS_DefaultTitle{
-
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     MockCall_GetProject_700
 
@@ -40,9 +34,6 @@ function Test_SearchProjectItem_SUCCESS_DefaultTitle{
 
 function Test_SearchProjectItem_SUCCESS_FieldName_Like{
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     MockCall_GetProject_700
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
@@ -56,8 +47,7 @@ function Test_SearchProjectItem_SUCCESS_FieldName_Like{
 
 function Test_SearchProjectItem_SUCCESS_FieldName_Exact{
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
+
 
     MockCall_GetProject_700
 
@@ -73,9 +63,6 @@ function Test_SearchProjectItem_SUCCESS_FieldName_Exact{
 
 
 function Test_SearchProjectItem_SUCCESS_AnyField{
-
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     MockCall_GetProject_700
 
@@ -95,9 +82,6 @@ function Test_SearchProjectItem_SUCCESS_AnyField{
 }
 
 function Test_SearchProjectItem_FAIL{
-
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $Owner = "SomeOrg" ; $ProjectNumber = 164
     $erroMessage= "Error: Project not found. Check owner and projectnumber"

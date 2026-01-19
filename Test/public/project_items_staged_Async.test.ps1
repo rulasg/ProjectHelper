@@ -1,8 +1,5 @@
 function Test_SyncProjectItemsStaged_Async_NoStaged {
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     $Owner = "SomeOrg" ; $ProjectNumber = 164 ;
     # $itemsCount = 12 ; $fieldsCount = 18
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2.json'
@@ -16,9 +13,6 @@ function Test_SyncProjectItemsStaged_Async_NoStaged {
 }
 
 function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue_NotCached {
-
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $modulePath = $MODULE_PATH | split-path -Parent
     $moduleTestPath = Join-Path -Path $modulePath -ChildPath 'Test'
@@ -91,7 +85,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue_NotCached {
     Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename invoke-getitem-$itemId1.json" -Alias "Invoke-GetItem -ItemId $itemId1"
 
     # Mock get-project
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json' -skipItems
+    MockCall_GetProject_700 -skipItems
 
     # Edit fields
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
@@ -115,9 +109,6 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue_NotCached {
 }
 
 function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_PullRequest_NotCached {
-
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $modulePath = $MODULE_PATH | Split-Path -Parent
     $moduleTestPath = Join-Path -Path $modulePath -ChildPath 'Test'
@@ -191,7 +182,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_PullRequest_NotCached
     Set-InvokeCommandMock -Command "Import-Module $moduleTestPath ; Get-MockFileContentJson -filename invoke-getitem-$itemId1.json" -Alias "Invoke-GetItem -ItemId $itemId1"
 
     # Mock get-project
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json' -skipItems
+    MockCall_GetProject_700 -skipItems
 
     # Edit fields
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
@@ -215,9 +206,6 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_PullRequest_NotCached
 }
 
 function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_DraftIssue_NotCached {
-
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $modulePath = $MODULE_PATH | Split-Path -Parent
     $moduleTestPath = Join-Path -Path $modulePath -ChildPath 'Test'
@@ -290,7 +278,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_DraftIssue_NotCached 
     Set-InvokeCommandMock -Command "Import-Module $moduleTestPath ; Get-MockFileContentJson -filename invoke-getitem-$itemId1.json" -Alias "Invoke-GetItem -ItemId $itemId1"
 
     # Mock get-project
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json' -skipItems
+    MockCall_GetProject_700 -skipItems
 
     # Edit fields
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
@@ -315,22 +303,18 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_DraftIssue_NotCached 
 
 function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue {
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     $modulePath = $MODULE_PATH | split-path -Parent
     $moduleTestPath = Join-Path -Path $modulePath -ChildPath 'Test'
 
     $Owner = "octodemo" ; $ProjectNumber = 700
 
     # Mock this call to cache the project in the test
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700.json'
+    MockCall_GetProject_700
     
     $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force
     $projectId = $project.ProjectId
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot -NotReset
+    Reset_Test_Mock -NoResetDatabase
 
     # project item issue
     $itemId1 = "PVTI_lADOAlIw4c4BCe3Vzgeio4o"
@@ -394,7 +378,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue {
     }
 
     # Mock get-project
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json' -skipItems
+    MockCall_GetProject_700 -skipItems
 
     # Edit fields
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
@@ -419,22 +403,18 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue {
 
 function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_PullRequest {
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     $modulePath = $MODULE_PATH | Split-Path -Parent
     $moduleTestPath = Join-Path -Path $modulePath -ChildPath 'Test'
 
     $Owner = "octodemo" ; $ProjectNumber = 700
 
     # Cache project (with items) so it is stored locally
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700.json'
+    MockCall_GetProject_700
     $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force
     $projectId = $project.ProjectId
 
     # Reset mocks keeping DB
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot -NotReset
+    Reset_Test_Mock -NoResetDatabase
 
     # Pull request item
     $itemId1 = "PVTI_lADOAlIw4c4BCe3VzgeioBY"
@@ -494,7 +474,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_PullRequest {
     }
 
     # Mock project (skip items)
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json' -skipItems
+    MockCall_GetProject_700 -skipItems
 
     # Stage edits (order similar to Issue/DraftIssue tests)
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
@@ -518,22 +498,18 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_PullRequest {
 
 function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_DraftIssue {
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     $modulePath = $MODULE_PATH | Split-Path -Parent
     $moduleTestPath = Join-Path -Path $modulePath -ChildPath 'Test'
 
     $Owner = "octodemo" ; $ProjectNumber = 700
 
     # Cache project (with items) so it is stored locally
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700.json'
+    MockCall_GetProject_700
     $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force
     $projectId = $project.ProjectId
 
     # Reset mocks keeping DB
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot -NotReset
+    Reset_Test_Mock -NoResetDatabase
 
     # Draft issue item
     $itemId1 = "PVTI_lADOAlIw4c4BCe3Vzgeiodc"
@@ -593,7 +569,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_DraftIssue {
     }
 
     # Mock project (skip items)
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json' -skipItems
+    MockCall_GetProject_700 -skipItems
 
     # Stage edits (order similar to Issue test)
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldTitle1 $fieldTitleValue1
@@ -643,9 +619,6 @@ function Test_SyncProjectItemsStaged_Async_debug {
 
 function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue_AddComment {
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     $modulePath = $MODULE_PATH | split-path -Parent
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
@@ -677,9 +650,6 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue_AddComment {
 }
 
 function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_PullRequest_AddComment {
-
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $modulePath = $MODULE_PATH | split-path -Parent
 

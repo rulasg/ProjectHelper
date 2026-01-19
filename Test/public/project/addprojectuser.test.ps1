@@ -1,6 +1,4 @@
 function Test_AddProjectUser_SUCCESS_SingleUser{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     # Enable-invokeCommandAliasModule
     # Invoke-UpdateProjectV2Collaborators -ProjectId PVT_kwDOAlIw4c4BCe3V -collaborators "MDQ6VXNlcjY4ODQ0MDg=" -Role "WRITER"
@@ -25,8 +23,6 @@ function Test_AddProjectUser_SUCCESS_SingleUser{
 }
 
 function Test_AddProjectUser_SUCCESS_MultipleUser{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $p =Get-Mock_Project_700 ; $owner = $p.Owner ; $projectNumber = $p.Number ; $projectId = $p.id
     MockCall_GetProject $p -SkipItems

@@ -1,8 +1,5 @@
 function Test_NewProjectIssueDirect{
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     $p = Get-Mock_Project_700 
     $r = $p.repo 
     $i = $p.issueToCreateAddAndRemove
@@ -30,8 +27,6 @@ function Test_NewProjectIssueDirect{
 }
 
 function Test_NewProjectIssue{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $r = $p.repo

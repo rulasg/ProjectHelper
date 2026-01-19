@@ -241,6 +241,7 @@ function MockCall_GetProject_700 {
     }
 
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName $filename -SkipItems:$SkipItems
+    Mock_Today
  
     if ($Cache) {
         $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems
@@ -260,6 +261,7 @@ function MockCall_GetProject_700_CaseSensitive {
     $filename = $p.projectFile_caseSensitive
 
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName $filename -SkipItems:$SkipItems
+    Mock_Today
  
     if ($Cache) {
         $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems

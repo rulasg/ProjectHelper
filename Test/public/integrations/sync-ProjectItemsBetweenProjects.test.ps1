@@ -1,6 +1,4 @@
 function Test_UpdateProjectItemsBetweenProjects{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $p625 = Get-Mock_Project_625 ; $owner0 = $p625.owner ; $projectNumber0 = $p625.number
     $p626 = Get-Mock_Project_626 ; $owner1 = $p626.owner ; $projectNumber1 = $p626.number
@@ -38,8 +36,6 @@ function Test_UpdateProjectItemsBetweenProjects{
 }
 
 function Test_UpdateProjectItemsBetweenProjects_NoRefresh_NoRefresh{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $p625 = Get-Mock_Project_625 ; $owner0 = $p625.owner ; $projectNumber0 = $p625.number
     $p626 = Get-Mock_Project_626 ; $owner1 = $p626.owner ; $projectNumber1 = $p626.number
@@ -51,8 +47,7 @@ function Test_UpdateProjectItemsBetweenProjects_NoRefresh_NoRefresh{
     MockCall_GetProject -MockProject $p626 -Cache
 
     # Reset mocks to fail if mocks are called again
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot -NotReset
+    Reset_Test_Mock -NoResetDatabase
 
     # Act
 
@@ -75,8 +70,6 @@ function Test_UpdateProjectItemsBetweenProjects_NoRefresh_NoRefresh{
 }
 
 function Test_SyncProjectItemsBetweenProjects_SameValues{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     MockCall_GetProject_700
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number

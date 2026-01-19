@@ -1,8 +1,5 @@
 function Test_GetProjectFields_SUCCESS_AllFields{
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     $p = Get-Mock_Project_700 ; $owner = $p.Owner ; $projectNumber = $p.Number
     MockCall_GetProject -MockProject $p -SkipItems
 
@@ -33,9 +30,6 @@ function Test_GetProjectFields_SUCCESS_AllFields{
 
 function Test_GetProjectFields_Fail_Comments_Present{
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     $p = Get-Mock_Project_700 ; $owner = $p.Owner ; $projectNumber = $p.Number
 
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName $p.projectFile_WrongField -SkipItems
@@ -55,15 +49,12 @@ function Test_GetProjectFields_Fail_Comments_Present{
 
 function Test_GetProjectFields_SUCCESS_FilterByName{
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     $Owner = "SomeOrg" ; $ProjectNumber = 164
 
     # title refrence with differnt case and spaces
     $filter = "Title"
 
-        MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2-skipitems.json' -SkipItems
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2-skipitems.json' -SkipItems
 
     $result = Get-ProjectFields -Owner $owner -ProjectNumber $projectNumber -Name $filter
 
@@ -73,8 +64,7 @@ function Test_GetProjectFields_SUCCESS_FilterByName{
 }
 
 function Test_GetProjectFields_SUCCESS_MoreInfo{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
+
     $Owner = "SomeOrg" ; $ProjectNumber = 164
 
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName 'projectV2-skipitems.json' -SkipItems

@@ -4,9 +4,6 @@
 
 function Test_EnvironmentCache{
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-
     $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $projectNumber = $p.number
     $i = $p.issue
     $f = $p.fieldtext
@@ -18,8 +15,7 @@ function Test_EnvironmentCache{
     MockCall_GetProject_700 -Cache
 
     # Reset mock calls
-    Reset-invokeCommandMock
-    Mock_DatabaseRoot -NotReset
+    Reset_Test_Mock -NoResetDatabase
 
     $itemId = $i.Id
     $fieldTitleValue = $i.title

@@ -130,6 +130,7 @@ This allows the test infrastructure to recognize the test while explicitly marki
 ### Example 1: Simple Success Case
 ```powershell
 function Test_FindProject_SUCCESS {
+
     # Arrange
     Reset-InvokeCommandMock
     Enable-InvokeCommandAliasModule
@@ -153,10 +154,8 @@ function Test_FindProject_SUCCESS {
 ### Example 2: Single vs Multiple User Variants
 ```powershell
 function Test_AddProjectUser_SUCCESS_SingleUser {
-    # Arrange
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
+    # Arrange
     $p = Get-Mock_Project_700
     $owner = $p.Owner
     $projectNumber = $p.Number
@@ -179,14 +178,9 @@ function Test_AddProjectUser_SUCCESS_SingleUser {
 }
 
 function Test_AddProjectUser_SUCCESS_MultipleUser {
-    # Arrange
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
-    $p = Get-Mock_Project_700
-    $owner = $p.Owner
-    $projectNumber = $p.Number
-    $projectId = $p.id
+    # Arrange
+    $p = Get-Mock_Project_700 ; $owner = $p.Owner ; $projectNumber = $p.Number ; $projectId = $p.id
     MockCall_GetProject $p -SkipItems
 
     $u = Get-Mock_Users

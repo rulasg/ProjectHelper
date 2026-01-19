@@ -1,6 +1,4 @@
 function Test_UpdateProject_Success{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     # enable-invokeCommandAliasModule
 
@@ -22,8 +20,6 @@ function Test_UpdateProject_Success{
 }
 
 function Test_UpdateProject_SkipItems_Success{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     # enable-invokeCommandAliasModule
 
@@ -45,8 +41,6 @@ function Test_UpdateProject_SkipItems_Success{
 }
 
 function Test_UpdateProject_With_Query_Success{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     # enable-invokeCommandAliasModule
 
@@ -67,8 +61,6 @@ function Test_UpdateProject_With_Query_Success{
 }
 
 function Test_UpdateProject_With_Query_Success_Update{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $cacheFileName = $p.cacheFileName

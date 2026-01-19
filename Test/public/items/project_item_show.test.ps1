@@ -62,9 +62,7 @@ function Get-Test_Write_Sucess_Factors {
 } Export-ModuleMember -Function Get-Test_Write_Sucess_Factors, Test_Write_Sucess
 
 function Test_ShowProjectItem_SUCESS{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-    
+
     $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $ProjectNumber = $p.number
     $i = $p.issue
     MockCall_GetProject $p -skipItems
@@ -90,9 +88,7 @@ function Test_ShowProjectItem_SUCESS{
 }
 
 function Test_OpenInEditor{
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-    
+
     $text = "Sample Text for Editor"
 
     $command = '"{content}" | code -w - '

@@ -1,8 +1,5 @@
 function Test_GetRepository{
 
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot
-    
     $p = Get-Mock_Project_700 ;
     $r = $p.repo
     $ro = $p.repo.object
@@ -24,8 +21,7 @@ function Test_GetRepository{
     Assert-ItemExist -Path (Join-Path -Path $dbpath -ChildPath $dbname)
 
     # reset mocks and get repo to use cache
-    Reset-InvokeCommandMock
-    Mock_DatabaseRoot -NotReset
+    Reset_Test_Mock -NoResetDatabase
 
     $result = Get-Repository -Owner $r.owner -Name $r.name
 
