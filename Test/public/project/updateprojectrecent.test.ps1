@@ -36,30 +36,80 @@ function Test_UpdateProjectRecent_FirstCAll_SetRecentUpdate_toToday{
 
     # Verify Set-EnvItem_Last_RecentUpdate_Today was NOT called - env item should be null/empty
     $envValue = Invoke-PrivateContext { Get-EnvItem_Last_RecentUpdate -Owner "octodemo" -ProjectNumber 700 }
-    Assert-IsNotNull -Object $envValue
     Assert-AreEqual -Expected $today -Presented $envValue
 
 }
 
-function Test_UpdateProjectRecent_UpdateBasedOn_SetRecentUpdate{
+function Test_UpdateProjectRecent_UpdateBasedOn_FirstTime{
     # Arrange
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $today = (Get-Mock_Today).today
     
-    # Cache project
+    # Act - use the mock to run the project full sync to set the last recent update to today
+    MockCall_GetProject_700
+
+    $result = Update-ProjectRecent -Owner $owner -ProjectNumber $projectNumber
+
+    ## Assert check that the EnvironmentCache_Last_RecentUpdate_octodemo_700.json is set to today
+    $envValue = Invoke-PrivateContext { Get-EnvItem_Last_RecentUpdate -Owner "octodemo" -ProjectNumber 700 }
+    Assert-AreEqual -Expected $today -Presented $envValue
+
+}
+
+function Test_UpdateProjectRecent_UpdateBasedOn_SetToToday{
+    # Arrange
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $today = (Get-Mock_Today).today
+    
+    # Act - use the mock to run the project full sync to set the last recent update to today
     MockCall_GetProject_700 -Cache
-    
+
+    ## Assert check that the EnvironmentCache_Last_RecentUpdate_octodemo_700.json is set to today
+    $envValue = Invoke-PrivateContext { Get-EnvItem_Last_RecentUpdate -Owner "octodemo" -ProjectNumber 700 }
+    Assert-AreEqual -Expected $today -Presented $envValue
+
     # Reset Mocks to ensure no mocks functions left from caching project
     Reset_Test_Mock -NoResetDatabase
 
-    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
-    $today = (Get-Mock_Today).today
-    $query  = "updated:<$today"
+    # Mock the call to GitHubOrgProjectWithFields with the query to get only recently updated items
+    $query = "updated:>=$today"
     # not real query just a mock file with some items reply
     $fileName = $p.getProjectWithQuery.getProjectWithQueryMockFile
-
     # Set te only sync allowed on Update-ProjectRecent
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -Query $query -FileName $fileName
 
     # Act second time - call Update-ProjectRecent again to ensure it uses the last recent update date
     $result = Update-ProjectRecent -Owner $owner -ProjectNumber $projectNumber
     Assert-IsTrue $result
+}
+
+function Test_UpdateProjectRecent_UpdateBasedOn_SetToTehPast{
+    # Arrange
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $d = Get-Mock_Today ; $today = $d.today ; $pastDate = $d.past
+    
+    # Act - use the mock to run the project full sync to set the last recent update to today
+    MockCall_GetProject_700 -Cache
+
+    ## Assert check that the EnvironmentCache_Last_RecentUpdate_octodemo_700.json is set to today
+    Invoke-PrivateContext { Set-EnvItem_Last_RecentUpdate -Owner "octodemo" -ProjectNumber 700 -Value "2024-02-18" }
+
+
+    # Reset Mocks to ensure no mocks functions left from caching project
+    Reset_Test_Mock -NoResetDatabase
+
+    # Mock the call to GitHubOrgProjectWithFields with the query to get only recently updated items
+    $query = "updated:>=$pastDate"
+    # not real query just a mock file with some items reply
+    $fileName = $p.getProjectWithQuery.getProjectWithQueryMockFile
+    # Set te only sync allowed on Update-ProjectRecent
+    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -Query $query -FileName $fileName
+
+    # Act second time - call Update-ProjectRecent again to ensure it uses the last recent update date
+    $result = Update-ProjectRecent -Owner $owner -ProjectNumber $projectNumber
+    Assert-IsTrue $result
+
+    # ASsert that value has changed to today
+    $envValue = Invoke-PrivateContext { Get-EnvItem_Last_RecentUpdate -Owner "octodemo" -ProjectNumber 700 }
+    Assert-AreEqual -Expected $today -Presented $envValue
 }
