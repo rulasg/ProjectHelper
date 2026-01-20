@@ -18,44 +18,6 @@ param (
     [Parameter()][string]$TestName
 )
 
-function Set-TestName{
-    [CmdletBinding()]
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '', Scope='Function')]
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '', Scope='Function')]
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Scope='Function')]
-    [Alias("st")]
-    param (
-        [Parameter(Position=0,ValueFromPipeline)][string]$TestName
-    )
-
-    process{
-        $global:TestNameVar = $TestName
-    }
-}
-
-function Get-TestName{
-    [CmdletBinding()]
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '', Scope='Function')]
-    [Alias("gt")]
-    param (
-    )
-
-    process{
-        $global:TestNameVar
-    }
-}
-
-function Clear-TestName{
-    [CmdletBinding()]
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '', Scope='Function')]
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '', Scope='Function')]
-    [Alias("ct")]
-    param (
-    )
-
-    $global:TestNameVar = $null
-}
-
 function Import-RequiredModule{
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Scope='Function')]
