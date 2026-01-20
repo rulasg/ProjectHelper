@@ -108,6 +108,31 @@ function Import-RequiredModule{
     }
 }
 
+function Test-TestingHelperResults{
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline)][object]$result,
+        [Parameter()][switch]$SkippedNotAllowed,
+        [Parameter()][switch]$NotImplementedNotAllowed
+    )
+
+    # Chek results from last run
+    $result = $result ?? $Global:ResultTestingHelper
+
+    if($SkippedNotAllowed -and $result.Skipped -gt 0){
+        return $false
+    }
+
+    if($NotImplementedNotAllowed -and $result.NotImplemented -gt 0){
+        return $false
+    }
+
+    # Allow Not Implemented and Skipped tests to pass
+    $passed = $result.Tests -eq $result.Pass + $result.NotImplemented + $result.Skipped
+
+    return $passed
+}
+
 <#
 . SYNOPSIS
     Extracts the required modules from the module manifest

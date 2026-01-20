@@ -35,9 +35,7 @@ jobs:
           $result = ./test.ps1 -ShowTestErrors
           $result
 
-          # Allow Not Implemented and Skipped tests to pass
-          $passed = $result.Tests -eq $result.Pass + $result.NotImplemented + $result.Skipped
-          # $passed = $result.Tests -eq $result.Pass
+          $passed = Test-TestingHelperResults -Results $result
 
           if($passed)
           { "All test passed" | Write-Verbose -verbose ; exit 0 } 
