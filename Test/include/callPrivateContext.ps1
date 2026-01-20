@@ -14,10 +14,14 @@ if(-not $MODULE_PATH){ throw "Missing MODULE_PATH variable initialization. Check
 function Invoke-PrivateContext {
     param (
         [Parameter(Mandatory, Position = 0)]
-        [scriptblock]$ScriptBlock
+        [scriptblock]$ScriptBlock,
+        [string]$ModulePath
     )
 
-    $modulePath = $MODULE_PATH | Split-Path -Parent
+    if ([string]::IsNullOrEmpty($ModulePath)) {
+        $modulePath = $MODULE_PATH | Split-Path -Parent
+    }
+    
     $module = Import-Module -Name $modulePath -PassThru
 
     if ($null -eq $module) {

@@ -13,7 +13,9 @@
 #
 
 # MODULE_NAME
-$MODULE_NAME = ($PSScriptRoot | Split-Path -Parent | Get-ChildItem -Filter *.psd1 | Select-Object -First 1).BaseName
+$MODULE_NAME_PATH = ($PSScriptRoot | Split-Path -Parent | Get-ChildItem -Filter *.psd1 | Select-Object -First 1) | Split-Path -Parent
+$MODULE_NAME = $MODULE_NAME_PATH | Split-Path -LeafBase
+
 if(-Not $MODULE_NAME){ throw "Module name not found. Please check the module structure." }
 
 $CONFIG_ROOT = [System.Environment]::GetFolderPath('UserProfile') | Join-Path -ChildPath ".helpers" -AdditionalChildPath $MODULE_NAME, "config"
@@ -126,7 +128,7 @@ function Invoke-ModuleNameGetConfigRootPath {
 $function = "Invoke-ModuleNameGetConfigRootPath"
 $destFunction = $function -replace "ModuleName", $MODULE_NAME
 if( -not (Test-Path function:$destFunction )){
-    Rename-Item -path Function:$function -NewName $destFunction
+    Copy-Item -path Function:$function -Destination Function:$destFunction
     Export-ModuleMember -Function $destFunction
 }
 
@@ -143,7 +145,7 @@ function Get-ModuleNameConfig{
 $function = "Get-ModuleNameConfig"
 $destFunction = $function -replace "ModuleName", $MODULE_NAME
 if( -not (Test-Path function:$destFunction )){
-    Rename-Item -path Function:$function -NewName $destFunction
+    Copy-Item -path Function:$function -Destination Function:$destFunction
     Export-ModuleMember -Function $destFunction
 }
 
@@ -158,7 +160,7 @@ function Open-ModuleNameConfig{
 $function = "Open-ModuleNameConfig"
 $destFunction = $function -replace "ModuleName", $MODULE_NAME
 if( -not (Test-Path function:$destFunction )){
-    Rename-Item -path Function:$function -NewName $destFunction
+    Copy-Item -path Function:$function -Destination Function:$destFunction
     Export-ModuleMember -Function $destFunction
 }
 
