@@ -126,8 +126,8 @@ function Enable-ModuleNameVerbose{
     $moduleDebugVarName = $MODULE_NAME + "_VERBOSE"
     [System.Environment]::SetEnvironmentVariable($moduleDebugVarName, $flag)
 }
-Rename-Item -path Function:Enable-ModuleNameVerbose -NewName "Set-$($MODULE_NAME)Verbose"
-Export-ModuleMember -Function "Set-$($MODULE_NAME)Verbose"
+Copy-Item -path Function:Enable-ModuleNameVerbose -Destination Function:"Enable-$($MODULE_NAME)Verbose"
+Export-ModuleMember -Function "Enable-$($MODULE_NAME)Verbose"
 
 function Disable-ModuleNameVerbose{
     param()
@@ -135,8 +135,8 @@ function Disable-ModuleNameVerbose{
     $moduleDebugVarName = $MODULE_NAME + "_VERBOSE"
     [System.Environment]::SetEnvironmentVariable($moduleDebugVarName, $null)
 }
-Rename-Item -path Function:Disable-ModuleNameVerbose -NewName "Clear-$($MODULE_NAME)Verbose"
-Export-ModuleMember -Function "Clear-$($MODULE_NAME)Verbose"
+Copy-Item -path Function:Disable-ModuleNameVerbose -Destination Function:"Disable-$($MODULE_NAME)Verbose"
+Export-ModuleMember -Function "Disable-$($MODULE_NAME)Verbose"
 
 function Test-MyDebug {
     param(
@@ -173,7 +173,7 @@ function Enable-ModuleNameDebug{
     $moduleDebugVarName = $MODULE_NAME + "_DEBUG"
     [System.Environment]::SetEnvironmentVariable($moduleDebugVarName, $flag)
 }
-Rename-Item -path Function:Enable-ModuleNameDebug -NewName "Enable-$($MODULE_NAME)Debug"
+Copy-Item -path Function:Enable-ModuleNameDebug -Destination Function:"Enable-$($MODULE_NAME)Debug"
 Export-ModuleMember -Function "Enable-$($MODULE_NAME)Debug"
 
 function Disable-ModuleNameDebug {
@@ -182,7 +182,7 @@ function Disable-ModuleNameDebug {
     $moduleDebugVarName = $MODULE_NAME + "_DEBUG"
     [System.Environment]::SetEnvironmentVariable($moduleDebugVarName, $null)
 }
-Rename-Item -path Function:Disable-ModuleNameDebug -NewName "Disable-$($MODULE_NAME)Debug"
+Copy-Item -path Function:Disable-ModuleNameDebug -Destination Function:"Disable-$($MODULE_NAME)Debug"
 Export-ModuleMember -Function "Disable-$($MODULE_NAME)Debug"
 
 function Get-ObjetString {
