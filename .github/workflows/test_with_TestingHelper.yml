@@ -33,9 +33,12 @@ jobs:
         shell: pwsh
         run: | 
           $result = ./test.ps1 -ShowTestErrors
-          $result
+          
+          Write-Output $result
 
-          $passed = Test-TestingHelperResults -Results $result
+          import-module ./tools/Test_Helper/
+
+          $passed = Test-Result -Result $result
 
           if($passed)
           { "All test passed" | Write-Verbose -verbose ; exit 0 } 
