@@ -78,4 +78,5 @@ Invoke-GetUser -Handle rulasg
 Invoke-UpdateProjectV2Collaborators -ProjectId PVT_kwDOAlIw4c4BCe3V -collaborators "MDQ6VXNlcjY4ODQ0MDg=" -Role "WRITER"
 Invoke-GetUser -Handle rauldibildos
 Invoke-UpdateProjectV2Collaborators -ProjectId PVT_kwDOAlIw4c4BCe3V -collaborators "MDQ6VXNlcjY4ODQ0MDg= U_kgDOC_E3gw" -Role "WRITER"
-Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 700 -afterFields "" -afterItems "" -query "updated:<2025-03-15"
+Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 700 -afterFields "" -afterItems "" -query "updated:>=2024-02-18"
+Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 700 -afterFields "" -afterItems "" -query "updated:>=2025-03-15"

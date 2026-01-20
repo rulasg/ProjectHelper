@@ -33,11 +33,12 @@ jobs:
         shell: pwsh
         run: | 
           $result = ./test.ps1 -ShowTestErrors
-          $result
+          
+          Write-Output $result
 
-          # Allow Not Implemented and Skipped tests to pass
-          $passed = $result.Tests -eq $result.Pass + $result.NotImplemented + $result.Skipped
-          # $passed = $result.Tests -eq $result.Pass
+          import-module ./tools/Test_Helper/
+
+          $passed = Test-Result -Result $result
 
           if($passed)
           { "All test passed" | Write-Verbose -verbose ; exit 0 } 

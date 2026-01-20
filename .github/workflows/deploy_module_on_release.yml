@@ -19,6 +19,22 @@ jobs:
         run: |
           echo $EVENT_CONTEXT
 
+      - name: Run test.ps1
+        shell: pwsh
+        run: | 
+          $result = ./test.ps1 -ShowTestErrors
+          
+          Write-Output $result
+
+          import-module ./tools/Test_Helper/
+
+          $passed = Test-Result -Result $result
+
+          if($passed)
+            { "All test passed" | Write-Verbose -verbose ; exit 0 } 
+          else
+            { "Not all tests passed" | Write-Verbose -verbose ; exit 1 }
+
       - name: deploy_ps1
         shell: pwsh
         env:
@@ -27,8 +43,16 @@ jobs:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
           RELEASE_NAME: ${{ github.event.release.name }}
         run: | 
-          $env:EVENT_REF = $env:REF
 
+          # Import required modules for deployment
+          import-module ./tools/Test_Helper/
+
+          Get-RequiredModule -Verbose | Import-RequiredModule -AllowPrerelease
+
+          # GET TAG NAME
+          
+          ## Ref definition. Branch or Tag
+          $env:EVENT_REF = $env:REF
           If ([string]::IsNullOrEmpty($env:EVENT_REF)) {
             # Release published trigger
             $tag = $env:RELEASE_TAG
@@ -41,9 +65,9 @@ jobs:
 
           If([string]::IsNullorwhitespace($tag)) {
             # Tag name is empty, exit
-            write-error "Tag name is empty"
-            exit 1
+            throw "Tag name is empty"
           }
 
+          # DEPLOYMENT
           ./deploy.ps1 -VersionTag $tag -NugetApiKey $env:NUGETAPIKEY
 
