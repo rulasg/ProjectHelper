@@ -88,5 +88,3 @@ function Test_ProjectItemList_ExcludeDone{
 
     Assert-AreEqual -Expected ($itemsCount - $itemsDone) -Presented $result.Count
 }
-
-

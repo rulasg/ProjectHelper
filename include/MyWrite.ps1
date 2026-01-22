@@ -203,8 +203,3 @@ function Get-ObjetString {
         return $Object | ConvertTo-Json -Depth 10 -ErrorAction SilentlyContinue
     }
 }
-
-
-
-
-

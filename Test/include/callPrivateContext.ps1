@@ -30,4 +30,3 @@ function Invoke-PrivateContext {
 
     & $module $ScriptBlock
 } Export-ModuleMember -Function Invoke-PrivateContext
-

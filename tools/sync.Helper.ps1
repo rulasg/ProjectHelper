@@ -59,4 +59,3 @@ function Save-UrlContentToFile {
     Set-Content -Path $filePath -Value $fileContent
     Write-Information -MessageData "Saved content to [$filePath] from [$url]"
 }
-

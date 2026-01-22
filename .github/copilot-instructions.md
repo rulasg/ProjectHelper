@@ -60,7 +60,7 @@ Disable-ProjectHelperDebug
 
 ### GraphQL Integration
 1. Store GraphQL in template files: `/public/graphql/queryName.query` or `.mutant`
-2. Retrieve via: `Get-GraphQLString "queryName.query"` 
+2. Retrieve via: `Get-GraphQLString "queryName.query"`
 3. Execute: `Invoke-GraphQL -Query $query -Variables $variables`
 
 Example:
@@ -110,7 +110,7 @@ The folder structure in `Test/` must exactly match the structure in the main mod
   - `Test_FindProject_SUCCESS` (success case)
   - `Test_AddProjectUser_SUCCESS_SingleUser` (specific variant)
   - `Test_GetProjectIssue_NotFound` (error case)
-- **Conventions**: 
+- **Conventions**:
   - Use PascalCase matching the actual function name (e.g., `Get-SomeInfo` → `Test_GetSomeInfo_<tip>`)
   - `<tip>` should be a descriptive word indicating the test goal (SUCCESS, NotFound, InvalidInput, etc.)
   - Use assertions: `Assert-IsTrue`, `Assert-Contains`, `Assert-AreEqual`, `Assert-Count`, `Assert-IsNull`

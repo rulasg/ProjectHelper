@@ -79,4 +79,3 @@ if ( [string]::IsNullOrWhiteSpace($NuGetApiKey) ) {
 
 # Deploy module to PSGallery
 Invoke-DeployModuleToPSGallery -NuGetApiKey $NuGetApiKey -Force -ModuleManifestPath $MODULE_PSD1
-

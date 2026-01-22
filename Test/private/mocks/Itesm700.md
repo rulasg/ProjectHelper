@@ -7,7 +7,7 @@ invoke-GitHubOrgProjectWithFields-octodemo-700-skipitems.json
 Name                           Value
 ----                           -----
 items                          {System.Management.Automation.OrderedHashtable}
-readme                         
+readme
 ProjectId                      PVT_kwDOAlIw4c4BCe3V
 title                          rulasg-dev-700
 shortDescription               Project used as development environment by rulasg
@@ -35,14 +35,14 @@ Name                           Value
 ----                           -----
 updatedAt                      9/9/2025 14:04:20
 Milestone                      Milestone 1: Project Setup
-field-iteration                
+field-iteration
 createdAt                      9/9/2025 13:56:05
 number                         25
 Repository                     https://github.com/octodemo/rulasg-dev-1
 Assignees                      rulasg
 field-number                   111
 Status                         Todo
-body                           
+body
 id                             PVTI_lADOAlIw4c4BCe3VzgeioBY
 state                          OPEN
 type                           PullRequest
@@ -57,7 +57,7 @@ Name                           Value
 ----                           -----
 updatedAt                      9/9/2025 14:01:23
 Milestone                      Milestone 3: Quality and Deployment
-field-iteration                
+field-iteration
 createdAt                      9/9/2025 14:01:17
 number                         26
 Repository                     https://github.com/octodemo/rulasg-dev-1
@@ -78,15 +78,15 @@ Name                           Value
 ----                           -----
 updatedAt                      9/9/2025 13:59:33
 field-number                   222
-field-iteration                
+field-iteration
 createdAt                      9/9/2025 13:59:21
-number                         
+number
 field-singleselect             option-2
 Status                         In Progress
-body                           
+body
 id                             PVTI_lADOAlIw4c4BCe3Vzgeiodc
-state                          
+state
 type                           DraftIssue
-url                            
+url
 Title                          DraftIssue for development
 field-text                     text2

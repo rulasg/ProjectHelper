@@ -21,9 +21,9 @@ jobs:
 
       - name: Run test.ps1
         shell: pwsh
-        run: | 
+        run: |
           $result = ./test.ps1 -ShowTestErrors
-          
+
           Write-Output $result
 
           import-module ./tools/Test_Helper/
@@ -31,7 +31,7 @@ jobs:
           $passed = Test-Result -Result $result
 
           if($passed)
-            { "All test passed" | Write-Verbose -verbose ; exit 0 } 
+            { "All test passed" | Write-Verbose -verbose ; exit 0 }
           else
             { "Not all tests passed" | Write-Verbose -verbose ; exit 1 }
 
@@ -42,7 +42,7 @@ jobs:
           EVENT_REF: ${{ github.event.ref }}
           RELEASE_TAG: ${{ github.event.release.tag_name }}
           RELEASE_NAME: ${{ github.event.release.name }}
-        run: | 
+        run: |
 
           # Import required modules for deployment
           import-module ./tools/Test_Helper/
@@ -50,7 +50,7 @@ jobs:
           Get-RequiredModule -Verbose | Import-RequiredModule -AllowPrerelease
 
           # GET TAG NAME
-          
+
           ## Ref definition. Branch or Tag
           $env:EVENT_REF = $env:REF
           If ([string]::IsNullOrEmpty($env:EVENT_REF)) {
@@ -70,4 +70,3 @@ jobs:
 
           # DEPLOYMENT
           ./deploy.ps1 -VersionTag $tag -NugetApiKey $env:NUGETAPIKEY
-

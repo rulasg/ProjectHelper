@@ -56,4 +56,3 @@ function Test_NewProjectIssue{
 
     Assert-AreEqual -Expected $result -Presented $i.itemId
 }
-

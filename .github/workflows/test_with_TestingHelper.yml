@@ -31,9 +31,9 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run test.ps1
         shell: pwsh
-        run: | 
+        run: |
           $result = ./test.ps1 -ShowTestErrors
-          
+
           Write-Output $result
 
           import-module ./tools/Test_Helper/
@@ -41,7 +41,6 @@ jobs:
           $passed = Test-Result -Result $result
 
           if($passed)
-          { "All test passed" | Write-Verbose -verbose ; exit 0 } 
-          else 
+          { "All test passed" | Write-Verbose -verbose ; exit 0 }
+          else
           { "Not all tests passed" | Write-Verbose -verbose ; exit 1 }
-

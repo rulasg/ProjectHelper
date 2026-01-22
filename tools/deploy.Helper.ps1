@@ -144,5 +144,3 @@ function Get-DeployModulePreRelease {
     $preRelease = $preRelease ?? " "
     $preRelease
 }
-
-

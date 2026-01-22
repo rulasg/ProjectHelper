@@ -199,5 +199,3 @@ function Invoke-ProjectInjectionOnDueDate {
         }
     }
 } # Do not export this function to avoid conflicts with Update-ProjectItemsWithIntegration
-
-

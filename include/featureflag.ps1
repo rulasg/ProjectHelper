@@ -164,4 +164,3 @@ if( -not (Test-Path function:$destFunction )){
     Rename-Item -path Function:$function -NewName $destFunction
     Export-ModuleMember -Function $destFunction
 }
-
