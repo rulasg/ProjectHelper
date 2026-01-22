@@ -23,7 +23,7 @@ function Get-ProjectItem {
     begin {
         ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
         if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
-    
+
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems
 
         if(! $db){ "Project not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError; return $null}
@@ -40,7 +40,7 @@ function Get-ProjectItem {
 
         return $item
     }
-    
+
     end {
         if ($dirty) {
             "Saving dirty database" | Write-Verbose
@@ -64,7 +64,7 @@ function Get-ProjectItemByUrl{
     begin {
         ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
         if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { return $null }
-    
+
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems
 
         if(! $db){ "Project not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError; return $null}
@@ -77,7 +77,7 @@ function Get-ProjectItemByUrl{
         $item = Get-ItemByUrl -Database $db -Url $Url
 
         # TODO: Create a Resolve-ProjectItemByUrl - Depend on function to get item from project remote by url
-        # Get-ItemByUrl only check cache so we need a function that will retreive item from project remote 
+        # Get-ItemByUrl only check cache so we need a function that will retreive item from project remote
         # and update the project cache.
         # This function depends on the capacity to retreive items by filter
         # Project API has just been updated to allow search project items
@@ -115,7 +115,7 @@ function Test-ProjectItem {
     process {
 
         $ret = Test-Item -Database $db -Url $Url
-        
+
         return $ret
     }
 
@@ -149,7 +149,7 @@ function Search-ProjectItem {
 
     ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
-    
+
     # Get items as hashtable for later queries
     $items = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -IncludeDone:$IncludeDone -AsHashtable
 
@@ -172,7 +172,7 @@ function Search-ProjectItem {
         } else {
             # Default to "Title as the single field to search"
             $FieldName = [string]::IsNullOrWhiteSpace($FieldName) ? "Title" : $FieldName
-            
+
             if($Exact){
                 # Pick just the first value a in Exact fielname there is only one match Fieldname value
                 $found = $items.Values | Where-Object { Test-WhereExactField -Item $_ -Fieldname $FieldName -Value $Filter[0] }
@@ -291,12 +291,12 @@ function Open-ProjectItem {
 
     begin {
 
-        
+
         ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
         if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) {
             throw "Owner and ProjectNumber are required on Open-ProjectItem"
         }
-        
+
         "Project set to [$owner/$ProjectNumber]" | Write-Verbose
 
     }
@@ -306,7 +306,7 @@ function Open-ProjectItem {
         $itemId = $Id
 
         "Opening item [$ItemId] in project [$Owner/$ProjectNumber]" | Write-Verbose
-   
+
         $item = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $ItemId
         if (-not $item) {
             throw "Item not found for Owner [$Owner], ProjectNumber [$ProjectNumber] and ItemId [$ItemId]"
@@ -318,11 +318,11 @@ function Open-ProjectItem {
             # fall back to url if urlcontent is empty
             $url = $item.urlContent ?? $item.url
         }
-        
+
         if ([string]::IsNullOrWhiteSpace($url)) {
             # We should never reach this point as all items has a urlpanel set in Convert-NodeItemToHash
             "No URL found for Item [$ItemId] type [ $($item.type) ]" | Write-Error
-            return 
+            return
         }
 
         Open-Url -Url $url
@@ -351,30 +351,30 @@ function Edit-ProjectItem {
 
         ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
         if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
-        
+
         # Force cache update
         # Full sync if force. Skip items if not force
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems:$(-not $Force)
-        
+
         # Find the actual value of the item. Item+Staged
         # Ignore $dirty as we are changing the db we will always save
         ($item, $dirty) = Resolve-ProjectItem -Database $db -ItemId $ItemId
-        
+
         # if the item is not found
         if($null -eq $item){ "Item [$ItemId] not found" | Write-MyError; return $null}
-        
+
         # Value transformations
         $valueTransformed = Convertto-ItemTransformedValue -Item $item -Value $Value
-        
+
         # Check if value is the same
         if ( AreEqual -Object1:$item.$FieldName -Object2:$valueTransformed) {
             "The value is the same, no need to stage it" | Write-Verbose
             return
         }
-        
+
         # save the new value
         Save-ItemFieldValue $db $itemId $FieldName $valueTransformed
-        
+
         # Commit changes to the database
         Save-ProjectDatabaseSafe -Database $db
     }
@@ -394,7 +394,7 @@ function Reset-ProjectItem {
 
         ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
         if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
-        
+
         # Force cache update
         # Full sync if force. Skip items if not force
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems:$(-not $Force)
@@ -434,7 +434,7 @@ function Add-ProjectItemDirect {
     begin{
         ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
         if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
-    
+
         # Get project id
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
         if ( ! $db) {
@@ -498,13 +498,13 @@ function Remove-ProjectItemDirect {
         [Parameter()][string]$ProjectNumber,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName,ValueFromPipeline, Position = 0)][Alias("Id")][string]$ItemId,
         [Parameter()][switch]$Force
-        
+
     )
 
     begin {
         ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
         if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
-        
+
         # Get project id
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
         if ($db) {
@@ -516,14 +516,14 @@ function Remove-ProjectItemDirect {
 
         # With no Project Id we ned to abort
         if( ! $projectId ){ return }
-        
+
         $item = Get-Item $db $ItemId
-        
+
         if (-not $item) {
             "Item [$ItemId] not found in project [$Owner/$ProjectNumber]" | Write-MyHost
             return
         }
-        
+
         $itemId = $item.id
         $itemUrl = $item.url
 
@@ -536,7 +536,7 @@ function Remove-ProjectItemDirect {
                 # Fake execution return ItemId
                 return $itemUrl
             }
-            
+
             # check if FAILED
             if ($response.errors -or ($response.data.deleteProjectV2Item.deletedItemId -ne $ItemId)) {
                 "Some issue removing [$ItemId] from project" | Write-MyError
@@ -548,7 +548,7 @@ function Remove-ProjectItemDirect {
                     return $itemUrl
                 }
             }
-            
+
             $result = $response.data.deleteProjectV2Item.deletedItemId
 
             if($result -ne $ItemId){
@@ -556,7 +556,7 @@ function Remove-ProjectItemDirect {
             }
         }
         catch {
-            throw "Error remvoving item [$ItemId] from project: $_" 
+            throw "Error remvoving item [$ItemId] from project: $_"
         }
 
         # Remove item from cache
@@ -578,7 +578,7 @@ function Remove-ProjectItem {
         [Parameter(Mandatory, ValueFromPipelineByPropertyName,ValueFromPipeline, Position = 0)][Alias("Id")][string]$ItemId,
         [Parameter()][switch]$DeleteIssue,
         [Parameter()][switch]$Force
-        
+
     )
 
     process {
@@ -589,7 +589,7 @@ function Remove-ProjectItem {
             $itemUrl = Remove-ProjectItemDirect -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $ItemId -Force:$Force
             return $itemUrl
         }
-        
+
         # Find Item to remove
         $item = Get-ProjectItem -ItemId $ItemId
 
@@ -599,7 +599,7 @@ function Remove-ProjectItem {
         }
 
         # Remove issue associated with the item
-        # If DraftIssue when it´s already delete when removed from project 
+        # If DraftIssue when it´s already delete when removed from project
         # If PullRequest. PR can not be deleted
         if($item.type -ne "Issue") {
             "Item [$ItemId] is not an Issue, skipping issue deletion" | Write-MyHost
@@ -670,7 +670,7 @@ function Test-WhereLikeAnyField {
                 return $true
             }
         }
-        
+
         return $false
     }
 }
@@ -688,7 +688,7 @@ function Test-WhereExactAnyField {
                 return $true
             }
         }
-        
+
         return $false
     }
 }
@@ -706,7 +706,7 @@ function Test-WhereLikeField {
         $itemValue = $item.$FieldName
 
         $foundCount = 0
-        
+
         foreach ($v in $Values) {
             if( $itemValue -like "*$v*"){
                 $foundCount ++

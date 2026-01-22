@@ -43,7 +43,7 @@ function Convert-NodeItemToHash {
         $item.RepositoryOwner = $NodeItem.content.repository.owner.login
         $item.createdAt = GetDateTime -DateTimeString $NodeItem.content.createdAt
         $item.updatedAt = GetDateTime -DateTimeString $NodeItem.content.updatedAt
-        
+
         # Url
         $item.urlPanel = Build-ItemPanelUrl -Item $item
         $item.url = [string]::IsNullOrWhiteSpace($item.urlContent) ? $item.urlPanel : $item.urlContent
@@ -98,7 +98,7 @@ function Build-ItemPanelUrl {
     param(
         [Parameter(Position = 1)][object]$Item
     )
-    
+
     $baseUrl = $item.projectUrl
     $uriBuilder = [System.UriBuilder]::new($baseUrl)
     $uriBuilder.Path += "/views/1"
@@ -115,7 +115,7 @@ function Build-ItemPanelUrl {
 
     # Get the final URL
     $finalUrl = $uriBuilder.ToString()
-    
+
     return $finalUrl
 }
 

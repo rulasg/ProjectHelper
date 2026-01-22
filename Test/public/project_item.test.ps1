@@ -21,7 +21,7 @@ function Test_GetProjectItem_SUCCESS{
 
     # Even if id is in project we make a direct call when with Force
     MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-$itemId-updated.json"
-    
+
     # Act get value from project
     $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
 
@@ -203,13 +203,13 @@ function Test_ResetProjectItem_Value_SUCCESS{
 
     # Act - reset F1
     Reset-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId -FieldName $f1
-    
+
     $reset1 = Get-ProjectItem $itemId
     Assert-AreEqual -Expected $f1Actual -Presented $reset1.$f1
     Assert-AreEqual -Expected $f2Value -Presented $reset1.$f2
-    
+
     # Act Reset F2
-    
+
     Reset-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId -FieldName $f2
     $reset2 = Get-ProjectItem $itemId
     Assert-AreEqual -Expected $f1Actual -Presented $reset2.$f1
@@ -245,7 +245,7 @@ function Test_ResetProjectItem_SUCCESS{
 
     # Act - reset F1
     Reset-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId
-    
+
     $reset = Get-ProjectItem $itemId
     Assert-AreEqual -Expected $f1Actual -Presented $reset.$f1
     Assert-AreEqual -Expected $f2Actual -Presented $reset.$f2
@@ -357,7 +357,7 @@ function Test_ShowProjectItem_SUCCESS{
 
     $p = Get-Mock_Project_700; $Owner = "octodemo" ; $ProjectNumber = 700
     $i = $p.issue
-    
+
     MockCall_GetProject -MockProject $p -SkipItems
     MockCall_GetItem -ItemId $i.id
 
@@ -371,14 +371,14 @@ function Test_ShowProjectItem_SUCCESS{
 
     # Act 0
     $result0 = $item | Format-ProjectItem
-    
+
     Assert-Count -Expected 1 -Presented $result0
 
     Assert-AreEqual -Expected $id -Presented $result0[0].id
     Assert-AreEqual -Expected $title -Presented $result0[0].Title
 
     $result1 = $item | Format-ProjectItem -Attributes "id","Title","Status"
-    
+
     Assert-Count -Expected 1 -Presented $result1
 
     Assert-AreEqual -Expected $id -Presented $result1[0].id
@@ -423,11 +423,11 @@ function Test_WhereLikeField_SUCCESS{
             id = "1"
             title = "This is a sample title for testing"
         }
-        
+
         # Test case 1: Single value match
         $result = $item | Test-WhereLikeField -Fieldname "title" -Values "sample"
         Assert-IsTrue -Condition $result
-        
+
         # Test case 2: Multiple values match (AND logic)
         $result = $item | Test-WhereLikeField -Fieldname "title" -Values "sample","testing"
         Assert-IsTrue -Condition $result

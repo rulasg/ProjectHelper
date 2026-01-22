@@ -193,7 +193,7 @@ function Set-ContentFields {
     param(
         [Parameter(ValueFromPipeline)][hashtable]$Fields
     )
-    
+
     # TITLE
     # Remove Title field comming from CustomFields
     $fieldTitleId = $fields.Keys | Where-Object {$fields.$_.dataType -eq "TITLE"}
@@ -204,7 +204,7 @@ function Set-ContentFields {
     if($fieldTitleId){
         throw "Set-ContentFields: [ Title ] field already exists. Please remove or rename this field from the project"
     }
-    
+
     # Add new title field
     $fields.title = @{
         id       = "title"

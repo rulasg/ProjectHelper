@@ -6,16 +6,16 @@ function Convertto-ItemTransformedValue{
 
     # Check if the Value contains any {{tag}} patterns
     if ($Value -match '\{\{[^}]+\}\}') {
-        
+
         # Find all {{tag}} patterns in the value
         $m = [regex]::Matches($Value, '\{\{([^}]+)\}\}')
-        
+
         $transformedValue = $Value
-        
+
         foreach ($match in $m) {
             $fullTag = $match.Value  # The full {{tag}} including braces
             $fieldName = $match.Groups[1].Value  # Just the tag name without braces
-            
+
             # Check if the item has this field
             if (! [string]::IsNullOrEmpty($Item.$fieldName)) {
                 $fieldValue = $Item.$fieldName
@@ -28,10 +28,10 @@ function Convertto-ItemTransformedValue{
                 Write-Warning "Field '$fieldName' not found in item. Tag '$fullTag' will remain unchanged."
             }
         }
-        
+
         return $transformedValue
     }
-    
+
     # No {{tag}} patterns found, return original value
     return $Value
 }

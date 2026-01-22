@@ -48,7 +48,7 @@ function Sync-ProjectAsync {
 
     $ItemsStagedId = $db.Staged.Keys | Copy-MyStringArray
     foreach ($itemId in $ItemsStagedId) {
-        
+
         $itemStaged = $db.Staged.$itemId
 
         $FieldStagedId = $itemStaged.Keys | Copy-MyStringArray

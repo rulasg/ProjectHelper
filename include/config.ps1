@@ -101,7 +101,7 @@ function Save-Configuration {
         return $false
     }
     finally{
-        Remove-Variable -Scope Script -Name "config-$Key" -ErrorAction SilentlyContinue 
+        Remove-Variable -Scope Script -Name "config-$Key" -ErrorAction SilentlyContinue
     }
 
     return $true

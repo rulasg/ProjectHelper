@@ -1,5 +1,5 @@
 # Run Before and After any test
-# 
+#
 # Supported by TestingHelper 4.1.0 we can specify code that will run :
 # - Before each test
 # - After each test

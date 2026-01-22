@@ -4,7 +4,7 @@
 
 .DESCRIPTION
     Helper functions Synchronize TestingHelper templates to the local repo.
-    TestingHelper uses templates to create a new module. 
+    TestingHelper uses templates to create a new module.
     This script will update the local module with the latest templates.
 .LINK
     https://raw.githubusercontent.com/rulasg/DemoPsModule/main/sync.ps1

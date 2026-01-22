@@ -31,7 +31,7 @@ function Use-Order {
         if ($Ordinal -gt -1) {
             $itemId = $finallist[$Ordinal].id
 
-            
+
             if($OpenInBrowser){
                 # Open
                 $item = Get-ProjectItem -ItemId $itemId

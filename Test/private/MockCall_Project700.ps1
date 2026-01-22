@@ -3,7 +3,7 @@ function Get-Mock_Project_700 {
 
     <#
     Reset-InvokeCommandMock
-    Enable-InvokeCommandAliasModule 
+    Enable-InvokeCommandAliasModule
     $cmd = 'Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 700 -afterFields "" -afterItems ""'
     save-invokeAsMockFile $cmd "invoke-GitHubOrgProjectWithFields-octodemo-700.json"
     #>
@@ -40,7 +40,7 @@ function Get-Mock_Project_700 {
     }
     $project.repo.object.Remove('parent')
     $project.repo.object.owner = $repoContent.data.repository.owner.login
-    
+
     # Project info
     $project.id = $pActual.id
     $project.owner = $pActual.owner.login
@@ -57,7 +57,7 @@ function Get-Mock_Project_700 {
     $project.fieldnumber = @{ id = $fieldnumber.id ; name = $fieldnumber.name }
     $project.fielddate = @{ id = $fielddate.id ; name = $fielddate.name }
     $project.fieldsingleselect = @{ id = $fieldsingleselect.id ; name = $fieldsingleselect.name ; options = $fieldsingleselect.options }
-    
+
     # Items
     $project.items = @{}
     $project.items.totalCount = $pActual.items.nodes.count
@@ -104,7 +104,7 @@ function Get-Mock_Project_700 {
             propertyCount = ($issue.content.comments.nodes[-1] | Get-Member -MemberType *Property).Count
         }
     }
-    
+
     # PullRequest for developer
     $pullRequest = $pActual.items.nodes | Where-Object { $_.content.title -eq "PullRequest for development" }
     $fss = $pullRequest.fieldValues.nodes | Where-Object { $_.field.id -eq $($fieldsingleselect.id) }
@@ -164,7 +164,7 @@ function Get-Mock_Project_700 {
         getProjectWithQueryMockFile = "invoke-GitHubOrgProjectWithFields-octodemo-700-query-field-text.json"
         totalCount = 7
     }
-    
+
     # searchIn Title like
     $project.searchInTitle = @{}
     $project.searchInTitle.titleFilter = "development"
@@ -177,7 +177,7 @@ function Get-Mock_Project_700 {
     $fnValues = ( $pActual.items.nodes.fieldValues.nodes | Where-Object {$_.Field.Name -eq "field-text"}).text
     # $fnValues = $pActual.items.nodes | Where-Object {$_.fieldValues.nodes.text -eq "text2"}
     $project.searchInFieldName = @{}
-    
+
     # searchIn FieldName Like
     $fn = "xt3"
     $project.searchInFieldName.Like = @{
@@ -242,7 +242,7 @@ function MockCall_GetProject_700 {
 
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName $filename -SkipItems:$SkipItems
     Mock_Today
- 
+
     if ($Cache) {
         $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems
     }
@@ -262,7 +262,7 @@ function MockCall_GetProject_700_CaseSensitive {
 
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName $filename -SkipItems:$SkipItems
     Mock_Today
- 
+
     if ($Cache) {
         $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems
     }

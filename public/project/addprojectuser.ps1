@@ -16,9 +16,9 @@ function Add-ProjectUser {
         if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) {
             throw "Owner and ProjectNumber are required on Get-Project"
         }
-        
+
         $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems
-        
+
         $projectId = $project.ProjectId
 
         $userIds = @()
@@ -26,7 +26,7 @@ function Add-ProjectUser {
     }
 
     process{
-        
+
         $user = Get-User -Handle $Handle
         $userId = $user.Id
 

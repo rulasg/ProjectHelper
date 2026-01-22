@@ -6,12 +6,12 @@ function Test_AddProjectSubIssue_SUCCESS{
     $parent  = $p.Issue
     $i0 = $p.subIssuesToAdd[0]
     $i1 = $p.subIssuesToAdd[1]
-    
+
     MockCall_GetProject $p -Cache
 
     MockCallJson -Command "Invoke-AddSubIssue -IssueId $($parent.contentId) -SubIssueUrl $($i0.url) -ReplaceParent False" -File "$($i0.addSubIssueMockfile)"
     MockCallJson -Command "Invoke-AddSubIssue -IssueId $($parent.contentId) -SubIssueUrl $($i1.url) -ReplaceParent False" -File "$($i1.addSubIssueMockfile)"
-    
+
 
     # Act add SubIssue 1
     $params = @{
@@ -50,7 +50,7 @@ function Test_GetProjectSubIssue_SUCCESS {
 
     $p = Get-Mock_Project_700 ; $owner = $p.Owner ; $projectNumber = $p.Number
     $i = $p.subIssueToShow
-    
+
     MockCall_GetProject $p -SkipItems
     MockCallJson -Command "Invoke-GetItem -ItemId $($i.id)" -File "invoke-getitem-$($i.id).json"
 

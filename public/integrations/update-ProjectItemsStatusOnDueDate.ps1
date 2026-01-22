@@ -6,7 +6,7 @@
     This cmdlet helps you maintain the status of project items based on a planning date field (e.g. 'DueDate', 'Target', etc.).
     The goal is set items to Action Required when due date is passed or reached, or set a Planned status if the due date is in the future.
     If items are closed (aka status "Done"), their due date is cleared.
-    
+
     To achieve this objective here the loggig implemented:
     For each project item that has the specified due date field:
       - If the due date is today or in the past:
@@ -75,7 +75,7 @@
     Clears Due on items whose status is Cancelled (treating them as done-like).
 
 .NOTES
-    Throws if both -AnyStatus and -StatusDone are supplied. 
+    Throws if both -AnyStatus and -StatusDone are supplied.
     Avoid conflict when item is in the past with the Specified Done Status. reopening closed items when Status Done and has Due field in the past.
     In this cases we could set to Action status or clear DueDate.
 #>

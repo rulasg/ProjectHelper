@@ -195,11 +195,11 @@ function Get-ObjetString {
         if ($null -eq $Object) {
             return "null"
         }
-        
+
         if ($Object -is [string]) {
             return $Object
         }
-        
+
         return $Object | ConvertTo-Json -Depth 10 -ErrorAction SilentlyContinue
     }
 }

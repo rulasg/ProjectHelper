@@ -60,17 +60,17 @@ function New-ProjectIssue {
 
         # Create Issue
         $url = New-ProjectIssueDirect -RepoOwner $RepoOwner -RepoName $RepoName -Title $Title -Body $Body
-        
+
         if(! $url ){
             "Issue could not be created" | Write-MyError
             return $null
         }
-        
+
         # Add issue to project
         $ProjectOwner,$ProjectNumber = Get-OwnerAndProjectNumber -Owner $ProjectOwner -ProjectNumber $ProjectNumber
-        
+
         $itemId = Add-ProjectItem -Owner $ProjectOwner -ProjectNumber $ProjectNumber -Url $url
-        
+
         return $itemId
     }
     catch{

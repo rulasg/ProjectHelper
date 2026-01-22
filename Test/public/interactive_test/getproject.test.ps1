@@ -3,7 +3,7 @@ function Test_Get_Project_ItemId_Equal_Case_Sensitive {
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
 
     MockCall_GetProject_700_CaseSensitive
-    
+
     # Project -Owner github -ProjectNumber 20521 has two items with the same Id case sensitive
     # Forces project 700n with two item ids with case difference last leter of their id
     $item1 = "PVTI_lADOAlIw4c4BCe3Vzgec8pU"
@@ -64,7 +64,7 @@ function Test_Get_Project_ItemId_Equal_Case_Sensitive_2 {
     $ht22 = @{}
     $ht22 += $ht22
 
-    
+
 }
 
 function Test_Get_Project_ItemId_Equal_Case_Sensitive_4 {
@@ -89,7 +89,7 @@ function Test_Get_Project_ItemId_Equal_Case_Sensitive_4 {
 
         Assert-Count -Expected 4 -Presented $source.keys
 
-        # This will throw. 
+        # This will throw.
         # Wrong way to merge hashtables
         $hasthrow = $false
         try{

@@ -28,7 +28,7 @@ function Get-User{
     } else {
         Write-MyDebug "Get-User: User retreived" -Section "Get-User"
         $result = Invoke-MyCommand -Command "getUser" -Parameters @{handle=$Handle}
-        
+
         # Cache
         Save-Database -Key "user-$Handle" -Database $result
     }

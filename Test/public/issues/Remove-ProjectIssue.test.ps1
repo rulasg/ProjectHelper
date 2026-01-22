@@ -2,9 +2,9 @@ function Test_RemoveProjectIssue_SUCCESS {
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $i = $p.issueToCreateAddAndRemove
-    
+
     MockCall_GetProject $p
-    
+
     # Add item to project to remover it later
     MockCallJson -Command "Invoke-GetIssueOrPullRequest -Url $($i.url)" -fileName $i.getIssueOrPullRequestMockFile
     MockCallJson -Command "Invoke-AddItemToProject -ProjectId $($p.id) -ContentId $($i.id)" -fileName $i.addIssueToOProjectMockFile

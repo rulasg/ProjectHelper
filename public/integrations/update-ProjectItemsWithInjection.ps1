@@ -59,7 +59,7 @@ function Invoke-ProjectInjectionFunctions {
     param()
 
     $functions = 'Get-Command -Name "Invoke-ProjectInjection_*" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty name'
-    
+
     # Get all functions that start with Invoke-ProjectInjection_
 
     if ($functions) {

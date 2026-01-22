@@ -15,14 +15,14 @@
 #         Headers = $Headers
 #         Body = $Body
 #     }
-    
+
 #     if (-not [string]::IsNullOrWhiteSpace($OutFile)) {
 #         $params.OutFile = $OutFile
 #     }
 
-#     ">> $Method $Uri" | Write-MyDebug -section "invokeRestMethod" 
+#     ">> $Method $Uri" | Write-MyDebug -section "invokeRestMethod"
 #     $result = Microsoft.PowerShell.Utility\Invoke-RestMethod @params
-#     "<< $Method $Uri" | Write-MyDebug -section "invokeRestMethod" 
+#     "<< $Method $Uri" | Write-MyDebug -section "invokeRestMethod"
 
 
 #     return $result

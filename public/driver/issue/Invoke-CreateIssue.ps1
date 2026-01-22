@@ -3,7 +3,7 @@ function Invoke-CreateIssue {
         [Parameter(Mandatory=$true)][string]$RepositoryId,      # Node ID of the repository
         [Parameter(Mandatory=$true)][string]$Title,             # Title for the issue
         [Parameter()][string]$Body                             # Issue body/description
-        
+
         #[Parameter()][string[]]$ProjectIds                      # Node IDs of projects
         # [Parameter()][string]$ParentIssueId,                    # Node ID of parent issue
         # [Parameter()][string]$ClientMutationId,                 # Client mutation identifier
@@ -21,7 +21,7 @@ function Invoke-CreateIssue {
             repositoryId    = $RepositoryId
             title           = $Title | ConvertTo-InvokeParameterString
             body            = $Body | ConvertTo-InvokeParameterString
-            
+
             #projectIds      = $ProjectIds
             # assigneeIds     = $AssigneeIds
             # clientMutationId= $ClientMutationId

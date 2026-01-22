@@ -13,7 +13,7 @@ function Resolve-ProjectItem {
 
     if (( ! $item ) -or $Force) {
         "Fetching item [$ItemId] from API" | Write-Verbose
-        
+
         # Get direct. No cache as we are in a database modification context
         $item = Get-ProjectItemDirect -ItemId $ItemId
 

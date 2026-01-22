@@ -25,7 +25,7 @@ function Test_UpdateProjectItemsBetweenProjects{
     $staged = Get-ProjectItemStaged -Owner $owner -ProjectNumber $destinationProjectNumber
 
     $p = $p626.syncBtwPrj_625
-    
+
     Assert-AreEqual -Expected $p.staged.Count -Presented $staged.Count
     foreach ($itemId in $staged.Keys) {
         Assert-AreEqual -Expected $p.staged.$itemId.Count -Presented $staged.$itemId.Count

@@ -70,7 +70,7 @@ function Get-OwnerAndProjectNumber{
             Set-EnvItem -Name "EnvironmentCache_Owner" -Value $Owner
         }
     }
- 
+
     $projectNumberCache = Get-EnvItem -Name "EnvironmentCache_ProjectNumber"
     if([string]::IsNullOrWhiteSpace($ProjectNumber)){
         $ProjectNumber = $projectNumberCache

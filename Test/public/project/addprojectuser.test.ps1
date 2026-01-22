@@ -16,7 +16,7 @@ function Test_AddProjectUser_SUCCESS_SingleUser{
 
     MockCallJson -Command "Invoke-GetUser -Handle $userName1" -File $u.u1.file
     MockCallJson -Command "Invoke-UpdateProjectV2Collaborators -ProjectId $projectId -collaborators ""$userId1"" -Role ""$role""" -File $fileName
-    
+
     $result = Add-ProjectUser -Owner $owner -ProjectNumber $projectNumber -Handle $userName1 -Role $role
 
     Assert-IsTrue $result
@@ -39,7 +39,7 @@ function Test_AddProjectUser_SUCCESS_MultipleUser{
     MockCallJson -Command "Invoke-GetUser -Handle $userName1" -File $u.u1.file
     MockCallJson -Command "Invoke-GetUser -Handle $userName2" -File $u.u2.file
     MockCallJson -Command "Invoke-UpdateProjectV2Collaborators -ProjectId $projectId -collaborators ""$usersIds"" -Role ""$role""" -File $fileName
-    
+
     $result = $userNames | Add-ProjectUser -Owner $owner -ProjectNumber $projectNumber -Role $role
 
     Assert-IsTrue $result

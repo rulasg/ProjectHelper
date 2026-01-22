@@ -20,27 +20,27 @@ function Invoke-GraphQL {
 
     try {
         $apiUri = "https://api.$ApiHost/graphql"
-    
+
         # Define the headers for the request
         $headers = @{
             "Authorization" = "Bearer $token"
             "Content-Type" = "application/json"
             "GraphQL-Features" = $GRAPHQL_FEATURES
         }
-    
+
         # Define the body for the request
         $body = @{
             query = $Query
             variables = $Variables
         } | ConvertTo-Json -Depth 100
-    
+
         # Trace request
         "[[QUERY]]" | writedebug
         $Query | writedebug
-    
+
         "[[VARIABLES]]" | writedebug
         $Variables | ConvertTo-Json -Depth 100 | writedebug
-    
+
         # Send the request
         $start = Get-Date
         ">>> Invoke-RestMethod - $apiUri" | writedebug
@@ -48,15 +48,15 @@ function Invoke-GraphQL {
              { $response = Invoke-RestMethod -Uri $apiUri -Method Post -Body $body -Headers $headers }
         else { $response = Invoke-RestMethod -Uri $apiUri -Method Post -Body $body -Headers $headers -OutFile $OutFile }
         "<<< Invoke-RestMethod - $apiUri [ $(((Get-Date) - $start).TotalSeconds) seconds]" | writedebug
-    
+
         # Trace response
         "[[RESPONSE]]" | writedebug
         $response | ConvertTo-Json -Depth 100 | writedebug
-    
+
         if($response.errors){
             throw "GraphQL query return errors - Error: $($response.errors.message)"
         }
-    
+
         return $response
     }
     catch {
@@ -82,21 +82,21 @@ function Invoke-RestAPI {
 
     try {
         $apiHost = "api.$ApiHost"
-    
+
         # Define the headers for the request
         $headers = @{
             "Authorization" = "Bearer $token"
             "Content-Type" = "application/json"
         }
-    
+
         $uriBuilder = New-Object System.UriBuilder
         $uriBuilder.Scheme = "https"
         $uriBuilder.Host = $apiHost
         $uriBuilder.Path = $api
         $uriBuilder.Query = "?per_page=$PageSize"
-    
+
         $url = $uriBuilder.Uri.AbsoluteUri
-    
+
         # Send the request
         $start = Get-Date
         ">>> Invoke-RestMethod - $url" | writedebug
@@ -125,7 +125,7 @@ function Invoke-RestAPI {
         }
 
         "<<< Invoke-RestMethod - $url [ $(((Get-Date) - $start).TotalSeconds) seconds]" | writedebug
-    
+
         # Trace response
         "[[RESPONSE]]" | writedebug
         $response | ConvertTo-Json -Depth 100 | writedebug

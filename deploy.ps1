@@ -19,7 +19,7 @@
 
 .EXAMPLE
     $env:$NUGETAPIKEY = '****'
-    .\deploy.ps1 -VersionTag v10.0.01-alpha 
+    .\deploy.ps1 -VersionTag v10.0.01-alpha
 
 .EXAMPLE
     .\deploy.ps1 -VersionTag v10.0.01-alpha -NuGetApiKey $NUGETAPIKEY -DependencyInjection $SCRIPTBLOCK_FOR_TESTING
@@ -45,12 +45,12 @@ $MODULE_NAME = $MODULE_PATH | Split-Path -LeafBase
 $MODULE_PSD1 = Join-Path -Path $MODULE_PATH -ChildPath "$MODULE_NAME.psd1"
 $MODULE_TOOLS = Join-Path -Path $MODULE_PATH -ChildPath "tools"
 
-# Load helper 
+# Load helper
 # We dot souce the ps1 to allow all code to be in the same scope as the script
 # Easier to inject for testing with DependecyInjection parameter
 . ($MODULE_TOOLS | Join-Path -ChildPath "deploy.Helper.ps1")
-if ($DependencyInjection) { 
-    . $DependencyInjection 
+if ($DependencyInjection) {
+    . $DependencyInjection
 }
 
 # Process Tag

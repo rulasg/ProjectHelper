@@ -38,7 +38,7 @@ function Find-Project{
     if($null -eq $projects){
         "Error finding projects for owner [$Owner] with pattern [$Pattern]" | Write-MyError
         return $null
-    } 
+    }
 
     "[$($projects.Count)] projects found" | Write-MyVerbose
     return $projects

@@ -40,9 +40,9 @@ function readMockCommandFile{
 
 function writeMockCommandFile($Content){
 
-    $list = $Content | ConvertTo-Json 
-    
+    $list = $Content | ConvertTo-Json
+
     $sorted = $list | Sort-Object fileName
-    
+
     $sorted | Out-File -FilePath $MockCommandFile
 }

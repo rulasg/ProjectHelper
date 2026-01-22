@@ -22,9 +22,9 @@ function Test_SyncProjectItemsStaged_SUCCESS_Number{
     $itemId1 = "PVTI_lADOAlIw4c4BCe3VzgeioBY"
     $contentId1 = "I_kwDOPrRnkc7KkwSq"
 
-    $fieldName = "field-number" 
+    $fieldName = "field-number"
     $fieldBeforeValueNumber = 111.0
-    $fieldValue = "10,1" 
+    $fieldValue = "10,1"
     $fieldValueToUpdate = "10.1"
     $fieldId = "PVTF_lADOAlIw4c4BCe3Vzg0rhjU"
     $type = "number"
@@ -74,7 +74,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_Number{
 
     $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-Count -Expected 0 -Presented $staged
-    
+
     $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
     Assert-AreEqual -Expected $fieldValue -Presented $item1.$fieldName
 }
@@ -88,7 +88,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_Date{
     $itemId1 = "PVTI_lADOAlIw4c4BCe3VzgeioBY"
     $contentId1 = "I_kwDOPrRnkc7KkwSq"
 
-    $fieldName = "field-date" 
+    $fieldName = "field-date"
     $fieldBeforeValueDate = "2025-09-01"
     $fieldValue = "2021-01-10"
     $fieldValueToUpdate = "2021-01-10"
@@ -153,7 +153,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_SingleSelect{
     $field = $p.fieldsingleselect
 
     $itemId1 = $item.id
-    
+
     $fieldName = $field.name
     $fieldId = $field.id
     $type = "singleSelectOptionId"
@@ -185,7 +185,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_SingleSelect{
 
     # Mock get-project
     MockCall_GetProject -MockProject $p -Cache
-    
+
 
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldName $fieldNewValue
 
@@ -214,7 +214,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_SingleSelect{
 
     # Assert
     Assert-IsTrue -Condition $result
-    
+
     $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-Count -Expected 0 -Presented $staged
 
@@ -500,7 +500,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_Content_Issue {
 
     # Mock this call to cache the project in the test
     MockCall_GetProject_700
-    
+
     $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force
     $projectId = $project.ProjectId
 
@@ -591,7 +591,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_Content_PullRequest {
 
     # Mock this call to cache the project in the test
     MockCall_GetProject_700
-    
+
     $project   = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force
     $projectId = $project.ProjectId
 
@@ -916,7 +916,7 @@ function Test_Sync_ProjectDatabaseAsync_ClearValues{
     $f = $p.fieldtext
     $fss = $p.fieldsingleselect
 
-    $projectId = $p.Id 
+    $projectId = $p.Id
     $itemId1 = $i.Id
     $fieldComment1 = $f.name  ; $fieldComment1Id = $f.Id ; $fieldCommentName = "field-text"
     $fieldPriority1 = $fss.name ; $fieldPriority1Id = $fss.Id ; $fieldPriorityName = "field-singleselect"
@@ -964,7 +964,7 @@ function Test_Sync_ProjectDatabaseAsync_ClearValues{
         "Done"
         "Saving [$projectId/$itemId1/$fieldPriority1Id ($fieldPriorityName) = """" ] ..."
         "Calling to update ItemField Async[True][$projectId/$itemId1/$fieldPriority1Id (singleSelectOptionId) = """" ]"
-    ) | ForEach-Object { 
+    ) | ForEach-Object {
         Assert-Contains -Presented $transcript -Expected $_ -Comment "Not found in transcript: '$_'"
     }
 
@@ -985,7 +985,7 @@ function Test_Sync_ProjectDatabase_ClearValues{
     $f = $p.fieldtext
     $fss = $p.fieldsingleselect
 
-    $projectId = $p.Id 
+    $projectId = $p.Id
     $itemId1 = $i.Id
     $fieldComment1 = $f.name  ; $fieldComment1Id = $f.Id ; $fieldCommentName = "field-text"
     $fieldPriority1 = $fss.name ; $fieldPriority1Id = $fss.Id ; $fieldPriorityName = "field-singleselect"
@@ -1028,7 +1028,7 @@ function Test_Sync_ProjectDatabase_ClearValues{
         "Done"
         "Saving [$projectId/$itemId1/$fieldPriority1Id ($fieldPriorityName) = """" ] ..."
         "Calling to update ItemField Async[False][$projectId/$itemId1/$fieldPriority1Id (singleSelectOptionId) = """" ]"
-    ) | ForEach-Object { 
+    ) | ForEach-Object {
         Assert-Contains -Presented $transcript -Expected $_ -Comment "Not found in transcript: '$_'"
     }
 

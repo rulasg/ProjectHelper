@@ -6,7 +6,7 @@
     Create a tag on the repo and a release to that tag on GitHub remote repo.
     This script works very well with GitHub Actions workflow that run on release creation.
 
-    Check the following workflow as an example: 
+    Check the following workflow as an example:
     https://raw.githubusercontent.com/rulasg/DemoPsModule/main/.github/workflows/deploy_module_on_release.yml
 
 
@@ -32,8 +32,8 @@
 .EXAMPLE
     .\release.ps1 -VersionTag v10.0.01-alpha -CreateTag -Force
 
-    Create tag and create release without confirmation. 
-    
+    Create tag and create release without confirmation.
+
 .LINK
     https://raw.githubusercontent.com/rulasg/DemoPsModule/main/release.ps1
 #>
@@ -61,7 +61,7 @@ if ($CreateTag) {
 if ($PSCmdlet.ShouldProcess($VersionTag, "gh release create")) {
 
     if ($NotPreRelease) {
-        gh release create $VersionTag --generate-notes --verify-tag --title "Release $VersionTag"  
+        gh release create $VersionTag --generate-notes --verify-tag --title "Release $VersionTag"
 
     } else {
         gh release create $VersionTag --generate-notes --verify-tag --title "Release $VersionTag (PreRelease)"  --prerelease

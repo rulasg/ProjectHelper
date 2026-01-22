@@ -44,7 +44,7 @@ function Test_UpdateProjectRecent_UpdateBasedOn_FirstTime{
     # Arrange
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $today = (Get-Mock_Today).today
-    
+
     # Act - use the mock to run the project full sync to set the last recent update to today
     MockCall_GetProject_700
 
@@ -60,7 +60,7 @@ function Test_UpdateProjectRecent_UpdateBasedOn_SetToToday{
     # Arrange
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $today = (Get-Mock_Today).today
-    
+
     # Act - use the mock to run the project full sync to set the last recent update to today
     MockCall_GetProject_700 -Cache
 
@@ -87,7 +87,7 @@ function Test_UpdateProjectRecent_UpdateBasedOn_SetToTehPast{
     # Arrange
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $d = Get-Mock_Today ; $today = $d.today ; $pastDate = $d.past
-    
+
     # Act - use the mock to run the project full sync to set the last recent update to today
     MockCall_GetProject_700 -Cache
 

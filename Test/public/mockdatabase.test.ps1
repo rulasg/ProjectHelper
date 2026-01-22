@@ -13,7 +13,7 @@ function Test_UpdateMock_DatabaseFileWithReplace{
     # find "Issue for development" from database file
     $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -FieldName $fieldName -Filter $fieldValueActual -Exact -IncludeDone
     Assert-Count -Expected $totalCount -Presented $result
-    
+
     $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -FieldName $fieldName -Filter $fieldValueNew -Exact -IncludeDone
     Assert-Count -Expected 0 -Presented $result
 

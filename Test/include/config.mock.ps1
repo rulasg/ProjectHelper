@@ -1,5 +1,5 @@
 
-# CONFIG MOCK 
+# CONFIG MOCK
 #
 # This file is used to mock the config path and the config file
 # for the tests. It creates a mock config path and a mock config file
@@ -38,8 +38,8 @@ function Mock_Config{
 
     if([string]::IsNullOrWhiteSpace($ModuleName)){
         $moduleName = $MODULE_NAME
-    } 
-    
+    }
+
     $invokefunction = $CONFIG_INVOKE_GET_ROOT_PATH_CMD -replace "ProjectHelper", $moduleName
 
     # Mock invoke call

@@ -154,7 +154,7 @@ function Test_UpdateProjectWithInjection_Failed_1{
             Assert-AreEqual -Expected $expectedStaged.$id.$field -Presented $staged.$id.$field.Value -Comment "Item $id Field $field"
         }
     }
-    
+
 }
 
 function Test_InvokeProjectInjection{
