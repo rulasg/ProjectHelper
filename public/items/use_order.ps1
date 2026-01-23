@@ -5,7 +5,8 @@ function Use-Order {
         [Parameter(Position = 0)][int]$Ordinal = -1,
         [Parameter(ValueFromPipeline)][array]$List,
         [Parameter()][switch]$OpenInEditor,
-        [Parameter()][Alias("w")][switch]$OpenInBrowser
+        [Parameter()][Alias("w")][switch]$OpenInBrowser,
+        [Parameter()][switch]$PassThru
     )
 
     begin {
@@ -37,8 +38,14 @@ function Use-Order {
                 $item = Get-ProjectItem -ItemId $itemId
                 Open-Url $($item.url)
             } else {
-                # Show
-                Show-ProjectItem -Item $itemId -OpenInEditor:$OpenInEditor
+                if($PassThru) {
+                    #return item
+                    $i = Get-ProjectItem -ItemId $itemId
+                    return [PsCustomObject]$i
+                } else {
+                    # Show
+                    Show-ProjectItem -Item $itemId -OpenInEditor:$OpenInEditor
+                }
             }
         }
         else {
