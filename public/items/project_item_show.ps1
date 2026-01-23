@@ -41,7 +41,7 @@ function Show-ProjectItem{
                 @(@{Name="Status"; Color = $statusColor})
             )
         }
-        
+
         # Before all
         addJumpLine -message "Header Start"
 
@@ -51,14 +51,14 @@ function Show-ProjectItem{
         $item.number | write -Color Cyan -PreFix "# "
         addSpace
         $item.Title | write -Color Yellow -BetweenQuotes
-        
+
         addJumpLine -message "Header End"
-        
+
         # URL
         $item.url | write -Color White
 
         addJumpLine -message "End Url"
-        
+
         # Fields by line
         if($FieldsToShow){
             addJumpLine -message "Fields Before"
@@ -69,7 +69,7 @@ function Show-ProjectItem{
         }
 
         addJumpLine -message "Fields After"
-        
+
         # Body
         "Body" | writeHeader
         $item.Body | write -Color Gray
@@ -193,13 +193,13 @@ function writeComment1{
         "Processing Comment by $($Comment.author.login)" | Write-Verbose
 
         $header = "Comment [$order/$($item.commentsTotalCount)]"
-        
+
         if($order -eq $item.commentsTotalCount) {$header += " Last"}
 
         addJumpLine -message "Comment 1 Start"
         addJumpLine -message "Comment 1 before header"
         $header | write Cyan
-        
+
         addSpace
 
         # $Comment.author | write -Color DarkGray -PreFix "By: " ; addSpace
@@ -210,7 +210,7 @@ function writeComment1{
         "------------" | write Cyan
 
         # addSpace ; addSpace
-        
+
         addJumpLine -message "Comment 1 before body"
         $Comment.body | write -Color Gray
     }
@@ -226,15 +226,15 @@ function writeComment2{
     process {
 
         $header = "Comment [$order/$($item.commentsTotalCount)]"
-        
+
         if($order -eq $item.commentsTotalCount) {$header += " Last"}
 
         addJumpLine -message "Comment 2 Start"
-        
+
         writeHeader $header -Author $Comment.author -UpdatedAt $Comment.updatedAt
-        
+
         addJumpLine -message "Comment 2 Body Start"
-        
+
         $Comment.body | write -Color Gray
 
         addJumpLine -message "Comment 2 Body End"
@@ -273,7 +273,7 @@ function write{
         if($SuFix){
             $text = $text + $SuFix
         }
-        
+
 
         $text | writetoconsole -Color:$color -NoNewLine
 
@@ -345,9 +345,9 @@ function Start-WriteBuffer{
 }
 function Stop-WriteBuffer{
     $buffer  = $script:outputBuffer
-    
+
     $script:outputBuffer = $null
-    
+
     "Stopping Write Buffer [$($buffer.Count)] Lines" | Write-MyDebug -section "WriteBuffer"
 
     return $buffer

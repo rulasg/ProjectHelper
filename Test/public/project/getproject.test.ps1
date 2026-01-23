@@ -48,7 +48,7 @@ function Test_UpdateProject_With_Query_Success{
     $query = $p.getProjectWithQuery.query
     $fileName = $p.getProjectWithQuery.getProjectWithQueryMockFile
     $totalCount = $p.getProjectWithQuery.totalCount
-    
+
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -Query $query -FileName $fileName
 
     $result = Update-Project -Owner $owner -ProjectNumber $projectNumber -Query $query

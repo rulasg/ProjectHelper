@@ -21,13 +21,12 @@ function Invoke-PrivateContext {
     if ([string]::IsNullOrEmpty($ModulePath)) {
         $modulePath = $MODULE_PATH | Split-Path -Parent
     }
-    
+
     $module = Import-Module -Name $modulePath -PassThru
 
     if ($null -eq $module) {
         throw "Failed to import the main module."
     }
 
-    & $module $ScriptBlock 
+    & $module $ScriptBlock
 } Export-ModuleMember -Function Invoke-PrivateContext
-

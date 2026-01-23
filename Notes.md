@@ -7,7 +7,7 @@ Notes used during the development of the module
 ```mermaid
 graph TD;
 
-    
+
 
     subgraph Module
         0([Sync-ProjectItemStaged])
@@ -33,7 +33,7 @@ graph TD;
     H <--> I
 
 
-    
+
 ```
 
 ## Update-ProjectDatabase
@@ -50,10 +50,10 @@ graph TD;
 
     end
     I<-->G
-    
+
 
     U<-- GitHubOrgProjectWithFields--> I[InvokeHelper]
     G <--> H[Invoke-RestMethod]
     H <--> Q([GitHub GraphQL API])
-    
+
 ```

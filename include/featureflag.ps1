@@ -2,7 +2,7 @@
 #
 # Feature Flags management module
 #
-# This module will allow set Feature Flags to the module to quicker release 
+# This module will allow set Feature Flags to the module to quicker release
 # features with less risk
 #
 # Include design description
@@ -120,7 +120,7 @@ function Get-ModuleNameRegisteredFeatureFlags{
         return
     }
 
-    $Json = Get-Content $ffPath 
+    $Json = Get-Content $ffPath
 
     $ff = $Json | ConvertFrom-Json
 
@@ -164,4 +164,3 @@ if( -not (Test-Path function:$destFunction )){
     Rename-Item -path Function:$function -NewName $destFunction
     Export-ModuleMember -Function $destFunction
 }
-

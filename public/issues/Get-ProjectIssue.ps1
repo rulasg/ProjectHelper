@@ -36,11 +36,11 @@ function Get-ProjectIssue {
     )
 
     # Check the active project cache just in case is there.
-    # We could try to check all cached projects but that could be 
+    # We could try to check all cached projects but that could be
     # Challenging as we are not user of the cache status for that item
     $owner,$projectNumber = Get-OwnerAndProjectNumber
     $item = Get-ProjectItemByUrl -Owner $owner -ProjectNumber $projectNumber -Url $Url -PassThru -Force:$Force
-    if( $item ) { 
+    if( $item ) {
         $issue = $item | Convert-ItemToIssue
         return $issue
     }

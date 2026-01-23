@@ -7,9 +7,9 @@ function Remove-IssueDirect {
      param(
          [Parameter(Position = 0)][string]$Url
      )
- 
+
      $issue = Get-ProjectIssue -Url $Url
- 
+
     if( ! $issue ){
         throw "Issue with URL $Url not found"
     }

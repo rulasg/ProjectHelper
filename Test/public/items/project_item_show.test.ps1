@@ -2,7 +2,7 @@ function Test_Write_Sucess {
 
     Invoke-PrivateContext {
         Start-Transcript -Path test.log
-    
+
         #Factors to test
         $factors = @(
             @{                     Text = "Test with no other parameters"; ExpectedText = "Test with no other parameters" }
@@ -14,7 +14,7 @@ function Test_Write_Sucess {
             @{ Color = "Cyan"; Text = "   "; BetweenQuotes = $false; PreFix = "WhiteSpace: "; ; ExpectedText = "WhiteSpace: (empty)" }
             @{ Color = "Cyan"; Text = "   "; BetweenQuotes = $true; PreFix = "WhiteSpace2: "; ; ExpectedText = 'WhiteSpace2: "(empty)"' }
         )
-        
+
         foreach ($factor in $factors) {
             $color = $factor.Color
             $text = $factor.Text
@@ -29,7 +29,7 @@ function Test_Write_Sucess {
             write -color $color -text $text -BetweenQuotes:$BetweenQuotes -PreFix $PreFix -DefaultValue $DefaultValue
 
         }
-        
+
         # Can not use MyTranscript as we are on a private context that does not hase access to Test private functions
         # Code loggic here to extract from transcript
         Stop-Transcript ;
@@ -37,11 +37,11 @@ function Test_Write_Sucess {
         $i = 0..($transcriptContent.Count - 1) | Where-Object { $transcriptContent[$_] -eq "**********************" }
         $firstLine = $i[1] + 1 ; $lastLine = $i[2] - 1
         $result = $transcriptContent[$firstLine..$lastLine]
-        
+
         # Assert.
         $assertLine = 0
         foreach ($factor in $factors) {
-            Assert-AreEqual -Expected $factor.ExpectedText -Presented $result[$assertLine] 
+            Assert-AreEqual -Expected $factor.ExpectedText -Presented $result[$assertLine]
             $assertLine++
         }
     }
@@ -83,7 +83,7 @@ function Test_ShowProjectItem_SUCESS{
     Assert-Contains -Presented $tt -Expected "By:[$($i.comments.last.author.login)]"
     Assert-Contains -Presented $tt -Expected "At:[$($i.comments.last.updatedAt)]"
     Assert-Contains -Presented $tt -Expected $i.comments.last.body
-    
+
     Assert-Contains -Presented $tt -Expected $i.id
 }
 
@@ -104,5 +104,5 @@ function Test_OpenInEditor{
 
         Assert-IsNull -Object $result
     }
-    
+
 }

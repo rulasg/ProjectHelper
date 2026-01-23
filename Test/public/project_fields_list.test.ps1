@@ -11,7 +11,7 @@ function Test_GetProjectFields_SUCCESS_AllFields{
 
     foreach ($expField in $p.fields.list){
         $f = $result | Where-Object { $_.Name -eq $expField.Name }
-        
+
         Assert-AreEqual -Presented $f.Name -Expected $expField.Name
         Assert-AreEqual -Presented $f.dataType -Expected $expField.dataType
     }

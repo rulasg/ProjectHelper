@@ -3,7 +3,7 @@ function Test_Edit_Sync_ProjectItem_AddComments_Issue {
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $i = $p.issue
 
-    $comment = "New comment"    
+    $comment = "New comment"
     $comment2 = "Another comment2"
 
 
@@ -19,7 +19,7 @@ function Test_Edit_Sync_ProjectItem_AddComments_Issue {
 
     # Act the edit part
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $i.id -FieldName "AddComment" -Value $comment
-    
+
     # Assert the Edit part
     $staged = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
     Assert-AreEqual -Expected $comment -Presented $staged.$($i.id).addcomment.Value

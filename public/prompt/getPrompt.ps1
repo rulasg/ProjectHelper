@@ -46,7 +46,7 @@ function Get-ProjecthelperPromptSettings {
     }
 
     return $global:ProjecthelperPromoptSettings
-} 
+}
 
 function Write-ProjecthelperPrompt {
     [CmdletBinding()]

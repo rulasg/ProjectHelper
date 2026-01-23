@@ -16,7 +16,7 @@ function Test_GetProjetItems_SUCCESS{
     $randomItem = $result | Where-Object {$_.id -eq $i.id}
 
     Assert-AreEqual -Presented $randomItem.Title        -Expected "Issue for development"
-    Assert-AreEqual -Presented $randomItem.Body         -Expected "Body of issue for development" 
+    Assert-AreEqual -Presented $randomItem.Body         -Expected "Body of issue for development"
     Assert-AreEqual -Presented $randomItem.state        -Expected "OPEN"
     Assert-AreEqual -Presented $randomItem.id           -Expected "PVTI_lADOAlIw4c4BCe3Vzgeio4o"
     Assert-AreEqual -Presented $randomItem.type         -Expected "Issue"
@@ -88,5 +88,3 @@ function Test_ProjectItemList_ExcludeDone{
 
     Assert-AreEqual -Expected ($itemsCount - $itemsDone) -Presented $result.Count
 }
-
-

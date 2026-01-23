@@ -11,7 +11,7 @@ function Test_SearchProjectItem_SUCCESS_NoParameters {
     Assert-Count -Expected $p.items.totalCount -Presented $result
 }
 
-    
+
 
 function Test_SearchProjectItem_SUCCESS_DefaultTitle{
 
@@ -74,7 +74,7 @@ function Test_SearchProjectItem_SUCCESS_AnyField{
         $result = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -Filter $_ -IncludeDone -AnyField
 
         Assert-Count -Expected $p.searchInAnyField.$_.totalCount -Presented $result
-        
+
         foreach ($r in $result) {
             Assert-Contains -Expected $r.Title -Presented $p.searchInAnyField.$_.Titles
         }

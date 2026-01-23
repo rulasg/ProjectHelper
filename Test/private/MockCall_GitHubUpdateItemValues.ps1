@@ -19,7 +19,7 @@ function MockCall_GitHubUpdateItemValues {
 
         $command = 'Import-Module {modulepath} ; ' + $command
         $command = $command -replace '{modulepath}', $modulePath
-    } 
+    }
 
     $command = $command -replace '{ProjectId}', $ProjectId
     $command = $command -replace '{ItemId}', $ItemId

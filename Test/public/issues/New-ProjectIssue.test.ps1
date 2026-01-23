@@ -1,13 +1,13 @@
 function Test_NewProjectIssueDirect{
 
-    $p = Get-Mock_Project_700 
-    $r = $p.repo 
+    $p = Get-Mock_Project_700
+    $r = $p.repo
     $i = $p.issueToCreateAddAndRemove
 
     $issueTitle = "Random value title"
     $issueBody = "Random value body"
     $mockfilename = $i.createIssueMockfile
-    
+
     # MockCall_GetProject $p
     MockCallJson -Command "Invoke-Repository -Owner $($r.owner) -Name $($r.name)" -FileName $r.getRepoMockFile
     MockCallJson -Command "Invoke-CreateIssue -RepositoryId $($r.id) -Title ""$issueTitle"" -Body ""$issueBody""" -FileName $mockfilename
@@ -51,9 +51,8 @@ function Test_NewProjectIssue{
         Title     = $issueTitle
         Body      = $issueBody
     }
-    
+
     $result = New-ProjectIssue @params
 
     Assert-AreEqual -Expected $result -Presented $i.itemId
 }
-

@@ -15,7 +15,7 @@ function Get-Item{
         # Check if is staged
         if($database.Staged.$ItemId){
 
-            
+
             # Update ret with all staged fields values
             foreach($fieldKey in $database.Staged.$ItemId.keys){
 
@@ -38,7 +38,7 @@ function Get-Item{
         }
 
         # Add the item id if not present
-        # This will happen if we have edited items 
+        # This will happen if we have edited items
         # not downloading the item from server
         $ret.id = $ret.id ?? $ItemId
 
@@ -84,7 +84,7 @@ function Find-Item {
     )
 
     process {
-        
+
         $found = @()
         foreach($item in $Database.items.Values){
             $item = Get-Item -Database $Database -ItemId $item.id
@@ -241,7 +241,7 @@ function Remove-ItemValueStaged{
         # Remove value
         "Removing staged field [$FieldId] for item [$ItemId] in project [$($db.ProjectId)]" | Write-MyDebug
         $db.Staged.$ItemId.Remove($FieldId)
-        
+
         # If no more fields in item remove item
         if ($db.Staged.$ItemId.Count -eq 0) { $db.Staged.Remove($ItemId)}
 

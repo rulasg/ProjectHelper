@@ -137,7 +137,7 @@ function Save-ProjectDatabase{
     if($projectnumber -le 0){
         throw "Database.number is null or not a positive integer"
     }
-    
+
     $dbkey = Get-DatabaseKey -Owner $owner -ProjectNumber $projectnumber
 
     if($Safe){

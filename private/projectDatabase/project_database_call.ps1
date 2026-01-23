@@ -47,7 +47,7 @@ function Update-ProjectItem {
                 break
             }
 
-            default { 
+            default {
                 throw "Item type $($item.type) not supported for update"
             }
         }
@@ -162,13 +162,13 @@ function Update-Issue {
         if([string]::IsNullOrWhiteSpace($Value)){
             "Comment value is empty" | Write-MyWarning
             return $null, $null, "addComment"
-        } 
+        }
 
          $params =  @{
                 subjectid = $Id
                 comment   = $Value
          }
-         
+
         if ($Async) {
             $params.projecthelper = $MODULE_PATH
             $job = Start-MyJob -Command AddCommentAsync -Parameters $params
@@ -179,25 +179,25 @@ function Update-Issue {
         }
 
         $returnType = "addComment"
-    
+
     } else {
         # TITLE AND BODY
-        
+
         $params = @{
             id    = $Id
             title = if ($FieldId -eq "title") { $Value } else { "" }
             body  = if ($FieldId -eq "body") { $Value } else { "" }
         }
-        
+
         if ($Async) {
             $params.projecthelper = $MODULE_PATH
             $job = Start-MyJob -Command UpdateIssueAsync -Parameters $params
-            
+
         }
         else {
             $result = Invoke-MyCommand -Command UpdateIssue -Parameters $params
         }
-        
+
         $returnType = "updateIssue"
     }
 
@@ -221,13 +221,13 @@ function Update-PullRequest {
         if([string]::IsNullOrWhiteSpace($Value)){
             "Comment value is empty" | Write-MyWarning
             return $null, $null, "addComment"
-        } 
+        }
 
          $params =  @{
                 subjectid = $Id
                 comment   = $Value
          }
-         
+
         if ($Async) {
             $params.projecthelper = $MODULE_PATH
             $job = Start-MyJob -Command AddCommentAsync -Parameters $params
@@ -238,20 +238,20 @@ function Update-PullRequest {
         }
 
         $returnType = "addComment"
-    
+
     } else {
         # TITLE AND BODY
-        
+
         $params = @{
             id    = $Id
             title = if ($FieldId -eq "title") { $Value } else { "" }
             body  = if ($FieldId -eq "body") { $Value } else { "" }
         }
-        
+
         if ($Async) {
             $params.projecthelper = $MODULE_PATH
             $job = Start-MyJob -Command UpdatePullRequestAsync -Parameters $params
-            
+
         }
         else {
             $result = Invoke-MyCommand -Command UpdatePullRequest -Parameters $params
@@ -327,7 +327,7 @@ function Update-ItemField {
         }
     }
     else {
-        
+
         if ([string]::IsNullOrWhiteSpace($value)) {
             $result = Invoke-MyCommand -Command GitHub_ClearProjectV2ItemFieldValue -Parameters $params
             $resultDataType = "clearProjectV2ItemFieldValue"

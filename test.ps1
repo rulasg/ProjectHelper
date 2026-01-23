@@ -32,4 +32,3 @@ $TestName = [string]::IsNullOrWhiteSpace($TestName) ? $global:TestNameVar : $Tes
 
 # Call TestingHelper to run the tests
 Invoke-TestingHelper -TestName $TestName -ShowTestErrors:$ShowTestErrors
-

@@ -310,7 +310,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue {
 
     # Mock this call to cache the project in the test
     MockCall_GetProject_700
-    
+
     $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force
     $projectId = $project.ProjectId
 

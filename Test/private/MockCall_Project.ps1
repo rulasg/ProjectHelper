@@ -4,7 +4,7 @@ function Get-Mock_Project_625 {
 
     <#
     Reset-InvokeCommandMock
-    Enable-InvokeCommandAliasModule 
+    Enable-InvokeCommandAliasModule
     $cmd = 'Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 625 -afterFields "" -afterItems ""'
     save-invokeAsMockFile $cmd "invoke-GitHubOrgProjectWithFields-octodemo-625.json"
     #>
@@ -43,7 +43,7 @@ function Get-Mock_Project_625 {
     PVTI_lADOAlIw4c4A0Lf4zgfN-44 draft6                      2025-03-15 Planned        Change to AR as P and Today
     PVTI_lADOAlIw4c4A0Lf4zgYNTc0 draft7                      2025-03-05 Done           Ignore as Done | (Change AR as Past)
     PVTI_lADOAlIw4c4A0Lf4zgYNTwo draft8                      9999-12-12 In Progress    Ignore future
-    PVTI_lADOAlIw4c4A0Lf4zgfOmpo draft9                      9999-12-12 Todo           (Ignore not P) 
+    PVTI_lADOAlIw4c4A0Lf4zgfOmpo draft9                      9999-12-12 Todo           (Ignore not P)
     PVTI_lADOAlIw4c4A0Lf4zgfJYv4 Issue for development                                 skip no DueDate
     PVTI_lADOAlIw4c4A0Lf4zgfJYvk PullRequest for development                           skip no DueDate
 
@@ -52,7 +52,7 @@ function Get-Mock_Project_625 {
     $dateFieldName = "DueDate"
     $statusAction = "ActionRequired"
     $statusPlanned = "Planned"
-    
+
     $sf = ($content.data.organization.projectV2.fields.nodes | Where-Object { $_.name -eq $statusFieldName })
     $df = ($content.data.organization.projectV2.fields.nodes | Where-Object { $_.name -eq $dateFieldName })
     $project.updateStatusOnDueDate = @{
@@ -68,11 +68,11 @@ function Get-Mock_Project_625 {
         anyStatus                      = @{
             "PVTI_lADOAlIw4c4A0Lf4zgYNTxI" = @{ $($sf.id) = $statusAction } # draft4
             "PVTI_lADOAlIw4c4A0Lf4zgfN77A" = @{ $($sf.id) = $statusAction } # draft9
-            
+
         }
         includeDone                    = @{
             "PVTI_lADOAlIw4c4A0Lf4zgYNTc0" = @{ $($df.id) = "" } # draft8
-            
+
         }
         includeDoneOther               = @{
             "PVTI_lADOAlIw4c4A0Lf4zgfN77A" = @{ $($df.id) = "" } # draft5
@@ -93,7 +93,7 @@ function Get-Mock_Project_625 {
         fieldSlug = "sf_"
         integrationField = "sfUrl"
         fields = @("sf_Int2","sf_Text1")
-        
+
         integrationCommand = "Get-SfAccount"
 
         mockdata1 = @{
@@ -126,7 +126,7 @@ function Get-Mock_Project_625 {
                 PVTF_lADOAlIw4c4A0Lf4zg15NMg = "value11"
             }
 
-        } 
+        }
     }
 
     #############################
@@ -216,7 +216,7 @@ function MockCall_GetProject {
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName $filename -SkipItems:$SkipItems
     Mock_Today
 
- 
+
     if ($Cache) {
         $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems
     }
@@ -265,6 +265,6 @@ function Add-ItemsToMock {
         title     = $draftIssue.content.title
         status    = ($draftIssue.fieldValues.nodes | Where-Object { $_.field.name -eq "Status" }).name
         fieldtext = ($draftIssue.fieldValues.nodes | Where-Object { $_.field.id -eq $($fieldtext.id) }).text
-        
+
     }
 }

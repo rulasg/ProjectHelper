@@ -17,7 +17,7 @@ function Start-MyTranscript {
 }
 
 function Stop-MyTranscript {
-    
+
     $null = Stop-Transcript
 
     $transcriptContent = Get-Content -Path $TEST_TRANSCRIPT_FILE
@@ -41,7 +41,6 @@ function Export-MyTranscript {
     $lastLine = $i[2] - 1
 
     $retlist = $transcriptContent[$firstLine..$lastLine]
-        
+
     return $retlist
 }
-

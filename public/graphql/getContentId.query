@@ -7,7 +7,7 @@ query GetContentId($owner: String!, $name: String!, $number: Int!) {
           projectItems(first: 100) {
             nodes {
               id
-              project { 
+              project {
                 id
                 title
                 number
@@ -29,7 +29,7 @@ query GetContentId($owner: String!, $name: String!, $number: Int!) {
           projectItems(first: 100) {
             nodes {
               id
-              project { 
+              project {
                 id
                 title
                 number

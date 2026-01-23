@@ -64,7 +64,3 @@ function Test_UpdateProjectItemStatusOnDueDate {
     Assert-DueDateStaged   $false        $false         $otherDone   -Expected ($p.staged               + $p.includeDoneOther                   )
 
 }
-
-
-
-
