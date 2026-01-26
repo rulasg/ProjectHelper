@@ -10,7 +10,7 @@ function Show-ProjectItem{
         [Parameter()][array[]]$FieldsToShow,
         [Parameter()][switch]$AllComments,
         [Parameter()][switch]$OpenInEditor,
-        [Parameter()][Alias("W")][switch]$OpenInWebBrowser
+        [Parameter()][Alias("W")][switch]$OpenInBrowser
     )
 
     begin{
@@ -26,7 +26,7 @@ function Show-ProjectItem{
 
         $item = Get-ProjectItem -ItemId $ItemId
 
-        if($OpenInWebBrowser){
+        if($OpenInBrowser){
             Open-Url -Url $item.url
         }
 
