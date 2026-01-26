@@ -1,13 +1,17 @@
-function Open-Url {
+
+# Include openFilesUrls.ps1
+# Provides controls to open files and URLs in the default system applications.
+# Use $MODULE_NAME variable to set up functions names
+
+Set-MyInvokeCommandAlias -Alias OpenUrl -Command "Invoke-$($MODULE_NAME)OpenUrl -Url {url}"
+
+function Invoke-ModuleNameOpenUrl{
     [CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string]$Url
+    param(
+        [Parameter(Mandatory = $true)][string]$Url
     )
 
-    process {
-        try {
+    try {
             # Determine the operating system
             if ($IsWindows -or $env:OS -match "Windows") {
                 # Windows - use Start-Process
@@ -47,6 +51,21 @@ function Open-Url {
         catch {
             Write-Error "Failed to open URL: $_"
         }
+}
+Copy-Item -path Function:Invoke-ModuleNameOpenUrl -Destination Function:"Invoke-$($MODULE_NAME)OpenUrl"
+Export-ModuleMember -Function "Invoke-$($MODULE_NAME)OpenUrl"
+
+
+function Open-Url {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Url
+    )
+
+    process {
+        Invoke-MyCommand -Command OpenUrl -Parameters @{url = $Url}
     }
 }
 
