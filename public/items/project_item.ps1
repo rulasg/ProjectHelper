@@ -216,11 +216,15 @@ function Format-ProjectItem{
         $ret = [pscustomobject]::new()
 
         foreach($a in $Attributes){
-            # if( ! $Item.$a){
-            #     continue
-            # }
+            # just in case attribute has an empty name
+            if( [string]::IsNullOrWhiteSpace($a) ){
+                continue
+            }
 
-            $ret | Add-Member -MemberType NoteProperty -Name $a -Value $Item.$a -force
+            # Add value even if it't empty value
+            $value = $Item.$a ?? ""
+
+            $ret | Add-Member -MemberType NoteProperty -Name $a -Value $value -force
         }
 
         return $ret
