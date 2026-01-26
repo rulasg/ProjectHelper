@@ -29,7 +29,7 @@ Invoke-CreateDraftItem -ProjectId PVT_kwDOAlIw4c4BCe3V -Title "DraftIssue create
 Invoke-CreateIssue -RepositoryId R_kgDOPrRnkQ -Title "Random value title" -Body "Random value body"
 Invoke-GetIssueOrPullRequest -Url https://github.com/octodemo/rulasg-dev-1/issues/46
 Invoke-AddItemToProject -ProjectId PVT_kwDOAlIw4c4BCe3V -ContentId I_kwDOPrRnkc7T2Al2
-"Sample Text for Editor" | code -w - 
+"Sample Text for Editor" | code -w -
 Invoke-RemoveItemFromProject -ProjectId PVT_kwDOAlIw4c4BCe3V -ItemId PVTI_lADOAlIw4c4BCe3VzggVZH8
 Invoke-RemoveIssue -IssueId I_kwDOPrRnkc7T2Al2
 Import-Module /Users/rulasg/code/ProjectHelper ; Invoke-GitHubUpdateItemValues -ProjectId PVT_kwDOAlIw4c4BCe3V -ItemId PVTI_lADOAlIw4c4BCe3Vzgeiodc -FieldId PVTF_lADOAlIw4c4BCe3Vzg0rhko -Value "new value of the comment 10" -Type text

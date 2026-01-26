@@ -4,7 +4,7 @@ function Test_UserOrder_Success{
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
 
     $list = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -IncludeDone
-    
+
     # Act
     $result = $list | Use-Order
 
@@ -18,7 +18,7 @@ function Test_UserOrder_Success_GetItem{
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
 
     $list = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -IncludeDone
-    
+
     # Act
     $result = $list | Use-Order 1 -PassThru
 
@@ -30,11 +30,11 @@ function Test_UserOrder_Success_OpenBrowser{
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $order = $p.issue.order ; $url = $p.issue.url
-    
+
     MockCallToNull -command "Invoke-ProjectHelperOpenUrl -Url $url"
 
     $list = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -IncludeDone
-    
+
     # Act
     $result = $list | Use-Order $order -OpenInBrowser
 
@@ -49,11 +49,10 @@ function Test_UserOrder_Success_Passthru{
     $order = $p.issue.order ; $id = $p.issue.id
 
     $list = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -IncludeDone
-    
+
     # Act
     $result = $list | Use-Order $order -PassThru
 
     # Assert
     Assert-AreEqual -Expected $id -Presented $result.id
 }
-

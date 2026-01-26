@@ -1,4 +1,4 @@
-Set-MyinvokeCommandAlias -Alias ShowInEditor -Command '"{content}" | code -w - '
+Set-MyinvokeCommandAlias -Alias ShowInEditor -Command '"{content}" | code -w -'
 
 function Show-ProjectItem{
     [CmdletBinding()]
