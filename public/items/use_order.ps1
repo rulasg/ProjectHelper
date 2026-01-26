@@ -29,27 +29,24 @@ function Use-Order {
     }
 
     end {
-        if ($Ordinal -gt -1) {
-            $itemId = $finallist[$Ordinal].id
 
+    # Show list of items
+        if ($Ordinal -lt 0) {
+            return $finalList | Format-Table -AutoSize
+        }
 
-            if($OpenInBrowser){
-                # Open
-                $item = Get-ProjectItem -ItemId $itemId
-                Open-Url $($item.url)
-            } else {
-                if($PassThru) {
-                    #return item
-                    $i = Get-ProjectItem -ItemId $itemId
-                    return [PsCustomObject]$i
-                } else {
-                    # Show
-                    Show-ProjectItem -Item $itemId -OpenInEditor:$OpenInEditor
-                }
-            }
+        # Show a particular item
+        $itemId = $finalList[$Ordinal].id
+
+        #return item
+        if($PassThru) {
+            $i = Get-ProjectItem -ItemId $itemId
+            return $i
         }
-        else {
-            $finalList | Format-Table -AutoSize
-        }
+
+        # Show item in console or editor
+        Show-ProjectItem -Item $itemId -OpenInEditor:$OpenInEditor -OpenInBrowser:$OpenInBrowser
+        return
+
     }
 } Export-ModuleMember -Function Use-Order -Alias "uo"

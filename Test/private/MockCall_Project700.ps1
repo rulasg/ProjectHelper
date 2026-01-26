@@ -85,6 +85,7 @@ function Get-Mock_Project_700 {
     $issue = $pActual.items.nodes | Where-Object { $_.content.title -eq "Issue for development" }
     $fss = $issue.fieldValues.nodes | Where-Object { $_.field.id -eq $($fieldsingleselect.id) }
     $project.issue = @{
+        order             = 20 # order of this item when calling spi
         id                = $issue.id
         number            = $issue.content.number
         contentId         = $issue.content.id
