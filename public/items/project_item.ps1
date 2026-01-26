@@ -216,9 +216,9 @@ function Format-ProjectItem{
         $ret = [pscustomobject]::new()
 
         foreach($a in $Attributes){
-            if( ! $Item.$a){
-                continue
-            }
+            # if( ! $Item.$a){
+            #     continue
+            # }
 
             $ret | Add-Member -MemberType NoteProperty -Name $a -Value $Item.$a -force
         }
