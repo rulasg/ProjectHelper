@@ -41,7 +41,7 @@ function Use-Order {
         #return item
         if($PassThru) {
             $i = Get-ProjectItem -ItemId $itemId
-            return $i
+            return [PsCustomObject]$i
         }
 
         # Show item in console or editor
