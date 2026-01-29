@@ -7,10 +7,13 @@ function Show-ProjectItem{
         [Parameter()][string]$Owner,
         [Parameter()][int]$ProjectNumber,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)][Alias("id")][string]$ItemId,
-        [Parameter()][array[]]$FieldsToShow,
-        [Parameter()][switch]$AllComments,
-        [Parameter()][switch]$OpenInEditor,
-        [Parameter()][Alias("W")][switch]$OpenInBrowser
+        [Parameter()][Alias("A")][switch]$AllComments,
+        [Parameter()][Alias("E")][switch]$OpenInEditor,
+        [Parameter()][Alias("W")][switch]$OpenInBrowser,
+        [Parameter()][Alias("C")][switch]$ClearScreen,
+        
+        # Custom Fields to show on header
+        [Parameter()][array[]]$FieldsToShow
     )
 
     begin{
@@ -40,6 +43,11 @@ function Show-ProjectItem{
             $FieldsToShow = @(
                 @(@{Name="Status"; Color = $statusColor})
             )
+        }
+
+        # Clear screen before showing if requested
+        if($ClearScreen){
+            Clear-Host
         }
 
         # Before all
