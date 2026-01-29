@@ -91,7 +91,7 @@ function Test_OpenInEditor{
 
     $text = "Sample Text for Editor"
 
-    $command = '"{content}" | code -w - '
+    $command = '"{content}" | code -w -'
     $command = $command -replace '\{content\}', $text
 
     MockCallToNull -Command $command
