@@ -30,6 +30,12 @@ function Trace-MockCommandFile{
 }
 
 function readMockCommandFile{
+
+    # Return empty list if the file does not exist
+    if(-not (Test-Path -Path $MockCommandFile)){
+        return @()
+    }
+
     $ret = Get-Content -Path $MockCommandFile | ConvertFrom-Json
 
     # return an empty aray if content does not exists
