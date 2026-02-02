@@ -591,6 +591,39 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_DraftIssue {
     Assert-AreEqual -Expected $fieldBodyValue1 -Presented $item1.$fieldBody
 }
 
+function Test_SyncProjectItemsStaged_Async_FAIL_Content_DraftIssue {
+
+    # Arrange
+    Reset-InvokeCommandMock
+    Enable-InvokeCommandAliasModule
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    MockCall_GetProject -MockProject $p -skipItems
+
+    $i = $p.draftIssue
+    $id = $i.id
+    $fieldName = "AddComment"
+    $fieldAddCommentValue = "new comment added"
+
+    MockCall_GetItem -ItemId $id
+
+    # Edit fields - stage an AddComment edit for a DraftIssue
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $id $fieldName $fieldAddCommentValue
+
+    # Act - Sync should throw because DraftIssue does not support AddComment
+    $hasThrown = $false
+    try {
+        Sync-ProjectItemStagedAsync -Owner $owner -ProjectNumber $projectNumber
+    } catch {
+        $hasThrown = $true
+        Assert-AreEqual -Expected "FieldId addcomment not supported for DraftIssue update" -Presented $_.Exception.Message
+    }
+
+    # Assert
+    Assert-IsTrue -Condition $hasThrown
+}
+
+
 function Test_SyncProjectItemsStaged_Async_debug {
 
     Assert-SkipTest

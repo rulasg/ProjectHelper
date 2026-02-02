@@ -276,8 +276,17 @@ function Update-DraftIssue {
 
     $params = @{
         id    = $Id
-        title = if ($FieldId -eq "title") { $Value } else { "" }
-        body  = if ($FieldId -eq "body") { $Value } else { "" }
+        title = ""
+        body  = ""
+    }
+
+    switch ($FieldId) {
+        "title" { $params.title = $Value ; Break }
+        "body"  { $params.body  = $Value ; Break }
+
+        Default {
+            throw "FieldId $FieldId not supported for DraftIssue update"
+        }
     }
 
     if ($Async) {
