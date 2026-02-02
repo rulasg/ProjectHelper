@@ -1,4 +1,4 @@
-Set-MyinvokeCommandAlias -Alias ShowInEditor -Command '"{content}" | code -w - '
+Set-MyinvokeCommandAlias -Alias ShowInEditor -Command '"{content}" | code -w -'
 
 function Show-ProjectItem{
     [CmdletBinding()]
@@ -7,10 +7,13 @@ function Show-ProjectItem{
         [Parameter()][string]$Owner,
         [Parameter()][int]$ProjectNumber,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)][Alias("id")][string]$ItemId,
-        [Parameter()][array[]]$FieldsToShow,
-        [Parameter()][switch]$AllComments,
-        [Parameter()][switch]$OpenInEditor,
-        [Parameter()][Alias("W")][switch]$OpenInWebBrowser
+        [Parameter()][Alias("A")][switch]$AllComments,
+        [Parameter()][Alias("E")][switch]$OpenInEditor,
+        [Parameter()][Alias("W")][switch]$OpenInBrowser,
+        [Parameter()][Alias("C")][switch]$ClearScreen,
+
+        # Custom Fields to show on header
+        [Parameter()][array[]]$FieldsToShow
     )
 
     begin{
@@ -26,7 +29,7 @@ function Show-ProjectItem{
 
         $item = Get-ProjectItem -ItemId $ItemId
 
-        if($OpenInWebBrowser){
+        if($OpenInBrowser){
             Open-Url -Url $item.url
         }
 
@@ -40,6 +43,12 @@ function Show-ProjectItem{
             $FieldsToShow = @(
                 @(@{Name="Status"; Color = $statusColor})
             )
+        }
+
+        # Clear screen before showing if requested
+        if($ClearScreen){
+            Clear-Host
+            Set-Clipboard $ItemId
         }
 
         # Before all
