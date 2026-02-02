@@ -6,7 +6,8 @@ function Use-Order {
         [Parameter(ValueFromPipeline)][array]$List,
         [Parameter()][switch]$OpenInEditor,
         [Parameter()][Alias("w")][switch]$OpenInBrowser,
-        [Parameter()][switch]$PassThru
+        [Parameter()][switch]$PassThru,
+        [Parameter()][Alias("C")][switch]$ClearScreen
     )
 
     begin {
@@ -30,7 +31,11 @@ function Use-Order {
 
     end {
 
-    # Show list of items
+        if($ClearScreen){
+            Clear-Host
+        }
+
+        # Show list of items
         if ($Ordinal -lt 0) {
             return $finalList | Format-Table -AutoSize
         }
@@ -45,7 +50,7 @@ function Use-Order {
         }
 
         # Show item in console or editor
-        Show-ProjectItem -Item $itemId -OpenInEditor:$OpenInEditor -OpenInBrowser:$OpenInBrowser
+        Show-ProjectItem -Item $itemId -OpenInEditor:$OpenInEditor -OpenInBrowser:$OpenInBrowser -ClearScreen:$ClearScreen
         return
 
     }

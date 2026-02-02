@@ -11,7 +11,7 @@ function Show-ProjectItem{
         [Parameter()][Alias("E")][switch]$OpenInEditor,
         [Parameter()][Alias("W")][switch]$OpenInBrowser,
         [Parameter()][Alias("C")][switch]$ClearScreen,
-        
+
         # Custom Fields to show on header
         [Parameter()][array[]]$FieldsToShow
     )
@@ -48,6 +48,7 @@ function Show-ProjectItem{
         # Clear screen before showing if requested
         if($ClearScreen){
             Clear-Host
+            Set-Clipboard $ItemId
         }
 
         # Before all
