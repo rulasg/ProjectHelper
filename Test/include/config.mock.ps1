@@ -9,7 +9,7 @@
 if(-not $MODULE_NAME){ throw "Missing MODULE_NAME varaible initialization. Check for module.helerp.ps1 file." }
 
 $MOCK_CONFIG_PATH = "test_config_path"
-$CONFIG_INVOKE_GET_ROOT_PATH_CMD = "Invoke-ProjectHelperGetConfigRootPath"
+$CONFIG_INVOKE_GET_ROOT_PATH_CMD = "Invoke-{modulename}GetConfigRootPath"
 
 function Mock_Config{
     param(
@@ -40,7 +40,7 @@ function Mock_Config{
         $moduleName = $MODULE_NAME
     }
 
-    $invokefunction = $CONFIG_INVOKE_GET_ROOT_PATH_CMD -replace "ProjectHelper", $moduleName
+    $invokefunction = $CONFIG_INVOKE_GET_ROOT_PATH_CMD -replace "{modulename}", $moduleName
 
     # Mock invoke call
     MockCallToString $invokefunction -OutString $fullpath
