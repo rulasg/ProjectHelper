@@ -15,9 +15,22 @@ $testRootPath = $MODULE_ROOT_PATH | Join-Path -ChildPath 'Test'
 $MOCK_PATH = $testRootPath | Join-Path -ChildPath 'private' -AdditionalChildPath 'mocks'
 
 $MODULE_INVOKATION_TAG = "$($MODULE_NAME)Module"
+$MODULE_INVOKATION_TEST_TAG = "$($MODULE_NAME)TestModule"
 $MODULE_INVOKATION_TAG_MOCK = "$($MODULE_INVOKATION_TAG)_Mock"
 
-$TraceInvokeMock = $testRootPath | Join-Path -ChildPath "traceInvoke.log"
+$TraceInvokeFilePathCommand = "Get-$($MODULE_NAME)TraceInvokeFilePath"
+
+function Invoke-ModuleNameGetTraceInvokeFilePath{
+    [CmdletBinding()]
+    param()
+
+    $filePath = $testRootPath | Join-Path -ChildPath "traceInvoke.log"
+
+    return $filePath
+}
+Copy-Item -path Function:Invoke-ModuleNameGetTraceInvokeFilePath -Destination Function:"Invoke-$($MODULE_NAME)GetTraceInvokeFilePath"
+Export-ModuleMember -Function "Invoke-$($MODULE_NAME)GetTraceInvokeFilePath"
+InvokeHelper\Set-InvokeCommandAlias -Alias $TraceInvokeFilePathCommand -Command "Invoke-$($MODULE_NAME)GetTraceInvokeFilePath" -Tag $MODULE_INVOKATION_TEST_TAG
 
 function Trace-InvokeCommandAlias{
     [CmdletBinding()]
@@ -25,11 +38,9 @@ function Trace-InvokeCommandAlias{
         [Parameter(Mandatory,Position=0)][string]$Alias
     )
 
-    $filePath = $TraceInvokeMock
+    $filePath = Invoke-MyCommand -Command $TraceInvokeFilePathCommand
 
-    if(! $filePath){ return }
-
-    # if(! (Test-Path $filePath)) {return}
+    if(! (Test-Path $filePath)) {return}
 
     $content = Get-Content $filePath
 
