@@ -19,9 +19,9 @@ function Get-Project {
 
     $prj = Get-ProjectFromDatabase -Owner $Owner -ProjectNumber $ProjectNumber
 
-    if($SkipItems){
-        $prj.Items = @()
-    }
+    # if($SkipItems){
+    #     $prj.items = @()
+    # }
 
     return $prj
 } Export-ModuleMember -Function Get-Project
