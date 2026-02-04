@@ -79,3 +79,33 @@ function Test_GetProjectFields_SUCCESS_MoreInfo{
     Assert-Contains -Presented $result[0].MoreInfo -Expected "In Progress"
     Assert-Contains -Presented $result[0].MoreInfo -Expected "Done"
 }
+
+# Check that when calling Get-ProjectFields with -Force the Items are still there
+function Test_GetProjectFields_SUCCESS_ForceWithItems{
+
+    $p = Get-Mock_Project_700 ; $owner = $p.Owner ; $projectNumber = $p.Number
+
+    # Cache project and reset Mocks
+    MockCall_GetProject $p -Cache
+    Reset_Test_Mock -NoResetDatabase
+
+    ## Assert that items are cached
+    $result = Get-Project -Owner $owner -ProjectNumber $projectNumber
+    Assert-Count -Expected $p.items.totalCount -Presented $result.items
+
+    # Mock the call with SkipItems
+    MockCall_GetProject $p -SkipItems
+
+    # Act
+    $result = Get-ProjectFields -Owner $owner -ProjectNumber $projectNumber -Force
+
+    # Assert return items.
+    Assert-Count -Expected $p.fields.totalCount -Presented $result
+
+    # Check that items are still there
+    # As we do not set a mock it will
+    $result = Get-Project -Owner $owner -ProjectNumber $projectNumber
+    Assert-Count -Expected $p.items.totalCount -Presented $result.items
+    Assert-Count -Expected $p.fields.totalCount -Presented $result.fields
+
+}
