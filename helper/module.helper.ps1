@@ -36,8 +36,45 @@ $MODULE_NAME = (Get-ChildItem -Path $MODULE_ROOT_PATH -Filter *.psd1 | Select-Ob
 
 # Helper for module variables
 
+# Folders names that IncludeHelper may add content to
+$VALID_INCLUDE_FOLDER_NAMES = @(
+    'Root',
+    'Include',
+    'DevContainer',
+    'WorkFlows',
+    'GitHub',
+    # 'Config',
+    'Helper',
+    # 'Private',
+    # 'Public',
+    'Tools',
 
-$VALID_FOLDER_NAMES = @('Include', 'Private', 'Public', 'Root', 'TestInclude', 'TestPrivate', 'TestPublic', 'TestRoot', 'Tools', 'DevContainer', 'WorkFlows', 'GitHub', 'Helper', 'Config', 'TestHelper', 'TestConfig')
+    'TestRoot',
+    # 'TestConfig'
+    'TestInclude',
+    'TestHelper',
+    # 'TestPrivate',
+    # 'TestPublic',
+
+    "TestHelperRoot",
+    "TestHelperPrivate",
+    "TestHelperPublic"
+
+    "VsCode"
+)
+
+# Folders names that IncludeHelper should not add content to.
+# In this folders is the module code itself
+$VALID_MODULE_FOLDER_NAMES = @(
+    'Config',
+    'Private',
+    'Public',
+    'TestConfig'
+    'TestPrivate',
+    'TestPublic'
+)
+
+$VALID_FOLDER_NAMES = $VALID_INCLUDE_FOLDER_NAMES + $VALID_MODULE_FOLDER_NAMES
 
 class ValidFolderNames : System.Management.Automation.IValidateSetValuesGenerator {
     [String[]] GetValidValues() {
@@ -113,56 +150,38 @@ function Get-ModuleFolder{
 
     # TestRootPath
     $testRootPath = $ModuleRootPath | Join-Path -ChildPath "Test"
+    $testHelperRootPath = $ModuleRootPath | Join-Path -ChildPath "tools/Test_Helper"
 
     switch ($FolderName){
-        'Public'{
-            $moduleFolder = $ModuleRootPath | Join-Path -ChildPath "public"
-        }
-        'Private'{
-            $moduleFolder = $ModuleRootPath | Join-Path -ChildPath "private"
-        }
-        'Include'{
-            $moduleFolder = $ModuleRootPath | Join-Path -ChildPath "include"
-        }
-        'TestInclude'{
-            $moduleFolder = $testRootPath | Join-Path -ChildPath "include"
-        }
-        'TestPrivate'{
-            $moduleFolder = $testRootPath | Join-Path -ChildPath "private"
-        }
-        'TestPublic'{
-            $moduleFolder = $testRootPath | Join-Path -ChildPath "public"
-        }
-        'Root'{
-            $moduleFolder = $ModuleRootPath
-        }
-        'TestRoot'{
-            $moduleFolder = $testRootPath
-        }
-        'Tools'{
-            $moduleFolder = $ModuleRootPath | Join-Path -ChildPath "tools"
-        }
-        'DevContainer'{
-            $moduleFolder = $ModuleRootPath | Join-Path -ChildPath ".devcontainer"
-        }
-        'WorkFlows'{
-            $moduleFolder = $ModuleRootPath | Join-Path -ChildPath ".github/workflows"
-        }
-        'GitHub'{
-            $moduleFolder = $ModuleRootPath | Join-Path -ChildPath ".github"
-        }
-        'Helper'{
-            $moduleFolder = $ModuleRootPath | Join-Path -ChildPath "helper"
-        }
-        'Config'{
-            $moduleFolder = $ModuleRootPath | Join-Path -ChildPath "config"
-        }
-        'TestHelper'{
-            $moduleFolder = $testRootPath | Join-Path -ChildPath "helper"
-        }
-        'TestConfig'{
-            $moduleFolder = $testRootPath | Join-Path -ChildPath "config"
-        }
+
+        # VALID_INCLUDE_FOLDER_NAMES
+        'Root'        { $moduleFolder = $ModuleRootPath }
+        'Include'     { $moduleFolder = $ModuleRootPath | Join-Path -ChildPath "include" }
+        'DevContainer'{ $moduleFolder = $ModuleRootPath | Join-Path -ChildPath ".devcontainer" }
+        'WorkFlows'   { $moduleFolder = $ModuleRootPath | Join-Path -ChildPath ".github/workflows" }
+        'GitHub'      { $moduleFolder = $ModuleRootPath | Join-Path -ChildPath ".github" }
+        'Helper'      { $moduleFolder = $ModuleRootPath | Join-Path -ChildPath "helper" }
+        'Tools'       { $moduleFolder = $ModuleRootPath | Join-Path -ChildPath "tools" }
+
+        'TestRoot'    { $moduleFolder = $testRootPath }
+        'TestInclude' { $moduleFolder = $testRootPath | Join-Path -ChildPath "include" }
+        'TestHelper'  { $moduleFolder = $testRootPath | Join-Path -ChildPath "helper" }
+
+        'TestHelperRoot' { $moduleFolder = $testHelperRootPath }
+        'TestHelperPrivate' { $moduleFolder = $testHelperRootPath | Join-Path -ChildPath "private" }
+        'TestHelperPublic' { $moduleFolder = $testHelperRootPath | Join-Path -ChildPath "public" }
+
+        "VsCode"      { $moduleFolder = $ModuleRootPath | Join-Path -ChildPath ".vscode" }
+
+        # VALID_MODULE_FOLDER_NAMES
+        'Config'      { $moduleFolder = $ModuleRootPath | Join-Path -ChildPath "config" }
+        'Private'     { $moduleFolder = $ModuleRootPath | Join-Path -ChildPath "private" }
+        'Public'      { $moduleFolder = $ModuleRootPath | Join-Path -ChildPath "public" }
+        'TestConfig'  { $moduleFolder = $testRootPath | Join-Path -ChildPath "config" }
+        'TestPrivate' { $moduleFolder = $testRootPath | Join-Path -ChildPath "private" }
+        'TestPublic'  { $moduleFolder = $testRootPath | Join-Path -ChildPath "public" }
+
+
         default{
             throw "Folder [$FolderName] is unknown"
         }

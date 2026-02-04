@@ -75,8 +75,42 @@ function Write-MyDebug {
                 $message = $message + " - " + $objString
             }
             $timestamp = Get-Date -Format 'HH:mm:ss.fff'
-            "[$timestamp][D][$section] $message" | Write-ToConsole -Color $DEBUG_COLOR
+
+            # Write on host
+            $logMessage ="[$timestamp][D][$section] $message"
+
+            $logMessage | Write-ToConsole -Color $DEBUG_COLOR
+            $logMessage | Write-MyDebugLogging
         }
+    }
+}
+
+function Write-MyDebugLogging {
+    param(
+        [Parameter(Position = 1, ValueFromPipeline)][string]$LogMessage
+    )
+
+    process{
+
+        $moduleDebugLoggingVarName = $MODULE_NAME + "_DEBUG_LOGGING_FILEPATH"
+        $loggingFilePath = [System.Environment]::GetEnvironmentVariable($moduleDebugLoggingVarName)
+
+        # Check if logging is enabled
+        if ([string]::IsNullOrWhiteSpace( $loggingFilePath )) {
+            return
+        }
+
+        # Check if file exists
+        # This should always exist as logging checks for parent path to be enabled
+        # It may happen if since enable to execution the parent folder aka loggingFilePath is deleted.
+        if(-not (Test-Path -Path $loggingFilePath) ){
+            Write-Warning "Debug logging file path not accesible : '$loggingFilePath'"
+            return $false
+        }
+
+        # Write to log file
+        $logFilePath = Join-Path -Path $loggingFilePath -ChildPath "$($MODULE_NAME)_debug.log"
+        Add-Content -Path $logFilePath -Value $LogMessage
     }
 }
 
@@ -140,7 +174,8 @@ Export-ModuleMember -Function "Disable-$($MODULE_NAME)Verbose"
 
 function Test-MyDebug {
     param(
-        [Parameter(Position = 0)][string]$section
+        [Parameter(Position = 0)][string]$section,
+        [Parameter()][switch]$Logging
     )
 
     # Get the module debug environment variable
@@ -161,9 +196,22 @@ function Test-MyDebug {
 
 function Enable-ModuleNameDebug{
     param(
-        [Parameter(Position = 0)][string]$section
+        [Parameter(Position = 0)][string]$section,
+        [Parameter()][string]$LoggingFilePath
     )
 
+    # Check if logging file path is provided
+    if( -Not ( [string]::IsNullOrWhiteSpace( $LoggingFilePath )) ) {
+        if(Test-Path -Path $LoggingFilePath){
+            $moduleDEbugLoggingVarName = $MODULE_NAME + "_DEBUG_LOGGING_FILEPATH"
+            [System.Environment]::SetEnvironmentVariable($moduleDEbugLoggingVarName, $LoggingFilePath)
+        } else {
+            Write-Error "Logging file path '$LoggingFilePath' does not exist. Debug logging will not be enabled."
+            return
+        }
+    }
+
+    # Check section value
     if( [string]::IsNullOrWhiteSpace( $section )) {
         $flag = "all"
     } else {
@@ -172,6 +220,7 @@ function Enable-ModuleNameDebug{
 
     $moduleDebugVarName = $MODULE_NAME + "_DEBUG"
     [System.Environment]::SetEnvironmentVariable($moduleDebugVarName, $flag)
+
 }
 Copy-Item -path Function:Enable-ModuleNameDebug -Destination Function:"Enable-$($MODULE_NAME)Debug"
 Export-ModuleMember -Function "Enable-$($MODULE_NAME)Debug"
@@ -181,6 +230,9 @@ function Disable-ModuleNameDebug {
 
     $moduleDebugVarName = $MODULE_NAME + "_DEBUG"
     [System.Environment]::SetEnvironmentVariable($moduleDebugVarName, $null)
+
+    $moduleDEbugLoggingVarName = $MODULE_NAME + "_DEBUG_LOGGING_FILEPATH"
+    [System.Environment]::SetEnvironmentVariable($moduleDEbugLoggingVarName, $null)
 }
 Copy-Item -path Function:Disable-ModuleNameDebug -Destination Function:"Disable-$($MODULE_NAME)Debug"
 Export-ModuleMember -Function "Disable-$($MODULE_NAME)Debug"

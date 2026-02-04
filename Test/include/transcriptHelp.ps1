@@ -32,7 +32,7 @@ function Export-MyTranscript {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory, Position = 0)]
-        [array]$transcriptContent
+        [object[]]$transcriptContent
     )
 
     $i = 0..($transcriptContent.Count - 1) | Where-Object { $transcriptContent[$_] -eq "**********************" }

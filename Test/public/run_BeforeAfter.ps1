@@ -6,22 +6,22 @@
 # - Before all tests
 # - After all tests
 
-function Run_BeforeAll{
-    Write-Verbose "Run_BeforeAll"
-}
+# function Run_BeforeAll{
+#     Write-Verbose "Run_BeforeAll"
+# }
 
-function Run_AfterAll{
-    Write-Verbose "Run_AfterAll"
-}
+# function Run_AfterAll{
+#     Write-Verbose "Run_AfterAll"
+# }
 
 function Run_BeforeEach{
     Write-Verbose "Run_BeforeEach"
 
-   Reset_Test_Mock
+    Reset_Test_Mock
 }
 
-function Run_AfterEach{
-    Write-Verbose "Run_AfterEach"
-}
+# function Run_AfterEach{
+#     Write-Verbose "Run_AfterEach"
+# }
 
 Export-ModuleMember -Function Run_*
