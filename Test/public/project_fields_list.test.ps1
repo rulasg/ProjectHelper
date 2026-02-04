@@ -103,7 +103,7 @@ function Test_GetProjectFields_SUCCESS_ForceWithItems{
     Assert-Count -Expected $p.fields.totalCount -Presented $result
 
     # Check that items are still there
-    # As we do not set a mock it will 
+    # As we do not set a mock it will
     $result = Get-Project -Owner $owner -ProjectNumber $projectNumber
     Assert-Count -Expected $p.items.totalCount -Presented $result.items
     Assert-Count -Expected $p.fields.totalCount -Presented $result.fields
