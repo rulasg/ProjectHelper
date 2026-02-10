@@ -2,12 +2,12 @@ function Use-Order {
     [cmdletbinding()]
     [Alias("uo")]
     param(
-        [Parameter(Position = 0)][int]$Ordinal = -1,
         [Parameter(ValueFromPipeline)][array]$List,
-        [Parameter()][switch]$OpenInEditor,
+        [Parameter(Position = 0)][Alias("o")][int]$Ordinal = -1,
+        [Parameter()][Alias("e")][switch]$OpenInEditor,
         [Parameter()][Alias("w")][switch]$OpenInBrowser,
-        [Parameter()][switch]$PassThru,
-        [Parameter()][Alias("C")][switch]$ClearScreen
+        [Parameter()][Alias("p")][switch]$PassThru,
+        [Parameter()][Alias("c")][switch]$ClearScreen
     )
 
     begin {
