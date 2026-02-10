@@ -43,6 +43,11 @@ function Use-Order {
         # Show a particular item
         $itemId = $finalList[$Ordinal].id
 
+        if($null -eq $itemId){
+            Write-MyError "Item with ordinal $Ordinal not found."
+            return
+        }
+
         #return item
         if($PassThru) {
             $i = Get-ProjectItem -ItemId $itemId
