@@ -1042,6 +1042,97 @@ function Test_Sync_ProjectDatabase_ClearValues{
     Assert-StringIsNullOrEmpty -Presented $item1.$fieldPriority1
 }
 
+function Test_ResetProjectItemStaged_SUCCESS_AllItems {
+
+    # Arrange
+    Reset-InvokeCommandMock
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $item1 = $p.issue
+    $item2 = $p.pullrequest
+    $fieldText = $p.fieldtext
+
+    MockCall_GetProject -MockProject $p -Cache
+
+    # Stage changes to two items
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $item1.id $fieldText.name "value1"
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $item2.id $fieldText.name "value2"
+
+    # Confirm staged changes exist
+    $stagedBefore = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
+    Assert-Count -Expected 2 -Presented $stagedBefore
+
+    # Act - Reset all staged items
+    Reset-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
+
+    # Assert
+    $stagedAfter = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
+    Assert-Count -Expected 0 -Presented $stagedAfter
+}
+
+function Test_ResetProjectItemStaged_SUCCESS_SingleItem {
+
+    # Arrange
+    Reset-InvokeCommandMock
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $item1 = $p.issue
+    $item2 = $p.pullrequest
+    $fieldText = $p.fieldtext
+
+    MockCall_GetProject -MockProject $p -Cache
+
+    # Stage changes to two items
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $item1.id $fieldText.name "value1"
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $item2.id $fieldText.name "value2"
+
+    # Confirm staged changes exist for both items
+    $stagedBefore = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
+    Assert-Count -Expected 2 -Presented $stagedBefore
+
+    # Act - Reset only item1
+    Reset-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber -ItemId $item1.id
+
+    # Assert - item1 should be reset, item2 should remain staged
+    $stagedAfter = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
+    Assert-Count -Expected 1 -Presented $stagedAfter
+    Assert-IsNull -Object $stagedAfter.($item1.id)
+    Assert-IsTrue -Condition ($null -ne $stagedAfter.($item2.id))
+}
+
+function Test_ResetProjectItemStaged_SUCCESS_Pipeline {
+
+    # Arrange
+    Reset-InvokeCommandMock
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $item1 = $p.issue
+    $item2 = $p.pullrequest
+    $item3 = $p.draftissue
+    $fieldText = $p.fieldtext
+
+    MockCall_GetProject -MockProject $p -Cache
+
+    # Stage changes to three items
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $item1.id $fieldText.name "value1"
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $item2.id $fieldText.name "value2"
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $item3.id $fieldText.name "value3"
+
+    # Confirm staged changes exist for all items
+    $stagedBefore = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
+    Assert-Count -Expected 3 -Presented $stagedBefore
+
+    # Act - Reset item1 and item2 via pipeline
+    @([PSCustomObject]@{id=$item1.id}, [PSCustomObject]@{id=$item2.id}) | Reset-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
+
+    # Assert - item1 and item2 should be reset, item3 should remain staged
+    $stagedAfter = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
+    Assert-Count -Expected 1 -Presented $stagedAfter
+    Assert-IsNull -Object $stagedAfter.($item1.id)
+    Assert-IsNull -Object $stagedAfter.($item2.id)
+    Assert-IsTrue -Condition ($null -ne $stagedAfter.($item3.id))
+}
+
 # For some reason Stop-MyTranscript is failing calling Export-MyTranscript for one test.
 # Merging both functions here to avoid the issue for this test.
 function Stop-MyTranscript2 {
