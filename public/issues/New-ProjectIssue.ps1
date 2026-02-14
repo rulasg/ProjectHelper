@@ -53,7 +53,8 @@ function New-ProjectIssue {
         [Parameter(Mandatory, Position = 1)][string]$RepoOwner,
         [Parameter(Mandatory, Position = 2)][string]$RepoName,
         [Parameter(Mandatory, Position = 3)][string]$Title,
-        [Parameter(Position = 4)][string]$Body
+        [Parameter(Position = 4)][string]$Body,
+        [Parameter()][switch]$OpenOnCreation
     )
 
     try{
@@ -70,6 +71,10 @@ function New-ProjectIssue {
         $ProjectOwner,$ProjectNumber = Get-OwnerAndProjectNumber -Owner $ProjectOwner -ProjectNumber $ProjectNumber
 
         $itemId = Add-ProjectItem -Owner $ProjectOwner -ProjectNumber $ProjectNumber -Url $url
+
+        if( $OpenOnCreation ) {
+            Open-Url $url
+        }
 
         return $itemId
     }
