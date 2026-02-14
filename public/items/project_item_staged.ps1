@@ -99,17 +99,34 @@ function Reset-ProjectItemStaged{
     [CmdletBinding()]
     param(
         [Parameter()][string]$Owner,
-        [Parameter()][string]$ProjectNumber
+        [Parameter()][string]$ProjectNumber,
+        [Parameter(ValueFromPipelineByPropertyName)][Alias("id")][string]$ItemId
+
     )
 
-    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+    begin{
+        ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+        if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
 
-    $db = Get-Project $Owner $ProjectNumber
+        $db = Get-Project $Owner $ProjectNumber
+    }
 
-    $db.Staged = $null
+    process {
 
-    Save-ProjectDatabaseSafe -Database $db
+        if([string]::IsNullOrWhiteSpace($ItemId)){
+            # reset all staged changes
+            $db.Staged = $null
+            "All staged changes have been discarded" | Write-MyDebug
+        } else {
+            # reset a specific item
+            $db.Staged.Remove($ItemId)
+            "Staged changes for item $ItemId have been discarded" | Write-MyDebug
+        }
+    }
+
+    end{
+        Save-ProjectDatabaseSafe -Database $db
+    }
 
 } Export-ModuleMember -Function Reset-ProjectItemStaged
 
