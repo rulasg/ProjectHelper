@@ -7,7 +7,8 @@ function Use-Order {
         [Parameter()][Alias("e")][switch]$OpenInEditor,
         [Parameter()][Alias("w")][switch]$OpenInBrowser,
         [Parameter()][Alias("p")][switch]$PassThru,
-        [Parameter()][Alias("c")][switch]$ClearScreen
+        [Parameter()][Alias("c")][switch]$ClearScreen,
+        [Parameter()][scriptblock]$ShowProjectItemScriptBlock
     )
 
     begin {
@@ -54,8 +55,17 @@ function Use-Order {
             return [PsCustomObject]$i
         }
 
+        # Get function to show item
+        $ShowProjectItemScriptBlock = $ShowProjectItemScriptBlock ?? { param($parameters) Show-ProjectItem @parameters }
+
         # Show item in console or editor
-        Show-ProjectItem -Item $itemId -OpenInEditor:$OpenInEditor -OpenInBrowser:$OpenInBrowser -ClearScreen:$ClearScreen
+        $params = @{
+            Item = $itemId
+            OpenInEditor = $OpenInEditor
+            OpenInBrowser = $OpenInBrowser
+            ClearScreen = $ClearScreen
+        }
+        $ShowProjectItemScriptBlock.Invoke($params)
         return
 
     }
