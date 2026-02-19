@@ -107,6 +107,78 @@ function Test_GetProjectItem_Staged_Body{
     Assert-AreEqual -Expected $newBody -Presented $result.Body
 }
 
+function Test_GetProjectItemUrl_SUCCESS {
+
+    # Arrange
+    Reset-InvokeCommandMock
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $i = $p.issue
+    MockCall_GetProject -MockProject $p -Cache
+
+    # Act
+    $result = Get-ProjectItemUrl -Owner $owner -ProjectNumber $projectNumber -ItemId $i.id
+
+    # Assert
+    Assert-AreEqual -Expected $i.url -Presented $result
+}
+
+function Test_GetProjectItemUrl_SUCCESS_FromApiWhenMissingInCache {
+
+    # Arrange
+    Reset-InvokeCommandMock
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $itemId = "id1"
+    MockCall_GetProject -MockProject $p -SkipItems
+    MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-id1.json"
+
+    # Act
+    $result = Get-ProjectItemUrl -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId
+
+    # Assert
+    Assert-IsTrue -Condition ($result.Count -gt 0)
+    Assert-IsTrue -Condition (($result -join " ") -like "*github.com/orgs/octodemo/projects/625*")
+}
+
+function Test_GetProjectItemUrl_NotFound {
+
+    # Arrange
+    Reset-InvokeCommandMock
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $itemId = "id1"
+    MockCall_GetProject -MockProject $p -SkipItems
+    MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-id2.json"
+
+    # Act
+    $result = Get-ProjectItemUrl -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId
+
+    # Assert
+    Assert-IsNull -Object $result
+}
+
+function Test_GetProjectItemUrl_SUCCESS_PipelineItems {
+
+    # Arrange
+    Reset-InvokeCommandMock
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    MockCall_GetProject -MockProject $p -Cache
+
+    $withUrl = @(Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -PassThru | Where-Object { -not [string]::IsNullOrWhiteSpace($_.url) } | Select-Object -First 2)
+    Assert-Count -Expected 2 -Presented $withUrl
+
+    $items = @(
+        [pscustomobject]@{ id = $withUrl[0].id }
+        [pscustomobject]@{ id = $withUrl[1].id }
+    )
+
+    # Act
+    $result = $items | Get-ProjectItemUrl -Owner $owner -ProjectNumber $projectNumber
+
+    # Assert
+    Assert-Count -Expected 2 -Presented $result
+    Assert-Contains -Expected $withUrl[0].url -Presented $result
+    Assert-Contains -Expected $withUrl[1].url -Presented $result
+}
+
 function Test_TestProjectItem_Success{
 
     $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $projectNumber = $p.number
