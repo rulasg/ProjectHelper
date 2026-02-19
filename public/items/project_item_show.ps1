@@ -320,13 +320,14 @@ function ShowAttribLine{
 
     $AttributesToShow | ForEach-Object {
         $name = $_.Name
+        $value = $_.Value
         $color = $_.Color
         $prefix = $_.Prefix
         $BetweenQuotes = $_.BetweenQuotes
         $DefaultValue = $_.DefaultValue ?? "[$name]"
         $HideIfEmpty = $_.HideIfEmpty
 
-        $value = $item.$name
+        $value = $value ?? $item.$name
 
         if($HideIfEmpty -and [string]::IsNullOrEmpty($value)){
             return
