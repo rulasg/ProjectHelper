@@ -52,7 +52,6 @@ function Get-ProjectItem {
 
 function Get-ProjectItemByUrl{
     [CmdletBinding()]
-    [Alias ("gpiu")]
     param(
         [Parameter(Mandatory, ValueFromPipeline, Position = 0)][string]$Url,
         [Parameter()][string]$Owner,
@@ -94,7 +93,31 @@ function Get-ProjectItemByUrl{
         }
         return $ret
     }
-} Export-ModuleMember -Function Get-ProjectItemByUrl -Alias "gpiu"
+} Export-ModuleMember -Function Get-ProjectItemByUrl
+
+function Get-ProjectItemUrl{
+    [CmdletBinding()]
+    [Alias ("gpiu")]
+    param(
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)][Alias("id")][string]$ItemId,
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter()][switch]$Force
+    )
+
+    process{
+
+        $item = Get-ProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+
+        if($item){
+            return $item.url
+        } else {
+            "Item [$ItemId] not found" | Write-MyError
+            return $null
+        }
+
+    }
+} Export-ModuleMember -Function Get-ProjectItemUrl -Alias "gpiu"
 
 function Test-ProjectItem {
     [CmdletBinding()]
