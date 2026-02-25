@@ -8,10 +8,7 @@ function Update-ProjectRecent{
         [Parameter()][int]$ProjectNumber
     )
 
-    ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) {
-        throw "Owner and ProjectNumber are required on Update-Project"
-    }
+    ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
     # Get Last update date
     $query = Get-UpdateRecentQuery -Owner $Owner -ProjectNumber $ProjectNumber

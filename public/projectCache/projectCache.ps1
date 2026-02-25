@@ -5,10 +5,7 @@ function Remove-ProjectCache{
         [Parameter()][int]$ProjectNumber
     )
 
-    ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) {
-        throw "Owner and ProjectNumber are required on Get-Project"
-    }
+    ($Owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
     if(Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber){
         throw "Project $Owner/$ProjectNumber has pending changes. Please commit changes with Sync-ProjectItemStaged or discard them with Reset-ProjectItemStaged before resetting the ProjectCache."
@@ -24,10 +21,8 @@ function Get-ProjectCacheFile{
         [Parameter()][int]$ProjectNumber
     )
 
-    ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) {
-        throw "Owner and ProjectNumber are required on Get-Project"
-    }
+    ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
+
 
     $key = Get-DatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
     $path = Get-DatabaseFile -Key $key

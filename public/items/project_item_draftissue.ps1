@@ -13,7 +13,7 @@ function New-ProjectDraftIssueDirect {
         [Parameter()][switch]$OpenOnCreation
     )
 
-    ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
     $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 

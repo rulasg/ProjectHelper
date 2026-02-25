@@ -68,7 +68,7 @@ function New-ProjectIssue {
         }
 
         # Add issue to project
-        $ProjectOwner,$ProjectNumber = Get-OwnerAndProjectNumber -Owner $ProjectOwner -ProjectNumber $ProjectNumber
+        ($ProjectOwner,$ProjectNumber) = Resolve-ProjectParameters -Owner $ProjectOwner -ProjectNumber $ProjectNumber
 
         $itemId = Add-ProjectItem -Owner $ProjectOwner -ProjectNumber $ProjectNumber -Url $url
 

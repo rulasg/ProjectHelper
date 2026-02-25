@@ -18,7 +18,7 @@ function Show-ProjectItem{
 
     begin{
 
-        $Owner,$ProjectNumber = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+        ($Owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
         if($OpenInEditor){
             Start-WriteBuffer
@@ -27,7 +27,7 @@ function Show-ProjectItem{
 
     process {
 
-        $item = Get-ProjectItem -ItemId $ItemId
+        $item = Get-ProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber
 
         if($OpenInBrowser){
             Open-Url -Url $item.url

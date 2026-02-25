@@ -21,8 +21,7 @@ function Get-ProjectItem {
     )
 
     begin {
-        ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+        ($owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems
 
@@ -61,8 +60,7 @@ function Get-ProjectItemByUrl{
     )
 
     begin {
-        ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { return $null }
+        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems
 
@@ -89,7 +87,7 @@ function Get-ProjectItemByUrl{
         if($PassThru){
             $ret = $item
         } else {
-            $ret = Format-ProjectItem -Item $item -Attributes @("id", "Title")
+            $ret = Format-ProjectItem -Item $item -Attributes $DEFAULT_DISPLAY_FIELDS
         }
         return $ret
     }
@@ -102,19 +100,26 @@ function Get-ProjectItemUrl{
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)][Alias("id")][string]$ItemId,
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
-        [Parameter()][switch]$Force
+        [Parameter()][switch]$Force,
+        [Parameter()][switch]$SetClipboard
+
     )
 
     process{
 
         $item = Get-ProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
-        if($item){
-            return $item.url
-        } else {
+        if(-not $item){
             "Item [$ItemId] not found" | Write-MyError
             return $null
         }
+        $ret = $item.url
+
+        if($SetClipboard){
+            $ret | Set-Clipboard
+        }
+
+        return $ret
 
     }
 } Export-ModuleMember -Function Get-ProjectItemUrl -Alias "gpiu"
@@ -129,8 +134,7 @@ function Test-ProjectItem {
     )
 
     begin {
-        ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
     }
@@ -160,6 +164,10 @@ function Search-ProjectItem {
         [Parameter()][switch]$Exact
 
     )
+    # if $attributes is empty add RepositoryName
+    if(-not ($Attributes)){
+        $Attributes = @("RepositoryName") + $Attributes
+    }
 
     # if $attributes does not contain "Title" add it at the front
     if(-not ($Attributes -contains "Title")){
@@ -170,8 +178,8 @@ function Search-ProjectItem {
         $Attributes = @("id") + $Attributes
     }
 
-    ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+
+($owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
     # Get items as hashtable for later queries
     $items = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -IncludeDone:$IncludeDone -AsHashtable
@@ -230,7 +238,7 @@ function Format-ProjectItem{
 
     begin {
         if([string]::IsNullOrWhiteSpace($Attributes)){
-            $Attributes = @("id", "Title")
+            $Attributes = $DEFAULT_DISPLAY_FIELDS
         }
     }
 
@@ -264,8 +272,7 @@ function Get-ProjectItems {
         [Parameter()][switch]$AsHashtable
     )
 
-    ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+($owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
     try {
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
@@ -317,15 +324,9 @@ function Open-ProjectItem {
     )
 
     begin {
+        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
-
-        ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) {
-            throw "Owner and ProjectNumber are required on Open-ProjectItem"
-        }
-
-        "Project set to [$owner/$ProjectNumber]" | Write-Verbose
-
+        "Project set to [$Owner/$ProjectNumber]" | Write-Verbose
     }
 
     process {
@@ -376,8 +377,7 @@ function Edit-ProjectItem {
 
     process{
 
-        ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
         # Force cache update
         # Full sync if force. Skip items if not force
@@ -419,8 +419,7 @@ function Reset-ProjectItem {
 
     process{
 
-        ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
         # Force cache update
         # Full sync if force. Skip items if not force
@@ -459,8 +458,7 @@ function Add-ProjectItemDirect {
     )
 
     begin{
-        ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
         # Get project id
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
@@ -529,8 +527,7 @@ function Remove-ProjectItemDirect {
     )
 
     begin {
-        ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
         # Get project id
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
@@ -608,6 +605,10 @@ function Remove-ProjectItem {
 
     )
 
+    begin {
+        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
+    }
+
     process {
 
         # Get item to delete issue later
@@ -618,7 +619,7 @@ function Remove-ProjectItem {
         }
 
         # Find Item to remove
-        $item = Get-ProjectItem -ItemId $ItemId
+        $item = Get-ProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber 
 
         if( ! $item){
             "Item [$ItemId] not found, cannot delete issue" | Write-MyWarning

@@ -1,5 +1,5 @@
 
-$DEFAULT_DISPLAY_FIELDS = @("id","title")
+$DEFAULT_DISPLAY_FIELDS = @("id","Title")
 
 function Get-ProjectHelperEnvironment{
     [CmdletBinding()]
@@ -50,38 +50,6 @@ function Set-ProjectHelperEnvironment{
     }
 
 } Export-ModuleMember -Function Set-ProjectHelperEnvironment
-
-function Get-OwnerAndProjectNumber{
-    [CmdletBinding()]
-    param(
-        [Parameter()][string]$Owner,
-        [Parameter()][string]$ProjectNumber
-    )
-
-    if($ProjectNumber -eq "0"){
-        $ProjectNumber = [string]::Empty
-    }
-
-    $ownerCache = Get-EnvItem -Name "EnvironmentCache_Owner"
-    if([string]::IsNullOrWhiteSpace($Owner)){
-        $owner = $ownerCache
-    } else {
-        if($owner -ne $ownerCache){
-            Set-EnvItem -Name "EnvironmentCache_Owner" -Value $Owner
-        }
-    }
-
-    $projectNumberCache = Get-EnvItem -Name "EnvironmentCache_ProjectNumber"
-    if([string]::IsNullOrWhiteSpace($ProjectNumber)){
-        $ProjectNumber = $projectNumberCache
-    } else {
-        if($ProjectNumber -ne $projectNumberCache){
-            Set-EnvItem -Name "EnvironmentCache_ProjectNumber" -Value $ProjectNumber
-        }
-    }
-
-    return ($owner, $ProjectNumber)
-}
 
 function Get-EnvironmentDisplayFields{
     [CmdletBinding()]

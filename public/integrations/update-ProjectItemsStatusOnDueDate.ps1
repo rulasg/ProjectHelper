@@ -87,7 +87,7 @@ function Update-ProjectItemsStatusOnDueDate{
         [Parameter()][string]$StatusFieldName = "Status",
         [Parameter(Mandatory)][string]$DateFieldName,
         [Parameter(Mandatory)][string]$StatusAction,
-        [Parameter(Mandatory)][string]$StatusPlanned,
+        [Parameter()][string]$StatusPlanned,
         [Parameter()][string]$StatusDone,
         [Parameter()][switch]$AnyStatus,
         [Parameter()][switch]$IncludeDoneItems,
@@ -96,8 +96,7 @@ function Update-ProjectItemsStatusOnDueDate{
 
     "Updating project items status with due date for project $owner/$ProjectNumber" | Write-MyHost
 
-    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+    ($Owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
     # Sync project if needed
     $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
@@ -129,14 +128,13 @@ function Invoke-ProjectInjectionOnDueDate {
         [Parameter(Mandatory)][string]$StatusFieldName,
         [Parameter(Mandatory)][string]$DateFieldName,
         [Parameter(Mandatory)][string]$StatusAction,
-        [Parameter(Mandatory)][string]$StatusPlanned,
+        [Parameter()][string]$StatusPlanned,
         [Parameter()][string]$StatusDone,
         [Parameter()][switch]$AnyStatus,
         [Parameter()][switch]$IncludeDoneItems
     )
 
-    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+    ($Owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
     $items = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber -IncludeDone:$IncludeDoneItems
 

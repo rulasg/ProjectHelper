@@ -2,15 +2,12 @@ function Get-Project {
     [CmdletBinding()]
     param(
         [Parameter()][string]$Owner,
-        [Parameter()][int]$ProjectNumber,
+        [Parameter()][string]$ProjectNumber,
         [Parameter()][switch]$SkipItems,
         [Parameter()][switch]$Force
     )
 
-    ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) {
-        throw "Owner and ProjectNumber are required on Get-Project"
-    }
+    ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
     if ($Force -or -Not (Test-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber)) {
         $result = Update-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems
@@ -35,10 +32,7 @@ function Update-Project{
         [Parameter()][switch]$SkipItems
     )
 
-    ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) {
-        throw "Owner and ProjectNumber are required on Update-Project"
-    }
+    ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
     $ret = Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems -Query $Query
 
@@ -58,10 +52,7 @@ function Get-ProjectId {
         [Parameter()][int]$ProjectNumber
     )
 
-    ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) {
-        throw "Owner and ProjectNumber are required on Get-ProjectId"
-    }
+    ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
     # Get project id
     $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems
@@ -78,10 +69,7 @@ function Open-Project{
         [Parameter(ValueFromPipelineByPropertyName)][int]$ProjectNumber
     )
 
-    ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) {
-        throw "Owner and ProjectNumber are required on Open-Project"
-    }
+    ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
     $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -skipItems
     if (-not $project) {
@@ -105,20 +93,3 @@ function Open-Project{
     }
 
 } Export-ModuleMember -Function Open-Project
-
-function Set-Project {
-    [CmdletBinding()]
-    param(
-        [Parameter(ValueFromPipelineByPropertyName, Position = 0)][string]$Owner,
-        [Parameter(ValueFromPipelineByPropertyName, Position = 1)][string]$ProjectNumber
-    )
-
-    process {
-
-        ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) {
-            throw "Owner and ProjectNumber are required on Open-Project"
-        }
-    }
-
-} Export-ModuleMember -Function Set-Project

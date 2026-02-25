@@ -192,7 +192,7 @@ function Test_TestProjectItem_Success{
 
     # Not found
 
-    $result = Test-ProjectItem -Url "https://github.com/octodemo/Project-700/issues/999"
+    $result = Test-ProjectItem -Url "https://github.com/octodemo/Project-700/issues/999" -Owner $owner -ProjectNumber $projectNumber
     Assert-IsFalse -Condition $result
 
 }

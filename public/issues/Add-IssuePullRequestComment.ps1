@@ -7,7 +7,7 @@ function Add-IssuePullRequestCommentDirect {
     )
 
     # Try to find item on context project
-    ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+    ($Owner, $ProjectNumber) = Resolve-ProjectParameters -DoNotThrow
     if (! [string]::IsNullOrWhiteSpace($owner) -and ! [string]::IsNullOrWhiteSpace($ProjectNumber)) {
         $item = Get-ProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber
     }

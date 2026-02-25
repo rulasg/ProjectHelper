@@ -45,13 +45,13 @@ function Update-ProjectItemsBetweenProjects {
     )
 
     # Get source project before destination to avoid project infor environment caching
-    ($SourceOwner,$SourceProjectNumber) = Get-OwnerAndProjectNumber -Owner $SourceOwner -ProjectNumber $SourceProjectNumber
+    ($SourceOwner,$SourceProjectNumber) = Resolve-ProjectParameters -Owner $SourceOwner -ProjectNumber $SourceProjectNumber -DoNotThrow
     if([string]::IsNullOrWhiteSpace($SourceOwner) -or [string]::IsNullOrWhiteSpace($SourceProjectNumber)){ "Source Owner and ProjectNumber are required" | Write-MyError; return $null}
     # Use Force parameter unless NoRefreshSource is specified
     $sourceProject = Get-Project -Owner $SourceOwner -ProjectNumber $SourceProjectNumber -Force:(-not $NoRefreshSource)
 
     # Get destination project for error handling and caching
-    ($DestinationOwner,$DestinationProjectNumber) = Get-OwnerAndProjectNumber -Owner $DestinationOwner -ProjectNumber $DestinationProjectNumber
+    ($DestinationOwner,$DestinationProjectNumber) = Resolve-ProjectParameters -Owner $DestinationOwner -ProjectNumber $DestinationProjectNumber -DoNotThrow
     if([string]::IsNullOrWhiteSpace($DestinationOwner) -or [string]::IsNullOrWhiteSpace($DestinationProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
     # Use Force parameter unless NoRefreshDestination is specified
     $destinationProject = Get-Project -Owner $DestinationOwner -ProjectNumber $DestinationProjectNumber -Force:(-not $NoRefreshDestination)

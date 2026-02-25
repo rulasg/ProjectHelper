@@ -18,11 +18,12 @@ function Remove-IssueDirect {
 
     $repoUrl = $result.data.deleteIssue.repository.url
 
-     # Verify response value
-    if($issue.repository -ne $repoUrl){
-        throw "Issue not removed properly"
+    # Check that issue was part of the returned repo url
+    if($issue.url.StartsWith($repourl)){
+        return $true
+        # Remove properly
     }
 
-     return $true
-
+    # Issue not removed properly
+    throw "Issue with URL $Url not removed properly. Repo URL in response is [$repoUrl]"
  }
