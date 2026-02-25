@@ -26,8 +26,7 @@ function Update-ProjectItemsWithInjection{
         [Parameter()] [switch]$IncludeDoneItems,
         [Parameter()] [switch]$Force
     )
-    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+    ($Owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
     # Get the project
     $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force

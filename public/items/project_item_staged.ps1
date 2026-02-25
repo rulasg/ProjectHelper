@@ -11,8 +11,7 @@ function Get-ProjectItemStaged{
         [Parameter(Position = 1)][string]$ProjectNumber
     )
 
-    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+    ($Owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
     $db = Get-Project $Owner $ProjectNumber -SkipItems
 
@@ -32,8 +31,7 @@ function Test-ProjectItemStaged{
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber
     )
-    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+    ($Owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
     return $(Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber)
 
@@ -51,8 +49,7 @@ function Sync-ProjectItemStaged{
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber
     )
-    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+    ($Owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
     if(! $(Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber)){
         "Nothing to commit" | Write-MyHost
@@ -76,8 +73,7 @@ function Sync-ProjectItemStagedAsync{
         [Parameter()][string]$ProjectNumber,
         [Parameter()][int]$SyncBatchSize = 30
     )
-    ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
+    ($Owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
     if(! $(Test-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber)){
         "Nothing to commit" | Write-MyHost
