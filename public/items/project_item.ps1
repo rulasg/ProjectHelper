@@ -160,6 +160,10 @@ function Search-ProjectItem {
         [Parameter()][switch]$Exact
 
     )
+    # if $attributes is empty add RepositoryName
+    if(-not ($Attributes)){
+        $Attributes = @("RepositoryName") + $Attributes
+    }
 
     # if $attributes does not contain "Title" add it at the front
     if(-not ($Attributes -contains "Title")){

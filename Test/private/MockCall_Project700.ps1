@@ -170,7 +170,7 @@ function Get-Mock_Project_700 {
     $project.searchInTitle = @{}
     $project.searchInTitle.titleFilter = "development"
     $project.searchInTitle.Titles = $pActual.items.nodes.content.title | Where-Object { $_ -like "*development*" }
-    $project.searchInTitle.attributesDefault = @("Title", "id")
+    $project.searchInTitle.attributesDefault = @("Title", "id" , "RepositoryName")
     $project.searchInTitle.attributes = @("Title", "id", "url", "Status", "field-text")
 
     # SearchIn FieldName

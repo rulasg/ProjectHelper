@@ -7,18 +7,22 @@ function Test_SearchProjectItem_Basic_SUCCESS {
     $p = Get-Mock_Project_700
     $Owner = $p.owner
     $ProjectNumber = $p.number
-    $filter = $p.searchInTitle.titleFilter
-    $expected = $p.searchInTitle.Titles.Count
+    $s = $p.searchInTitle
+    $filter = $s.titleFilter
+    $expected = $s.Titles.Count
+    $defautlAttrs = $s.attributesDefault
 
     $result = Search-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Filter $filter
     Assert-Count -Expected $expected -Presented $result
 
-    # Default attributes should be id + Title
+    # Default attributes should be id + Title + RepositoryName
     foreach($r in $result){
         $props = $r.PSObject.Properties.Name
-        Assert-Count -Expected 2 -Presented $props
-        Assert-Contains -Expected "id" -Presented $props
-        Assert-Contains -Expected "Title" -Presented $props
+
+        Assert-Count -Expected $defautlAttrs.Count -Presented $props
+        $defautlAttrs | ForEach-Object -Process {
+            Assert-Contains -Expected $_ -Presented $props
+        }
     }
 }
 
