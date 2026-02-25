@@ -9,8 +9,10 @@ function Test_Get_Project_ItemId_Equal_Case_Sensitive {
     $item1 = "PVTI_lADOAlIw4c4BCe3Vzgec8pU"
     $item2 = "PVTI_lADOAlIw4c4BCe3Vzgec8pu"
 
+    Set-ProjectHelperEnvironment -Owner $owner -ProjectNumber $projectNumber
+
     # Act
-    $result = Get-Project -owner $owner -ProjectNumber $ProjectNumber
+    $result = Get-Project
     Assert-Count -Expected $p.items.totalCount -Presented $result.items.keys
 
     $result1 = Get-ProjectItem -ItemId $item1
