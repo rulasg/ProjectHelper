@@ -1,8 +1,11 @@
 function Test_GetProjecthelperPrompt {
 
-    $owner = "octodemo"
-    $projectNumber = "625"
-    $s = $ProjecthelperPromoptSettings
+    $p = Get-Mock_Project_625 ; $owner = $p.owner ; $projectNumber = $p.number ; $projectTitle = $p.title
+    MockCall_GetProject -MockProject $p
+
+    $Mock_ProjectHelperPromptSettingsVariableName = "Mock_ProjectHelperPromptSettingsVariableName"
+    Clear-Variable -Name $Mock_ProjectHelperPromptSettingsVariableName -Scope Global -ErrorAction SilentlyContinue
+    MockCallToString -Command "echo ProjecthelperPromoptSettings" -OutString $Mock_ProjectHelperPromptSettingsVariableName
 
     MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName "invoke-GitHubOrgProjectWithFields-octodemo-625-skipitems.json" -SkipItems
     MockCallJson -Command 'Invoke-GetItem -itemid id1' -FileName "invoke-getitem-id1.json"
@@ -17,21 +20,27 @@ function Test_GetProjecthelperPrompt {
     Assert-IsNull -Object $(($result | select-string -Pattern "^\[$" ).LineNumber)
 
     # Set environment with empty values
-    Set-ProjectHelperEnvironment -Owner $owner -ProjectNumber $projectNumber
+    Set-ProjectParameters -Owner $owner -ProjectNumber $projectNumber
 
     # With environment, without new line
     $result = Invoke-WriteProjecthelperPrompt
     # Find the line with '[' character
     $resultLine = ($result | select-string -Pattern "^\[$" ).LineNumber
 
+    $s = (Get-Variable -Name $Mock_ProjectHelperPromptSettingsVariableName -Scope Global).Value
+
     Assert-AreEqual -Presented $result[$resultLine - 1] -Expected $s.BeforeStatus.PreText
     Assert-AreEqual -Presented $result[$resultLine]     -Expected $($($s.OwnerStatus.PreText)+$owner)
     Assert-AreEqual -Presented $result[$resultLine + 1] -Expected $s.DelimStatus1.PreText
     Assert-AreEqual -Presented $result[$resultLine + 2] -Expected $($($s.NumberStatus.PreText)+$projectNumber)
     Assert-AreEqual -Presented $result[$resultLine + 3] -Expected "" # $s.DelimStatus2.PreText is " " that is converted to "" by posh-git"
-    Assert-AreEqual -Presented $result[$resultLine + 4] -Expected $s.OKStatus.PreText
-    Assert-AreEqual -Presented $result[$resultLine + 5] -Expected $s.AfterStatus.PreText
-    Assert-AreEqual -Presented $result[$resultLine + 6] -Expected "" # $s.SpaceStatus.PreText " " that is converted to "" by posh-git
+    
+    Assert-AreEqual -Presented $result[$resultLine + 4] -Expected $($($s.TitleStatus.PreText)+$projectTitle)
+    Assert-AreEqual -Presented $result[$resultLine + 5] -Expected "" # $s.DelimStatus2.PreText is " " that is converted to "" by posh-git"
+    
+    Assert-AreEqual -Presented $result[$resultLine + 6] -Expected $s.OKStatus.PreText
+    Assert-AreEqual -Presented $result[$resultLine + 7] -Expected $s.AfterStatus.PreText
+    Assert-AreEqual -Presented $result[$resultLine + 8] -Expected "" # $s.SpaceStatus.PreText " " that is converted to "" by posh-git
 
     # With environment, without new line
     $result = Invoke-WriteProjecthelperPrompt -withnewline
@@ -43,24 +52,28 @@ function Test_GetProjecthelperPrompt {
     Assert-AreEqual -Presented $result[$resultLine + 1] -Expected $s.DelimStatus1.PreText
     Assert-AreEqual -Presented $result[$resultLine + 2] -Expected $($($s.NumberStatus.PreText)+$projectNumber)
     Assert-AreEqual -Presented $result[$resultLine + 3] -Expected "" # $s.DelimStatus2.PreText is " " that is converted to "" by posh-git"
-    Assert-AreEqual -Presented $result[$resultLine + 4] -Expected $s.OKStatus.PreText
-    Assert-AreEqual -Presented $result[$resultLine + 5] -Expected $s.AfterStatus.PreText
-    Assert-AreEqual -Presented $result[$resultLine + 6] -Expected "" # SpaceStatus.PreText
-    Assert-AreEqual -Presented $result[$resultLine + 7] -Expected $s.NewlineStatus.PreText
+
+    Assert-AreEqual -Presented $result[$resultLine + 4] -Expected $($($s.TitleStatus.PreText)+$projectTitle)
+    Assert-AreEqual -Presented $result[$resultLine + 5] -Expected "" # $s.DelimStatus2.PreText is " " that is converted to "" by posh-git"
+
+    Assert-AreEqual -Presented $result[$resultLine + 6] -Expected $s.OKStatus.PreText
+    Assert-AreEqual -Presented $result[$resultLine + 7] -Expected $s.AfterStatus.PreText
+    Assert-AreEqual -Presented $result[$resultLine + 8] -Expected "" # SpaceStatus.PreText
+    Assert-AreEqual -Presented $result[$resultLine + 9] -Expected $s.NewlineStatus.PreText
 
     # Add some staged items
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId "id1" -FieldName "sf_Text1" -Value "value1"
-    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId "id1" -FieldName "sf_Text2" -Value "value2"
+    # Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId "id1" -FieldName "sf_Text2" -Value "value2"
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId "id2" -FieldName "sf_Text1" -Value "value1"
-    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId "id2" -FieldName "sf_Text2" -Value "value2"
-    $itemstaged = 4
+    # Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId "id2" -FieldName "sf_Text2" -Value "value2"
+    $itemstaged = 2
 
     # With items staged
     $result = Invoke-WriteProjecthelperPrompt
     # Find the line with '[' character
     $resultLine = ($result | select-string -Pattern "^\[$" ).LineNumber
 
-    Assert-AreEqual -Presented $result[$resultLine + 4] -Expected $($($s.KOStatus.PreText)+$itemstaged)
+    Assert-AreEqual -Presented $result[$resultLine + 6] -Expected $($($s.KOStatus.PreText)+$itemstaged)
 
 }
 
