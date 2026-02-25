@@ -42,3 +42,18 @@ function Test-ProjectParameters {
 
     return -not ([string]::IsNullOrWhiteSpace($Owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber))
 }
+
+function Set-ProjectParameters {
+    [CmdletBinding()]
+    [Alias("Set-Project")]
+    param(
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName, Position = 0)][string]$Owner,
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName, Position = 1)][string]$ProjectNumber
+    )
+
+    process {
+
+        Set-ProjectHelperEnvironment -Owner $Owner -ProjectNumber $ProjectNumber
+    }
+
+} Export-ModuleMember -Function Set-ProjectParameters -Alias "Set-Project"

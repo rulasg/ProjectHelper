@@ -93,17 +93,3 @@ function Open-Project{
     }
 
 } Export-ModuleMember -Function Open-Project
-
-function Set-Project {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory,ValueFromPipelineByPropertyName, Position = 0)][string]$Owner,
-        [Parameter(Mandatory,ValueFromPipelineByPropertyName, Position = 1)][string]$ProjectNumber
-    )
-
-    process {
-
-        Set-ProjectHelperEnvironment -Owner $Owner -ProjectNumber $ProjectNumber
-    }
-
-} Export-ModuleMember -Function Set-Project
