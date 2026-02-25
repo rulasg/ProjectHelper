@@ -52,8 +52,13 @@ function Set-ProjectParameters {
     )
 
     process {
+        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -ErrorAction SilentlyContinue
 
-        Set-ProjectHelperEnvironment -Owner $Owner -ProjectNumber $ProjectNumber
+        if($db){
+            $ProjectTitle = $db.title
+        }
+
+        Set-ProjectHelperEnvironment -Owner $Owner -ProjectNumber $ProjectNumber -ProjectTitle $ProjectTitle
     }
 
 } Export-ModuleMember -Function Set-ProjectParameters -Alias "Set-Project"
