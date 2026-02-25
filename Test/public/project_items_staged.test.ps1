@@ -15,7 +15,7 @@ function Test_SyncProjectItemsStaged_NoStaged {
 
 function Test_SyncProjectItemsStaged_SUCCESS_Number{
 
-    $Owner = "octodemo" ; $ProjectNumber = 700
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $projectId = "PVT_kwDOAlIw4c4BCe3V"
 
     # project item issue
@@ -52,8 +52,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_Number{
 
     # Mock get-project
     # MockCall_GetProject_700 -skipItems
-    MockCall_GetProject_700
-    $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force
+    MockCall_GetProject -MockProject $p -Cache
 
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldName $fieldValue
 
@@ -62,7 +61,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_Number{
     $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-AreEqual -Expected $fieldValue -Presented $staged.$itemId1.$fieldId.Value
 
-    $showStaged = Show-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber | Show-ProjectItemStaged
+    $showStaged = Show-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber | Show-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-AreEqual -Expected $fieldValue -Presented $showStaged.$fieldName.Value
     Assert-AreEqual -Expected $fieldBeforeValueNumber -Presented $showStaged.$fieldName.Before
 
@@ -81,7 +80,6 @@ function Test_SyncProjectItemsStaged_SUCCESS_Number{
 
 function Test_SyncProjectItemsStaged_SUCCESS_Date{
 
-    $Owner = "octodemo" ; $ProjectNumber = 700
     $projectId = "PVT_kwDOAlIw4c4BCe3V"
 
     # project item issue
@@ -117,8 +115,8 @@ function Test_SyncProjectItemsStaged_SUCCESS_Date{
     }
 
     # Mock get-project
-    MockCall_GetProject_700
-    $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    MockCall_GetProject -MockProject $p -Cache
 
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldName $fieldValue
 
@@ -127,7 +125,8 @@ function Test_SyncProjectItemsStaged_SUCCESS_Date{
     $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-AreEqual -Expected $fieldValue -Presented $staged.$itemId1.$fieldId.Value
 
-    $showStaged = Show-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber | Show-ProjectItemStaged
+    # During interactive use we will set project environment avoiding to use the owner an PN parameters
+    $showStaged = Show-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber | Show-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-AreEqual -Expected $fieldValue -Presented $showStaged.$fieldName.Value
     Assert-AreEqual -Expected $fieldBeforeValueDate -Presented $showStaged.$fieldName.Before
 
@@ -205,7 +204,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_SingleSelect{
         }
     }
 
-    $showStaged = Show-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber | Show-ProjectItemStaged
+    $showStaged = Show-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber | Show-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-AreEqual -Expected $fieldNewValue -Presented $showStaged.$fieldName.Value
     Assert-AreEqual -Expected $fieldBeforeValueSingleSelect -Presented $showStaged.$fieldName.Before
 

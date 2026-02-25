@@ -11,8 +11,7 @@ function Add-ProjectSubIssueDirect {
         [Parameter()][switch]$ReplaceParent
     )
 
-    $Owner, $ProjectNumber = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)){ throw "Owner and ProjectNumber are required"}
+    ($Owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
     # Get Parent Issue
     $parent = Get-ProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber

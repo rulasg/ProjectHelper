@@ -103,7 +103,7 @@ function Invoke-ProjectInjection {
     )
 
     begin{
-        ($Owner,$ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+        ($Owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
         $ret = @{
             FailedIntegration = @()

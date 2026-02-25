@@ -18,7 +18,7 @@ function Show-ProjectItem{
 
     begin{
 
-        $Owner,$ProjectNumber = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
+        ($Owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
         if($OpenInEditor){
             Start-WriteBuffer
