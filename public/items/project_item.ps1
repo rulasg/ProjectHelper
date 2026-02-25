@@ -87,7 +87,7 @@ function Get-ProjectItemByUrl{
         if($PassThru){
             $ret = $item
         } else {
-            $ret = Format-ProjectItem -Item $item -Attributes @("id", "Title")
+            $ret = Format-ProjectItem -Item $item -Attributes $DEFAULT_DISPLAY_FIELDS
         }
         return $ret
     }
@@ -238,7 +238,7 @@ function Format-ProjectItem{
 
     begin {
         if([string]::IsNullOrWhiteSpace($Attributes)){
-            $Attributes = @("id", "Title")
+            $Attributes = $DEFAULT_DISPLAY_FIELDS
         }
     }
 
