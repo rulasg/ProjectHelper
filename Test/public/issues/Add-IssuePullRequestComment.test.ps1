@@ -22,7 +22,7 @@ function Test_AddComment_SUCCESS_Using_Cache{
 
 function Test_AddComment_SUCCESS_Using_Direct{
 
-    $p = Get-Mock_Project_700
+    $p = Get-Mock_Project_700 
     $i = $p.Issue
     $id = $i.id
     $contentId = $i.contentId

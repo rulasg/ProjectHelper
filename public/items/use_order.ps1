@@ -49,6 +49,11 @@ function Use-Order {
             return
         }
 
+        # To work on the item we need Owner and ProjectNumber from the environment. If not set, we cannot continue.
+        if( -Not (Test-ProjectParameters)){
+            throw "ProjectEnvironment is required. Run Set-ProjectHelperEnvironment"
+        }
+
         #return item
         if($PassThru) {
             $i = Get-ProjectItem -ItemId $itemId

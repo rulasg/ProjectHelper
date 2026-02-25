@@ -12,12 +12,33 @@ function Test_UserOrder_Success{
 
 }
 
+function Test_UserOrder_Success_GetItem_FAIL_NO_ENVIRONMENT{
+    MockCall_GetProject_700
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+
+    # We need to have the environment set to get item details in PassThru
+    $list = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -IncludeDone
+
+    # Act
+    $hasthorwn = $false
+    try {
+        $list | Use-Order 1
+    } catch {
+        $hasthorwn = $true
+        Assert-IsTrue -Condition $_.Exception.Message.StartsWith("ProjectEnvironment is required.")
+    }
+    Assert-IsTrue -Condition $hasthorwn
+}
+
 function Test_UserOrder_Success_GetItem{
     MockCall_GetProject_700
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
 
-    $list = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -IncludeDone
+    # We need to have the environment set to get item details in PassThru
+    Set-ProjectHelperEnvironment -Owner $owner -ProjectNumber $projectNumber
+    $list = Search-ProjectItem -IncludeDone
 
     # Act
     $result = $list | Use-Order 1 -PassThru
@@ -33,7 +54,9 @@ function Test_UserOrder_Success_OpenBrowser{
 
     MockCallToNull -command "Invoke-ProjectHelperOpenUrl -Url $url"
 
-    $list = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -IncludeDone
+    # We need to have the environment set to get item details in PassThru
+    Set-ProjectHelperEnvironment -Owner $owner -ProjectNumber $projectNumber
+    $list = Search-ProjectItem -IncludeDone
 
     # Act
     $result = $list | Use-Order $order -OpenInBrowser
@@ -48,7 +71,9 @@ function Test_UserOrder_Success_Passthru{
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $order = $p.issue.order ; $id = $p.issue.id
 
-    $list = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -IncludeDone
+    # We need to have the environment set to get item details in PassThru
+    Set-ProjectHelperEnvironment -Owner $owner -ProjectNumber $projectNumber
+    $list = Search-ProjectItem -IncludeDone
 
     # Act
     $result = $list | Use-Order $order -PassThru

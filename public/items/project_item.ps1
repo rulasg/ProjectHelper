@@ -21,8 +21,7 @@ function Get-ProjectItem {
     )
 
     begin {
-        ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+        ($owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems
 
@@ -61,8 +60,7 @@ function Get-ProjectItemByUrl{
     )
 
     begin {
-        ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { return $null }
+        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems
 
@@ -136,8 +134,7 @@ function Test-ProjectItem {
     )
 
     begin {
-        ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
     }
@@ -182,8 +179,7 @@ function Search-ProjectItem {
     }
 
 
-    ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+($owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
     # Get items as hashtable for later queries
     $items = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -IncludeDone:$IncludeDone -AsHashtable
@@ -276,8 +272,7 @@ function Get-ProjectItems {
         [Parameter()][switch]$AsHashtable
     )
 
-    ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+($owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
     try {
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
@@ -329,15 +324,9 @@ function Open-ProjectItem {
     )
 
     begin {
+        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
-
-        ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) {
-            throw "Owner and ProjectNumber are required on Open-ProjectItem"
-        }
-
-        "Project set to [$owner/$ProjectNumber]" | Write-Verbose
-
+        "Project set to [$Owner/$ProjectNumber]" | Write-Verbose
     }
 
     process {
@@ -388,8 +377,7 @@ function Edit-ProjectItem {
 
     process{
 
-        ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
         # Force cache update
         # Full sync if force. Skip items if not force
@@ -431,8 +419,7 @@ function Reset-ProjectItem {
 
     process{
 
-        ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
         # Force cache update
         # Full sync if force. Skip items if not force
@@ -471,8 +458,7 @@ function Add-ProjectItemDirect {
     )
 
     begin{
-        ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
         # Get project id
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
@@ -541,8 +527,7 @@ function Remove-ProjectItemDirect {
     )
 
     begin {
-        ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
         # Get project id
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
@@ -620,6 +605,10 @@ function Remove-ProjectItem {
 
     )
 
+    begin {
+        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
+    }
+
     process {
 
         # Get item to delete issue later
@@ -630,7 +619,7 @@ function Remove-ProjectItem {
         }
 
         # Find Item to remove
-        $item = Get-ProjectItem -ItemId $ItemId
+        $item = Get-ProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber 
 
         if( ! $item){
             "Item [$ItemId] not found, cannot delete issue" | Write-MyWarning

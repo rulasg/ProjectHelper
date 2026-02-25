@@ -12,10 +12,7 @@ function Add-ProjectUser {
 
     begin{
 
-        ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-        if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) {
-            throw "Owner and ProjectNumber are required on Get-Project"
-        }
+        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
         $project = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems
 

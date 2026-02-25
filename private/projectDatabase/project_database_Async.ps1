@@ -7,8 +7,7 @@ function Sync-ProjectDatabaseAsync {
         [Parameter()][int]$SyncBatchSize = 30
     )
 
-    ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
-    if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
+($owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
     if (! $(Test-ProjectDatabaseStaged -Owner $Owner -ProjectNumber $ProjectNumber)) {
         "Nothing to commit" | Write-MyHost

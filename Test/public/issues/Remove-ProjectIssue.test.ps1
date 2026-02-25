@@ -9,7 +9,7 @@ function Test_RemoveProjectIssue_SUCCESS {
     MockCallJson -Command "Invoke-GetIssueOrPullRequest -Url $($i.url)" -fileName $i.getIssueOrPullRequestMockFile
     MockCallJson -Command "Invoke-AddItemToProject -ProjectId $($p.id) -ContentId $($i.id)" -fileName $i.addIssueToOProjectMockFile
     $itemId = Add-ProjectItem -owner $owner -projectNumber $projectNumber -Url $i.url
-    $item = Get-ProjectItem -Id $itemId
+    $item = Get-ProjectItem -Id $itemId -owner $owner -projectNumber $projectNumber
     Assert-AreEqual -expected $i.id -Presented $item.contentId
 
     MockCallJson -Command "Invoke-RemoveItemFromProject -ProjectId $($p.id) -ItemId $($i.itemId)" -fileName $i.removeIssueFromProjectMockFile
@@ -19,11 +19,11 @@ function Test_RemoveProjectIssue_SUCCESS {
 
     # Assert
     Assert-AreEqual -Expected $i.url -Presented $result
-    Assert-IsFalse -Condition $(Test-ProjectItem -Url $i.url)
+    Assert-IsFalse -Condition $(Test-ProjectItem -Url $i.url -Owner $owner -ProjectNumber $projectNumber)
 
-    # Remove issue assocaited
+    # Remove issue associated
     $itemId = Add-ProjectItem -owner $owner -projectNumber $projectNumber -Url $i.url
-    Assert-IsTrue -Condition $(Test-ProjectItem -Url $i.url)
+    Assert-IsTrue -Condition $(Test-ProjectItem -Url $i.url -Owner $owner -ProjectNumber $projectNumber)
     MockCallJson -Command "Invoke-RemoveIssue -IssueId $($i.id)" -FileName "invoke-removeissue-any.json"
 
     # Act
