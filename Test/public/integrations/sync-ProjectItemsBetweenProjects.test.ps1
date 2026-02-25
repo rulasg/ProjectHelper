@@ -22,7 +22,7 @@ function Test_UpdateProjectItemsBetweenProjects{
 
     Assert-IsNull -Object $result
 
-    $staged = Get-ProjectItemStaged -Owner $owner -ProjectNumber $destinationProjectNumber
+    $staged = Get-ProjectItemStaged -Owner $destinationOwner -ProjectNumber $destinationProjectNumber
 
     $p = $p626.syncBtwPrj_625
 
