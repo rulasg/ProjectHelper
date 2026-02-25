@@ -102,19 +102,26 @@ function Get-ProjectItemUrl{
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)][Alias("id")][string]$ItemId,
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
-        [Parameter()][switch]$Force
+        [Parameter()][switch]$Force,
+        [Parameter()][switch]$SetClipboard
+
     )
 
     process{
 
         $item = Get-ProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
-        if($item){
-            return $item.url
-        } else {
+        if(-not $item){
             "Item [$ItemId] not found" | Write-MyError
             return $null
         }
+        $ret = $item.url
+
+        if($SetClipboard){
+            $ret | Set-Clipboard
+        }
+
+        return $ret
 
     }
 } Export-ModuleMember -Function Get-ProjectItemUrl -Alias "gpiu"
@@ -173,6 +180,7 @@ function Search-ProjectItem {
     if(-not ($Attributes -contains "id")){
         $Attributes = @("id") + $Attributes
     }
+
 
     ($Owner, $ProjectNumber) = Get-OwnerAndProjectNumber -Owner $Owner -ProjectNumber $ProjectNumber
     if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($ProjectNumber)) { "Owner and ProjectNumber are required" | Write-MyError; return $null }
