@@ -87,7 +87,7 @@ function Update-ProjectItemsStatusOnDueDate{
         [Parameter()][string]$StatusFieldName = "Status",
         [Parameter(Mandatory)][string]$DateFieldName,
         [Parameter(Mandatory)][string]$StatusAction,
-        [Parameter(Mandatory)][string]$StatusPlanned,
+        [Parameter()][string]$StatusPlanned,
         [Parameter()][string]$StatusDone,
         [Parameter()][switch]$AnyStatus,
         [Parameter()][switch]$IncludeDoneItems,
@@ -129,7 +129,7 @@ function Invoke-ProjectInjectionOnDueDate {
         [Parameter(Mandatory)][string]$StatusFieldName,
         [Parameter(Mandatory)][string]$DateFieldName,
         [Parameter(Mandatory)][string]$StatusAction,
-        [Parameter(Mandatory)][string]$StatusPlanned,
+        [Parameter()][string]$StatusPlanned,
         [Parameter()][string]$StatusDone,
         [Parameter()][switch]$AnyStatus,
         [Parameter()][switch]$IncludeDoneItems
