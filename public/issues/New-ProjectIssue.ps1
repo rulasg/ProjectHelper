@@ -83,3 +83,51 @@ function New-ProjectIssue {
     }
 
 } Export-ModuleMember -Function New-ProjectIssue -Alias npi
+
+function Copy-ProjectIssue {
+    [CmdletBinding()]
+    param(
+        #Source Item
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)][Alias("id")][string]$ItemId,
+        #ProjectOwner
+        [Parameter()][string]$ProjectOwner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter(Mandatory, Position = 1)][string]$RepoOwner,
+        [Parameter(Mandatory, Position = 2)][string]$RepoName,
+        [Parameter()][switch]$OpenOnCreation,
+        [Parameter()][switch]$DoNotAddToProject
+
+    )
+
+    try{
+        # Get Project
+        ($ProjectOwner,$ProjectNumber) = Resolve-ProjectParameters -Owner $ProjectOwner -ProjectNumber $ProjectNumber
+
+        $sourceItem = Get-ProjectItem -Owner $ProjectOwner -ProjectNumber $ProjectNumber -ItemId $ItemId
+        $title = $sourceItem.Title
+        $body = $sourceItem.Body
+
+        # Create Issue
+        $url = New-ProjectIssueDirect -RepoOwner $RepoOwner -RepoName $RepoName -Title $title -Body $body
+
+        if(! $url ){
+            "Issue could not be created" | Write-MyError
+            return $null
+        }
+
+        if(-Not $DoNotAddToProject){
+            # Add issue to project
+             $itemId = Add-ProjectItem -Owner $ProjectOwner -ProjectNumber $ProjectNumber -Url $url
+        }
+
+        if( $OpenOnCreation ) {
+            Open-Url $url
+        }
+
+        return $itemId
+    }
+    catch{
+        throw "Error creating issue and adding to project: $_"
+    }
+
+} Export-ModuleMember -Function Copy-ProjectIssue
