@@ -76,8 +76,8 @@ function Save-ProjectV2toDatabase{
     param(
         [Parameter(Position = 0)][object]$ProjectV2,
         [Parameter(Position = 1)][hashtable]$Items,
-        [Parameter(Position = 2)][Object[]]$Fields,
-        [Parameter()][switch]$ItemsUpdate
+        [Parameter(Position = 1)][hashtable]$QueryItems,
+        [Parameter(Position = 2)][Object[]]$Fields
     )
 
     $owner = $ProjectV2.owner.login
@@ -96,14 +96,15 @@ function Save-ProjectV2toDatabase{
     $db.owner            = $owner
     $db.number           = $projectnumber
 
-    if($ItemsUpdate){
+    # Full list update
+    $db.items = $Items
+
+    # Update just a few items
+    if($QueryItems){
         # Update each of the items to avoid replacing all
-        foreach ($item in $items.Values){
+        foreach ($item in $QueryItems.Values){
             Set-Item $db $item
         }
-    } else {
-        # Add items
-        $db.items = $Items
     }
 
     # Update fields
@@ -161,6 +162,13 @@ function Get-DatabaseKey{
         [Parameter(Position = 0)][string]$Owner,
         [Parameter(Position = 1)][int]$ProjectNumber
     )
+
+    if([string]::IsNullOrWhiteSpace($Owner)){
+        throw "Owner is null or empty"
+    }
+    if($ProjectNumber -le 0){
+        throw "ProjectNumber is null or not a positive integer"
+    }
 
     $ret = "$($owner)_$($projectnumber)"
 
