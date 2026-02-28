@@ -93,6 +93,16 @@ function Update-ProjectDatabase {
         $actualItems = $actualprj.items ?? $(New-HashTable)
 
         foreach($itemKey in $items.Keys){
+
+            # Sanity check : We need to confirm that the item projectUrl field is the same as project url
+            # We are detecting a bug that sometimes we are saving items in the wrong database.
+            # Need to keep this check until we fix this bug.
+            if($items.$itemKey.projectUrl -ne $actualItems.$itemKey.projectUrl){
+                #break in debugger
+                Write-Debug "Item projectUrl mismatch for key [$itemKey]"
+                Wait-Debugger
+            }
+
             $actualItems.$itemKey = $items.$itemKey
         }
         $items = $actualItems
