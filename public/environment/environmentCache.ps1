@@ -9,8 +9,13 @@ function Get-ProjectHelperEnvironment{
 
         # Last Known Good Owner
         Owner         = Get-EnvItem -Name "EnvironmentCache_Owner"
+        
         # Last Known Good Project Number
         ProjectNumber = Get-EnvItem -Name "EnvironmentCache_ProjectNumber"
+
+        # Last known good Project Name
+        ProjectTitle   = Get-EnvItem -Name "EnvironmentCache_ProjectTitle"
+
         # List of fields to display on Items display commands. Useful with ConvertToItemDisplay
         # TODO : Consider if its worth keeping this setting
         DisplayFields = Get-EnvItem -Name "EnvironmentCache_Display_Fields"
@@ -26,6 +31,7 @@ function Reset-ProjectHelperEnvironment{
 
     Set-EnvItem -Name "EnvironmentCache_Owner" -Value $null
     Set-EnvItem -Name "EnvironmentCache_ProjectNumber" -Value $null
+    Set-EnvItem -Name "EnvironmentCache_ProjectTitle" -Value $null
     Set-EnvItem -Name "EnvironmentCache_Display_Fields" -Value $null
 
 } Export-ModuleMember -Function Reset-ProjectHelperEnvironment
@@ -35,6 +41,7 @@ function Set-ProjectHelperEnvironment{
     param(
         [Parameter(ValueFromPipelineByPropertyName)][string]$Owner,
         [Parameter(ValueFromPipelineByPropertyName)][string]$ProjectNumber,
+        [Parameter(ValueFromPipelineByPropertyName)][string]$ProjectTitle,
         [Parameter(ValueFromPipelineByPropertyName)][string[]]$DisplayFields
     )
 
@@ -45,6 +52,11 @@ function Set-ProjectHelperEnvironment{
     if(! [string]::IsNullOrWhiteSpace($ProjectNumber)) {
         Set-EnvItem -Name "EnvironmentCache_ProjectNumber" -Value $ProjectNumber
     }
+
+    if(! [string]::IsNullOrWhiteSpace($ProjectTitle)) {
+        Set-EnvItem -Name "EnvironmentCache_ProjectTitle" -Value $ProjectTitle
+    }
+
     if($DisplayFields) {
         Set-EnvItem -Name "EnvironmentCache_Display_Fields" -Value $DisplayFields
     }

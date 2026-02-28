@@ -20,6 +20,7 @@ function Get-Mock_Project_625 {
     $project.id = $p.id
     $project.owner = $p.owner.login
     $project.number = $p.number
+    $project.title = $p.title
     $project.url = $p.url
 
     # Add Items to mock

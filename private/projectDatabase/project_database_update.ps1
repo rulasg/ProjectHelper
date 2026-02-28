@@ -15,6 +15,9 @@ function Update-ProjectDatabase {
 
     $params = @{ owner = $Owner ; projectnumber = $ProjectNumber ; afterFields = "" ; afterItems = "" ; query = "$query" }
 
+    # We new if this is a partial update
+    $isQuery = -Not [string]::IsNullOrEmpty($Query)
+
     # This means that the ProjectNumber has a empty string value
     if($ProjectNumber -eq 0){
         throw "ProjectNumber invalid. Please specify a valid ProjectNumber"
@@ -86,16 +89,14 @@ function Update-ProjectDatabase {
 
     # If query is set we are updating just a few items from the database.
     # update just this items
-    if( -Not [string]::IsNullOrEmpty($Query)){
+    if( $isQuery ){
+        $queryItems = $items
+
         $actualprj = Get-ProjectFromDatabase -Owner $Owner -ProjectNumber $ProjectNumber
 
         # Check if project has no items or the project is not cached yet
-        $actualItems = $actualprj.items ?? $(New-HashTable)
+        $items = $actualprj.items ?? $(New-HashTable)
 
-        foreach($itemKey in $items.Keys){
-            $actualItems.$itemKey = $items.$itemKey
-        }
-        $items = $actualItems
     }
 
     # If we are Skiping items on the update we need to keep the existing items in the database and just update the fields
@@ -109,7 +110,7 @@ function Update-ProjectDatabase {
     }
 
     # Save ProjectV2 object to ProjectDatabase
-    Save-ProjectV2toDatabase $projectV2 -Items $items -Fields $fields
+    Save-ProjectV2toDatabase $projectV2 -Items $items -Fields $fields -QueryItems $queryItems
 
     return $true
 } Export-ModuleMember -Function Update-ProjectDatabase

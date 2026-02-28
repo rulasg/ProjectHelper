@@ -45,15 +45,20 @@ function Test-ProjectParameters {
 
 function Set-ProjectParameters {
     [CmdletBinding()]
-    [Alias("Set-Project")]
+    [Alias("Set-Project","spp")]
     param(
         [Parameter(Mandatory,ValueFromPipelineByPropertyName, Position = 0)][string]$Owner,
         [Parameter(Mandatory,ValueFromPipelineByPropertyName, Position = 1)][string]$ProjectNumber
     )
 
     process {
+        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -ErrorAction SilentlyContinue
 
-        Set-ProjectHelperEnvironment -Owner $Owner -ProjectNumber $ProjectNumber
+        if($db){
+            $ProjectTitle = $db.title
+        }
+
+        Set-ProjectHelperEnvironment -Owner $Owner -ProjectNumber $ProjectNumber -ProjectTitle $ProjectTitle
     }
 
-} Export-ModuleMember -Function Set-ProjectParameters -Alias "Set-Project"
+} Export-ModuleMember -Function Set-ProjectParameters -Alias "Set-Project","spp"

@@ -126,7 +126,7 @@ function Test_GetProjectItemUrl_SUCCESS_FromApiWhenMissingInCache {
 
     # Arrange
     Reset-InvokeCommandMock
-    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $p = Get-Mock_Project_625 ; $owner = $p.owner ; $projectNumber = $p.number
     $itemId = "id1"
     MockCall_GetProject -MockProject $p -SkipItems
     MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-id1.json"

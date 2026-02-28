@@ -81,3 +81,5 @@ Invoke-UpdateProjectV2Collaborators -ProjectId PVT_kwDOAlIw4c4BCe3V -collaborato
 Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 700 -afterFields "" -afterItems "" -query "updated:>=2024-02-18"
 Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 700 -afterFields "" -afterItems "" -query "updated:>=2025-03-15"
 Invoke-ProjectHelperOpenUrl -Url https://github.com/octodemo/rulasg-dev-1/issues/26
+echo ProjecthelperPromoptSettings
+Invoke-CreateIssue -RepositoryId R_kgDOPrRnkQ -Title "Issue for development" -Body "Body of issue for development"

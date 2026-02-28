@@ -137,6 +137,12 @@ function Set-Item{
         $db = New-HashTable
     }
 
+    # Add Sanity check for item
+    # Ensure that we are adding an item to the proper project database
+    if($Database.ProjectId -ne $Item.projectId){
+        Wait-Debugger
+    }
+
     $items = $db | AddHashLink items
 
     $items.$($Item.id) = $Item
