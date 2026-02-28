@@ -3,7 +3,7 @@
 # Provides controls to open files and URLs in the default system applications.
 # Use $MODULE_NAME variable to set up functions names
 
-Set-MyInvokeCommandAlias -Alias OpenUrl -Command "Invoke-$($MODULE_NAME)OpenUrl -Url {url}"
+Set-MyInvokeCommandAlias -Alias OpenUrl -Command $('Invoke-{modulename}OpenUrl -Url "{url}"' -replace "{modulename}", $MODULE_NAME)
 
 function Invoke-ModuleNameOpenUrl{
     [CmdletBinding()]

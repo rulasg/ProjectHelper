@@ -129,7 +129,9 @@ function Get-Mock_Project_700 {
     $draftIssue = $pActual.items.nodes | Where-Object { $_.content.title -eq "DraftIssue for development" }
     $fss = $draftIssue.fieldValues.nodes | Where-Object { $_.field.id -eq $($fieldsingleselect.id) }
     $project.draftissue = @{
+        order             = 11 # order of this item when calling spi
         id                = $draftIssue.id
+        url               = "https://github.com/orgs/$($project.owner)/projects/$($project.number)/views/1?pane=issue&itemId=$($draftIssue.fullDatabaseId)"
         contentId         = $draftIssue.content.id
         title             = $draftIssue.content.title
         status            = ($draftIssue.fieldValues.nodes | Where-Object { $_.field.name -eq "Status" }).name

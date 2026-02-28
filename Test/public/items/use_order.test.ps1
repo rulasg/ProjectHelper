@@ -52,7 +52,30 @@ function Test_UserOrder_Success_OpenBrowser{
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $order = $p.issue.order ; $url = $p.issue.url
 
-    MockCallToNull -command "Invoke-ProjectHelperOpenUrl -Url $url"
+    $command = 'Invoke-ProjectHelperOpenUrl -Url "{url}"'
+    $command = $command -replace "{url}", $url
+    MockCallToNull -command $command
+
+    # We need to have the environment set to get item details in PassThru
+    Set-ProjectHelperEnvironment -Owner $owner -ProjectNumber $projectNumber
+    $list = Search-ProjectItem -IncludeDone
+
+    # Act
+    $result = $list | Use-Order $order -OpenInBrowser
+
+    # Assert
+    Assert-IsNull -Object $result
+}
+
+function Test_UserOrder_Success_OpenBrowser_DRAFT{
+    MockCall_GetProject_700
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $order = $p.draftissue.order ; $url = $p.draftissue.url
+
+    $command = 'Invoke-ProjectHelperOpenUrl -Url "{url}"'
+    $command = $command -replace "{url}", $url
+    MockCallToNull -command $command
 
     # We need to have the environment set to get item details in PassThru
     Set-ProjectHelperEnvironment -Owner $owner -ProjectNumber $projectNumber
