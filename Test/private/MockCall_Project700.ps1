@@ -70,6 +70,8 @@ function Get-Mock_Project_700 {
     $project.issueToCreateAddAndRemove= @{
         id = $id
         number = 46
+        title = "Issue for development"
+        body = "Body of issue for development"
         url = "https://github.com/octodemo/rulasg-dev-1/issues/46"
         getIssueOrPullRequestMockFile = "invoke-getissueorpullrequest-46.json"
         itemId = $itemId
