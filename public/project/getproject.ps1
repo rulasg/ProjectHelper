@@ -66,7 +66,8 @@ function Open-Project{
     [CmdletBinding()]
     param(
         [Parameter(ValueFromPipelineByPropertyName)][string]$Owner,
-        [Parameter(ValueFromPipelineByPropertyName)][int]$ProjectNumber
+        [Parameter(ValueFromPipelineByPropertyName)][int]$ProjectNumber,
+        [Parameter(ValueFromPipelineByPropertyName)][string]$View
     )
 
     ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
@@ -75,7 +76,14 @@ function Open-Project{
     if (-not $project) {
         throw "Project not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]"
     }
-    $projectUrl = $project.url
+    
+    $builder = [UriBuilder]$project.url
+
+    if (-Not [string]::IsNullOrEmpty($View)) {
+        $builder.Path = "$($builder.Path)/views/$View"
+    }
+
+    $projectUrl = $builder.Uri
 
     # Open the URL based on the operating system
     if ($IsWindows -or $env:OS -match "Windows") {
