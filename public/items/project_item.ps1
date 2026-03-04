@@ -49,6 +49,23 @@ function Get-ProjectItem {
 
 } Export-ModuleMember -Function Get-ProjectItem -Alias "gpi"
 
+function Update-ProjectItem {
+    [CmdletBinding()]
+    [Alias ("upi")]
+    param(
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)][Alias("id")][string]$ItemId,
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber
+    )
+
+    process{
+        $item = Get-ProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber -Force
+
+        return $item.id
+    }
+
+} Export-ModuleMember -Function Update-ProjectItem -Alias "upi"
+
 function Get-ProjectItemByUrl{
     [CmdletBinding()]
     param(
@@ -356,57 +373,6 @@ function Open-ProjectItem {
         Open-Url -Url $url
     }
 } Export-ModuleMember -Function Open-ProjectItem -Alias "opi"
-
-<#
-.SYNOPSIS
-    Edit a project item
-.EXAMPLE
-    Edit-ProjectItem -Owner "someOwner" -ProjectNumber 164 -Title "Item 1 - title" -FieldName "comment" -Value "new value of the comment"
-    Edit-ProjectItem -Owner "someOwner" -ProjectNumber 164 -Title "Item 1 - title" -FieldName "title" -Value "new value of the title"
-#>
-function Edit-ProjectItem {
-    [CmdletBinding()]
-    param(
-        [Parameter()][string]$Owner,
-        [Parameter()][string]$ProjectNumber,
-        [Parameter(Mandatory, ValueFromPipeline, Position = 1)][string]$ItemId,
-        [Parameter(Position = 2)][string]$FieldName,
-        [Parameter(Position = 3)][string]$Value,
-        [Parameter()][switch]$Force
-    )
-
-    process{
-
-        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
-
-        # Force cache update
-        # Full sync if force. Skip items if not force
-        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems:$(-not $Force)
-
-        # Find the actual value of the item. Item+Staged
-        # Ignore $dirty as we are changing the db we will always save
-        ($item, $dirty) = Resolve-ProjectItem -Database $db -ItemId $ItemId
-
-        # if the item is not found
-        if($null -eq $item){ "Item [$ItemId] not found" | Write-MyError; return $null}
-
-        # Value transformations
-        $valueTransformed = Convertto-ItemTransformedValue -Item $item -Value $Value
-
-        # Check if value is the same
-        if ( AreEqual -Object1:$item.$FieldName -Object2:$valueTransformed) {
-            "The value is the same, no need to stage it" | Write-Verbose
-            return
-        }
-
-        # save the new value
-        Save-ItemFieldValue $db $itemId $FieldName $valueTransformed
-
-        # Commit changes to the database
-        Save-ProjectDatabaseSafe -Database $db
-    }
-
-} Export-ModuleMember -Function Edit-ProjectItem
 
 function Reset-ProjectItem {
     [CmdletBinding()]

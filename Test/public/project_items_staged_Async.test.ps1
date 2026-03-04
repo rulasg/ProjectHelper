@@ -594,9 +594,6 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_DraftIssue {
 function Test_SyncProjectItemsStaged_Async_FAIL_Content_DraftIssue {
 
     # Arrange
-    Reset-InvokeCommandMock
-    Enable-InvokeCommandAliasModule
-
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     MockCall_GetProject -MockProject $p -skipItems
 

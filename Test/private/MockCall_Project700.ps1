@@ -27,6 +27,7 @@ function Get-Mock_Project_700 {
     $fieldnumber = $pActual.fields.nodes | Where-Object { $_.name -eq "field-number" }
     $fielddate = $pActual.fields.nodes | Where-Object { $_.name -eq "field-date" }
     $fieldsingleselect = $pActual.fields.nodes | Where-Object { $_.name -eq "field-singleselect" }
+    $fieldStatus = $pActual.fields.nodes | Where-Object { $_.name -eq "Status" }
 
     # Repository Info
     $repoContent = Get-MockFileContentJson -fileName $project.repofile -AsHashtable
@@ -58,6 +59,7 @@ function Get-Mock_Project_700 {
     $project.fieldnumber = @{ id = $fieldnumber.id ; name = $fieldnumber.name }
     $project.fielddate = @{ id = $fielddate.id ; name = $fielddate.name }
     $project.fieldsingleselect = @{ id = $fieldsingleselect.id ; name = $fieldsingleselect.name ; options = $fieldsingleselect.options }
+    $project.fieldStatus = @{ id = $fieldStatus.id ; name = $fieldStatus.name ; options = $fieldStatus.options }
 
     # Items
     $project.items = @{}

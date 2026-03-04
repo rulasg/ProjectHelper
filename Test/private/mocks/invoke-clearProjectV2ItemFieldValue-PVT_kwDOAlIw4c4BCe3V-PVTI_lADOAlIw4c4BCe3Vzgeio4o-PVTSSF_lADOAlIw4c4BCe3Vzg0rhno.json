@@ -53,7 +53,7 @@
             },
             {
               "__typename": "ProjectV2ItemFieldSingleSelectValue",
-              "name": "Todo",
+              "name": "In Progress",
               "field": {
                 "__typename": "ProjectV2SingleSelectField",
                 "id": "PVTSSF_lADOAlIw4c4BCe3Vzg0rg-U",

@@ -72,7 +72,7 @@ function Sync-ProjectAsync {
 
             # "Calling  [$($params.Database.ProjectId)/$($params.ItemId)/$($params.FieldId) ($($params.FieldType)) = $($params.Value) ] ..." | Write-MyHost -NoNewLine
 
-            $call = Update-ProjectItem @params -Async
+            $call = UpdateProjectItem @params -Async
 
             $calls += $call
             $callsBatch += $call

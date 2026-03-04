@@ -13,7 +13,7 @@ Set-MyInvokeCommandAlias -Alias GitHub_ClearProjectV2ItemFieldValue       -Comma
 Set-MyInvokeCommandAlias -Alias AddComment      -Command 'Invoke-AddComment -SubjectId {subjectid} -Comment "{comment}"'
 Set-MyInvokeCommandAlias -Alias AddCommentAsync -Command 'Import-Module {projecthelper} ; Invoke-AddComment -SubjectId {subjectid} -Comment "{comment}"'
 
-function Update-ProjectItem {
+function UpdateProjectItem {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory, Position = 0)][object]$Database,

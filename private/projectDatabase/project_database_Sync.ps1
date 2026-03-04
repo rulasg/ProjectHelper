@@ -64,11 +64,11 @@ function Sync-Project{
 
             "Saving [$($params.Database.ProjectId)/$($params.ItemId)/$($params.FieldId) ($($params.FieldName)) = ""$($params.Value)"" ] ..." | Write-MyHost
 
-            $call = Update-ProjectItem @params
+            $call = UpdateProjectItem @params
 
             if ( ! (Test-UpdateProjectItemCall $call) ) {
                 "FAILED !!" | Write-MyHost
-                Write-MyDebug -section "Sync-Project" -Message "Update-ProjectItem call failed" -Object $call
+                Write-MyDebug -section "Sync-Project" -Message "UpdateProjectItem call failed" -Object $call
                 continue
             }
 

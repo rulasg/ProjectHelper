@@ -50,8 +50,8 @@ function New-ProjectIssue {
         #ProjectOwner
         [Parameter()][string]$ProjectOwner,
         [Parameter()][string]$ProjectNumber,
-        [Parameter(Mandatory, Position = 1)][string]$RepoOwner,
-        [Parameter(Mandatory, Position = 2)][string]$RepoName,
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName, Position = 1)][Alias("Owner")][string]$RepoOwner,
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName, Position = 2)][string]$RepoName,
         [Parameter(Mandatory, Position = 3)][string]$Title,
         [Parameter(Position = 4)][string]$Body,
         [Parameter()][switch]$OpenOnCreation

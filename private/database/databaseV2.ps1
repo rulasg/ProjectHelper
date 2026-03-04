@@ -1,7 +1,9 @@
 # Not using Include version as we moved away from the generic include version
 
 # Invoke to allow mockig the store path on testing
-Set-MyInvokeCommandAlias -Alias GetDatabaseStorePath -Command "Invoke-ProjectHelperGetDatabaseStorePath"
+
+$aliasName = $MODULE_NAME+ "GetDatabaseStorePath"
+Set-MyInvokeCommandAlias -Alias "$aliasName" -Command "Invoke-ProjectHelperGetDatabaseStorePath"
 
 $DATABASE_ROOT = [System.Environment]::GetFolderPath('UserProfile') | Join-Path -ChildPath ".helpers" -AdditionalChildPath $MODULE_NAME, "databaseCache"
 
@@ -20,6 +22,8 @@ function Reset-DatabaseStore {
 
     New-Item -Path $databaseRoot -ItemType Directory
 
+    $script:databaseRoot = $null
+
 } Export-ModuleMember -Function Reset-DatabaseStore
 
 function Get-DatabaseStore {
@@ -29,7 +33,7 @@ function Get-DatabaseStore {
     )
 
     if ($Force -or -Not $script:databaseRoot) {
-        $script:databaseRoot = Invoke-MyCommand -Command GetDatabaseStorePath
+        $script:databaseRoot = Invoke-MyCommand -Command $aliasName
         "Using DatabaseStore path: $script:databaseRoot" | Write-MyDebug -Section DatabaseStore
     }
 

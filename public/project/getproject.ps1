@@ -1,8 +1,8 @@
 function Get-Project {
     [CmdletBinding()]
     param(
-        [Parameter()][string]$Owner,
-        [Parameter()][string]$ProjectNumber,
+        [Parameter(Position=0)][string]$Owner,
+        [Parameter(Position=1)][string]$ProjectNumber,
         [Parameter()][switch]$SkipItems,
         [Parameter()][switch]$Force
     )
