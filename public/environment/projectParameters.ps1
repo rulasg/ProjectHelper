@@ -62,3 +62,26 @@ function Set-ProjectParameters {
     }
 
 } Export-ModuleMember -Function Set-ProjectParameters -Alias "Set-Project","spp"
+
+function Get-ProjectParameters {
+    [CmdletBinding()]
+    [Alias("gpp")]
+    param()
+
+    $result =Get-ProjectHelperEnvironment
+
+    $ret = @{
+        Owner = $result.Owner
+        ProjectNumber = $result.ProjectNumber
+        ProjectTitle = $result.ProjectTitle
+    }
+    $ret.Owner = $result.Owner
+    $ret.ProjectNumber = $result.ProjectNumber
+    
+    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -ErrorAction SilentlyContinue -skipItems
+
+    $ret.ProjectTitle = $db.title
+
+    return $ret
+
+} Export-ModuleMember -Function Get-ProjectParameters -Alias "gpp"
