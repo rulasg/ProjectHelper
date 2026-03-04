@@ -83,3 +83,7 @@ Invoke-GitHubOrgProjectWithFields -Owner octodemo -ProjectNumber 700 -afterField
 Invoke-ProjectHelperOpenUrl -Url https://github.com/octodemo/rulasg-dev-1/issues/26
 echo ProjecthelperPromoptSettings
 Invoke-CreateIssue -RepositoryId R_kgDOPrRnkQ -Title "Issue for development" -Body "Body of issue for development"
+Invoke-ProjectHelperOpenUrl -Url "https://github.com/octodemo/rulasg-dev-1/issues/26"
+Invoke-ProjectHelperOpenUrl -Url "https://github.com/orgs/octodemo/projects/700/views/1?pane=issue&itemId=128098775"
+ProjectHelper_EditFile
+ProjectHelper_EditFileCode

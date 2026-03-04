@@ -1044,8 +1044,6 @@ function Test_Sync_ProjectDatabase_ClearValues{
 function Test_ResetProjectItemStaged_SUCCESS_AllItems {
 
     # Arrange
-    Reset-InvokeCommandMock
-
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $item1 = $p.issue
     $item2 = $p.pullrequest
@@ -1072,8 +1070,6 @@ function Test_ResetProjectItemStaged_SUCCESS_AllItems {
 function Test_ResetProjectItemStaged_SUCCESS_SingleItem {
 
     # Arrange
-    Reset-InvokeCommandMock
-
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $item1 = $p.issue
     $item2 = $p.pullrequest
@@ -1102,8 +1098,6 @@ function Test_ResetProjectItemStaged_SUCCESS_SingleItem {
 function Test_ResetProjectItemStaged_SUCCESS_Pipeline {
 
     # Arrange
-    Reset-InvokeCommandMock
-
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $item1 = $p.issue
     $item2 = $p.pullrequest

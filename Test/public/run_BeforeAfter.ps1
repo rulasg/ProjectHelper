@@ -17,7 +17,10 @@
 function Run_BeforeEach{
     Write-Verbose "Run_BeforeEach"
 
-    Reset_Test_Mock
+    # Reset_Test_Mock
+    Reset-InvokeCommandMock
+    Mock_DatabaseRoot -NotReset:$NoResetDatabase
+    Mock_Today
 }
 
 # function Run_AfterEach{

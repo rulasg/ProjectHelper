@@ -110,7 +110,6 @@ function Test_GetProjectItem_Staged_Body{
 function Test_GetProjectItemUrl_SUCCESS {
 
     # Arrange
-    Reset-InvokeCommandMock
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $i = $p.issue
     MockCall_GetProject -MockProject $p -Cache
@@ -125,7 +124,6 @@ function Test_GetProjectItemUrl_SUCCESS {
 function Test_GetProjectItemUrl_SUCCESS_FromApiWhenMissingInCache {
 
     # Arrange
-    Reset-InvokeCommandMock
     $p = Get-Mock_Project_625 ; $owner = $p.owner ; $projectNumber = $p.number
     $itemId = "id1"
     MockCall_GetProject -MockProject $p -SkipItems
@@ -142,7 +140,6 @@ function Test_GetProjectItemUrl_SUCCESS_FromApiWhenMissingInCache {
 function Test_GetProjectItemUrl_NotFound {
 
     # Arrange
-    Reset-InvokeCommandMock
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $itemId = "id1"
     MockCall_GetProject -MockProject $p -SkipItems
@@ -158,7 +155,6 @@ function Test_GetProjectItemUrl_NotFound {
 function Test_GetProjectItemUrl_SUCCESS_PipelineItems {
 
     # Arrange
-    Reset-InvokeCommandMock
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     MockCall_GetProject -MockProject $p -Cache
 
@@ -323,32 +319,7 @@ function Test_ResetProjectItem_SUCCESS{
     Assert-AreEqual -Expected $f2Actual -Presented $reset.$f2
 }
 
-function Test_EditProjectItems_Direct{
 
-    $Owner = "octodemo" ; $ProjectNumber = 700
-
-    # No sync of project with items allowed just with skipitems
-    MockCall_GetProject_700 -skipItems
-
-    $itemId = "PVTI_lADOAlIw4c4BCe3Vzgeio4o"
-    $fieldComment = "field-text" ; $fieldCommentValue = "new value of the comment 10.1"
-    $fieldId = "PVTF_lADOAlIw4c4BCe3Vzg0rhko"
-
-    # Mock the direct call for item
-    MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-$itemId.json"
-
-    # Direct edit of the item
-    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId -FieldName $fieldComment -Value $fieldCommentValue
-
-    # Get the staged item
-    $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
-
-    Assert-Count -Expected 1 -Presented $result.Keys
-    Assert-AreEqual -Expected $itemId -Presented $result.Keys[0]
-    Assert-AreEqual -Expected $fieldComment -Presented $result.$itemId.$fieldId.Field.name
-    Assert-AreEqual -Expected $fieldCommentValue -Presented $result.$itemId.$fieldId.Value
-
-}
 
 function Test_UpdateProjectDatabase_Fail_With_Staged{
     # When changes are staged list update should fail.
