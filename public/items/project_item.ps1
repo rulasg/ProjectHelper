@@ -49,6 +49,23 @@ function Get-ProjectItem {
 
 } Export-ModuleMember -Function Get-ProjectItem -Alias "gpi"
 
+function Update-ProjectItem {
+    [CmdletBinding()]
+    [Alias ("upi")]
+    param(
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)][Alias("id")][string]$ItemId,
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber
+    )
+
+    process{
+        $item = Get-ProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber -Force
+
+        return $item.id
+    }
+
+} Export-ModuleMember -Function Update-ProjectItem -Alias "upi"
+
 function Get-ProjectItemByUrl{
     [CmdletBinding()]
     param(
