@@ -190,7 +190,7 @@ function Test-MyDebug {
     $flag = $flag.ToLower()
     $section = $section.ToLower()
 
-    $trace = ($flag -like '*all*') -or ( $section -like "*$flag*")
+    $trace = ($flag -like '*all*') -or ( $flag -like "*$section*")
     return $trace
 }
 
