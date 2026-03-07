@@ -118,10 +118,17 @@ function getFieldsCache{
     )
 
     $key = "$Owner-$ProjectNumber"
-    $ret = $script:fieldsCache[$key]
+    $lockKey = Get-DatabaseKey $Owner $ProjectNumber "field-cachelock"
 
-    return $ret
+    $lock = Get-Database -Key $lockKey
+    $cache = $script:fieldsCache[$key]
 
+    if($lock -cne $cache.SafeId) {
+        $script:fieldsCache.Remove($key)
+        return $null
+    }
+
+    return $cache.List
 }
 
 function setFieldsCache{
@@ -132,5 +139,16 @@ function setFieldsCache{
     )
 
     $key = "$Owner-$ProjectNumber"
-    $script:fieldsCache[$key] = $FieldList
+    $lockKey = Get-DatabaseKey $Owner $ProjectNumber "field-cachelock"
+
+    $safeId = [Guid]::NewGuid().ToString()
+
+    # Save safeId to field-lock
+    Save-Database -Database $safeId -Key $lockKey
+
+     # Set lock in database to prevent concurrent updates
+    $script:fieldsCache[$key] = @{
+        List = $FieldList
+        SafeId = $safeId
+    }
 }
