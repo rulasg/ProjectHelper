@@ -30,6 +30,7 @@ Gets all fields from project 1 in the octocat repository.
 Get-ProjectFields -Owner "octocat" -ProjectNumber "1" -Name "status"
 Gets all fields from project 1 that contain "status" in their name.
 #>
+
 function Get-ProjectFields{
     [CmdletBinding()]
     [OutputType([string[]])]
@@ -42,16 +43,23 @@ function Get-ProjectFields{
 
     ($Owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
-    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems
+    $fieldList = getFieldsCache -Owner $Owner -ProjectNumber $ProjectNumber
 
-    # Check if $db is null
-    if($null -eq $db){
-        "Project not found. Check owner and projectnumber" | Write-MyError
-        return $null
+    if(-Not $fieldList -or $Force){
+
+        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems
+        
+        # Check if $db is null
+        if($null -eq $db){
+            "Project not found. Check owner and projectnumber" | Write-MyError
+            return $null
+        }
+        
+        # if $db is null it rill return null
+        $fieldList = $db.fields.Values
+
+        setFieldsCache -Owner $Owner -ProjectNumber $ProjectNumber -FieldList $fieldList
     }
-
-    # if $db is null it rill return null
-    $fieldList = $db.fields.Values
 
     # if name
     if($Name){
@@ -99,4 +107,30 @@ function ConvertToFieldDisplay{
 
         return $ret
     }
+}
+
+$script:fieldsCache = @{}
+
+function getFieldsCache{
+    param(
+        [Parameter(Mandatory,Position = 0)][string]$Owner,
+        [Parameter(Mandatory,Position = 1)][string]$ProjectNumber
+    )
+
+    $key = "$Owner-$ProjectNumber"
+    $ret = $script:fieldsCache[$key]
+
+    return $ret
+
+}
+
+function setFieldsCache{
+    param(
+        [Parameter(Mandatory,Position = 0)][string]$Owner,
+        [Parameter(Mandatory,Position = 1)][string]$ProjectNumber,
+        [Parameter(Mandatory,Position = 2)][object]$FieldList
+    )
+
+    $key = "$Owner-$ProjectNumber"
+    $script:fieldsCache[$key] = $FieldList
 }

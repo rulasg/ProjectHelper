@@ -61,6 +61,9 @@ function Invoke-ProjectInjectionWithIntegration{
 
     $items = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber -IncludeDone:$IncludeDoneItems
 
+    $Fields = Get-ProjectFields -Owner $owner -ProjectNumber $projectNumber
+
+
     foreach($item in $items){
 
         # Skip if the item does not have the integration field
