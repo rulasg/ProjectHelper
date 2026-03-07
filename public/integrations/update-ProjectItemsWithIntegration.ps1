@@ -19,15 +19,25 @@ function Update-ProjectItemsWithIntegration{
         [Parameter(Mandatory)][string]$IntegrationField,
         [Parameter(Mandatory)][string]$IntegrationCommand,
         [Parameter()] [string]$Slug,
-        [Parameter()] [switch]$IncludeDoneItems
+        [Parameter()] [switch]$IncludeDoneItems,
+        [Parameter()] [int32]$CommitMaxItems = -1
     )
     ($Owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
     # Sync project if needed
     $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
+    $params = @{
+        Owner = $Owner
+        ProjectNumber = $ProjectNumber
+        IntegrationField = $IntegrationField
+        IntegrationCommand = $IntegrationCommand
+        Slug = $Slug
+        IncludeDoneItems = $IncludeDoneItems
+        CommitMaxItems = $CommitMaxItems
+    }
     # Call the injection type function
-    $ret = Invoke-ProjectInjectionWithIntegration -Owner $Owner -ProjectNumber $ProjectNumber -IntegrationField $IntegrationField -IntegrationCommand $IntegrationCommand -Slug $Slug -IncludeDoneItems:$IncludeDoneItems
+    $ret = Invoke-ProjectInjectionWithIntegration @params
 
     return $ret
 
@@ -41,10 +51,13 @@ function Invoke-ProjectInjectionWithIntegration{
         [Parameter(Mandatory)][string]$IntegrationField,
         [Parameter(Mandatory)][string]$IntegrationCommand,
         [Parameter()] [string]$Slug,
-        [Parameter()] [switch]$IncludeDoneItems
+        [Parameter()] [switch]$IncludeDoneItems,
+        [Parameter()] [int32]$CommitMaxItems = -1
     )
 
     ($Owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
+
+    $updateCount = 0
 
     $items = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber -IncludeDone:$IncludeDoneItems
 
@@ -52,12 +65,12 @@ function Invoke-ProjectInjectionWithIntegration{
 
         # Skip if the item does not have the integration field
         if(-not $item.$IntegrationField){
-            "Item $($item.id) does not have the integration field $IntegrationField, skipping" | Write-MyVerbose
+            "[Update-ProjectItemsWithIntegration] $($item.id) does not have the integration field $IntegrationField, skipping" | Write-MyDebug -section "Integration"
             continue
         }
 
         try {
-            "Calling integration [ $IntegrationCommand $($item.$IntegrationField)]" | Write-MyHost
+            "Calling integration - $IntegrationCommand $($item.$IntegrationField)]" | Write-MyHost
             $command = $IntegrationCommand + " " + '"{key}"'
             $command = $command -replace '{key}', $item.$IntegrationField
             $values = Invoke-MyCommand -Command $command
@@ -67,12 +80,14 @@ function Invoke-ProjectInjectionWithIntegration{
         }
         # Call the ingetration Command with the integration field value as parameter
 
+        Write-MyDebug "[Update-ProjectItemsWithIntegration] Values" -Section "Integration" -Object $values
+        
         # Check if Values is empty or null
         if($null -eq $values -or $values.Count -eq 0){
             "No values returned from the integration command for $($item.id)" | Write-MyVerbose
             continue
         }
-
+        
         # Edit item with the value
         $param = @{
             Owner = $owner
@@ -80,8 +95,20 @@ function Invoke-ProjectInjectionWithIntegration{
             ItemId = $item.id
             Values = $values
             FieldSlug = $Slug
+            Fields = $Fields
         }
-
+        
+        Write-MyDebug "[Update-ProjectItemsWithIntegration] >> Editing with values" -Section "Integration"
         Edit-ProjectItemWithValues @param
+        Write-MyDebug "[Update-ProjectItemsWithIntegration] << Editing with values" -Section "Integration"
+
+        # Commit 
+        $updateCount++
+        if(($CommitMaxItems -ne -1) -and $updateCount -ge $CommitMaxItems){
+            Sync-ProjectItemStagedAsync -Owner $Owner -ProjectNumber $ProjectNumber
+            $updateCount = 0
+        } else {
+            "[Update-ProjectItemsWithIntegration] Count $updateCount / $CommitMaxItems" | Write-MyDebug -section "Integration"
+        }
     }
 } # Do not export this function to avoid conflicts with Update-ProjectItemsWithIntegration
