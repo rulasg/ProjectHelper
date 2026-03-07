@@ -12,10 +12,16 @@ function Edit-ProjectItemWithValues {
         [Parameter(Position = 1)][string]$ProjectNumber,
         [Parameter(Mandatory)][string]$ItemId,
         [Parameter(Mandatory)][hashtable]$Values,
-        [Parameter()][string]$FieldSlug
+        [Parameter()][string]$FieldSlug,
+        [Parameter()][object]$Fields
     )
 
-    $fields = Get-ProjectFields -Owner $owner -ProjectNumber $projectNumber
+    if($null -eq $Fields){
+        "[Edit-ProjectItemWithValues] Retriving fields" | Write-MyDebug -Section "EditProjectItem"
+        $Fields = Get-ProjectFields -Owner $owner -ProjectNumber $projectNumber
+    } else {
+        "[Edit-ProjectItemWithValues] Using provided fields" | Write-MyDebug -Section "EditProjectItem"
+    }
 
     # forech key in data do
     foreach ($key in $Values.Keys) {
@@ -24,10 +30,11 @@ function Edit-ProjectItemWithValues {
         # Check if field exists
         $field = $fields | Where-Object { $_.name -eq $fieldName }
         if ($null -eq $field) {
-            "Field $fieldName not found" | Write-MyVerbose
+            "[Edit-ProjectItemWithValues]Field $fieldName not found" | Write-MyDebug -Section "EditProjectItem"
             continue
         }
-
+        
+        "[Edit-ProjectItemWithValues]Editing field $fieldName with value $($Values[$key])" | Write-MyDebug -Section "EditProjectItem"
         Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $ItemId -FieldName $fieldName -Value $Values[$key]
 
     }
