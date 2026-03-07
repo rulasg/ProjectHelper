@@ -24,9 +24,6 @@ function Update-ProjectItemsWithIntegration{
     )
     ($Owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
-    # Sync project if needed
-    $null = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
-
     $params = @{
         Owner = $Owner
         ProjectNumber = $ProjectNumber
