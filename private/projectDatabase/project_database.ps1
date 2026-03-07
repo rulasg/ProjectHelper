@@ -7,7 +7,7 @@ function Test-ProjectDatabase{
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    $key = Get-DatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
+    $key = Get-ProjectDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
 
     $ret = Test-Database -Key $key
 
@@ -21,7 +21,7 @@ function Test-ProjectDatabaseStaged{
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    $key = Get-DatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
+    $key = Get-ProjectDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
     $prj = Get-Database -Key $key
 
     if($null -eq $prj){
@@ -46,7 +46,7 @@ function Get-ProjectFromDatabase{
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    $key = Get-DatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
+    $key = Get-ProjectDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
     $prj = Get-Database -Key $key
 
     if($null -eq $prj){
@@ -67,7 +67,7 @@ function Reset-ProjectDatabase{
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    $dbKey = Get-DatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
+    $dbKey = Get-ProjectDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
     Reset-Database -Key $dbKey
 }
 
@@ -139,7 +139,7 @@ function Save-ProjectDatabase{
         throw "Database.number is null or not a positive integer"
     }
 
-    $dbkey = Get-DatabaseKey -Owner $owner -ProjectNumber $projectnumber
+    $dbkey = Get-ProjectDatabaseKey -Owner $owner -ProjectNumber $projectnumber
 
     if($Safe){
         $oldDatabase = Get-Database -Key $dbkey
@@ -156,21 +156,12 @@ function Save-ProjectDatabase{
     Save-Database -Key $dbkey -Database $Database
 }
 
-function Get-DatabaseKey{
+function Get-ProjectDatabaseKey{
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$Owner,
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
-    if([string]::IsNullOrWhiteSpace($Owner)){
-        throw "Owner is null or empty"
-    }
-    if($ProjectNumber -le 0){
-        throw "ProjectNumber is null or not a positive integer"
-    }
-
-    $ret = "$($owner)_$($projectnumber)"
-
-    return $ret
+    return Get-DatabaseKey  $Owner  $ProjectNumber "project"
 }

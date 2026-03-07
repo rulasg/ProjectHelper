@@ -95,6 +95,29 @@ function Save-Database {
     $Database | ConvertTo-Json -Depth 10 | Set-Content $path
 }
 
+function Get-DatabaseKey{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][string]$Owner,
+        [Parameter(Position = 1)][int]$ProjectNumber,
+         [Parameter(Position = 2)][string] $Category
+    )
+
+    if([string]::IsNullOrWhiteSpace($Owner)){
+        throw "Owner is null or empty"
+    }
+    if($ProjectNumber -le 0){
+        throw "ProjectNumber is null or not a positive integer"
+    }
+    if([string]::IsNullOrWhiteSpace($Category)){
+        throw "Category is null or empty"
+    }
+
+    $ret = "db-{0}-{1}-{2}" -f $Owner, $ProjectNumber, $Category
+
+    return $ret
+}
+
 function Get-DatabaseFile {
     [CmdletBinding()]
     param(
