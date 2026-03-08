@@ -16,7 +16,7 @@ function Test_GetRepository{
 
     # Assert repo cache created
     $dbpath = get-Mock_DatabaseRootPath
-    $dbname = "$($r.owner)-$($r.name).json"
+    $dbname = "repo-$($r.owner)-$($r.name).json"
 
     Assert-ItemExist -Path (Join-Path -Path $dbpath -ChildPath $dbname)
 
