@@ -47,6 +47,8 @@ function Get-Database {
         [Parameter(Position = 0)][string]$Key
     )
 
+    "Getting database for key [$Key]" | Write-MyDebug -Section Database
+
     $path = Get-DatabaseFile $Key
 
     if (-Not (Test-Path $path)) {
@@ -67,6 +69,8 @@ function Test-Database {
     $path = Get-DatabaseFile -Key $Key
 
     $ret = Test-Path $path
+    
+    "Test [$ret] database for key [$Key] at path [$path]" | Write-MyDebug -Section Database
 
     return $ret
 }
@@ -76,9 +80,12 @@ function Reset-Database {
     param(
         [Parameter(Position = 0)][string]$Key
     )
+
     $path = Get-DatabaseFile -Key $Key
+    
+    "Resetting database for key [$Key] at path [$path]" | Write-MyDebug -Section Database
+
     Microsoft.PowerShell.Management\Remove-Item -Path $path -Force -ErrorAction SilentlyContinue
-    return
 }
 
 function Save-Database {
