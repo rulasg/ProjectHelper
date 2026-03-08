@@ -12,11 +12,11 @@ function Resolve-ProjectParameters {
         }
 
         if([string]::IsNullOrWhiteSpace($Owner)){
-            $Owner = Get-EnvItem -Name "EnvironmentCache_Owner"
+            $Owner = Get-EnvItem -Name "env-owner"
         }
 
         if([string]::IsNullOrWhiteSpace($ProjectNumber)){
-            $ProjectNumber = Get-EnvItem -Name "EnvironmentCache_ProjectNumber"
+            $ProjectNumber = Get-EnvItem -Name "env-ProjectNumber"
         }
 
         if([string]::IsNullOrWhiteSpace($ProjectNumber) -or [string]::IsNullOrWhiteSpace($Owner)){

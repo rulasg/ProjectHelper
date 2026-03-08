@@ -50,7 +50,7 @@ function Test_UpdateProjectRecent_UpdateBasedOn_FirstTime{
 
     $result = Update-ProjectRecent -Owner $owner -ProjectNumber $projectNumber
 
-    ## Assert check that the EnvironmentCache_Last_RecentUpdate_octodemo_700.json is set to today
+    ## Assert check that the env-Last_RecentUpdate_octodemo_700.json is set to today
     $envValue = Invoke-PrivateContext { Get-EnvItem_Last_RecentUpdate -Owner "octodemo" -ProjectNumber 700 }
     Assert-AreEqual -Expected $today -Presented $envValue
 
@@ -64,7 +64,7 @@ function Test_UpdateProjectRecent_UpdateBasedOn_SetToToday{
     # Act - use the mock to run the project full sync to set the last recent update to today
     MockCall_GetProject_700 -Cache
 
-    ## Assert check that the EnvironmentCache_Last_RecentUpdate_octodemo_700.json is set to today
+    ## Assert check that the env-Last_RecentUpdate_octodemo_700.json is set to today
     $envValue = Invoke-PrivateContext { Get-EnvItem_Last_RecentUpdate -Owner "octodemo" -ProjectNumber 700 }
     Assert-AreEqual -Expected $today -Presented $envValue
 
@@ -91,7 +91,7 @@ function Test_UpdateProjectRecent_UpdateBasedOn_SetToTehPast{
     # Act - use the mock to run the project full sync to set the last recent update to today
     MockCall_GetProject_700 -Cache
 
-    ## Assert check that the EnvironmentCache_Last_RecentUpdate_octodemo_700.json is set to today
+    ## Assert check that the env-Last_RecentUpdate_octodemo_700.json is set to today
     Invoke-PrivateContext { Set-EnvItem_Last_RecentUpdate -Owner "octodemo" -ProjectNumber 700 -Value "2024-02-18" }
 
 

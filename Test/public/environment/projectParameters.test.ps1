@@ -8,9 +8,9 @@ function Test_SetProjectParameters_SUCCESS{
     Set-ProjectParameters -Owner $owner -ProjectNumber $projectNumber
 
     $v = @{
-        Owner = @{value =$owner ; file = $($dbPath | Join-Path -Child "EnvironmentCache_Owner.json")}
-        ProjectNumber = @{value =$projectNumber ; file = $($dbPath | Join-Path -Child "EnvironmentCache_ProjectNumber.json")}
-        ProjectTitle = @{value =$projectTitle ; file = $($dbPath | Join-Path -Child "EnvironmentCache_ProjectTitle.json")}
+        Owner = @{value =$owner ; file = $($dbPath | Join-Path -Child "env-owner.json")}
+        ProjectNumber = @{value =$projectNumber ; file = $($dbPath | Join-Path -Child "env-ProjectNumber.json")}
+        ProjectTitle = @{value =$projectTitle ; file = $($dbPath | Join-Path -Child "env-ProjectTitle.json")}
     }
 
     $v.keys | ForEach-Object {
