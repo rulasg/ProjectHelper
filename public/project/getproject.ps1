@@ -21,6 +21,7 @@ function Get-Project {
             
             if ( ! $result) { 
                 "Failed to update project for $Owner/$ProjectNumber. Project may not exist or there was an error during update." | Write-MyError
+                resetProjectCache -Owner $Owner -ProjectNumber $ProjectNumber
                 return 
             }
         } else {
@@ -178,4 +179,16 @@ function setProjectCache{
         List = $Project
         SafeId = $safeId
     }
+}
+
+function resetProjectCache{
+    param(
+        [Parameter(Mandatory,Position = 0)][string]$Owner,
+        [Parameter(Mandatory,Position = 1)][string]$ProjectNumber
+    )
+
+    "Resetting project cache for $Owner/$ProjectNumber" | Write-MyDebug -Section "Get-Project"
+
+    $key = "$Owner-$ProjectNumber"
+    $script:ProjectsCache.Remove($key)
 }

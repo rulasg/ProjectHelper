@@ -27,25 +27,29 @@ function Test_SaveProjectDatabase_SafeId_Flag_PrivateCall{
 function Test_SaveProjectDatabase_Safe_PrivateCall{
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
-    MockCall_GetProject_700
+    MockCall_GetProject_700 -Cache
 
     Invoke-PrivateContext {
 
         $Owner = "octodemo" ; $ProjectNumber = 700
         # Cache the project
-        $prj1 = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+        # $prj1 = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
         # modify the project
-        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber ; Save-ProjectDatabaseSafe -Database $db
-
+        # $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+        $db1 = Get-ProjectFromDatabase -Owner $Owner -ProjectNumber $ProjectNumber
+        $dbClone = $db1 | ConvertTo-Json | ConvertFrom-Json
+        Save-ProjectDatabaseSafe -Database $db1
+        
         # Check that safeId has changed
-        $prj2 = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
-        Assert-AreNotEqual -Presented $prj2.safeId -Expected $prj1.safeId
+        $db2 = Get-ProjectFromDatabase -Owner $Owner -ProjectNumber $ProjectNumber
+        # $prj2 = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+        Assert-AreNotEqual -Presented $dbClone.safeId -Expected $db2.safeId
 
         ## When saving again as prj1 that has been saved before it will throw
         $hasThrow = $false
         try{
-            Save-ProjectDatabaseSafe -Database $prj1
+            Save-ProjectDatabaseSafe -Database $dbClone
         } catch {
             $hasThrow = $true
         }
