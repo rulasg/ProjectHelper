@@ -53,7 +53,8 @@ function Update-Project{
         if(! $Force){
             "Performing INCREMENTAL update for $Owner/$ProjectNumber" | Write-MyDebug -Section "Update-Project"
             $recentQuery = Get-UpdateRecentQuery -Owner $Owner -ProjectNumber $ProjectNumber
-            $query += " " + $recentQuery
+
+            $query = $recentQuery
         } else {
             "Performing FULL update for $Owner/$ProjectNumber" | Write-MyDebug -Section "Update-Project"
         }
