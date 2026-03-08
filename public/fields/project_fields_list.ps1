@@ -121,13 +121,21 @@ function getFieldsCache{
     $lockKey = Get-DatabaseKey $Owner $ProjectNumber "field-cachelock"
 
     $lock = Get-Database -Key $lockKey
+
+    if([string]::IsNullOrWhiteSpace($lock)){
+        "No cache lock found for $Owner/$ProjectNumber. Cache will be ignored." | Write-MyDebug -Section "Get-ProjectFields"
+        return $null
+    }
+
     $cache = $script:fieldsCache[$key]
 
     if($lock -cne $cache.SafeId) {
+        "Cache lock mismatch for $Owner/$ProjectNumber. Cache safeId [$($cache.SafeId)], lock [$lock]. Cache will be ignored." | Write-MyDebug -Section "Get-ProjectFields"
         $script:fieldsCache.Remove($key)
         return $null
     }
 
+    "Getting fields cache for $Owner/$ProjectNumber with lock [$lock] and cache safeId [$($cache.SafeId)]" | Write-MyDebug -Section "Get-ProjectFields"
     return $cache.List
 }
 
