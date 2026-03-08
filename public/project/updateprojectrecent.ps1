@@ -13,10 +13,10 @@ function Update-ProjectRecent{
     # Get Last update date
     $query = Get-UpdateRecentQuery -Owner $Owner -ProjectNumber $ProjectNumber
 
-    $ret = Update-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems -Query $Query
+    $ret = Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -Query $Query
 
     if($ret){
-        Set-EnvItem_Last_RecentUpdate_Today -Owner $Owner -ProjectNumber $ProjectNumber
+        Set-EnvProjectLastUpdate_Today -Owner $Owner -ProjectNumber $ProjectNumber
     }
 
     return $ret
@@ -29,7 +29,7 @@ function Get-UpdateRecentQuery{
         [Parameter()][int]$ProjectNumber
     )
 
-    $last = Get-EnvItem_Last_RecentUpdate -Owner $Owner -ProjectNumber $ProjectNumber
+    $last = Get-EnvProjectLastUpdate -Owner $Owner -ProjectNumber $ProjectNumber
 
     # If no last update return no filter to update all
     if ($null -eq $last){
@@ -38,24 +38,28 @@ function Get-UpdateRecentQuery{
 
     $ret = $RECENT_QUERY -replace "{date}", $last
 
+    "Updated recent query [ $ret ]" | Write-MyDebug -Section "Update-Project"
+
     return $ret
 } Export-ModuleMember -Function Get-UpdateRecentQuery
 
-function Get-EnvItem_Last_RecentUpdate{
+function Get-EnvProjectLastUpdate{
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)][string]$Owner,
         [Parameter(Mandatory)][int]$ProjectNumber
     )
 
-    $last = Get-EnvItem -Name "EnvironmentCache_Last_RecentUpdate_$($Owner)_$($ProjectNumber)"
+    $key = "db-$($Owner)-$($ProjectNumber)-project-LastUpdate"
 
-    Write-MyDebug "EnvItem_Last_RecentUpdate" "Last recent update for $Owner/$ProjectNumber is $last"
+    $last = Get-EnvItem -Name $key
+
+    "Get last recent update for $Owner/$ProjectNumber with $last" | Write-MyDebug -Section "Update-Project"
 
     return $last
 }
 
-function Set-EnvItem_Last_RecentUpdate{
+function Set-EnvProjectLastUpdate{
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)][string]$Owner,
@@ -63,13 +67,15 @@ function Set-EnvItem_Last_RecentUpdate{
         [Parameter(Mandatory)][string]$Value
     )
 
-    Set-EnvItem -Name "EnvironmentCache_Last_RecentUpdate_$($Owner)_$($ProjectNumber)" -Value $Value
+    $key = "db-$($Owner)-$($ProjectNumber)-project-LastUpdate"
 
-    Write-MyDebug "EnvItem_Last_RecentUpdate" "Set last recent update for $Owner/$ProjectNumber to $Value"
+    Set-EnvItem -Name $key -Value $Value
+
+    "Set last recent update for $Owner/$ProjectNumber to $Value" | Write-MyDebug -Section "Update-Project"
 
 }
 
-function Set-EnvItem_Last_RecentUpdate_Today{
+function Set-EnvProjectLastUpdate_Today{
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)][string]$Owner,
@@ -78,6 +84,6 @@ function Set-EnvItem_Last_RecentUpdate_Today{
 
     $now = Get-DateToday
 
-    Set-EnvItem_Last_RecentUpdate -Owner $Owner -ProjectNumber $ProjectNumber -Value $now
+    Set-EnvProjectLastUpdate -Owner $Owner -ProjectNumber $ProjectNumber -Value $now
 
 }
