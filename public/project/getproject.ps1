@@ -59,13 +59,15 @@ function Update-Project{
         } else {
             "Performing FULL update for $Owner/$ProjectNumber" | Write-MyDebug -Section "Update-Project"
         }
-        $ret = Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems -Query $Query
+        $ret = Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems
         Set-EnvProjectLastUpdate_Today -Owner $Owner -ProjectNumber $ProjectNumber
     }
     else{
         "Performing PARTIAL update for $Owner/$ProjectNumber with query [$Query]" | Write-MyDebug -Section "Update-Project"
         $ret = Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems -Query $Query
     }
+
+    resetProjectCache -Owner $Owner -ProjectNumber $ProjectNumber
 
     return $ret
 } Export-ModuleMember -Function Update-Project
