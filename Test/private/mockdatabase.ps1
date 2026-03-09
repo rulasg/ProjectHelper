@@ -31,6 +31,6 @@ function Update-Mock_DatabaseFileWithReplace([string]$FileName, [string]$SearchS
     $content | Set-Content $dbpath
 
     # Reset the memory cache deleting the cachelock file
-    $cachelock = $dbpath -replace '\.json$', '-cachelock.json'
+    $cachelock = $dbpath -replace '\.json$', '-lock.json'
     Remove-Item -Path $cachelock -Force -ErrorAction SilentlyContinue
 }
