@@ -30,6 +30,7 @@ Gets all fields from project 1 in the octocat repository.
 Get-ProjectFields -Owner "octocat" -ProjectNumber "1" -Name "status"
 Gets all fields from project 1 that contain "status" in their name.
 #>
+
 function Get-ProjectFields{
     [CmdletBinding()]
     [OutputType([string[]])]
@@ -42,16 +43,20 @@ function Get-ProjectFields{
 
     ($Owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
-    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems
+    if(-Not $fieldList -or $Force){
 
-    # Check if $db is null
-    if($null -eq $db){
-        "Project not found. Check owner and projectnumber" | Write-MyError
-        return $null
+        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems
+        
+        # Check if $db is null
+        if($null -eq $db){
+            "Project not found. Check owner and projectnumber" | Write-MyError
+            return $null
+        }
+        
+        # if $db is null it rill return null
+        $fieldList = $db.fields.Values
+
     }
-
-    # if $db is null it rill return null
-    $fieldList = $db.fields.Values
 
     # if name
     if($Name){

@@ -65,8 +65,11 @@ function Show-ProjectItem{
 
         # URL
         $item.url | write -Color White
-
         addJumpLine -message "End Url"
+        
+        # Assignee
+        $item.Assignees | write -color DarkGreen
+        addJumpLine -message "End Assignees"
 
         # Fields by line
         if($FieldsToShow){

@@ -9,7 +9,7 @@ function Get-Repository{
     )
 
     # Check database
-    $key = "$Owner-$Name"
+    $key = "repo-$Owner-$Name"
     $repodb = Get-Database -Key $key
 
     # use cache if available and not forced

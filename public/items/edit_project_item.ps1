@@ -80,16 +80,6 @@ function Edit-ProjectItem {
             $AddComment = Get-LongText -Text $AddComment
         }
 
-        # NormalizeTitle
-        if ($NormalizeTitle) {
-            if([string]::IsNullOrWhiteSpace($Title)){
-                $Title = "[{{RepositoryName}}] {{Title}}"
-            } else {
-                # Editing Title at the same time
-                $Title = "[{{RepositoryName}}] $Title"
-            }
-        }
-
         # Default
         if($DefaultValues){
             Write-MyWarning "No Default values are currently setup. Please use other parameters to set values or update the DefaultValues parameter with default values"
@@ -174,6 +164,8 @@ function Edit-ProjectItem {
             }
         }
 
+        # With Item
+
         if ($OpenInBrowser) {
             $item = Get-ProjectItem -ItemId $Id -Owner $Owner -ProjectNumber $ProjectNumber
             if ($null -ne $item) {
@@ -181,6 +173,14 @@ function Edit-ProjectItem {
             } else {
                 Write-Warning "Item not found. Cannot open in browser."
             }
+        }
+
+        # NormalizeTitle
+        if ($NormalizeTitle) {
+            $item = Get-ProjectItem -ItemId $Id -Owner $Owner -ProjectNumber $ProjectNumber
+            $params.fieldname = "Title"
+            $params.value = Get-NormalizedTitle -Item $item
+            edit $params
         }
     }
 
@@ -244,3 +244,42 @@ function Edit-ProjectItemValue {
     }
 
 } 
+
+# function Get-NormalizedTitle {
+#     param(
+#         [Parameter(Mandatory)][hashtable]$Item
+#     )
+#     $title = $Item.Title
+#     $header = "[{0}]" -f $Item.RepositoryName
+
+#     if($title.ToLower().Contains($header.ToLower())){
+#         "The title is already normalized" | Write-MyDebug -section "Edit-ProjectItem"
+#         # update title with proper repository name case
+#         $newTitle = $title -replace "^\[[^\]]*\]\s*", "$header"
+#         return $newTitle
+#     } else {
+#         return "$header $title"
+#     }
+# }
+
+function Get-NormalizedTitle {
+    param(
+        [Parameter(Mandatory)][hashtable]$Item
+    )
+    $title = $Item.Title
+    $header = "[{0}]" -f $Item.RepositoryName
+    $repoEscaped = [regex]::Escape($Item.RepositoryName)
+    
+    "Original   title: $title" | Write-MyDebug -section "Edit-ProjectItem NormalizedTitle"
+
+    if($title -imatch "\[$repoEscaped\]" -or $title -imatch "^\s*\[?$repoEscaped\]\s*"){
+        # Ttile contains repo name. Normalize it to proper case and formatting. This will cover the following scenarios:
+        $ret = ($title -ireplace "^\s*\[?$repoEscaped\]\s*", "$header ") -ireplace "\[$repoEscaped\]", $header
+        
+    } else {
+        $ret = "$header $title"
+    }
+
+    "Normalized title: $ret" | Write-MyDebug -section "Edit-ProjectItem NormalizedTitle"
+    return $ret
+}

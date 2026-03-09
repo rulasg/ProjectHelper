@@ -24,7 +24,7 @@ function Get-ProjectCacheFile{
     ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
 
-    $key = Get-DatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
+    $key = Get-ProjectDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
     $path = Get-DatabaseFile -Key $key
 
     if($path | Test-Path ){

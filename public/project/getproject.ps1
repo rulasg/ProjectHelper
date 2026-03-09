@@ -10,15 +10,19 @@ function Get-Project {
     ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
     if ($Force -or -Not (Test-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber)) {
-        $result = Update-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems
-        if ( ! $result) { return }
+        "Project not found in database or force specified. Updating project for $Owner/$ProjectNumber." | Write-MyDebug -Section Get-Project
+
+        $result = Update-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems -Force:$Force
+        
+        if ( ! $result) {
+            "Failed to update project for $Owner/$ProjectNumber. Project may not exist or there was an error during update." | Write-MyError
+            return 
+        }
+    } else {
+        "Project found in database for $Owner/$ProjectNumber. Loading project." | Write-MyDebug -Section Get-Project
     }
 
     $prj = Get-ProjectFromDatabase -Owner $Owner -ProjectNumber $ProjectNumber
-
-    # if($SkipItems){
-    #     $prj.items = @()
-    # }
 
     return $prj
 } Export-ModuleMember -Function Get-Project
@@ -29,17 +33,29 @@ function Update-Project{
         [Parameter()][string]$Owner,
         [Parameter()][int]$ProjectNumber,
         [parameter()][string]$Query,
-        [Parameter()][switch]$SkipItems
+        [Parameter()][switch]$SkipItems,
+        [Parameter()][switch]$Force
     )
 
     ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
-    $ret = Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems -Query $Query
-
-    # Check if we did a full projectupdate
     if([string]::IsNullOrEmpty($Query)){
-        # Reset recent to today
-        Set-EnvItem_Last_RecentUpdate_Today -Owner $Owner -ProjectNumber $ProjectNumber
+
+        # Update just the items that were modified unless -Force
+        if(! $Force){
+            "Performing INCREMENTAL update for $Owner/$ProjectNumber" | Write-MyDebug -Section "Update-Project"
+            $recentQuery = Get-UpdateRecentQuery -Owner $Owner -ProjectNumber $ProjectNumber
+
+            $query = $recentQuery
+        } else {
+            "Performing FULL update for $Owner/$ProjectNumber" | Write-MyDebug -Section "Update-Project"
+        }
+        $ret = Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems
+        Set-EnvProjectLastUpdate_Today -Owner $Owner -ProjectNumber $ProjectNumber
+    }
+    else{
+        "Performing PARTIAL update for $Owner/$ProjectNumber with query [$Query]" | Write-MyDebug -Section "Update-Project"
+        $ret = Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems -Query $Query
     }
 
     return $ret

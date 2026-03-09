@@ -8,17 +8,17 @@ function Get-ProjectHelperEnvironment{
     $ret = @{
 
         # Last Known Good Owner
-        Owner         = Get-EnvItem -Name "EnvironmentCache_Owner"
+        Owner         = Get-EnvItem -Name "env-owner"
         
         # Last Known Good Project Number
-        ProjectNumber = Get-EnvItem -Name "EnvironmentCache_ProjectNumber"
+        ProjectNumber = Get-EnvItem -Name "env-ProjectNumber"
 
         # Last known good Project Name
-        ProjectTitle   = Get-EnvItem -Name "EnvironmentCache_ProjectTitle"
+        ProjectTitle   = Get-EnvItem -Name "env-ProjectTitle"
 
         # List of fields to display on Items display commands. Useful with ConvertToItemDisplay
         # TODO : Consider if its worth keeping this setting
-        DisplayFields = Get-EnvItem -Name "EnvironmentCache_Display_Fields"
+        DisplayFields = Get-EnvItem -Name "env-Display_Fields"
     }
 
     return $ret
@@ -29,10 +29,10 @@ function Reset-ProjectHelperEnvironment{
     [CmdletBinding()]
     param()
 
-    Set-EnvItem -Name "EnvironmentCache_Owner" -Value $null
-    Set-EnvItem -Name "EnvironmentCache_ProjectNumber" -Value $null
-    Set-EnvItem -Name "EnvironmentCache_ProjectTitle" -Value $null
-    Set-EnvItem -Name "EnvironmentCache_Display_Fields" -Value $null
+    Set-EnvItem -Name "env-owner" -Value $null
+    Set-EnvItem -Name "env-ProjectNumber" -Value $null
+    Set-EnvItem -Name "env-ProjectTitle" -Value $null
+    Set-EnvItem -Name "env-Display_Fields" -Value $null
 
 } Export-ModuleMember -Function Reset-ProjectHelperEnvironment
 
@@ -46,19 +46,19 @@ function Set-ProjectHelperEnvironment{
     )
 
     if(! [string]::IsNullOrWhiteSpace($Owner)) {
-        Set-EnvItem -Name "EnvironmentCache_Owner" -Value $Owner
+        Set-EnvItem -Name "env-owner" -Value $Owner
     }
 
     if(! [string]::IsNullOrWhiteSpace($ProjectNumber)) {
-        Set-EnvItem -Name "EnvironmentCache_ProjectNumber" -Value $ProjectNumber
+        Set-EnvItem -Name "env-ProjectNumber" -Value $ProjectNumber
     }
 
     if(! [string]::IsNullOrWhiteSpace($ProjectTitle)) {
-        Set-EnvItem -Name "EnvironmentCache_ProjectTitle" -Value $ProjectTitle
+        Set-EnvItem -Name "env-ProjectTitle" -Value $ProjectTitle
     }
 
     if($DisplayFields) {
-        Set-EnvItem -Name "EnvironmentCache_Display_Fields" -Value $DisplayFields
+        Set-EnvItem -Name "env-Display_Fields" -Value $DisplayFields
     }
 
 } Export-ModuleMember -Function Set-ProjectHelperEnvironment
@@ -69,7 +69,7 @@ function Get-EnvironmentDisplayFields{
         [Parameter()][string[]]$Fields
     )
 
-    $displayFields = Get-EnvItem -Name "EnvironmentCache_Display_Fields"
+    $displayFields = Get-EnvItem -Name "env-Display_Fields"
     # Use this order
     $fields_Options = @()
     if ($DEFAULT_DISPLAY_FIELDS) { $fields_Options += $DEFAULT_DISPLAY_FIELDS }
@@ -114,6 +114,6 @@ function Get-DefaultDisplayFields{
     [CmdletBinding()]
     param()
 
-    # return Get-EnvItem -Name "EnvironmentCache_Display_Fields"
+    # return Get-EnvItem -Name "env-Display_Fields"
     return $DEFAULT_DISPLAY_FIELDS
 }

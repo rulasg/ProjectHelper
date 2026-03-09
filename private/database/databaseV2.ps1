@@ -47,6 +47,8 @@ function Get-Database {
         [Parameter(Position = 0)][string]$Key
     )
 
+    "Getting database for key [$Key]" | Write-MyDebug -Section Database
+
     $path = Get-DatabaseFile $Key
 
     if (-Not (Test-Path $path)) {
@@ -67,6 +69,8 @@ function Test-Database {
     $path = Get-DatabaseFile -Key $Key
 
     $ret = Test-Path $path
+    
+    "Test [$ret] database for key [$Key] at path [$path]" | Write-MyDebug -Section Database
 
     return $ret
 }
@@ -76,9 +80,12 @@ function Reset-Database {
     param(
         [Parameter(Position = 0)][string]$Key
     )
+
     $path = Get-DatabaseFile -Key $Key
+    
+    "Resetting database for key [$Key] at path [$path]" | Write-MyDebug -Section Database
+
     Microsoft.PowerShell.Management\Remove-Item -Path $path -Force -ErrorAction SilentlyContinue
-    return
 }
 
 function Save-Database {
@@ -93,6 +100,29 @@ function Save-Database {
     "Saving database to $path" | Write-MyDebug -Section Database
 
     $Database | ConvertTo-Json -Depth 10 | Set-Content $path
+}
+
+function Get-DatabaseKey{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)][string]$Owner,
+        [Parameter(Position = 1)][int]$ProjectNumber,
+         [Parameter(Position = 2)][string] $Category
+    )
+
+    if([string]::IsNullOrWhiteSpace($Owner)){
+        throw "Owner is null or empty"
+    }
+    if($ProjectNumber -le 0){
+        throw "ProjectNumber is null or not a positive integer"
+    }
+    if([string]::IsNullOrWhiteSpace($Category)){
+        throw "Category is null or empty"
+    }
+
+    $ret = "db-{0}-{1}-{2}" -f $Owner, $ProjectNumber, $Category
+
+    return $ret
 }
 
 function Get-DatabaseFile {

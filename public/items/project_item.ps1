@@ -733,15 +733,15 @@ function Test-WhereExactField {
 
 function AreEqual {
     param(
-        [object]$Object1,
-        [object]$Object2
+        [string]$Object1,
+        [string]$Object2
     )
 
     $Object1 = [string]::IsNullOrEmpty($Object1) ? $null : $Object1
     $Object2 = [string]::IsNullOrEmpty($Object2) ? $null : $Object2
 
     # Check if the objects are equal
-    $ret = $Object1 -eq $Object2
+    $ret = $Object1 -ceq $Object2
 
     return $ret
 }

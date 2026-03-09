@@ -263,6 +263,57 @@ function Test_EditProjectItems_NormalizeTitle{
     Assert-AreEqual -Expected $newTitle -Presented $result.$itemId.title.Value
 }
 
+function Test_EditProjectItems_NormalizeTitle_AlreadyNormalized{
+
+    # Arrange
+    $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $ProjectNumber = $p.number
+    MockCall_GetProject $p -skipItems
+    $i= $p.issue ; $itemId = $i.id
+
+    MockCall_GetProject $p -SkipItems
+
+    $newTitle = "[rulasg-dev-1] Issue [rulasg-dev-1] for [value between] development"
+
+    # Mock the direct call for item
+    MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-$itemId-Normalized.json"
+    # Act
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId -NormalizeTitle
+
+    # Assert
+    $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
+
+    Assert-Count -Expected 1 -Presented $result.$itemId.Keys
+    Assert-AreEqual -Expected $newTitle -Presented $result.$itemId.title.Value
+}
+
+function Test_NormalizedTitle{
+
+    Invoke-PrivateContext{
+        $cases = @(
+            @{item = @{Title= "Test"; repositoryName = "rulasg-dev-1"}; expected = "[rulasg-dev-1] Test"}
+            @{item = @{Title= "[rulasg-dev-1] Test"; repositoryName = "rulasg-dev-1"}; expected = "[rulasg-dev-1] Test"}
+            
+            @{item = @{Title= "[BBVA] Test"; repositoryName = "bBva"}; expected = "[bBva] Test"}
+            
+            @{item = @{Title= "Test [rulasg-dev-1]"; repositoryName = "rulasg-dev-1"}; expected = "Test [rulasg-dev-1]"}
+            
+            @{item = @{Title= "Test [rulasg-dEv-1]"; repositoryName = "rulasg-dev-1"}; expected = "Test [rulasg-dev-1]"}
+
+            @{item = @{Title= "[RULaSG-DeV-1] Test"; repositoryName = "rulasg-dev-1"}; expected = "[rulasg-dev-1] Test"}
+            @{item = @{Title= "[RULaSG-DeV-1] Test [value between] development"; repositoryName = "rulasg-dev-1"}; `
+                   expected = "[rulasg-dev-1] Test [value between] development"}
+            @{item = @{Title= "[RULaSG-DeV-1] Issue [RULASG-DEV-1] for [value between] development"; repositoryName = "rulasg-dev-1"}; `
+                   expected = "[rulasg-dev-1] Issue [rulasg-dev-1] for [value between] development"}
+        )
+
+        foreach($case in $cases){
+            $result = Get-NormalizedTitle -Item $case.item
+            Assert-AreEqual -Expected $case.expected -Presented $result
+        }
+
+    }
+}
+
 function Test_EditProjectItems_OpenInBrowser{
 
     # Arrange
