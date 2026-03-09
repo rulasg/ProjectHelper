@@ -93,20 +93,14 @@ function Update-ProjectDatabase {
         $queryItems = $items
 
         $actualprj = Get-ProjectFromDatabase -Owner $Owner -ProjectNumber $ProjectNumber
-
-        # Check if project has no items or the project is not cached yet
         $items = $actualprj.items ?? $(New-HashTable)
 
     }
 
-    # If we are Skiping items on the update we need to keep the existing items in the database and just update the fields
+    # We need to keep actualitems if SkipedItems to avoid losing them in the DB
     if($SkipItems){
         $actualprj = Get-ProjectFromDatabase -Owner $Owner -ProjectNumber $ProjectNumber
-
-        # Check if project has no items or the project is not cached yet
-        $actualItems = $actualprj.items ?? $(New-HashTable)
-
-        $items = $actualItems
+        $items = $actualprj.items ?? $(New-HashTable)
     }
 
     # Save ProjectV2 object to ProjectDatabase
