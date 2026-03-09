@@ -17,7 +17,7 @@ function Get-Project {
         if ($Force -or -Not (Test-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber)) {
             "Project not found in database or force specified. Updating project for $Owner/$ProjectNumber." | Write-MyDebug -Section Get-Project
 
-            $result = Update-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems
+            $result = Update-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems -Force:$Force
             
             if ( ! $result) { 
                 "Failed to update project for $Owner/$ProjectNumber. Project may not exist or there was an error during update." | Write-MyError
