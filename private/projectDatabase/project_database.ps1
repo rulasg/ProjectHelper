@@ -86,7 +86,7 @@ function Save-ProjectV2toDatabase{
         [Parameter(Position = 0)][object]$ProjectV2,
         [Parameter(Position = 1)][hashtable]$Items,
         [Parameter(Position = 1)][hashtable]$QueryItems,
-        [Parameter(Position = 2)][Object[]]$Fields
+        [Parameter(Position = 2)][hashtable]$Fields
     )
 
     $owner = $ProjectV2.owner.login
