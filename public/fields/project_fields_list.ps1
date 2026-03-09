@@ -43,8 +43,6 @@ function Get-ProjectFields{
 
     ($Owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
-    $fieldList = getFieldsCache -Owner $Owner -ProjectNumber $ProjectNumber
-
     if(-Not $fieldList -or $Force){
 
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems
@@ -58,7 +56,6 @@ function Get-ProjectFields{
         # if $db is null it rill return null
         $fieldList = $db.fields.Values
 
-        setFieldsCache -Owner $Owner -ProjectNumber $ProjectNumber -FieldList $fieldList
     }
 
     # if name
@@ -106,57 +103,5 @@ function ConvertToFieldDisplay{
         }
 
         return $ret
-    }
-}
-
-$script:fieldsCache = @{}
-
-function getFieldsCache{
-    param(
-        [Parameter(Mandatory,Position = 0)][string]$Owner,
-        [Parameter(Mandatory,Position = 1)][string]$ProjectNumber
-    )
-
-    $key = "$Owner-$ProjectNumber"
-    $lockKey = Get-DatabaseKey $Owner $ProjectNumber "field-cachelock"
-
-    $lock = Get-Database -Key $lockKey
-
-    if([string]::IsNullOrWhiteSpace($lock)){
-        "No cache lock found for $Owner/$ProjectNumber. Cache will be ignored." | Write-MyDebug -Section "Get-ProjectFields"
-        return $null
-    }
-
-    $cache = $script:fieldsCache[$key]
-
-    if($lock -cne $cache.SafeId) {
-        "Cache lock mismatch for $Owner/$ProjectNumber. Cache safeId [$($cache.SafeId)], lock [$lock]. Cache will be ignored." | Write-MyDebug -Section "Get-ProjectFields"
-        $script:fieldsCache.Remove($key)
-        return $null
-    }
-
-    "Getting fields cache for $Owner/$ProjectNumber with lock [$lock] and cache safeId [$($cache.SafeId)]" | Write-MyDebug -Section "Get-ProjectFields"
-    return $cache.List
-}
-
-function setFieldsCache{
-    param(
-        [Parameter(Mandatory,Position = 0)][string]$Owner,
-        [Parameter(Mandatory,Position = 1)][string]$ProjectNumber,
-        [Parameter(Mandatory,Position = 2)][object]$FieldList
-    )
-
-    $key = "$Owner-$ProjectNumber"
-    $lockKey = Get-DatabaseKey $Owner $ProjectNumber "field-cachelock"
-
-    $safeId = [Guid]::NewGuid().ToString()
-
-    # Save safeId to field-lock
-    Save-Database -Database $safeId -Key $lockKey
-
-     # Set lock in database to prevent concurrent updates
-    $script:fieldsCache[$key] = @{
-        List = $FieldList
-        SafeId = $safeId
     }
 }
