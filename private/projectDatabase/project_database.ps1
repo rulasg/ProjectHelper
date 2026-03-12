@@ -231,7 +231,7 @@ function resetProjectDatabaseCache{
 
     "Resetting project cache for $KeyLock" | Write-MyDebug -Section "ProjectDatabase"
 
-    Reset.Database -Key $KeyLock
+    Reset-Database -Key $KeyLock
     
     $script:ProjectDatabaseCache.Remove($KeyLock)
 }
