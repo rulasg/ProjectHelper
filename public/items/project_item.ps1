@@ -195,8 +195,8 @@ function Search-ProjectItem {
         $Attributes = @("id") + $Attributes
     }
 
-
-($owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
+    # Resolve project parameters
+    ($owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
     # Get items as hashtable for later queries
     $items = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -IncludeDone:$IncludeDone -AsHashtable

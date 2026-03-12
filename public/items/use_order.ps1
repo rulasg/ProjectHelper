@@ -8,6 +8,7 @@ function Use-Order {
         [Parameter()][Alias("w")][switch]$OpenInBrowser,
         [Parameter()][Alias("p")][switch]$PassThru,
         [Parameter()][Alias("c")][switch]$ClearScreen,
+        [Parameter()][Alias("d")][switch]$DontShow,
         [Parameter()][scriptblock]$ShowProjectItemScriptBlock
     )
 
@@ -54,24 +55,26 @@ function Use-Order {
             throw "ProjectEnvironment is required. Run Set-ProjectHelperEnvironment"
         }
 
-        #return item
+        if( -not $DontShow){
+            # Get function to show item
+            $ShowProjectItemScriptBlock = $ShowProjectItemScriptBlock ?? { param($parameters) Show-ProjectItem @parameters }
+            
+            # Show item in console or editor
+            $params = @{
+                Item = $itemId
+                OpenInEditor = $OpenInEditor
+                OpenInBrowser = $OpenInBrowser
+                ClearScreen = $ClearScreen
+            }
+            $ShowProjectItemScriptBlock.Invoke($params)
+        }
+
+                #return item
         if($PassThru) {
             $i = Get-ProjectItem -ItemId $itemId
             return [PsCustomObject]$i
         }
 
-        # Get function to show item
-        $ShowProjectItemScriptBlock = $ShowProjectItemScriptBlock ?? { param($parameters) Show-ProjectItem @parameters }
-
-        # Show item in console or editor
-        $params = @{
-            Item = $itemId
-            OpenInEditor = $OpenInEditor
-            OpenInBrowser = $OpenInBrowser
-            ClearScreen = $ClearScreen
-        }
-        $ShowProjectItemScriptBlock.Invoke($params)
-        return
 
     }
 } Export-ModuleMember -Function Use-Order -Alias "uo"
