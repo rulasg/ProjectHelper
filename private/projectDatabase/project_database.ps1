@@ -7,9 +7,13 @@ function Test-ProjectDatabase{
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
+    "Testing project database for $Owner/$ProjectNumber >>>" | Write-MyDebug -Section "ProjectDatabase"
+
     $key,$keyLock = Get-ProjectDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
 
     $ret = Test-Database -Key $key
+
+    "Testing project database for $Owner/$ProjectNumber <<< $ret" | Write-MyDebug -Section "ProjectDatabase"
 
     return $ret
 }
@@ -46,12 +50,16 @@ function Get-ProjectFromDatabase{
     )
 
     $key,$keyLock = Get-ProjectDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
+
+    "Getting project for $Owner/$ProjectNumber" | Write-MyDebug -Section "ProjectDatabase"
     
     $prj = getProjectDatabaseCache -KeyLock $keyLock
 
     if($null -ne $prj){
-        "Project cache hit for $Owner/$ProjectNumber" | Write-MyDebug -Section "ProjectDatabase"
+        "🟩 Get Project Database from MEMORY $Owner/$ProjectNumber" | Write-MyDebug -Section "ProjectDatabase"
         return $prj
+    } else {
+        "🟧 Get Project Database from FILE $Owner/$ProjectNumber" | Write-MyDebug -Section "ProjectDatabase"
     }
     
     # No cache or cache mismatch, read from database
@@ -64,6 +72,9 @@ function Get-ProjectFromDatabase{
     $prj.fields = $prj.fields | Copy-MyHashTable
     $prj.items  = $prj.items  | Copy-MyHashTable
     $prj.Staged = $prj.Staged | Copy-MyHashTable
+
+    # Savige to cache for future calls
+    setProjectDatabaseCache -KeyLock $keyLock -SafeId $prj.safeId -Database $prj
 
     return $prj
 }
@@ -161,6 +172,9 @@ function Save-ProjectDatabase{
     # Add safe mark
     $Database.safeId = [guid]::NewGuid().ToString()
 
+    # Trace
+    "🟥 Save Project Database from FILE $Owner/$ProjectNumber safeId [$($Database.safeId)]" | Write-MyDebug -Section "ProjectDatabase"
+
     # Save database
     Save-Database -Key $dbkey -Database $Database
     setProjectDatabaseCache -KeyLock $dbkeyLock -SafeId $Database.safeId -Database $Database
@@ -231,7 +245,7 @@ function resetProjectDatabaseCache{
 
     "Resetting project cache for $KeyLock" | Write-MyDebug -Section "ProjectDatabase"
 
-    Reset.Database -Key $KeyLock
+    Reset-Database -Key $KeyLock
     
     $script:ProjectDatabaseCache.Remove($KeyLock)
 }
