@@ -53,8 +53,18 @@ function Write-MyHost {
         [Parameter()][string]$ForegroundColor = $OUTPUT_COLOR,
         [Parameter()][switch]$NoNewLine
     )
+
+    Write-MyDebug -Section "MyHost" -Message $Message
+
     # Write-Host $message -ForegroundColor $OUTPUT_COLOR
     Write-ToConsole $message -Color $ForegroundColor -NoNewLine:$NoNewLine
+}
+
+function Clear-MyHost {
+    [CmdletBinding()]
+    param()
+
+    Clear-Host
 }
 
 function Write-MyDebug {
@@ -77,7 +87,7 @@ function Write-MyDebug {
             $timestamp = Get-Date -Format 'HH:mm:ss.fff'
 
             # Write on host
-            $logMessage ="[$timestamp][D][$section] $message"
+            $logMessage ="[$timestamp][$MODULE_NAME][D][$section] $message"
 
             $logMessage | Write-ToConsole -Color $DEBUG_COLOR
             $logMessage | Write-MyDebugLogging
@@ -92,8 +102,7 @@ function Write-MyDebugLogging {
 
     process{
 
-        $moduleDebugLoggingVarName = $MODULE_NAME + "_DEBUG_LOGGING_FILEPATH"
-        $loggingFilePath = [System.Environment]::GetEnvironmentVariable($moduleDebugLoggingVarName)
+        $loggingFilePath = get-DebugLogFile
 
         # Check if logging is enabled
         if ([string]::IsNullOrWhiteSpace( $loggingFilePath )) {
@@ -134,8 +143,7 @@ function Test-MyVerbose {
         [Parameter(Position = 0)][string]$section
     )
 
-    $moduleDebugVarName = $MODULE_NAME + "_VERBOSE"
-    $flag = [System.Environment]::GetEnvironmentVariable($moduleDebugVarName)
+    $flag = get-VerboseSections
 
     if ([string]::IsNullOrWhiteSpace( $flag )) {
         return $false
@@ -156,8 +164,7 @@ function Enable-ModuleNameVerbose{
         $flag = $section
     }
 
-    $moduleDebugVarName = $MODULE_NAME + "_VERBOSE"
-    [System.Environment]::SetEnvironmentVariable($moduleDebugVarName, $flag)
+    set-VerboseSections $flag
 }
 Copy-Item -path Function:Enable-ModuleNameVerbose -Destination Function:"Enable-$($MODULE_NAME)Verbose"
 Export-ModuleMember -Function "Enable-$($MODULE_NAME)Verbose"
@@ -165,8 +172,7 @@ Export-ModuleMember -Function "Enable-$($MODULE_NAME)Verbose"
 function Disable-ModuleNameVerbose{
     param()
 
-    $moduleDebugVarName = $MODULE_NAME + "_VERBOSE"
-    [System.Environment]::SetEnvironmentVariable($moduleDebugVarName, $null)
+    set-VerboseSections $null
 }
 Copy-Item -path Function:Disable-ModuleNameVerbose -Destination Function:"Disable-$($MODULE_NAME)Verbose"
 Export-ModuleMember -Function "Disable-$($MODULE_NAME)Verbose"
@@ -184,19 +190,19 @@ function Test-MyDebug {
         $flags = $flags.ToLower()
         $section = $section.ToLower()
 
-        return ($flags.Contains("all")) -or ( $flags.Contains($section))
+        return ($flags.Contains("all")) -or ( $flags -eq $section)
     }
 
-    $moduleDebugVarName = $MODULE_NAME + "_DEBUG"
-    $flagsString = [System.Environment]::GetEnvironmentVariable($moduleDebugVarName)
+
+    $sectionsString = get-DebugSections
 
     # No configuration means no debug
-    if([string]::IsNullOrWhiteSpace( $flagsString )) {
+    if([string]::IsNullOrWhiteSpace( $sectionsString )) {
         return $false
     }
 
-    # Get flags from flagdsString
-    $flags = getFlagsFromSectionsString $flagsString
+    # Get flags from sectionsString
+    $flags = getSectionsFromSectionsString $sectionsString
 
     # Add all if allow is empty. 
     # This mean stat flagsString only contains filters.
@@ -228,57 +234,54 @@ function Enable-ModuleNameDebug{
         }
     }
 
-    $flagsString = $sections -join " "
+    $sectionsString = $sections -join " "
     $addedFlagsString = $AddSections -join " "
 
     # if no section get value from env and is still mepty set to all
-    if([string]::IsNullOrWhiteSpace( $flagsString )) {
-        $flagsString = get-Sections
-        if( [string]::IsNullOrWhiteSpace( $flagsString )) {
-            $flagsString = "all"
+    if([string]::IsNullOrWhiteSpace( $sectionsString )) {
+        $sectionsString = get-DebugSections
+        if( [string]::IsNullOrWhiteSpace( $sectionsString )) {
+            $sectionsString = "all"
         }
     }
     
-    # Add added to flagsString if provided
+    # Add added to sectionsString if provided
     if(-Not [string]::IsNullOrWhiteSpace( $addedFlagsString )) {
-        $flagsString += " " + $addedFlagsString
+        $sectionsString += " " + $addedFlagsString
     }
 
-    set-Sections $flagsString
+    set-DebugSections $sectionsString
 
 }
 Copy-Item -path Function:Enable-ModuleNameDebug -Destination Function:"Enable-$($MODULE_NAME)Debug"
 Export-ModuleMember -Function "Enable-$($MODULE_NAME)Debug"
 
-function getFlagsFromSectionsString($sectionsString){
-    $flags = @{
+function getSectionsFromSectionsString($sectionsString){
+    $sections = @{
         allow = $null
         filter = $null
     }
 
     if([string]::IsNullOrWhiteSpace($sectionsString) ){
-        $flags.allow = @("all")
-        return $flags
+        $sections.allow = @("all")
+        return $sections
     }
 
     $list = $sectionsString.Split(" ", [StringSplitOptions]::RemoveEmptyEntries)
 
     $split = @($list).Where({ $_ -like '-*' }, 'Split')
 
-    $flags.filter = $split[0] | ForEach-Object { $_ -replace '^-', '' }  # -> API, Auth
-    $flags.allow = $split[1]  # -> Sync, Cache
+    $sections.filter = $split[0] | ForEach-Object { $_ -replace '^-', '' }  # -> API, Auth
+    $sections.allow = $split[1]  # -> Sync, Cache
 
-    return $flags
+    return $sections
 }
 
 function Disable-ModuleNameDebug {
     param()
 
-    $moduleDebugVarName = $MODULE_NAME + "_DEBUG"
-    [System.Environment]::SetEnvironmentVariable($moduleDebugVarName, $null)
-
-    $moduleDEbugLoggingVarName = $MODULE_NAME + "_DEBUG_LOGGING_FILEPATH"
-    [System.Environment]::SetEnvironmentVariable($moduleDEbugLoggingVarName, $null)
+    set-DebugSections $null
+    set-LogFile $null
 }
 Copy-Item -path Function:Disable-ModuleNameDebug -Destination Function:"Disable-$($MODULE_NAME)Debug"
 Export-ModuleMember -Function "Disable-$($MODULE_NAME)Debug"
@@ -288,8 +291,8 @@ function Get-ModuleNameDebug {
     param()
 
     return @{
-        Sections = get-Sections
-        LoggingFilePath = get-LogFile
+        Sections = get-DebugSections
+        LoggingFilePath = get-DebugLogFile
     }
 }
 Copy-Item -path Function:Get-ModuleNameDebug -Destination Function:"Get-$($MODULE_NAME)Debug"
@@ -336,4 +339,40 @@ function get-LogFile(){
 function set-LogFile($logFilePath){
     $moduleDEbugLoggingVarName = $MODULE_NAME + "_DEBUG_LOGGING_FILEPATH"
     [System.Environment]::SetEnvironmentVariable($moduleDEbugLoggingVarName, $logFilePath)
+}
+
+function get-DebugSections(){
+    $moduleDebugVarName = $MODULE_NAME + "_DEBUG"
+    $sections = [System.Environment]::GetEnvironmentVariable($moduleDebugVarName)
+
+    return $sections
+}
+
+function set-DebugSections($sections){
+    $moduleDebugVarName = $MODULE_NAME + "_DEBUG"
+    [System.Environment]::SetEnvironmentVariable($moduleDebugVarName, $sections)
+}
+
+function get-DebugLogFile(){
+    $moduleDEbugLoggingVarName = $MODULE_NAME + "_DEBUG_LOGGING_FILEPATH"
+    $logfile = [System.Environment]::GetEnvironmentVariable($moduleDEbugLoggingVarName)
+
+    return $logfile
+}
+
+function set-LogFile($logFilePath){
+    $moduleDEbugLoggingVarName = $MODULE_NAME + "_DEBUG_LOGGING_FILEPATH"
+    [System.Environment]::SetEnvironmentVariable($moduleDEbugLoggingVarName, $logFilePath)
+}
+
+function get-VerboseSections{
+    $moduleVerboseVarName = $MODULE_NAME + "_VERBOSE"
+    $sections = [System.Environment]::GetEnvironmentVariable($moduleVerboseVarName)
+
+    return $sections
+}
+
+function set-VerboseSections($sections){
+    $moduleVerboseVarName = $MODULE_NAME + "_VERBOSE"
+    [System.Environment]::SetEnvironmentVariable($moduleVerboseVarName, $sections)
 }
