@@ -64,7 +64,8 @@ function Add-ProjectSubissueCreate {
     [CmdletBinding()]
     [Alias("New-Issue")]
     param (
-        [Parameter(Mandatory, Position = 0)][string]$ItemId,
+        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)][Alias("Id")][string]$ItemId,
+
         [Parameter(Position = 1)][string]$RepoOwner,
         [Parameter(Position = 2)][string]$RepoName,
         [Parameter(Mandatory, Position = 3)][string]$Title,
