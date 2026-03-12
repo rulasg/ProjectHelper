@@ -50,8 +50,10 @@ function Get-ProjectFromDatabase{
     $prj = getProjectDatabaseCache -KeyLock $keyLock
 
     if($null -ne $prj){
-        "Project cache hit for $Owner/$ProjectNumber" | Write-MyDebug -Section "ProjectDatabase"
+        "🟩 Get Project from MEMORY $Owner/$ProjectNumber" | Write-MyDebug -Section "ProjectDatabase"
         return $prj
+    } else {
+        "🟧 Get Project from DATABASE $Owner/$ProjectNumber" | Write-MyDebug -Section "ProjectDatabase"
     }
     
     # No cache or cache mismatch, read from database
@@ -64,6 +66,8 @@ function Get-ProjectFromDatabase{
     $prj.fields = $prj.fields | Copy-MyHashTable
     $prj.items  = $prj.items  | Copy-MyHashTable
     $prj.Staged = $prj.Staged | Copy-MyHashTable
+
+    setProjectDatabaseCache -KeyLock $keyLock -SafeId $prj.safeId -Database $prj
 
     return $prj
 }
@@ -161,6 +165,8 @@ function Save-ProjectDatabase{
     # Add safe mark
     $Database.safeId = [guid]::NewGuid().ToString()
 
+    "🟥 Set Project from DATABASE $Owner/$ProjectNumber safeid [$($Database.safeId)]" | Write-MyDebug -Section "ProjectDatabase"
+
     # Save database
     Save-Database -Key $dbkey -Database $Database
     setProjectDatabaseCache -KeyLock $dbkeyLock -SafeId $Database.safeId -Database $Database
@@ -177,61 +183,4 @@ function Get-ProjectDatabaseKey{
     $keylock = "$key-lock"
 
     return $key, $keylock
-}
-
-$script:ProjectDatabaseCache = @{}
-
-function getProjectDatabaseCache{
-    param(
-        [Parameter(Mandatory,Position = 0)][string]$KeyLock
-    )
-
-    $lock = Get-Database -Key $KeyLock
-
-    if([string]::IsNullOrWhiteSpace($lock)){
-        "No cache lock found for $KeyLock. Cache will be ignored." | Write-MyDebug -Section "ProjectDatabase"
-        return $null
-    }
-
-    $cache = $script:ProjectDatabaseCache[$KeyLock]
-
-    if($lock -cne $cache.safeId) {
-        "Cache lock mismatch for $KeyLock. Cache safeId [$($cache.SafeId)], lock [$lock]. Cache will be ignored." | Write-MyDebug -Section "ProjectDatabase"
-        resetProjectDatabaseCache -KeyLock $KeyLock
-        return $null
-    }
-
-    "Getting fields cache for $KeyLock with lock [$lock] and cache safeId [$($cache.SafeId)]" | Write-MyDebug -Section "ProjectDatabase"
-    return $cache.Database
-}
-
-function setProjectDatabaseCache{
-    param(
-        [Parameter(Mandatory,Position = 0)][string]$KeyLock,
-        [Parameter(Mandatory,Position = 1)][string]$SafeId,
-        [Parameter(Mandatory,Position = 2)][object]$Database
-    )
-
-    "Setting project cache for $KeyLock with safeId [$SafeId]" | Write-MyDebug -Section "ProjectDatabase"
-
-    # Save safeId to project-lock
-    Save-Database -Database $SafeId -Key $KeyLock
-
-     # Set lock in database to prevent concurrent updates
-    $script:ProjectDatabaseCache[$KeyLock] = @{
-        Database = $Database
-        SafeId = $SafeId
-    }
-}
-
-function resetProjectDatabaseCache{
-    param(
-        [Parameter(Mandatory,Position = 0)][string]$KeyLock
-    )
-
-    "Resetting project cache for $KeyLock" | Write-MyDebug -Section "ProjectDatabase"
-
-    Reset-Database -Key $KeyLock
-    
-    $script:ProjectDatabaseCache.Remove($KeyLock)
 }
