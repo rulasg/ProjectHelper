@@ -38,6 +38,7 @@ function Get-ProjectFields{
         [Parameter()] [string]$Owner,
         [Parameter()] [string]$ProjectNumber,
         [Parameter(Position = 0)][string]$Name,
+        [Parameter()][switch]$Exact,
         [Parameter()][switch]$Force
     )
 
@@ -61,7 +62,11 @@ function Get-ProjectFields{
     # if name
     if($Name){
         # Filter fields by name
-        $fieldList = $fieldList | Where-Object { $_.name -like "*$Name*" }
+        if($Exact){
+            $fieldList = $fieldList | Where-Object { $_.name -eq $Name }
+        } else {
+            $fieldList = $fieldList | Where-Object { $_.name -like "*$Name*" }
+        }
     }
 
     # return if #db is null

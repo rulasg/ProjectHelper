@@ -72,9 +72,7 @@ function Use-Order {
                 #return item
         if($PassThru) {
             $i = Get-ProjectItem -ItemId $itemId
-            return [PsCustomObject]$i
+            Write-Output ([PsCustomObject]$i)
         }
-
-
     }
 } Export-ModuleMember -Function Use-Order -Alias "uo"
