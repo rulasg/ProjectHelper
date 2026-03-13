@@ -82,7 +82,7 @@ function Edit-ProjectItem {
 
         # Default
         if($DefaultValues){
-            Write-MyWarning "No Default values are currently setup. Please use other parameters to set values or update the DefaultValues parameter with default values"
+            "DefaultValues EMPTY" | Write-MyDebug -section "Edit-ProjectItem"
 
             # Do not edit but leave this parameters flow the edit process
         }
