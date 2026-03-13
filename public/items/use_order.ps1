@@ -74,18 +74,5 @@ function Use-Order {
             $i = Get-ProjectItem -ItemId $itemId
             Write-Output ([PsCustomObject]$i)
         }
-
-        # Get function to show item
-        $ShowProjectItemScriptBlock = $ShowProjectItemScriptBlock ?? { param($parameters) Show-ProjectItem @parameters }
-
-        # Show item in console or editor
-        $params = @{
-            Item = $itemId
-            OpenInEditor = $OpenInEditor
-            OpenInBrowser = $OpenInBrowser
-            ClearScreen = $ClearScreen
-        }
-        $ShowProjectItemScriptBlock.Invoke($params)
-
     }
 } Export-ModuleMember -Function Use-Order -Alias "uo"
