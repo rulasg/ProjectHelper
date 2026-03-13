@@ -71,8 +71,11 @@ function Invoke-RestAPI {
     param(
         [Parameter(Mandatory)][string]$Api,
         [Parameter()][string]$Token,
+        [Parameter()][ValidateSet("GET","POST","PATCH","PUT","DELETE")][string]$Method = "GET",
         [Parameter()] [string]$ApiHost,
-        [Parameter()] [string]$PageSize = 30
+        [Parameter()] [string]$PageSize = 30,
+        [Parameter()] [object]$Body
+
     )
 
     ">>>" | writedebug
@@ -93,14 +96,34 @@ function Invoke-RestAPI {
         $uriBuilder.Scheme = "https"
         $uriBuilder.Host = $apiHost
         $uriBuilder.Path = $api
-        $uriBuilder.Query = "?per_page=$PageSize"
-
-        $url = $uriBuilder.Uri.AbsoluteUri
-
+        
         # Send the request
         $start = Get-Date
-        ">>> Invoke-RestMethod - $url" | writedebug
-        $response = Invoke-RestMethod -Uri $url -Method Get -Headers $headers -ResponseHeadersVariable responseHeaders
+        if($Method -eq "PATCH"){
+            $url = $uriBuilder.Uri.AbsoluteUri
+            $bodyJson = $Body | ConvertTo-Json -Depth 100
+            $params = @{
+                Uri = $url
+                Method = "PATCH"
+                Headers = $headers
+                Body = $bodyJson
+                ResponseHeadersVariable = "responseHeaders"
+            }
+        }
+        else {
+            # Check the paging
+            $uriBuilder.Query = "?per_page=$PageSize"
+            $url = $uriBuilder.Uri.AbsoluteUri
+             $params = @{
+                Uri = $url
+                Method = "GET"
+                Headers = $headers
+                ResponseHeadersVariable = "responseHeaders"
+            }
+        }
+
+        ">>> Invoke-RestMethod - $url" | writedebug -Object $params
+        $response = Invoke-RestMethod @params
 
         $responseHeaders | writedebug
 
@@ -136,7 +159,7 @@ function Invoke-RestAPI {
     catch {
         throw
     }
-}
+} Export-ModuleMember -Function Invoke-RestAPI
 
 ####################################################################################################
 
@@ -180,7 +203,7 @@ function Get-ApiToken {
     )
 
     if(![string]::IsNullOrWhiteSpace($Token)){
-        "Token provided" | Write-TraceApi
+        "Token provided" | writedebug
         return $Token
     }
 
@@ -225,10 +248,11 @@ function Get-EnvVariable{
 function writedebug{
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline)][string]$Message
+        [Parameter(ValueFromPipeline)][string]$Message,
+        [Parameter()][object]$Object
     )
 
     process{
-        Write-MyDebug $Message -Section "api"
+        Write-MyDebug $Message -Section "api" -object:$Object
     }
 }
