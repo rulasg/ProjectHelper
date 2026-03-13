@@ -7,9 +7,13 @@ function Test-ProjectDatabase{
         [Parameter(Position = 1)][int]$ProjectNumber
     )
 
+    "Testing project database for $Owner/$ProjectNumber >>>" | Write-MyDebug -Section "ProjectDatabase"
+
     $key,$keyLock = Get-ProjectDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
 
     $ret = Test-Database -Key $key
+
+    "Testing project database for $Owner/$ProjectNumber <<< $ret" | Write-MyDebug -Section "ProjectDatabase"
 
     return $ret
 }
@@ -46,6 +50,8 @@ function Get-ProjectFromDatabase{
     )
 
     $key,$keyLock = Get-ProjectDatabaseKey -Owner $Owner -ProjectNumber $ProjectNumber
+
+    "Getting project for $Owner/$ProjectNumber" | Write-MyDebug -Section "ProjectDatabase"
     
     $prj = getProjectDatabaseCache -KeyLock $keyLock
 
@@ -67,6 +73,7 @@ function Get-ProjectFromDatabase{
     $prj.items  = $prj.items  | Copy-MyHashTable
     $prj.Staged = $prj.Staged | Copy-MyHashTable
 
+    # Save to cache for future calls
     setProjectDatabaseCache -KeyLock $keyLock -SafeId $prj.safeId -Database $prj
 
     return $prj

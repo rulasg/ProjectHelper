@@ -9,6 +9,8 @@ function Get-Project {
 
     ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
+    "Getting project for $Owner/$ProjectNumber with SkipItems=$SkipItems and Force=$Force >>>" | Write-MyDebug -Section "Get-Project"
+
     if ($Force -or -Not (Test-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber)) {
         "Project not found in database or force specified. Updating project for $Owner/$ProjectNumber." | Write-MyDebug -Section Get-Project
 
@@ -16,13 +18,15 @@ function Get-Project {
         
         if ( ! $result) {
             "Failed to update project for $Owner/$ProjectNumber. Project may not exist or there was an error during update." | Write-MyError
-            return 
+            return
         }
     } else {
-        "Project found in database for $Owner/$ProjectNumber. Loading project." | Write-MyDebug -Section Get-Project
+        "Project found in database for $Owner/$ProjectNumber. Calling to retreive." | Write-MyDebug -Section Get-Project
     }
 
     $prj = Get-ProjectFromDatabase -Owner $Owner -ProjectNumber $ProjectNumber
+
+    "Getting project for $Owner/$ProjectNumber with SkipItems=$SkipItems and Force=$Force <<< $($prj.safeId)" | Write-MyDebug -Section "Get-Project"
 
     return $prj
 } Export-ModuleMember -Function Get-Project
