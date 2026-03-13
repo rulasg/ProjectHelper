@@ -14,10 +14,11 @@ function Get-ValidNames{
         return $null
     }
 
-    $field = Get-ProjectFields -Owner $owner -ProjectNumber $projectNumber -Name $FieldName
+    $field = Get-ProjectFields -Owner $owner -ProjectNumber $projectNumber -Name $FieldName -Exact
 
     if($field.dataType -eq "SINGLE_SELECT"){
         $ret = $field.MoreInfo
+        $ret +=""
     } else {
         throw "Get-ValidNames only supports fields with SINGLE_SELECT dataType. Field $FieldName has $($field.dataType) dataType."
     }
