@@ -177,12 +177,14 @@ function Write-ProjecthelperPrompt {
 
     # Get Staged items
     $stagedItems = Get-ProjectItemStaged
-    $count = $stagedItems.values.Keys.Count
+    $countItems = $stagedItems.Count
+    $countFields = $stagedItems.values.Keys.Count
+    $count = "$countItems|$countFields"
 
     # Build prompt text
 
-    $countColor = $count -eq 0 ? $s.OKStatus : $s.KOStatus
-    $countText  = $count -eq 0 ? '' : $count
+    $countColor = $countFields -eq 0 ? $s.OKStatus : $s.KOStatus
+    $countText  = $countFields -eq 0 ? '' : $count
 
     $s.BeforeStatus       | Write-HostPrompt
     $s.OwnerStatus        | Write-HostPrompt $owner

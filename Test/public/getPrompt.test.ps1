@@ -63,18 +63,20 @@ function Test_GetProjecthelperPrompt {
 
     # Add some staged items
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId "id1" -FieldName "sf_Text1" -Value "value1"
-    # Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId "id1" -FieldName "sf_Text2" -Value "value2"
+    Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId "id1" -FieldName "sf_Int2" -Value "2"
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId "id2" -FieldName "sf_Text1" -Value "value1"
-    # Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId "id2" -FieldName "sf_Text2" -Value "value2"
+
     $itemstaged = 2
+    $fieldstaged = 3
 
     # With items staged
     $result = Invoke-WriteProjecthelperPrompt
     # Find the line with '[' character
     $resultLine = ($result | select-string -Pattern "^\[$" ).LineNumber
+    $stagedLine = $resultLine + 6
 
-    Assert-AreEqual -Presented $result[$resultLine + 6] -Expected $($($s.KOStatus.PreText)+$itemstaged)
 
+    Assert-AreEqual -Presented $result[$stagedLine] -Expected $($($s.KOStatus.PreText)+$itemstaged + "|" + $fieldstaged)
 }
 
 function Invoke-WriteProjecthelperPrompt([Switch]$withnewline) {
