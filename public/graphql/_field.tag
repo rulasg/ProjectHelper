@@ -1,5 +1,5 @@
 {__typename,
-    ... on ProjectV2Field{id,name,dataType},
-    ... on ProjectV2IterationField{id,name,dataType},
-    ... on ProjectV2SingleSelectField{id,name,dataType,options{id,name}}
+    ... on ProjectV2Field{id,databaseId,name,dataType},
+    ... on ProjectV2IterationField{id,databaseId,name,dataType},
+    ... on ProjectV2SingleSelectField{id,databaseId,name,dataType,options{id,name}}
 }
