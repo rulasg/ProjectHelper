@@ -54,7 +54,8 @@ function Update-Project{
         } else {
             "Performing FULL update for $Owner/$ProjectNumber" | Write-MyDebug -Section "Update-Project"
         }
-        $ret = Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems
+        $ret = Update-ProjectDatabase -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems:$SkipItems -Query "$query"
+        
         Set-EnvProjectLastUpdate_Today -Owner $Owner -ProjectNumber $ProjectNumber
     }
     else{
