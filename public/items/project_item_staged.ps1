@@ -111,11 +111,16 @@ function Reset-ProjectItemStaged{
         if([string]::IsNullOrWhiteSpace($ItemId)){
             # reset all staged changes
             $db.Staged = $null
-            "All staged changes have been discarded" | Write-MyDebug
+            "All staged changes have been discarded" | Write-MyDebug -section "Reset-ProjectItemStaged"
         } else {
             # reset a specific item
+            if($null -eq $db.Staged.$ItemId){
+                "No staged item found for item $ItemId in project $ProjectNumber owned by $Owner" | Write-MyDebug -section "Reset-ProjectItemStaged"
+                return
+            }
+
             $db.Staged.Remove($ItemId)
-            "Staged changes for item $ItemId have been discarded" | Write-MyDebug
+            "Staged changes for item $ItemId have been discarded" | Write-MyDebug -section "Reset-ProjectItemStaged"
         }
     }
 

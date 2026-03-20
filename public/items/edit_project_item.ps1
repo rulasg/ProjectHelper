@@ -60,7 +60,7 @@ function Edit-ProjectItem {
 
         # Centralize the editing of the value for later refactoring if needed
         function edit($params) {
-             Edit-ProjectItemValue @params 
+             editProjectItemValue @params
             }
         # Commit check
         if ($commmit) {
@@ -193,6 +193,32 @@ function Edit-ProjectItem {
     }
 } Export-ModuleMember -Function Edit-ProjectItem -Alias "epi"
 
+function Edit-ProjectItemValue {
+    [CmdletBinding()]
+    [Alias("epiv")]
+    param(
+        [Parameter(ValueFromPipelineByPropertyName)][string]$Owner,
+        [Parameter(ValueFromPipelineByPropertyName)][string]$ProjectNumber,
+        [Parameter(Mandatory,ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)][Alias("Id")][string]$ItemId,
+        [Parameter(ValueFromPipelineByPropertyName,Position = 1)][string]$FieldName,
+        [Parameter(ValueFromPipelineByPropertyName,Position = 2)][string]$Value,
+        [Parameter()][switch]$Force
+    )
+
+    process{
+
+        $parameters = @{
+            Owner = $Owner
+            ProjectNumber = $ProjectNumber
+            ItemId = $ItemId
+            FieldName = $FieldName
+            Value = $Value
+            Force = $Force
+        }
+        editProjectItemValue @parameters
+    }
+
+} Export-ModuleMember -Function Edit-ProjectItemValue -Alias "epiv"
 
 <#
 .SYNOPSIS
@@ -201,31 +227,34 @@ function Edit-ProjectItem {
     Edit-ProjectItem -Owner "someOwner" -ProjectNumber 164 -Title "Item 1 - title" -FieldName "comment" -Value "new value of the comment"
     Edit-ProjectItem -Owner "someOwner" -ProjectNumber 164 -Title "Item 1 - title" -FieldName "title" -Value "new value of the title"
 #>
-function Edit-ProjectItemValue {
+function editProjectItemValue {
     [CmdletBinding()]
     param(
-        [Parameter()][string]$Owner,
-        [Parameter()][string]$ProjectNumber,
-        [Parameter(Mandatory, ValueFromPipeline, Position = 1)][string]$ItemId,
-        [Parameter(Position = 2)][string]$FieldName,
-        [Parameter(Position = 3)][string]$Value,
+        [Parameter(ValueFromPipelineByPropertyName)][string]$Owner,
+        [Parameter(ValueFromPipelineByPropertyName)][string]$ProjectNumber,
+        [Parameter(Mandatory,ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)][Alias("Id")][string]$ItemId,
+        [Parameter(ValueFromPipelineByPropertyName,Position = 1)][string]$FieldName,
+        [Parameter(ValueFromPipelineByPropertyName,Position = 2)][string]$Value,
         [Parameter()][switch]$Force
     )
 
-    process{
-
-        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
+    begin{
+        # Resolve project parameters 
+        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber 
 
         # Force cache update
         # Full sync if force. Skip items if not force
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems:$(-not $Force)
+    }
+
+    process{
 
         # Find the actual value of the item. Item+Staged
         # Ignore $dirty as we are changing the db we will always save
         ($item, $dirty) = Resolve-ProjectItem -Database $db -ItemId $ItemId
 
         # if the item is not found
-        if($null -eq $item){ "Item [$ItemId] not found" | Write-MyError; return $null}
+        if($null -eq $item){ "Item [$ItemId] not found" | Write-MyError; return }
 
         # Value transformations
         $valueTransformed = Convertto-ItemTransformedValue -Item $item -Value $Value
@@ -239,6 +268,9 @@ function Edit-ProjectItemValue {
         # save the new value
         Save-ItemFieldValue $db $itemId $FieldName $valueTransformed
 
+    }
+    
+    end{
         # Commit changes to the database
         Save-ProjectDatabaseSafe -Database $db
     }
