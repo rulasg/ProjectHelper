@@ -16,12 +16,16 @@ function Edit-ProjectItemWithValues {
         [Parameter()][object]$Fields
     )
 
+    "[Edit-ProjectItemWithValues] [$itemid] >>>"
+
     if($null -eq $Fields){
         "[Edit-ProjectItemWithValues] Retriving fields" | Write-MyDebug -Section "EditProjectItem"
         $Fields = Get-ProjectFields -Owner $owner -ProjectNumber $projectNumber
     } else {
         "[Edit-ProjectItemWithValues] Using provided fields" | Write-MyDebug -Section "EditProjectItem"
     }
+
+    $count = 0
 
     # forech key in data do
     foreach ($key in $Values.Keys) {
@@ -35,8 +39,10 @@ function Edit-ProjectItemWithValues {
         }
         
         "[Edit-ProjectItemWithValues]Editing field $fieldName with value $($Values[$key])" | Write-MyDebug -Section "EditProjectItem"
-        Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $ItemId -FieldName $fieldName -Value $Values[$key]
-
+        Edit-ProjectItemValue -Owner $owner -ProjectNumber $projectNumber -ItemId $ItemId -FieldName $fieldName -Value $Values[$key]
+        $count++
     }
+
+    "[Edit-ProjectItemWithValues] [$itemid] <<< Edited $count fields" | Write-MyDebug -Section "EditProjectItem"
 
 } Export-ModuleMember -Function Edit-ProjectItemWithValues
