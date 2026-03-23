@@ -16,7 +16,7 @@ function Edit-ProjectItemWithValues {
         [Parameter()][object]$Fields
     )
 
-    "[Edit-ProjectItemWithValues] [$itemid] >>>"
+    "[Edit-ProjectItemWithValues] [$itemid] >>>" | Write-MyDebug -Section "EditProjectItem"
 
     if($null -eq $Fields){
         "[Edit-ProjectItemWithValues] Retriving fields" | Write-MyDebug -Section "EditProjectItem"
