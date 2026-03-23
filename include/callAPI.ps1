@@ -238,7 +238,11 @@ function Get-EnvVariable{
         return $null
     }
 
-    $ret = "Env:$Name"
+    $ret = [System.Environment]::GetEnvironmentVariable($Name)
+
+    if([string]::IsNullOrWhiteSpace($ret)){
+        return $null
+    }
 
     return $ret
 }
