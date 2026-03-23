@@ -115,7 +115,8 @@ function Invoke-ProjectRecordUpdateWithIntegration{
             $values = Invoke-MyCommand -Command $command
         }
         catch {
-            "[Invoke-ProjectRecordUpdateWithIntegration] Something went wrong with the integration command for $($item.id)" | Write-Error
+            "[Invoke-ProjectRecordUpdateWithIntegration] Something went wrong with the integration command for $($item.id). $($_.Exception.Message) " | Write-MyWarning
+            continue
         }
         # Call the ingetration Command with the integration field value as parameter
 
