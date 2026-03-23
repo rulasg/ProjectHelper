@@ -245,6 +245,8 @@ function editProjectItemValue {
         # Force cache update
         # Full sync if force. Skip items if not force
         $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems:$(-not $Force)
+
+        $dbDirty= $false
     }
 
     process{
@@ -267,12 +269,18 @@ function editProjectItemValue {
 
         # save the new value
         Save-ItemFieldValue $db $itemId $FieldName $valueTransformed
+        $dbDirty = $true
 
     }
     
     end{
-        # Commit changes to the database
-        Save-ProjectDatabaseSafe -Database $db
+        if($dbDirty){
+            "Database is dirty, saving changes" | Write-MyDebug -Section "Edit-ProjectItem"
+            # Commit changes to the database
+            Save-ProjectDatabaseSafe -Database $db
+        } else {
+            "Database is not dirty, no need to save changes" | Write-MyDebug -Section "Edit-ProjectItem"
+        }
     }
 
 } 
