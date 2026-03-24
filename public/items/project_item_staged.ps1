@@ -132,10 +132,11 @@ function Reset-ProjectItemStaged{
 
 function Show-ProjectItemStaged{
     [CmdletBinding()]
+    [Alias("spis")]
     param(
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
-        [Parameter(ValueFromPipelineByPropertyName, Position = 0)][string]$Id
+        [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)][string]$Id
     )
 
     begin{
@@ -206,4 +207,4 @@ function Show-ProjectItemStaged{
         return $ret
     }
 
-} Export-ModuleMember -Function Show-ProjectItemStaged
+} Export-ModuleMember -Function Show-ProjectItemStaged -Alias spis
