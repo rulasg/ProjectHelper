@@ -14,11 +14,11 @@ function Edit-ProjectItem {
     [CmdletBinding()]
     [Alias("epi")]
     param(
-        [Parameter()][string]$Owner,
-        [Parameter()][string]$ProjectNumber,
+        [Parameter(ValueFromPipelineByPropertyName)][string]$Owner,
+        [Parameter(ValueFromPipelineByPropertyName)][string]$ProjectNumber,
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)][Alias("ItemId")][string]$Id,
-        [Parameter(Position = 1)][string]$FieldName,
-        [Parameter(Position = 2)][string]$Value,
+        [Parameter(ValueFromPipelineByPropertyName,Position = 1)][string]$FieldName,
+        [Parameter(ValueFromPipelineByPropertyName,Position = 2)][string]$Value,
         
         [Parameter()][Alias("MM")][switch]$Commit,
         [Parameter()][Alias("F")][switch]$Force,
