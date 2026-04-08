@@ -82,8 +82,12 @@ function Invoke-FindProject{
         variables = $variables
     } | ConvertTo-Json -Depth 10
 
+    "Invoke-RestMethod with body: >>> " | Write-MyDebug -object $body
+    
     # Send the request
     $response = Invoke-RestMethod -Uri 'https://api.github.com/graphql' -Method Post -Body $body -Headers $headers
+    
+    "Invoke-RestMethod with response: <<<  " | Write-MyDebug -object $response
 
     # Check if here are errors
     if($response.errors){
