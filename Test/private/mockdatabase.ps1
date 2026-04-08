@@ -26,7 +26,7 @@ function Get-Mock_DatabaseRootPath{
 function Update-Mock_DatabaseFileWithReplace([string]$FileName, [string]$SearchString, [string]$ReplaceString){
 
     $dbpath = Get-Mock_DatabaseRootPath | Join-Path -ChildPath $FileName
-    $content = Get-Content $dbpath
+    $content = Get-Content $dbpath -Raw
     $content = $content -replace $SearchString, $ReplaceString
     $content | Set-Content $dbpath
 
