@@ -23,7 +23,7 @@ function Get-ProjectItem {
     begin {
         ($owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
-        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -SkipItems
+        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
 
         if(! $db){ "Project not found for Owner [$Owner] and ProjectNumber [$ProjectNumber]" | Write-MyError; return $null}
 

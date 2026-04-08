@@ -6,7 +6,7 @@ function Test_AddComment_SUCCESS_Using_Cache{
     $contentId = $i.contentId
     $comment = "sample comment 1"
 
-    MockCall_GetProject -MockProject $p -SkipItems
+    MockCall_GetProject -MockProject $p
     MockCall_GetItem -ItemId $i.id
 
     Set-ProjectHelperEnvironment -Owner $owner -ProjectNumber $projectNumber -DisplayFields @("Status","FieldText")
