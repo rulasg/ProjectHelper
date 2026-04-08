@@ -20,10 +20,10 @@
 .PARAMETER FieldSlug
     The slug to use for the fields in the destination project.
     Slug is the prefix of the field name in the destination project.
-.PARAMETER NoRefreshDestination
+.PARAMETER ForceDestination
     If specified, will not force a refresh of the destination project from the server.
     Use this parameter when you know the destination project is already cached locally with the correct.
-.PARAMETER NoRefreshSource
+.PARAMETER ForceSource
     If specified, will not force a refresh of the source project from the server.
     Use this parameter when you know the source project is already cached locally.
 .PARAMETER IncludeDoneItems
@@ -40,21 +40,17 @@ function Update-ProjectItemsBetweenProjects {
         [Parameter(Position = 3)][string]$DestinationProjectNumber,
         [Parameter()][string]$FieldSlug,
         [Parameter()][switch]$IncludeDoneItems,
-        [Parameter()][switch]$NoRefreshDestination,
-        [Parameter()][switch]$NoRefreshSource
+        [Parameter()][switch]$ForceDestination,
+        [Parameter()][switch]$ForceSource
     )
 
     # Get source project before destination to avoid project infor environment caching
     ($SourceOwner,$SourceProjectNumber) = Resolve-ProjectParameters -Owner $SourceOwner -ProjectNumber $SourceProjectNumber -DoNotThrow
-    if([string]::IsNullOrWhiteSpace($SourceOwner) -or [string]::IsNullOrWhiteSpace($SourceProjectNumber)){ "Source Owner and ProjectNumber are required" | Write-MyError; return $null}
-    # Use Force parameter unless NoRefreshSource is specified
-    $sourceProject = Get-Project -Owner $SourceOwner -ProjectNumber $SourceProjectNumber -Force:(-not $NoRefreshSource)
+    $sourceProject = Get-Project -Owner $SourceOwner -ProjectNumber $SourceProjectNumber -Force:$ForceSource
 
     # Get destination project for error handling and caching
     ($DestinationOwner,$DestinationProjectNumber) = Resolve-ProjectParameters -Owner $DestinationOwner -ProjectNumber $DestinationProjectNumber -DoNotThrow
-    if([string]::IsNullOrWhiteSpace($DestinationOwner) -or [string]::IsNullOrWhiteSpace($DestinationProjectNumber)){ "Owner and ProjectNumber are required" | Write-MyError; return $null}
-    # Use Force parameter unless NoRefreshDestination is specified
-    $destinationProject = Get-Project -Owner $DestinationOwner -ProjectNumber $DestinationProjectNumber -Force:(-not $NoRefreshDestination)
+    $destinationProject = Get-Project -Owner $DestinationOwner -ProjectNumber $DestinationProjectNumber -Force:$ForceDestination
 
     # check if any of the projects are null
     if($null -eq $sourceProject -or $null -eq $destinationProject){
