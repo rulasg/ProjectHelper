@@ -259,6 +259,7 @@ function write{
         [Parameter(Position = 1)][string]$color,
         [Parameter(Position = 2,ValueFromPipeline)][string]$text,
         [Parameter()][switch]$BetweenQuotes,
+        [Parameter()][switch]$BetweenBrackets,
         [Parameter()][string]$PreFix,
         [Parameter()][string]$SuFix,
         [Parameter()][string]$DefaultValue
@@ -272,6 +273,10 @@ function write{
                 $DefaultValue = "(empty)"
             }
             $text = $DefaultValue
+        }
+
+        if($BetweenBrackets){
+            $text = "($text)"
         }
 
         if($BetweenQuotes){
