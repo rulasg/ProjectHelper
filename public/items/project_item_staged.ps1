@@ -93,11 +93,11 @@ function Sync-ProjectItemStagedAsync{
 #>
 function Reset-ProjectItemStaged{
     [CmdletBinding()]
+    [Alias("rpis")]
     param(
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
         [Parameter(ValueFromPipelineByPropertyName)][Alias("id")][string]$ItemId
-
     )
 
     begin{
@@ -128,7 +128,7 @@ function Reset-ProjectItemStaged{
         Save-ProjectDatabaseSafe -Database $db
     }
 
-} Export-ModuleMember -Function Reset-ProjectItemStaged
+} Export-ModuleMember -Function Reset-ProjectItemStaged -Alias rpis
 
 function Show-ProjectItemStaged{
     [CmdletBinding()]
