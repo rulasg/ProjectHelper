@@ -19,6 +19,7 @@ function Convert-NodeItemToHash {
         $item.projectUrl = $NodeItem.project.url
         $item.projectOwner = $NodeItem.project.owner.login
         $item.projectNumber = $NodeItem.project.number
+        $item.projectTitle = $NodeItem.project.title
 
         # Content
         $item.type = $NodeItem.content.__typename
