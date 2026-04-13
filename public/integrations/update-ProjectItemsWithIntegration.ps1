@@ -113,6 +113,11 @@ function Invoke-ProjectRecordUpdateWithIntegration{
             $command = $IntegrationCommand + " " + '"{key}"'
             $command = $command -replace '{key}', $item.$IntegrationField
             $values = Invoke-MyCommand -Command $command
+
+            # If not a hashtable convert to it.
+            if(-not ($values -is [hashtable])){
+                $values = $values | ConvertTo-Json -Depth 10 | ConvertFrom-Json -Depth 10 -AsHashtable
+            }
         }
         catch {
             "[Invoke-ProjectRecordUpdateWithIntegration] Something went wrong with the integration command for $($item.id). $($_.Exception.Message) " | Write-MyWarning
