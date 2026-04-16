@@ -68,8 +68,9 @@ function Update-ProjectItem {
 
 function Get-ProjectItemByUrl{
     [CmdletBinding()]
+    [Alias ("gpibu")]
     param(
-        [Parameter(Mandatory, ValueFromPipeline, Position = 0)][string]$Url,
+        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)][string]$Url,
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
         [Parameter()][switch]$Force,
@@ -88,6 +89,8 @@ function Get-ProjectItemByUrl{
 
         if(!$db){ return }
 
+        "Find Item by URL [$Url] in project [$Owner/$ProjectNumber]" | Write-MyDebug -Section "Get-ProjectItemByUrl"
+
         $item = Get-ItemByUrl -Database $db -Url $Url
 
         # TODO: Create a Resolve-ProjectItemByUrl - Depend on function to get item from project remote by url
@@ -98,8 +101,11 @@ function Get-ProjectItemByUrl{
 
         if(-not $item){
             # "Item not found for URL [$Url]" | Write-MyError
+            "Item not found for URL [$Url] in cache, trying to retreive it from project remote..." | Write-MyDebug -Section "Get-ProjectItemByUrl"
             return
         }
+
+        "Found item [$($item.id)] for URL [$Url] in project cache" | Write-MyDebug -Section "Get-ProjectItemByUrl"
 
         if($PassThru){
             $ret = $item
@@ -108,7 +114,7 @@ function Get-ProjectItemByUrl{
         }
         return $ret
     }
-} Export-ModuleMember -Function Get-ProjectItemByUrl
+} Export-ModuleMember -Function Get-ProjectItemByUrl -Alias "gpibu"
 
 function Get-ProjectItemUrl{
     [CmdletBinding()]
