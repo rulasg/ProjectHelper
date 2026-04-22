@@ -48,7 +48,6 @@ function Show-ProjectItem{
         # Clear screen before showing if requested
         if($ClearScreen){
             Clear-Host
-            Set-Clipboard $ItemId
         }
 
         # Before all
@@ -332,6 +331,7 @@ function ShowAttribLine{
         $color = $_.Color
         $prefix = $_.Prefix
         $BetweenQuotes = $_.BetweenQuotes
+        $BetweenBrackets = $_.BetweenBrackets
         $DefaultValue = $_.DefaultValue ?? "[$name]"
         $HideIfEmpty = $_.HideIfEmpty
 
@@ -347,7 +347,7 @@ function ShowAttribLine{
             $isfirst = $false
         }
 
-        $value | write $color -PreFix $prefix -BetweenQuotes:$BetweenQuotes -DefaultValue $DefaultValue
+        $value | write $color -PreFix $prefix -BetweenQuotes:$BetweenQuotes -BetweenBrackets:$BetweenBrackets -DefaultValue $DefaultValue
 
         $isAdded = $true
     }
