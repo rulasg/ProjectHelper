@@ -7,7 +7,7 @@ function Test_Edit_Sync_ProjectItem_AddComments_Issue {
     $comment2 = "Another comment2"
 
 
-    MockCall_GetProject -MockProject $p -SkipItems
+    MockCall_GetProject -MockProject $p
     MockCall_GetItem $i.id
 
     MockCallJson -Command "Invoke-AddComment -SubjectId $($i.contentId) -Comment ""New comment""" -filename "invoke-addcomment-$($i.contentId).json"

@@ -51,7 +51,7 @@ function Test_GetProjectSubIssue_SUCCESS {
     $p = Get-Mock_Project_700 ; $owner = $p.Owner ; $projectNumber = $p.Number
     $i = $p.subIssueToShow
 
-    MockCall_GetProject $p -SkipItems
+    MockCall_GetProject $p
     MockCallJson -Command "Invoke-GetItem -ItemId $($i.id)" -File "invoke-getitem-$($i.id).json"
 
     $result  = Get-ProjectItem -ItemId $i.id -Owner $owner -ProjectNumber $projectNumber -Force

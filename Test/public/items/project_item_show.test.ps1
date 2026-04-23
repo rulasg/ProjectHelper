@@ -65,7 +65,7 @@ function Test_ShowProjectItem_SUCESS{
 
     $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $ProjectNumber = $p.number
     $i = $p.issue
-    MockCall_GetProject $p -skipItems
+    MockCall_GetProject $p
     MockCall_GetItem $i.Id
 
     Start-MyTranscript

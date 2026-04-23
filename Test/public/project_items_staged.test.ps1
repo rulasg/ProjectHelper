@@ -289,7 +289,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_Content_Issue_NotCached {
     Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename invoke-getitem-$itemId1.json" -Alias "Invoke-GetItem -ItemId $itemId1"
 
     # Mock get-project
-    MockCall_GetProject_700 -skipItems
+    MockCall_GetProject_700
 
     # Edit fields
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
@@ -380,7 +380,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_Content_PullRequest_NotCached {
     Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename invoke-getitem-$itemId1.json" -Alias "Invoke-GetItem -ItemId $itemId1"
 
     # Mock get-project
-    MockCall_GetProject_700 -skipItems
+    MockCall_GetProject_700
 
     # Edit fields
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
@@ -470,7 +470,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_Content_DraftIssue_NotCached {
     Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename invoke-getitem-$itemId1.json" -Alias "Invoke-GetItem -ItemId $itemId1"
 
     # Mock get-project
-    MockCall_GetProject_700 -skipItems
+    MockCall_GetProject_700
 
     # Edit fields
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1

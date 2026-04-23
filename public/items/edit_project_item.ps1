@@ -199,7 +199,8 @@ function Edit-ProjectItemValue {
     param(
         [Parameter(ValueFromPipelineByPropertyName)][string]$Owner,
         [Parameter(ValueFromPipelineByPropertyName)][string]$ProjectNumber,
-        [Parameter(Mandatory,ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)][Alias("Id")][string]$ItemId,
+        [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)][Alias("Id")][string]$ItemId,
+        [Parameter(ValueFromPipelineByPropertyName)][string]$Url,
         [Parameter(ValueFromPipelineByPropertyName,Position = 1)][string]$FieldName,
         [Parameter(ValueFromPipelineByPropertyName,Position = 2)][string]$Value,
         [Parameter()][switch]$Force
@@ -211,6 +212,7 @@ function Edit-ProjectItemValue {
             Owner = $Owner
             ProjectNumber = $ProjectNumber
             ItemId = $ItemId
+            Url = $Url
             FieldName = $FieldName
             Value = $Value
             Force = $Force
@@ -232,7 +234,8 @@ function editProjectItemValue {
     param(
         [Parameter(ValueFromPipelineByPropertyName)][string]$Owner,
         [Parameter(ValueFromPipelineByPropertyName)][string]$ProjectNumber,
-        [Parameter(Mandatory,ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)][Alias("Id")][string]$ItemId,
+        [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)][Alias("Id")][string]$ItemId,
+        [Parameter(ValueFromPipelineByPropertyName)][string]$Url,
         [Parameter(ValueFromPipelineByPropertyName,Position = 1)][string]$FieldName,
         [Parameter(ValueFromPipelineByPropertyName,Position = 2)][string]$Value,
         [Parameter()][switch]$Force
@@ -243,8 +246,8 @@ function editProjectItemValue {
         ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber 
 
         # Force cache update
-        # Full sync if force. Skip items if not force
-        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems:$(-not $Force)
+        # Full sync if force
+        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
         $dbDirty= $false
     }
@@ -253,7 +256,7 @@ function editProjectItemValue {
 
         # Find the actual value of the item. Item+Staged
         # Ignore $dirty as we are changing the db we will always save
-        ($item, $dirty) = Resolve-ProjectItem -Database $db -ItemId $ItemId
+        ($item, $dirty) = Resolve-ProjectItem -Database $db -ItemId $ItemId -Url $Url
 
         # if the item is not found
         if($null -eq $item){ "Item [$ItemId] not found" | Write-MyError; return }

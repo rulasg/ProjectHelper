@@ -85,7 +85,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue_NotCached {
     Set-InvokeCommandMock -Command "Get-MockFileContentJson -filename invoke-getitem-$itemId1.json" -Alias "Invoke-GetItem -ItemId $itemId1"
 
     # Mock get-project
-    MockCall_GetProject_700 -skipItems
+    MockCall_GetProject_700
 
     # Edit fields
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
@@ -182,7 +182,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_PullRequest_NotCached
     Set-InvokeCommandMock -Command "Import-Module $moduleTestPath ; Get-MockFileContentJson -filename invoke-getitem-$itemId1.json" -Alias "Invoke-GetItem -ItemId $itemId1"
 
     # Mock get-project
-    MockCall_GetProject_700 -skipItems
+    MockCall_GetProject_700
 
     # Edit fields
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
@@ -278,7 +278,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_DraftIssue_NotCached 
     Set-InvokeCommandMock -Command "Import-Module $moduleTestPath ; Get-MockFileContentJson -filename invoke-getitem-$itemId1.json" -Alias "Invoke-GetItem -ItemId $itemId1"
 
     # Mock get-project
-    MockCall_GetProject_700 -skipItems
+    MockCall_GetProject_700
 
     # Edit fields
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId1 $fieldComment1 $fieldCommentValue1
@@ -595,7 +595,7 @@ function Test_SyncProjectItemsStaged_Async_FAIL_Content_DraftIssue {
 
     # Arrange
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
-    MockCall_GetProject -MockProject $p -skipItems
+    MockCall_GetProject -MockProject $p
 
     $i = $p.draftIssue
     $id = $i.id
@@ -652,7 +652,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue_AddComment {
     $modulePath = $MODULE_PATH | split-path -Parent
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
-    MockCall_GetProject -MockProject $p -skipItems
+    MockCall_GetProject -MockProject $p
 
     $i = $p.issue
     $id = $i.id
@@ -684,7 +684,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_PullRequest_AddCommen
     $modulePath = $MODULE_PATH | split-path -Parent
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
-    MockCall_GetProject -MockProject $p -skipItems
+    MockCall_GetProject -MockProject $p
 
     $i = $p.pullRequest
     $id = $i.id

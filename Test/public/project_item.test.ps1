@@ -126,7 +126,7 @@ function Test_GetProjectItemUrl_SUCCESS_FromApiWhenMissingInCache {
     # Arrange
     $p = Get-Mock_Project_625 ; $owner = $p.owner ; $projectNumber = $p.number
     $itemId = "id1"
-    MockCall_GetProject -MockProject $p -SkipItems
+    MockCall_GetProject -MockProject $p
     MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-id1.json"
 
     # Act
@@ -142,7 +142,7 @@ function Test_GetProjectItemUrl_NotFound {
     # Arrange
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $itemId = "id1"
-    MockCall_GetProject -MockProject $p -SkipItems
+    MockCall_GetProject -MockProject $p
     MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-id2.json"
 
     # Act
@@ -250,7 +250,7 @@ function Test_ResetProjectItem_Value_SUCCESS{
     $item = $p.issue ; $itemId = $item.id
     $f1 = $p.fieldtext.name ; $f1Value = "Any value" ;
     $f2 = $p.fieldnumber.name ; $f2Value = 99 ;
-    MockCall_GetProject $p -SkipItems
+    MockCall_GetProject $p
     MockCall_GetItem $itemId
 
     Set-ProjectHelperEnvironment -Owner $owner -ProjectNumber $projectNumber
@@ -286,13 +286,11 @@ function Test_ResetProjectItem_Value_SUCCESS{
 
 function Test_ResetProjectItem_SUCCESS{
 
-
-
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
     $item = $p.issue ; $itemId = $item.id
     $f1 = $p.fieldtext.name ; $f1Value = "Any value" ;
     $f2 = $p.fieldnumber.name ; $f2Value = 99 ;
-    MockCall_GetProject $p -SkipItems
+    MockCall_GetProject $p
     MockCall_GetItem $itemId
 
     Set-ProjectHelperEnvironment -Owner $owner -ProjectNumber $projectNumber
@@ -401,7 +399,7 @@ function Test_ShowProjectItem_SUCCESS{
     $p = Get-Mock_Project_700; $Owner = "octodemo" ; $ProjectNumber = 700
     $i = $p.issue
 
-    MockCall_GetProject -MockProject $p -SkipItems
+    MockCall_GetProject -MockProject $p
     MockCall_GetItem -ItemId $i.id
 
     $id = $i.Id

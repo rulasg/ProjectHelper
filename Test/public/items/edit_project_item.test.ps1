@@ -84,10 +84,8 @@ function Test_EditProjectItems_Status{
 
     # Arrange
     $p = Get-Mock_Project_700 ; $Owner = $p.owner ; $ProjectNumber = $p.number
-    MockCall_GetProject $p
-    $i= $p.issue ; $itemId = $i.id
-
     MockCall_GetProject $p -SkipItems
+    $i= $p.issue ; $itemId = $i.id
 
     Set-ProjectHelperEnvironment -Owner $Owner -ProjectNumber $ProjectNumber
 
