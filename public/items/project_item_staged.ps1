@@ -97,7 +97,7 @@ function Reset-ProjectItemStaged{
     param(
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
-        [Parameter(ValueFromPipelineByPropertyName)][Alias("id")][string]$ItemId
+        [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)][Alias("id")][string]$ItemId
     )
 
     begin{
