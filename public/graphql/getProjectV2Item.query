@@ -2,7 +2,7 @@ query($itemId: ID ! $lastComments: Int=10) {
   node(id: $itemId) {
     ... on ProjectV2Item {
       id, type, fullDatabaseId,
-      project{ id, url},
+      project{ id, url, title},
       content{__typename,
            ... on DraftIssue {id,body,title,updatedAt,createdAt},
            ... on PullRequest{id,body,title,updatedAt,createdAt,number,url,state,repository{name,owner{login}}
