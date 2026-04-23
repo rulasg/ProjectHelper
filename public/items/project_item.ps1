@@ -184,7 +184,11 @@ function Search-ProjectItem {
         [Parameter()][switch]$PassThru,
         [Parameter()][string]$FieldName,
         [Parameter()][switch]$AnyField,
-        [Parameter()][switch]$Exact
+        [Parameter()][switch]$Exact,
+        
+        # Repository
+        [Parameter()][string]$RepositoryName
+
 
     )
     # if $attributes is empty add RepositoryName
@@ -206,6 +210,11 @@ function Search-ProjectItem {
 
     # Get items as hashtable for later queries
     $items = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -IncludeDone:$IncludeDone -AsHashtable
+
+    # Filter by repository if needed
+    if(-not [string]::IsNullOrWhiteSpace($RepositoryName)){
+        $items = $items.Values | Where-Object { $_.RepositoryName -eq $RepositoryName } | ForEach-Object { @{ $_.id = $_ } }
+    }
 
     # return if #items is null
     if ($null -eq $items) { return $null }
