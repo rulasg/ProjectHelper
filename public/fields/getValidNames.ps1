@@ -8,7 +8,7 @@ function Get-ValidNames{
         [Parameter(Mandatory, Position = 0)][ValidateSet([ValidFields])][string]$FieldName
     )
 
-    ($owner, $projectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber -DoNotThrow
+    ($owner, $projectNumber) = Resolve-ProjectParameters -DoNotThrow
 
     if ($null -eq $owner -or $null -eq $projectNumber) {
         return $null
