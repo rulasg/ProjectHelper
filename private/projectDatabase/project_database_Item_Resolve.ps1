@@ -2,16 +2,28 @@ function Resolve-ProjectItem {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory, Position = 0)][object]$Database,
-        [Parameter(Mandatory, Position = 1)][string]$ItemId,
+        [Parameter()][string]$ItemId,
+        [Parameter()][string]$Url,
         [Parameter()][switch]$Force
     )
 
+    # $item and $url can not be both empty
+    if([string]::IsNullOrWhiteSpace($ItemId) -and [string]::IsNullOrWhiteSpace($Url)){
+        "Either ItemId or Url must be provided" | Write-MyError
+        return $null, $false
+    }
+
     $dirty = $false
 
-    # Get Item to know what we are updating
-    $item = Get-Item -Database $Database -ItemId $ItemId
+    # When no url use ItemID
+    if([string]::IsNullOrWhiteSpace($Url)){
+        $item = Get-Item -Database $Database -ItemId $ItemId
+    } else{
+        $item = Get-ItemByUrl -Database $Database -Url $Url
+        $ItemId = $item.id
+    }
 
-    if (( ! $item ) -or $Force) {
+    if ($Force -or -not $item) {
         "Fetching item [$ItemId] from API" | Write-Verbose
 
         # Get direct. No cache as we are in a database modification context
