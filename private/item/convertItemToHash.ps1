@@ -33,6 +33,12 @@ function Convert-NodeItemToHash {
             $item.commentLast = $item.comments ? $item.comments[-1] : $null
         }
 
+        # Parent
+        if($NodeItem.content.parent){
+            $item.parent = $NodeItem.content.parent
+        }
+
+        # SubIssues
         if($NodeItem.content.subIssues.totalCount -gt 0){
             $item.subIssues = $NodeItem.content.subIssues.nodes
         }

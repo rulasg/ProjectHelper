@@ -1,1 +1,1 @@
-{ id, title, url }
+{ id, title, state, url }

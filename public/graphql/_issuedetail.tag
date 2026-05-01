@@ -1,8 +1,8 @@
-{ id,body,title,updatedAt,createdAt,number,url,state,
-  repository{ name, owner{ login }}
+{ id,body,title,updatedAt,createdAt,number,url,state, repository{ name, owner{ login }}
+  parent{{issuemini}},
   comments(last: 10){
      totalCount,
-     nodes{createdAt,updatedAt,url,body,fullDatabaseId,author{login}}
+     nodes{{comment}}
   },
   subIssues(first: 100){
     totalCount,

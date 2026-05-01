@@ -1,0 +1,1 @@
+{createdAt,updatedAt,url,body,fullDatabaseId,author{login}}

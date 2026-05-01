@@ -56,6 +56,8 @@ function Show-ProjectItem{
         # title bar
         # ($item.RepositoryOwner + "/") | write -Color Cyan
         # ($item.RepositoryName) | write -Color Cyan
+        writeState($item.state) -Trim
+        addSpace
         $item.number | write -Color Cyan -PreFix "# "
         addSpace
         $item.Title | write -Color Yellow -BetweenQuotes
@@ -66,9 +68,23 @@ function Show-ProjectItem{
         $item.url | write -Color White
         addJumpLine -message "End Url"
         
+        # Parent
+        if($item.parent){
+            writeSubissue "Parent." $item.parent
+        }
+
         # Assignee
         $item.Assignees | write -color DarkGreen
         addJumpLine -message "End Assignees"
+
+        # SubIssues
+        if($item.subIssues.Count -gt 0){
+            addJumpLine -message "SubIssues Start"
+            for($i = 0; $i -lt $item.subIssues.Count; $i++){
+                addTab
+                writeSubissue "$($i+1)." $item.subIssues[$i]
+            }
+        }
 
         # Fields by line
         if($FieldsToShow){
@@ -138,10 +154,37 @@ function getStatusColor{
     )
 
     switch ($status.ToLower()) {
-        "Todo" { return "Green" }
+        "Todo" { return "DarkGreen" }
         "Done" { return "DarkMagenta" }
-        "In Progress" { return "Yellow" }
+        "In Progress" { return "DarkYellow" }
         default { return "Gray" }
+    }
+}
+
+function getStateColor{
+    param(
+        [string]$state
+    )
+
+    switch ($state.ToLower()) {
+        "DRAFT"  { return "Grey" }
+        "OPEN"   { return "DarkGreen" }
+        "CLOSED" { return "DarkMagenta" }
+        "MERGED" { return "DarkMagenta" }
+        default  { return "Red" }
+    }
+}
+function getStateChar{
+    param(
+        [string]$state
+    )
+
+    switch ($state.ToLower()) {
+        "DRAFT"  { return "⚪Draft " }
+        "OPEN"   { return "🟢OPEN  " }
+        "CLOSED" { return "🟣CLOSED" }
+        "MERGED" { return "🟣MERGED" }
+        default {  return "⭕️Unknown" }
     }
 }
 
@@ -253,12 +296,43 @@ function writeComment2{
     }
 }
 
+function writeState{
+    param(
+        [string]$state,
+        [switch]$Trim
+    )
+
+    $s = getStateChar($state)
+
+    $s = $Trim ? $s.Trim() : $s
+
+    $s | write -Color $(getStateColor $state)
+}
+
+function writeSubissue{
+    param(
+        [string]$Tag,
+        [object]$Sub
+     )
+
+    $Tag | write -Color DarkGray
+    addSpace
+    writeState($sub.state)
+    addSpace
+    $sub.title | write -Color Gray
+    addSpace
+    $sub.url | write -Color DarkGray -BetweenSquareBrackets
+    addJumpLine -message "SubIssue item End $Tag"
+
+}
+
 function write{
     param(
         [Parameter(Position = 1)][string]$color,
         [Parameter(Position = 2,ValueFromPipeline)][string]$text,
         [Parameter()][switch]$BetweenQuotes,
         [Parameter()][switch]$BetweenBrackets,
+        [Parameter()][switch]$BetweenSquareBrackets,
         [Parameter()][string]$PreFix,
         [Parameter()][string]$SuFix,
         [Parameter()][string]$DefaultValue
@@ -276,6 +350,10 @@ function write{
 
         if($BetweenBrackets){
             $text = "($text)"
+        }
+
+        if($BetweenSquareBrackets){
+            $text = "[$text]"
         }
 
         if($BetweenQuotes){
@@ -303,6 +381,11 @@ function addJumpLine($message){
 }
 function addSpace{
     $text = (Test-MyDebug -section $DEBUG_SECTION_SHOWPROJECTITEM) ? "[●]" : " "
+    $text | writetoconsole -Color Green -NoNewLine
+}
+
+function addTab{
+     $text = (Test-MyDebug -section $DEBUG_SECTION_SHOWPROJECTITEM) ? "[TAB]" : "    "
     $text | writetoconsole -Color Green -NoNewLine
 }
 

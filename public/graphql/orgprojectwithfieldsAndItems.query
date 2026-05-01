@@ -14,10 +14,15 @@ query OrgProjectWithFields( $afterFields:String! $afterItems:String! $lastCommen
                         nodes{createdAt,updatedAt,url,body,fullDatabaseId,author{login}}
                     }
                 },
-                ... on       Issue{id,body,title,updatedAt,createdAt,number,url,state,repository{name,owner{login}}
+                ... on Issue{id,body,title,updatedAt,createdAt,number,url,state,repository{name,owner{login}}
+                    parent{{issuemini}},
                     comments(last: $lastComments){
                         totalCount,
                         nodes{createdAt,updatedAt,url,body,fullDatabaseId,author{login}}
+                    },
+                    subIssues(last: 100){
+                        totalCount,
+                        nodes{id,title,url,state}
                     }
                 }
             },
