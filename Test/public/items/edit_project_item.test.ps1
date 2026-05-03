@@ -285,8 +285,8 @@ function Test_EditProjectItems_NormalizeTitle_AlreadyNormalized_Different_Case{
     $i= $p.issue ; $itemId = $i.id
 
     # Already Normalized
-    $newTitle = "[RuLasG-dev-1] Issue [rulasg-DEV-1] for [value between] development"
-    $expectedtitle = "[rulasg-dev-1] Issue [rulasg-dev-1] for [value between] development"
+    $newTitle        = "[RuLasG-dev-1] Issue [rulasg-DEV-1] for [value between] development"
+    $expectedtitle   = "[rulasg-dev-1] Issue [rulasg-dev-1] for [value between] development"
     Update-Mock_DatabaseFileWithReplace "db-$Owner-$ProjectNumber-project.json" $i.title $newTitle
 
     # Act
@@ -295,11 +295,7 @@ function Test_EditProjectItems_NormalizeTitle_AlreadyNormalized_Different_Case{
     # Assert
     $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
     Assert-Count -Expected 1 -Presented $result.$itemId.Keys
-    
-    # Assert
-    $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
-    Assert-Count -Expected 0 -Presented $result.$itemId.Keys
-    Assert-AreEqual -Expected $newTitle -Presented $result.$itemId.title.Value
+    Assert-AreEqual -Expected $expectedtitle -Presented $result.$itemId.title.Value
 }
 
 function Test_NormalizedTitle{
