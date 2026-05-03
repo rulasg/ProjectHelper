@@ -58,7 +58,7 @@ function Test_UpdateProjectItemsBetweenProjects_NoRefresh_NoRefresh{
         DestinationProjectNumber = $destinationProjectNumber
         FieldSlug = "pr1_"
     }
-    $result = Update-ProjectItemsBetweenProjects -IncludeDoneItems -NoRefreshDestination -NoRefreshSource @params
+    $result = Update-ProjectItemsBetweenProjects -IncludeDoneItems @params
 
     Assert-IsNull -Object $result
 
