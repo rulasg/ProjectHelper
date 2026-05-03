@@ -18,71 +18,71 @@
     },
     fieldValues(first: 100){
         nodes{__typename,
-        ... on ProjectV2ItemFieldDateValue{date,field{__typename,... on ProjectV2Field{id,name,dataType
-                },... on ProjectV2IterationField{id,name,dataType
-                },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
+        ... on ProjectV2ItemFieldDateValue{date,field{__typename,... on ProjectV2Field{databaseId,id,name,dataType
+                },... on ProjectV2IterationField{databaseId,id,name,dataType
+                },... on ProjectV2SingleSelectField{databaseId,id,name,dataType,options{id,name
                     }
                 }
             }
-        },... on ProjectV2ItemFieldIterationValue{title,startDate,duration,field{__typename,... on ProjectV2Field{id,name,dataType
-                },... on ProjectV2IterationField{id,name,dataType
-                },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
+        },... on ProjectV2ItemFieldIterationValue{title,startDate,duration,field{__typename,... on ProjectV2Field{databaseId,id,name,dataType
+                },... on ProjectV2IterationField{databaseId,id,name,dataType
+                },... on ProjectV2SingleSelectField{databaseId,id,name,dataType,options{id,name
                     }
                 }
             }
         },... on ProjectV2ItemFieldLabelValue{labels(first: 10){nodes{name
                 }
-            },field{__typename,... on ProjectV2Field{id,name,dataType
-                },... on ProjectV2IterationField{id,name,dataType
-                },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
+            },field{__typename,... on ProjectV2Field{databaseId,id,name,dataType
+                },... on ProjectV2IterationField{databaseId,id,name,dataType
+                },... on ProjectV2SingleSelectField{databaseId,id,name,dataType,options{id,name
                     }
                 }
             }
-        },... on ProjectV2ItemFieldNumberValue{number,field{__typename,... on ProjectV2Field{id,name,dataType
-                },... on ProjectV2IterationField{id,name,dataType
-                },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
+        },... on ProjectV2ItemFieldNumberValue{number,field{__typename,... on ProjectV2Field{databaseId,id,name,dataType
+                },... on ProjectV2IterationField{databaseId,id,name,dataType
+                },... on ProjectV2SingleSelectField{databaseId,id,name,dataType,options{id,name
                     }
                 }
             }
-        },... on ProjectV2ItemFieldSingleSelectValue{name,field{__typename,... on ProjectV2Field{id,name,dataType
-                },... on ProjectV2IterationField{id,name,dataType
-                },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
+        },... on ProjectV2ItemFieldSingleSelectValue{name,field{__typename,... on ProjectV2Field{databaseId,id,name,dataType
+                },... on ProjectV2IterationField{databaseId,id,name,dataType
+                },... on ProjectV2SingleSelectField{databaseId,id,name,dataType,options{id,name
                     }
                 }
             }
-        },... on ProjectV2ItemFieldTextValue{text,field{__typename,... on ProjectV2Field{id,name,dataType
-                },... on ProjectV2IterationField{id,name,dataType
-                },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
+        },... on ProjectV2ItemFieldTextValue{text,field{__typename,... on ProjectV2Field{databaseId,id,name,dataType
+                },... on ProjectV2IterationField{databaseId,id,name,dataType
+                },... on ProjectV2SingleSelectField{databaseId,id,name,dataType,options{id,name
                     }
                 }
             }
         },... on ProjectV2ItemFieldMilestoneValue{milestone{title,description,dueOn
-            },field{__typename,... on ProjectV2Field{id,name,dataType
-                },... on ProjectV2IterationField{id,name,dataType
-                },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
+            },field{__typename,... on ProjectV2Field{databaseId,id,name,dataType
+                },... on ProjectV2IterationField{databaseId,id,name,dataType
+                },... on ProjectV2SingleSelectField{databaseId,id,name,dataType,options{id,name
                     }
                 }
             }
         },... on ProjectV2ItemFieldPullRequestValue{pullRequests(first: 10){nodes{url
                 }
-            },field{__typename,... on ProjectV2Field{id,name,dataType
-                },... on ProjectV2IterationField{id,name,dataType
-                },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
+            },field{__typename,... on ProjectV2Field{databaseId,id,name,dataType
+                },... on ProjectV2IterationField{databaseId,id,name,dataType
+                },... on ProjectV2SingleSelectField{databaseId,id,name,dataType,options{id,name
                     }
                 }
             }
         },... on ProjectV2ItemFieldRepositoryValue{repository{url
-            },field{__typename,... on ProjectV2Field{id,name,dataType
-                },... on ProjectV2IterationField{id,name,dataType
-                },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
+            },field{__typename,... on ProjectV2Field{databaseId,id,name,dataType
+                },... on ProjectV2IterationField{databaseId,id,name,dataType
+                },... on ProjectV2SingleSelectField{databaseId,id,name,dataType,options{id,name
                     }
                 }
             }
         },... on ProjectV2ItemFieldUserValue{users(first: 10){nodes{login
                 }
-            },field{__typename,... on ProjectV2Field{id,name,dataType
-                },... on ProjectV2IterationField{id,name,dataType
-                },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
+            },field{__typename,... on ProjectV2Field{databaseId,id,name,dataType
+                },... on ProjectV2IterationField{databaseId,id,name,dataType
+                },... on ProjectV2SingleSelectField{databaseId,id,name,dataType,options{id,name
                     }
                 }
             }
@@ -90,9 +90,9 @@
                     },... on User{login
                     }
                 }
-            },field{__typename,... on ProjectV2Field{id,name,dataType
-                },... on ProjectV2IterationField{id,name,dataType
-                },... on ProjectV2SingleSelectField{id,name,dataType,options{id,name
+            },field{__typename,... on ProjectV2Field{databaseId,id,name,dataType
+                },... on ProjectV2IterationField{databaseId,id,name,dataType
+                },... on ProjectV2SingleSelectField{databaseId,id,name,dataType,options{id,name
                     }
                 }
             }

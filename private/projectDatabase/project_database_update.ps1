@@ -176,6 +176,7 @@ function Convert-FieldsFromReponse{
 
         $field = @{
             id = $node.id
+            databaseId = $node.databaseId
             dataType = $node.dataType
             type = $node.__typename
             name = $node.name
@@ -187,6 +188,9 @@ function Convert-FieldsFromReponse{
                 $field.options.$($option.name) = $option.id
             }
         }
+
+        # TODO: Add other fields like iteration or milestone
+
         $fields.$fieldId = $field
     }
 
