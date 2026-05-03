@@ -12,6 +12,7 @@ query($itemId: ID ! $lastComments: Int=10) {
              }
            },
            ... on Issue{id,body,title,updatedAt,createdAt,number,url,state,repository{name,owner{login}}
+             parent{{issuemini}},
              comments(last: $lastComments){
                 totalCount,
                 nodes{createdAt,updatedAt,url,body,fullDatabaseId,author{login}}
