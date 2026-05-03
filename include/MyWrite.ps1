@@ -84,14 +84,45 @@ function Write-MyDebug {
                 $objString = $Object | Get-ObjetString
                 $message = $message + " - " + $objString
             }
-            $timestamp = Get-Date -Format 'HH:mm:ss.fff'
 
-            # Write on host
-            $logMessage ="[$timestamp][$MODULE_NAME][D][$section] $message"
+            $logMessage = normalizeMessage -Message $message -Section $section -Tag "D"
 
             $logMessage | Write-ToConsole -Color $DEBUG_COLOR
             $logMessage | Write-MyDebugLogging
         }
+    }
+}
+
+function normalizeMessage {
+    param(
+        [Parameter(Mandatory, ValueFromPipeline)][string]$Message,
+        #section
+        [Parameter(Position = 1)][string]$Section,
+        # tag
+        [Parameter(Position = 2)][string]$Tag
+    )
+
+    process{
+        $timestamp = Get-Date -Format 'HH:mm:ss.fff'
+
+        $message = remove-secrets -Message $message
+
+        return "[$timestamp][$MODULE_NAME][$Tag][$Section] $Message"
+    }
+}
+
+function remove-secrets {
+    param(
+        [Parameter(Mandatory, ValueFromPipeline)][string]$Message
+    )
+
+    process{
+
+        # Remove GitHub tokens (ghp_ or gho_ or ghu_ or ghs_)
+        $tokenPattern = "gh[opsu]_[A-Za-z0-9_]{36,255}"
+        $message = [regex]::Replace($message, $tokenPattern, "gh***")
+
+        return $message
     }
 }
 
