@@ -197,7 +197,7 @@ function Test_InvokeProjectInjection{
 
     Assert-Count -Expected 1 -Presented $result
     # PVTI_lADOAlIw4c4A0Lf4zgYNTxI
-    Assert-AreEqual -Expected "Value updated from integration1" -Presented $result.PVTI_lADOAlIw4c4A0Lf4zgYNTxI.PVTF_lADOAlIw4c4A0Lf4zgp2lxM.Value
+    Assert-AreEqual -Expected "Value updated from integration1" -Presented $result.PVTI_lADOAlIw4c4A0Lf4zgYNTxI.PVTF_lADOAlIw4c4A0Lf4zg15NMg.Value
 }
 
 function Test_InvokeProjectInjection_Fail{
