@@ -1,14 +1,7 @@
 
-class ValidStatus : System.Management.Automation.IValidateSetValuesGenerator { 
-    [String[]] GetValidValues() {
-        # TODO : Remove this reset and reset class script variable from Reset-DatabaseStore
-        # We need to reset the database variable to ensure Class will reset databaseRoot and read fromthe proper place.
-        # This is needed for testing as we mock the databaseRoot path
-        # We can remove this if we figure out how to reset the class script variable when reseting the databaseRoot in Reset-DatabaseStore
-        $script:databaseRoot = $null
-        
-        return Get-ValidNames "Status" }
-}
+Register-ArgumentCompleter -CommandName Edit-ProjectItem -ParameterName Value -ScriptBlock $(Get-ArgumentCompleterScriptBlock "Script_GetValidNames_FieldName")
+Register-ArgumentCompleter -CommandName Edit-ProjectItem -ParameterName Status -ScriptBlock $(Get-ArgumentCompleterScriptBlock "Script_GetValidNames_ParameterName")
+Register-ArgumentCompleter -CommandName Edit-ProjectItem -ParameterName FieldName -ScriptBlock $(Get-ArgumentCompleterScriptBlock "Script_GetValidFieldsNames")
 
 function Edit-ProjectItem {
     [CmdletBinding()]
@@ -37,7 +30,8 @@ function Edit-ProjectItem {
         [Parameter()][Alias("CL")][switch]$AddCommentLongText,
 
         # Status
-        [Parameter()][ValidateSet([ValidStatus])][Alias("St")][string]$Status,
+        # [Parameter()][ValidateSet([ValidStatus])][Alias("St")][string]$Status,
+        [Parameter()][Alias("St")][string]$Status,
 
         # Punded parameters
         [Parameter()][Alias("D")][switch]$DefaultValues,
