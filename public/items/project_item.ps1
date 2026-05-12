@@ -187,8 +187,8 @@ function Search-ProjectItem {
         [Parameter()][switch]$Exact,
         
         # Repository
-        [Parameter()][string]$RepositoryName
-
+        [Parameter()][string]$RepositoryName,
+        [Parameter()][string]$RepositoryOwner
 
     )
     # if $attributes is empty add RepositoryName
@@ -214,6 +214,10 @@ function Search-ProjectItem {
     # Filter by repository if needed
     if(-not [string]::IsNullOrWhiteSpace($RepositoryName)){
         $items = $items.Values | Where-Object { $_.RepositoryName -eq $RepositoryName } | ForEach-Object { @{ $_.id = $_ } }
+    }
+
+    if(-not [string]::IsNullOrWhiteSpace($RepositoryOwner)){
+        $items = $items.Values | Where-Object { $_.RepositoryOwner -eq $RepositoryOwner } | ForEach-Object { @{ $_.id = $_ } }
     }
 
     # return if #items is null
