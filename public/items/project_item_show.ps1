@@ -98,8 +98,9 @@ function Show-ProjectItem{
         addJumpLine -message "Fields After"
 
         # Body
-        "Body" | writeHeader
-        $item.Body | write -Color Gray
+        # "Body" | writeHeader
+        # $item.Body | write -Color Gray
+        writeBodyComment -order 0 -author $item.Author -createdAt $item.createdAt -Text $item.Body
         addJumpLine -message "Body End"
 
         # Comments
@@ -112,12 +113,13 @@ function Show-ProjectItem{
                 $count++
                 $order = $orderFirst + $count
 
-                writeComment -Comment $c -order $order -item $item
+                writeBodyComment -order $order -total $item.commentsTotalCount -author $c.author -createdAt $c.updatedAt -Text $c.body
             }
         } else {
             # LastCommment
             if($item.commentLast){
-                writeComment -Comment $item.commentLast -order $item.commentsTotalCount -item $item
+                writeBodyComment -order $item.commentsTotalCount -total $item.commentsTotalCount -author $item.commentLast.author -createdAt $item.commentLast.updatedAt -Text $item.commentLast.body
+
             }
         }
 
@@ -294,6 +296,34 @@ function writeComment2{
         addJumpLine -message "Comment 2 Body End"
 
     }
+}
+
+function writeBodyComment{
+    param(
+        [int]$order,
+        [int]$total,
+        [string]$author,
+        [string]$createdAt,
+        [string]$Text
+    )
+
+    if ($order -eq 0){
+        $header = "Body"
+    } else {
+        $header = "Comment [$order/$total]"
+        if($order -eq $total) {$header += " Last"}
+    }
+
+    addJumpLine -message "Comment Body Start"
+
+    writeHeader $header -Author $author -UpdatedAt $createdAt
+
+    addJumpLine -message "Comment Body Text Start"
+
+    $Text | write -Color Gray
+
+    addJumpLine -message "Comment Body End"
+
 }
 
 function writeState{
