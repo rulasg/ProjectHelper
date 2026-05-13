@@ -1,0 +1,1 @@
+id,body,author{login},title,updatedAt,createdAt,number,url,state,repository{name,owner{login}}

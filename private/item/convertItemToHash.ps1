@@ -24,6 +24,7 @@ function Convert-NodeItemToHash {
         # Content
         $item.type = $NodeItem.content.__typename
         $item.Body = $NodeItem.content.body
+        $item.Author = $NodeItem.content.author.login
         $item.contentId = $NodeItem.content.id
 
         # Comments
