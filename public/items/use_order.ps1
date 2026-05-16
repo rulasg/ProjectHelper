@@ -39,7 +39,13 @@ function Use-Order {
 
         # Show list of items
         if ($Ordinal -lt 0) {
-            return $finalList | Format-Table -AutoSize
+            #return item
+            if($PassThru) {
+                return [PsCustomObject]$finalList
+            } else {
+                $finalList | Format-Table -Property * -AutoSize
+                return
+            }
         }
 
         # Show a particular item
@@ -72,7 +78,7 @@ function Use-Order {
                 #return item
         if($PassThru) {
             $i = Get-ProjectItem -ItemId $itemId
-            Write-Output ([PsCustomObject]$i)
+            [PsCustomObject]$i
         }
     }
 } Export-ModuleMember -Function Use-Order -Alias "uo"
