@@ -7,6 +7,7 @@ function Show-ProjectItem{
         [Parameter()][string]$Owner,
         [Parameter()][int]$ProjectNumber,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)][Alias("id")][string]$ItemId,
+        [Parameter()][Alias("M")][switch]$Minimal,
         [Parameter()][Alias("A")][switch]$AllComments,
         [Parameter()][Alias("E")][switch]$OpenInEditor,
         [Parameter()][Alias("W")][switch]$OpenInBrowser,
@@ -98,28 +99,29 @@ function Show-ProjectItem{
         addJumpLine -message "Fields After"
 
         # Body
-        # "Body" | writeHeader
-        # $item.Body | write -Color Gray
-        writeBodyComment -order 0 -author $item.Author -createdAt $item.createdAt -Text $item.Body
-        addJumpLine -message "Body End"
+        $lines = $Minimal ? 10 : 0
+
+        #Body
+        writeBodyComment -order 0 -author $item.Author -createdAt $item.createdAt -Text $bodyPreview -MaxPreviewLines $lines
 
         # Comments
+
         if($AllComments){
             # All comments
             $count = 0
             $orderFirst = $item.commentsTotalCount - $item.comments.Count
-
+            
             foreach($c in $item.comments){
                 $count++
                 $order = $orderFirst + $count
-
-                writeBodyComment -order $order -total $item.commentsTotalCount -author $c.author -createdAt $c.updatedAt -Text $c.body
+                
+                writeBodyComment -order $order -total $item.commentsTotalCount -author $c.author -createdAt $c.updatedAt -Text $c.body -MaxPreviewLines $lines
             }
         } else {
             # LastCommment
             if($item.commentLast){
-                writeBodyComment -order $item.commentsTotalCount -total $item.commentsTotalCount -author $item.commentLast.author -createdAt $item.commentLast.updatedAt -Text $item.commentLast.body
-
+                writeBodyComment -order $item.commentsTotalCount -total $item.commentsTotalCount -author $item.commentLast.author -createdAt $item.commentLast.updatedAt -Text $item.commentLast.body -MaxPreviewLines $lines
+                
             }
         }
 
@@ -298,14 +300,36 @@ function writeComment2{
     }
 }
 
+function getTextPreview{
+    param(
+        [string]$Body,
+        [int]$MaxLines = 0
+    )
+
+    if($MaxLines -eq 0){
+        return $Body
+    }
+
+    $bodyPreview = ($Body -split '\n' | Select-Object -First $MaxLines) -join "`n"
+    $count = ($Body -split '\n').Count
+    if($count -gt $MaxLines){
+        $bodyPreview += "`n..."
+    }
+
+    return $bodyPreview
+}
+
 function writeBodyComment{
     param(
         [int]$order,
         [int]$total,
         [string]$author,
         [string]$createdAt,
-        [string]$Text
+        [string]$Text,
+        [int]$MaxPreviewLines = 0
     )
+
+    $text = getTextPreview -Body $Text -MaxLines $MaxPreviewLines
 
     if ($order -eq 0){
         $header = "Body"
