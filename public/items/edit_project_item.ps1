@@ -1,7 +1,7 @@
 
-Register-ArgumentCompleter -CommandName Edit-ProjectItem -ParameterName Value -ScriptBlock $(Get-ArgumentCompleterScriptBlock "Script_GetValidNames_FieldName")
 Register-ArgumentCompleter -CommandName Edit-ProjectItem -ParameterName Status -ScriptBlock $(Get-ArgumentCompleterScriptBlock "Script_GetValidNames_ParameterName")
 Register-ArgumentCompleter -CommandName Edit-ProjectItem -ParameterName FieldName -ScriptBlock $(Get-ArgumentCompleterScriptBlock "Script_GetValidFieldsNames")
+Register-ArgumentCompleter -CommandName Edit-ProjectItem -ParameterName Value -ScriptBlock $(Get-ArgumentCompleterScriptBlock "Script_GetValidNames_FieldName")
 
 function Edit-ProjectItem {
     [CmdletBinding()]
@@ -10,11 +10,11 @@ function Edit-ProjectItem {
         [Parameter(ValueFromPipelineByPropertyName)][string]$Owner,
         [Parameter(ValueFromPipelineByPropertyName)][string]$ProjectNumber,
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)][Alias("ItemId")][string]$Id,
-        [Parameter(ValueFromPipelineByPropertyName,Position = 1)][string]$FieldName,
-        [Parameter(ValueFromPipelineByPropertyName,Position = 2)][string]$Value,
+        [Parameter(ValueFromPipelineByPropertyName,Position = 0)][Alias("F")][string]$FieldName,
+        [Parameter(ValueFromPipelineByPropertyName,Position = 1)][Alias("V")][string]$Value,
         
         [Parameter()][Alias("MM")][switch]$Commit,
-        [Parameter()][Alias("F")][switch]$Force,
+        [Parameter()][switch]$Force,
         [Parameter()][Alias("O")][switch]$OpenInBrowser,
         
         # Fields

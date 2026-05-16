@@ -1,13 +1,20 @@
 function Get-ParameterValue {
     param(
         [string]$CommandText,
-        [string]$ParameterName = "FieldName"
+        [string]$ParameterName,
+        [string]$ParameterAlias
     )
     
     # Match parameter followed by either quoted string or unquoted word
     if ($CommandText -match "-$ParameterName\s+(?:(?:`"([^`"]*)`")|(?:'([^']*)')|([^\s-]+))") {
         return $matches[1], $matches[2], $matches[3] | Where-Object { $_ }
     }
+    
+    # If ParameterName not found, try ParameterAlias
+    if ($ParameterAlias -and $CommandText -match "-$ParameterAlias\s+(?:(?:`"([^`"]*)`")|(?:'([^']*)')|([^\s-]+))") {
+        return $matches[1], $matches[2], $matches[3] | Where-Object { $_ }
+    }
+    
     return $null
 }
 
@@ -27,7 +34,7 @@ function Get-ArgumentCompleterScriptBlock($Name) {
 
         "Procesing $CommandName -$parameterName with word to complete: $wordToComplete" | Write-MyDebug -Section "ArgumentCompleter"
 
-        $fieldname = Get-ParameterValue -CommandText $commandAst.Extent.Text -ParameterName "FieldName"
+        $fieldname = Get-ParameterValue -CommandText $commandAst.Extent.Text -ParameterName "FieldName" -ParameterAlias "F"
 
         "Extracted FieldName: $fieldname" | Write-MyDebug -Section "ArgumentCompleter"
 
