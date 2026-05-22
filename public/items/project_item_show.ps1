@@ -41,9 +41,14 @@ function Show-ProjectItem{
 
         if(-not $FieldsToShow){
             $statusColor = getStatusColor($item.Status)
-            $FieldsToShow = @(
+            $lineFields = @(
                 @(@{Name="Status"; Color = $statusColor})
+                @(@{Name="DueDate"; Color = "DarkYellow"; Prefix = "Due: " ; HideIfEmpty = $true})
             )
+            $lineComment = @(
+               @{Name = "Comment"  ; Color = "White"; Prefix = "> CM: " ; BetweenQuotes = $false ; HideIfEmpty = $true }
+            )
+            $FieldsToShow = $lineFields, $lineComment
         }
 
         # Clear screen before showing if requested
@@ -99,10 +104,10 @@ function Show-ProjectItem{
         addJumpLine -message "Fields After"
 
         # Body
-        $lines = $Minimal ? 10 : 0
+        $lines = $Minimal ? 15 : 0
 
         #Body
-        writeBodyComment -order 0 -author $item.Author -createdAt $item.createdAt -Text $bodyPreview -MaxPreviewLines $lines
+        writeBodyComment -order 0 -author $item.Author -createdAt $item.createdAt -Text $item.Body -MaxPreviewLines $lines
 
         # Comments
 
@@ -161,6 +166,7 @@ function getStatusColor{
         "Todo" { return "DarkGreen" }
         "Done" { return "DarkMagenta" }
         "In Progress" { return "DarkYellow" }
+        "Answered" { return "Magenta" }
         default { return "Gray" }
     }
 }
