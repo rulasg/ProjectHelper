@@ -1,4 +1,4 @@
-Set-MyinvokeCommandAlias -Alias GetToken -Command "gh auth token"
+Set-MyinvokeCommandAlias -Alias ProjectHelper_GetToken -Command "gh auth token"
 
 
 <#
@@ -499,7 +499,7 @@ function Get-GithubToken{
     [CmdletBinding()]
     param()
 
-    $token = Invoke-MyCommand -Command GetToken
+    $token = Invoke-MyCommand -Command ProjectHelper_GetToken
 
     if(-not $token){
         throw "Token not available. Check `gh auth token` output."
