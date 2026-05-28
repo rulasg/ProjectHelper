@@ -114,7 +114,7 @@ function Show-ProjectItem{
         if($AllComments){
             # All comments
             $count = 0
-            $orderFirst = $item.commentsTotalCount - $item.comments.Count
+            $orderFirst = $item.commentsTotalCount - $item.comments.Length
             
             foreach($c in $item.comments){
                 $count++
