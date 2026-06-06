@@ -1,6 +1,6 @@
  {
     id, type, fullDatabaseId,
-    project{ id, url},
+    project{{projectv2}},
     content{__typename,
         ... on DraftIssue {id,body,title,updatedAt,createdAt},
         ... on PullRequest{id,body,author{login},title,updatedAt,createdAt,number,url,state,repository{name,owner{login}}

@@ -1,6 +1,6 @@
 {
     id,fullDatabaseId,
-    project{ id, number, title, url},
+    project{{projectv2}},
     content{{content}},
     fieldValues(first: 100){
         nodes{{fieldValuesNodes}}
