@@ -10,8 +10,8 @@ function Edit-ProjectItem {
         [Parameter(ValueFromPipelineByPropertyName)][string]$Owner,
         [Parameter(ValueFromPipelineByPropertyName)][string]$ProjectNumber,
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)][Alias("ItemId")][string]$Id,
-        [Parameter(ValueFromPipelineByPropertyName,Position = 0)][Alias("F")][string]$FieldName,
-        [Parameter(ValueFromPipelineByPropertyName,Position = 1)][Alias("V")][string]$Value,
+        [Parameter(ValueFromPipelineByPropertyName,Position = 1)][Alias("F")][string]$FieldName,
+        [Parameter(ValueFromPipelineByPropertyName,Position = 2)][Alias("V")][string]$Value,
         
         [Parameter()][Alias("MM")][switch]$Commit,
         [Parameter()][switch]$Force,
