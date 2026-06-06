@@ -33,6 +33,7 @@ function Get-Project {
 
 function Update-Project{
     [CmdletBinding()]
+    [Alias("up")]
     param(
         [Parameter()][string]$Owner,
         [Parameter()][int]$ProjectNumber,
@@ -64,7 +65,7 @@ function Update-Project{
     }
 
     return $ret
-} Export-ModuleMember -Function Update-Project
+} Export-ModuleMember -Function Update-Project -Alias up
 
 function Get-ProjectId {
     [CmdletBinding()]
@@ -85,6 +86,7 @@ function Get-ProjectId {
 
 function Open-Project{
     [CmdletBinding()]
+    [Alias("op")]
     param(
         [Parameter(ValueFromPipelineByPropertyName)][string]$Owner,
         [Parameter(ValueFromPipelineByPropertyName)][int]$ProjectNumber,
@@ -121,4 +123,4 @@ function Open-Project{
         Write-Host "URL: $projectUrl"
     }
 
-} Export-ModuleMember -Function Open-Project
+} Export-ModuleMember -Function Open-Project -Alias op
