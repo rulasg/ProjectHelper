@@ -5,7 +5,7 @@ Register-ArgumentCompleter -CommandName Edit-ProjectItem -ParameterName Value -S
 
 function Edit-ProjectItem {
     [CmdletBinding()]
-    [Alias("epi")]
+    [Alias("epi","e")]
     param(
         [Parameter(ValueFromPipelineByPropertyName)][string]$Owner,
         [Parameter(ValueFromPipelineByPropertyName)][string]$ProjectNumber,
@@ -111,7 +111,7 @@ function Edit-ProjectItem {
         # Begin determine that we should not run any pipe object
         if( $quit ){ return }
 
-        $params.ItemId = $Id
+        $params.ItemId = [string]::IsNullOrWhiteSpace($Id) ? $(Invoke-QQ_Get_G) : $Id
 
         # Status parameter
         if (-Not [string]::IsNullOrWhiteSpace($Status)) {
@@ -185,7 +185,7 @@ function Edit-ProjectItem {
         }
 
     }
-} Export-ModuleMember -Function Edit-ProjectItem -Alias "epi"
+} Export-ModuleMember -Function Edit-ProjectItem -Alias "epi","e"
 
 function Edit-ProjectItemValue {
     [CmdletBinding()]
