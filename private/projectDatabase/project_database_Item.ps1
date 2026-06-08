@@ -106,9 +106,16 @@ function Get-ItemByUrl{
     )
 
     process{
-        $item = Find-Item -Database $Database -FieldName "urlContent" -Value $Url
 
-        return $item
+        # Do not use find to improve performance
+        # $item = Find-Item -Database $Database -FieldName "urlContent" -Value $Url
+
+        $item = $Database.items.Values | where-Object {$_."urlContent" -eq $Url}
+
+        # Return item with all the fields including staged values
+        $ret = Get-Item -Database $db -ItemId $item.id
+
+        return $ret
     }
 }
 
