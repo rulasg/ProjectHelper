@@ -1,0 +1,5 @@
+mutation UpdateProjectV2($input:UpdateProjectV2Input!){
+    updateProjectV2(input:$input){
+        projectV2{{projectV2}}
+    }
+}
