@@ -48,6 +48,7 @@ function Get-Mock_Project_700 {
     $project.title = $pActual.title
     $project.number = $pActual.number
     $project.url = $pActual.url
+    $project.id = $pActual.id
     $project.cacheFileName = "db-$($pActual.owner.login)-$($pActual.number)-project.json"
 
     # Fields info

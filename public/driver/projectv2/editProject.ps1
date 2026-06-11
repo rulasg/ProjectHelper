@@ -1,5 +1,5 @@
 
-Set-InvokeCommandAlias -Alias updateProjectV2 -Command 'Invoke-UpdateProjectV2 -ProjectId {projectid} -ReadMeBase64 {readmebase64}'
+Set-MyInvokeCommandAlias -Alias updateProjectV2 -Command 'Invoke-UpdateProjectV2 -ProjectId {projectid} -ReadMeBase64 {readmebase64}'
 
 function Edit-Project {
     param(

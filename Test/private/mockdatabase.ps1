@@ -34,3 +34,16 @@ function Update-Mock_DatabaseFileWithReplace([string]$FileName, [string]$SearchS
     $cachelock = $dbpath -replace '\.json$', '-lock.json'
     Remove-Item -Path $cachelock -Force -ErrorAction SilentlyContinue
 }
+
+function Update-Mock_DatabaseFileWithField([string]$FileName, [string]$Property, [string]$ReplaceString){
+
+    $dbpath = Get-Mock_DatabaseRootPath | Join-Path -ChildPath $FileName
+    $db = Get-Content $dbpath -Raw | convertfrom-json -Depth 10
+    $db.$Property = $ReplaceString
+    $content = $db | ConvertTo-Json -Depth 10
+    $content | Set-Content $dbpath
+
+    # Reset the memory cache deleting the cachelock file
+    $cachelock = $dbpath -replace '\.json$', '-lock.json'
+    Remove-Item -Path $cachelock -Force -ErrorAction SilentlyContinue
+}

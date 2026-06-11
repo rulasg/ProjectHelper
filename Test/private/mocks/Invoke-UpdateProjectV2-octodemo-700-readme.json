@@ -1,0 +1,17 @@
+{
+  "data": {
+    "updateProjectV2": {
+      "projectV2": {
+        "id": "PVT_kwDOAlIw4c4BCe3V",
+        "url": "https://github.com/orgs/octodemo/projects/700",
+        "title": "rulasg-dev-700",
+        "number": 700,
+        "readme": "<details><summary>ProjectHelper_Configuration</summary><p>\n{\n  \"module\": \"KkHelper\"\n}\n</p></details>",
+        "shortDescription": "Project used as development environment by rulasg",
+        "owner": {
+          "login": "octodemo"
+        }
+      }
+    }
+  }
+}

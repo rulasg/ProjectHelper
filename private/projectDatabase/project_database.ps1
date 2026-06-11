@@ -112,6 +112,7 @@ function Save-ProjectV2toDatabase{
     $db.title            = $ProjectV2.title
     $db.ProjectId        = $ProjectV2.id
     $db.readme           = $ProjectV2.readme
+    $db.config           = Get-ProjectConfigFromReadme -Readme $ProjectV2.readme
 
     $db.owner            = $owner
     $db.number           = $projectnumber
