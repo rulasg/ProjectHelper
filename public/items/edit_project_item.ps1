@@ -7,7 +7,7 @@ function Edit-ProjectItem {
     [CmdletBinding()]
     [Alias("epi","e")]
     param(
-        [Parameter(ValueFromPipelineByPropertyName)][string]$Owner,
+        [Parameter(ValueFromPipelineByPropertyName)][Alias("ProjectOwner")][string]$Owner,
         [Parameter(ValueFromPipelineByPropertyName)][string]$ProjectNumber,
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)][Alias("ItemId")][string]$Id,
         [Parameter(ValueFromPipelineByPropertyName,Position = 1)][Alias("F")][string]$FieldName,
