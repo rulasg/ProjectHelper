@@ -143,12 +143,10 @@ function Set-Item{
     if(-not $database){
         $db = New-HashTable
     }
-
+    
     # Add Sanity check for item
     # Ensure that we are adding an item to the proper project database
-    if($Database.ProjectId -ne $Item.projectId){
-        Wait-Debugger
-    }
+    Wait-OnItemNotOnDatabase $db $Item
 
     $items = $db | AddHashLink items
 
@@ -164,6 +162,8 @@ function Remove-Item{
     )
 
     process{
+        Wait-OnItemIdNotOnDatabase $Database $ItemId
+
         $Database.items.Remove($ItemId) | Out-Null
     }
 
@@ -179,6 +179,8 @@ function Set-ItemValue{
         [Parameter(Position = 3)][string]$Value
     )
 
+    Wait-OnItemIdNotOnDatabase $Database $ItemId
+
     $db = $Database
 
     $item = $db | AddHashLink items | AddHashLink $ItemId
@@ -188,6 +190,7 @@ function Set-ItemValue{
         Set-LastComment -Database $db -Item $item -comment $Value
     }
 
+    # TODO: MAybe this is wrong and we should not run last line when $FieldName is AddComment.
     $item.$FieldName = $Value
 }
 
@@ -200,6 +203,8 @@ function Get-ItemStaged{
     )
 
     process {
+        
+        Wait-OnItemIdNotOnDatabase $Database $ItemId
 
         $staged = $db.Staged.$itemId
 
@@ -226,6 +231,8 @@ function Remove-ItemStaged{
         [Parameter(Mandatory,Position = 1)][string]$ItemId
     )
 
+    Wait-OnItemIdNotOnDatabase $Database $ItemId
+
     $db = $Database
 
     # remove item
@@ -245,6 +252,8 @@ function Remove-ItemValueStaged{
         [Parameter(Mandatory,Position = 1)][string]$ItemId,
         [Parameter(Mandatory,Position = 2)][string]$FieldId
     )
+
+    Wait-OnItemIdNotOnDatabase $Database $ItemId
 
     $db = $Database
 
@@ -276,6 +285,8 @@ function Save-ItemFieldValue{
         [Parameter(Position = 2)][string]$FieldName,
         [Parameter(Position = 3)][string]$Value
     )
+
+    Wait-OnItemIdNotOnDatabase $Database $ItemId
 
     "Staging item [$ItemId] with field [$FieldName] and value [$Value] in Project [$($Database.ProjectId)]" | Write-MyHost
 
@@ -389,5 +400,26 @@ function Copy-MyStringArray{
         }
 
         return $ret
+    }
+}
+
+function Wait-OnItemNotOnDatabase($Database,$item){
+
+    if($null -eq $item){
+        Write-host "Item is null when working on database [$($Database.title)]" -ForegroundColor Yellow
+        # return
+    }
+
+    if($Database.ProjectId -ne $Item.projectId){
+        write-host "Waiting on database item check for item [$($item.id)] in project [$($Database.title)]" -ForegroundColor Yellow
+        Wait-Debugger
+    }
+}
+
+function Wait-OnItemIdNotOnDatabase($Database,$itemId){
+
+    if(-not $Database.items.$itemId){
+        write-host "Waiting on database item id check for item id [$itemId] in project [$($Database.title)]" -ForegroundColor Yellow
+        Wait-Debugger
     }
 }
