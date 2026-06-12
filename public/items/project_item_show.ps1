@@ -11,7 +11,7 @@ function Show-ProjectItem{
         [Parameter()][Alias("A")][switch]$AllComments,
         [Parameter()][Alias("E")][switch]$OpenInEditor,
         [Parameter()][Alias("W")][switch]$OpenInBrowser,
-        [Parameter()][Alias("C")][switch]$ClearScreen,
+        [Parameter()][Alias("C")][switch]$NotClearScreen,
 
         # Custom Fields to show on header
         [Parameter()][array[]]$FieldsToShow
@@ -52,7 +52,7 @@ function Show-ProjectItem{
         }
 
         # Clear screen before showing if requested
-        if($ClearScreen){
+        if(-not $NotClearScreen){
             Clear-Host
         }
 
@@ -133,6 +133,8 @@ function Show-ProjectItem{
         # Id at the end
         writeHeader1
         $item.id | write -Color DarkGray ; addJumpLine -message "Id End"
+
+        Set-QQ_ItemId -ItemId $item.id
     }
 
     end{

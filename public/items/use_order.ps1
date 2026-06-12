@@ -70,7 +70,6 @@ function Use-Order {
                 Item = $itemId
                 OpenInEditor = $OpenInEditor
                 OpenInBrowser = $OpenInBrowser
-                ClearScreen = $ClearScreen
             }
             $ShowProjectItemScriptBlock.Invoke($params)
         }
