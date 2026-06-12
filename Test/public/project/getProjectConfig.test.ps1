@@ -1,14 +1,26 @@
 function Test_GetProjectConfig{
 
     $p = Get-Mock_Project_700 ; $owner = $p.Owner; $projectNumber = $p.number
-    $filename = $p.projectFile_skipitems_readme
+    MockCall_GetProject $p -SkipItems -Cache
 
-    MockCall_GitHubOrgProjectWithFields -Owner $owner -ProjectNumber $projectNumber -FileName $filename -SkipItems
+    $configTemplate = @'
+<details><summary>ProjectHelper_Configuration</summary><p>
+{module}
+</p></details>
+'@
 
+    # Arrange actual readme value
+    $actualconfigString = @{ module = "OldModule" } | ConvertTo-Json
+    $actualReadme = $configTemplate -replace '{module}', $actualconfigString
+    Update-Mock_DatabaseFileWithField "db-$Owner-$ProjectNumber-project.json" "readme" $actualReadme
+    $db = Get-Project -owner $owner -projectNumber $projectNumber -SkipItems
+    Assert-AreEqual -Expected $actualReadme -Present $db.readme
+
+    # Act
     $result = Get-ProjectConfig -Owner $owner -ProjectNumber $projectNumber
 
     Assert-IsNotNull -Object $result
-    Assert-areEqual -Expected "Show-SalesProjectItem" -Present $result.SHOW_PROJECT_ITEM_FUNCTION
+    Assert-areEqual -Expected "OldModule" -Present $result.module
 }
 
 function Test_SetProjectConfig_Empty{
