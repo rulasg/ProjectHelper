@@ -163,12 +163,12 @@ function Show-ProjectItemStaged{
                 $stagedItem = Get-ItemStaged $db $itemKey
                 $item = Get-Item $db $itemKey
 
-                $itemToShow = @{}
-                $itemToShow.Id = $itemKey
-                # $itemToShow.type = $item.type
-                $itemToShow.Title = $item.Title
-                # $itemToShow.FieldsCount = $stagedItem.Count
-                $itemToShow.FieldsName = $stagedItem.Keys
+                $itemToShow = [PSCustomObject] @{
+                    Id = $itemKey
+                    # $itemToShow.type = $item.type
+                    Title = $item.Title
+                    # $itemToShow.FieldsCount = $stagedItem.Count
+                    FieldsName = $stagedItem.Keys
                 # $itemToShow.Fields = @{}
                 # foreach($field in $staged.Keys){
                     #     $itemToShow.Fields = [PSCustomObject]@{
@@ -176,8 +176,9 @@ function Show-ProjectItemStaged{
                         #         Before = $item.$field
                         #     }
                         # }
+                }
 
-                $ret += [PSCustomObject] $itemToShow
+                $ret += $itemToShow
             }
         } else {
 
