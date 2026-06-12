@@ -247,7 +247,7 @@ function MockCallExpression{
 '@
     $mockCommand = $mockCommand -replace "{expression}", $expression
 
-    Set-InvokeCommandMock -Alias $command -Command $expression
+    Set-InvokeCommandMock -Alias $command -Command $mockCommand
 }
 
 
