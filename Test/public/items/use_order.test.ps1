@@ -6,7 +6,7 @@ function Test_UserOrder_Success{
     $list = Search-ProjectItem -Owner $owner -ProjectNumber $projectNumber -IncludeDone
 
     # Act
-    $result = $list | Use-Order
+    $result = $list | Use-Order -NotClearScreenOnItemShow
 
     Assert-Count -Expected $($p.items.totalCount +4) -Presented $result
 
@@ -23,7 +23,7 @@ function Test_UserOrder_Success_GetItem_FAIL_NO_ENVIRONMENT{
     # Act
     $hasthorwn = $false
     try {
-        $list | Use-Order 1
+        $list | Use-Order 1 -NotClearScreenOnItemShow
     } catch {
         $hasthorwn = $true
         Assert-IsTrue -Condition $_.Exception.Message.StartsWith("ProjectEnvironment is required.")
@@ -40,8 +40,8 @@ function Test_UserOrder_Success_GetItem{
     Set-ProjectHelperEnvironment -Owner $owner -ProjectNumber $projectNumber
     $list = Search-ProjectItem -IncludeDone
 
-    # Act
-    $result = $list | Use-Order 1 -PassThru
+    # Act 
+    $result = $list | Use-Order 1 -PassThru -NotClearScreenOnItemShow
 
     Assert-AreEqual -Expected $($list[1].id) -Presented $result.id
 }
@@ -61,7 +61,7 @@ function Test_UserOrder_Success_OpenBrowser{
     $list = Search-ProjectItem -IncludeDone
 
     # Act
-    $result = $list | Use-Order $order -OpenInBrowser
+    $result = $list | Use-Order $order -OpenInBrowser -NotClearScreenOnItemShow
 
     # Assert
     Assert-IsNull -Object $result
@@ -82,7 +82,7 @@ function Test_UserOrder_Success_OpenBrowser_DRAFT{
     $list = Search-ProjectItem -IncludeDone
 
     # Act
-    $result = $list | Use-Order $order -OpenInBrowser
+    $result = $list | Use-Order $order -OpenInBrowser -NotClearScreenOnItemShow
 
     # Assert
     Assert-IsNull -Object $result
@@ -99,7 +99,7 @@ function Test_UserOrder_Success_Passthru{
     $list = Search-ProjectItem -IncludeDone
 
     # Act
-    $result = $list | Use-Order $order -PassThru
+    $result = $list | Use-Order $order -PassThru -NotClearScreenOnItemShow
 
     # Assert
     Assert-AreEqual -Expected $id -Presented $result.id

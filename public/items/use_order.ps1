@@ -8,6 +8,7 @@ function Use-Order {
         [Parameter()][Alias("w")][switch]$OpenInBrowser,
         [Parameter()][Alias("p")][switch]$PassThru,
         [Parameter()][Alias("c")][switch]$ClearScreen,
+        [Parameter()][switch]$NotClearScreenOnItemShow,
         [Parameter()][Alias("d")][switch]$DontShow,
         [Parameter()][scriptblock]$ShowProjectItemScriptBlock
     )
@@ -70,6 +71,7 @@ function Use-Order {
                 Item = $itemId
                 OpenInEditor = $OpenInEditor
                 OpenInBrowser = $OpenInBrowser
+                NotClearScreen = $NotClearScreenOnItemShow
             }
             $ShowProjectItemScriptBlock.Invoke($params)
         }
