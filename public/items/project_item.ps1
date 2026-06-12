@@ -191,9 +191,10 @@ function Search-ProjectItem {
         [Parameter()][string]$RepositoryOwner
 
     )
-    # if $attributes is empty add RepositoryName
+    # if $attributes is empty add basic attributes to display
     if(-not ($Attributes)){
         $Attributes = @("RepositoryName") + $Attributes
+        $Attributes = @("Status") + $Attributes
     }
 
     # if $attributes does not contain "Title" add it at the front
@@ -644,6 +645,7 @@ function Remove-ProjectItem {
 
 function Get-ProjectItemDirect {
     [CmdletBinding()]
+    [Alias ("gpid")]
     param(
         [Parameter(Mandatory, ValueFromPipeline, Position = 0)][string]$ItemId
     )
@@ -666,7 +668,7 @@ function Get-ProjectItemDirect {
     $item = $response.data.node | Convert-NodeItemToHash
 
     return $item
-} Export-ModuleMember -Function Get-ProjectItemDirect
+} Export-ModuleMember -Function Get-ProjectItemDirect -Alias "gpid"
 
 
 
