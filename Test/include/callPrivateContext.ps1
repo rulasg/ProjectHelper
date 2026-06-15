@@ -15,7 +15,8 @@ function Invoke-PrivateContext {
     param (
         [Parameter(Mandatory, Position = 0)]
         [scriptblock]$ScriptBlock,
-        [string]$ModulePath
+        [string]$ModulePath,
+        [object[]]$Arguments
     )
 
     if ([string]::IsNullOrEmpty($ModulePath)) {
@@ -28,5 +29,11 @@ function Invoke-PrivateContext {
         throw "Failed to import the main module."
     }
 
-    & $module $ScriptBlock
+    if($Arguments){
+        & $module $ScriptBlock -Arguments $Arguments
+    }
+    else {
+        & $module $ScriptBlock
+    }
+
 } Export-ModuleMember -Function Invoke-PrivateContext
