@@ -218,13 +218,11 @@ function Test-MyDebug {
         if($flags.Count -eq 0){
             return $false
         }
-        $flags = $flags.ToLower()
-        $section = $section.ToLower()
 
-        return ($flags.Contains("all")) -or ( $flags -eq $section)
+        return ($flags.Contains("all")) -or ( $flags.Contains("$section"))
     }
 
-
+    $section = $section.ToLower()
     $sectionsString = get-DebugSections
 
     # No configuration means no debug
@@ -300,10 +298,17 @@ function getSectionsFromSectionsString($sectionsString){
 
     $list = $sectionsString.Split(" ", [StringSplitOptions]::RemoveEmptyEntries)
 
+    # make all string in $list lowercase
+    $list = $list | ForEach-Object { $_.ToLower() }
+
+    # Split between allow and filter. Filter sections that start with '-'
     $split = @($list).Where({ $_ -like '-*' }, 'Split')
 
-    $sections.filter = $split[0] | ForEach-Object { $_ -replace '^-', '' }  # -> API, Auth
-    $sections.allow = $split[1]  # -> Sync, Cache
+    # Get sections that are filtered. Remove the '-' from the beginning of the section name
+    $sections.filter = @($split[0] | ForEach-Object { $_ -replace '^-', '' })  # -> API, Auth
+
+    # Get allow sections
+    $sections.allow = @($split[1])  # -> Sync, Cache
 
     return $sections
 }
