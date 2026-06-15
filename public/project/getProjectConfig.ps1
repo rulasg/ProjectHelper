@@ -39,19 +39,10 @@ function Set-ProjectConfig {
     "Setting project configuraiton for $Owner/$ProjectNumber >>>" | Write-MyDebug -Section "Set-ProjectConfig"
 
     $p = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems
-
     $readme = $p.readme
 
-    # Extract config json from readme
-    $currentConfig = Get-ProjectConfigFromReadme -Readme $readme
-
-    # Merge current config with new config
-    foreach($key in $Config.Keys){
-        $currentConfig.$key = $Config.$key
-    }
-
     # Update the readme with the new config json
-    $newReadMe = Merge-ConfigToString -Config $currentConfig -ReadMe $readme
+    $newReadMe = Merge-ConfigToString -Config $config -ReadMe $readme
 
     if([string]::IsNullOrWhiteSpace($newReadMe)){
         "ERROR: Failed to merge config to readme. New readme is empty or whitespace. Aborting update." | Write-MyDebug -Section "Set-ProjectConfig"
@@ -112,7 +103,7 @@ function Get-ProjectConfigFromReadme($readme){
 
         # Parse the JSON config
         try{
-            $ret = $jsonConfig | ConvertFrom-Json
+            $ret = $jsonConfig | ConvertFrom-Json -AsHashtable
         } catch {
             "ERROR: Failed to parse JSON config. Error: $($_.Exception.Message). Skipping this node.`n Readme content: $readme" | Write-MyDebug -Section "Get-ProjectConfig"
             return $ret
