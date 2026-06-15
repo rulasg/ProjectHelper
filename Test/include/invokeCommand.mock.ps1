@@ -200,6 +200,17 @@ function MockCallToString{
     Set-InvokeCommandMock -Alias $command -Command $outputstring
 }
 
+function MockCallToBool{
+    param(
+        [Parameter(Position=0)][string] $command,
+        [Parameter(Position=1)][bool] $OutBool
+    )
+
+    $outputstring = $outBool ? 'return $true' : 'return $false'
+
+    Set-InvokeCommandMock -Alias $command -Command $outputstring
+}
+
 
 function MockCallToObject{
     param(
