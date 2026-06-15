@@ -1,50 +1,30 @@
 function Test_GetProjectConfig{
 
+    $moduleName = "OldModule"
+
     $p = Get-Mock_Project_700 ; $owner = $p.Owner; $projectNumber = $p.number
-    MockCall_GetProject $p -SkipItems -Cache
 
-    $configTemplate = @'
-<details><summary>ProjectHelper_Configuration</summary><p>
-{module}
-</p></details>
-'@
-
-    # Arrange actual readme value
-    $actualconfigString = @{ module = "OldModule" } | ConvertTo-Json
-    $actualReadme = $configTemplate -replace '{module}', $actualconfigString
-    Update-Mock_DatabaseFileWithField "db-$Owner-$ProjectNumber-project.json" "readme" $actualReadme
-    $db = Get-Project -owner $owner -projectNumber $projectNumber -SkipItems
-    Assert-AreEqual -Expected $actualReadme -Present $db.readme
+    Update-Mock_Project_ReadMe_With_String_And_Config $p $moduleName
 
     # Act
     $result = Get-ProjectConfig -Owner $owner -ProjectNumber $projectNumber
 
     Assert-IsNotNull -Object $result
-    Assert-areEqual -Expected "OldModule" -Present $result.module
+    Assert-areEqual -Expected $moduleName -Present $result.module
 }
 
 function Test_SetProjectConfig_Empty{
 
+    $moduleName = " "
+
     $p = Get-Mock_Project_700 ; $owner = $p.Owner; $projectNumber = $p.number ; $projectId = $p.id
-    MockCall_GetProject $p -SkipItems -Cache
 
-    $configTemplate = @'
-<details><summary>ProjectHelper_Configuration</summary><p>
-{module}
-</p></details>
-'@
+    Update-Mock_Project_ReadMe_With_String_And_Config $p $moduleName
 
-    # Arrange actual readme value
-    $actualReadme = " "
-    Update-Mock_DatabaseFileWithField "db-$Owner-$ProjectNumber-project.json" "readme" $actualReadme
-    $db = Get-Project -owner $owner -projectNumber $projectNumber -SkipItems
-    Assert-AreEqual -Expected $actualReadme -Present $db.readme
-
-    ## Assert call
     ## Arrange call
     $config = @{ module = "KkHelper" }
     $configJson = $config | ConvertTo-Json
-    $targetreadme = ($configTemplate -replace '{module}', $configJson)
+    $targetreadme = ($PROJECT_CONFIG_TEMPLATE -replace '{module}', $configJson)
     $targetReadmeBase64 = $targetreadme | ConvertTo-Base64
     MockCallJson -Command "Invoke-UpdateProjectV2 -ProjectId $projectId -ReadMeBase64 $targetReadmeBase64" -Filename "Invoke-UpdateProjectV2-octodemo-700-readme.json"
 
@@ -63,22 +43,14 @@ function Test_SetProjectConfig_readme_WithContentString{
     $p = Get-Mock_Project_700 ; $owner = $p.Owner; $projectNumber = $p.number ; $projectId = $p.id
     MockCall_GetProject $p -SkipItems -Cache
 
-    $configTemplate = @'
-<details><summary>ProjectHelper_Configuration</summary><p>
-{module}
-</p></details>
-'@
-
-    # Arrange actual readme value
+    # update readme
     $actualReadmeString = "This is some readme content that should be preserved"
-    Update-Mock_DatabaseFileWithField "db-$Owner-$ProjectNumber-project.json" "readme" $actualReadmeString
-    $db = Get-Project -owner $owner -projectNumber $projectNumber -SkipItems
-    Assert-AreEqual -Expected $actualReadmeString -Present $db.readme
+    Update-Mock_Project_ReadMe_With_String_And_Config $p -extraString $actualReadmeString
 
     ## Arrange call
     $config = @{ module = "KkHelper" }
     $configJson = $config | ConvertTo-Json
-    $targetreadme = $actualReadmeString + "`n`n" + ($configTemplate -replace '{module}', $configJson)
+    $targetreadme = $actualReadmeString + "`n`n" + ($PROJECT_CONFIG_TEMPLATE -replace '{module}', $configJson)
     $targetReadmeBase64 = $targetreadme | ConvertTo-Base64
     MockCallJson -Command "Invoke-UpdateProjectV2 -ProjectId $projectId -ReadMeBase64 $targetReadmeBase64" -Filename "Invoke-UpdateProjectV2-octodemo-700-readme.json"
 
@@ -97,23 +69,12 @@ function Test_SetProjectConfig_readme_WithContentConfig{
     $p = Get-Mock_Project_700 ; $owner = $p.Owner; $projectNumber = $p.number ; $projectId = $p.id
     MockCall_GetProject $p -SkipItems -Cache
 
-    $configTemplate = @'
-<details><summary>ProjectHelper_Configuration</summary><p>
-{module}
-</p></details>
-'@
-
-    # Arrange actual readme value
-    $actualconfigString = @{ module = "OldModule" } | ConvertTo-Json
-    $actualReadme = $configTemplate -replace '{module}', $actualconfigString
-    Update-Mock_DatabaseFileWithField "db-$Owner-$ProjectNumber-project.json" "readme" $actualReadme
-    $db = Get-Project -owner $owner -projectNumber $projectNumber -SkipItems
-    Assert-AreEqual -Expected $actualReadme -Present $db.readme
+    Update-Mock_Project_ReadMe_With_String_And_Config $p "OldModule"
 
     ## Arrange call
     $config = @{ module = "KkHelper" }
     $configJson = $config | ConvertTo-Json
-    $targetreadme = ($configTemplate -replace '{module}', $configJson)
+    $targetreadme = ($PROJECT_CONFIG_TEMPLATE -replace '{module}', $configJson)
     $targetReadmeBase64 = $targetreadme | ConvertTo-Base64
     MockCallJson -Command "Invoke-UpdateProjectV2 -ProjectId $projectId -ReadMeBase64 $targetReadmeBase64" -Filename "Invoke-UpdateProjectV2-octodemo-700-readme.json"
 
@@ -132,24 +93,14 @@ function Test_SetProjectConfig_readme_WithContentConfigAndString{
     $p = Get-Mock_Project_700 ; $owner = $p.Owner; $projectNumber = $p.number ; $projectId = $p.id
     MockCall_GetProject $p -SkipItems -Cache
 
-    $configTemplate = @'
-<details><summary>ProjectHelper_Configuration</summary><p>
-{module}
-</p></details>
-'@
-
-    # Arrange actual readme value
+    # Arrange project readme
     $actualReadmeString = "This is some readme content that should be preserved"
-    $actualconfigString = @{ module = "OldModule" } | ConvertTo-Json
-    $actualReadme = $actualReadmeString + "`n`n" + ($configTemplate -replace '{module}', $actualconfigString)
-    Update-Mock_DatabaseFileWithField "db-$Owner-$ProjectNumber-project.json" "readme" $actualReadme
-    $db = Get-Project -owner $owner -projectNumber $projectNumber -SkipItems
-    Assert-AreEqual -Expected $actualReadme -Present $db.readme
+    Update-Mock_Project_ReadMe_With_String_And_Config $p "OldModule" $actualReadmeString
 
     ## Arrange call
     $config = @{ module = "KkHelper" }
     $configJson = $config | ConvertTo-Json
-    $targetreadme = $actualReadmeString + "`n`n" + ($configTemplate -replace '{module}', $configJson)
+    $targetreadme = $actualReadmeString + "`n`n" + ($PROJECT_CONFIG_TEMPLATE -replace '{module}', $configJson)
     $targetReadmeBase64 = $targetreadme | ConvertTo-Base64
     MockCallJson -Command "Invoke-UpdateProjectV2 -ProjectId $projectId -ReadMeBase64 $targetReadmeBase64" -Filename "Invoke-UpdateProjectV2-octodemo-700-readme.json"
 
