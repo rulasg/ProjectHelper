@@ -1,5 +1,6 @@
 function Get-Project {
     [CmdletBinding()]
+    [Alias("gprj")]
     param(
         [Parameter(Position=0)][string]$Owner,
         [Parameter(Position=1)][string]$ProjectNumber,
@@ -29,7 +30,86 @@ function Get-Project {
     "Getting project for $Owner/$ProjectNumber with SkipItems=$SkipItems and Force=$Force <<< $($prj.safeId)" | Write-MyDebug -Section "Get-Project"
 
     return $prj
-} Export-ModuleMember -Function Get-Project
+} Export-ModuleMember -Function Get-Project -Alias gprj
+
+function Show-Project {
+    [CmdletBinding()]
+    [Alias("sprj")]
+    param(
+        [Parameter(Position=0)][string]$Owner,
+        [Parameter(Position=1)][string]$ProjectNumber,
+        [Parameter()][Alias("C")][switch]$NotClearScreen,
+        [Parameter()][switch]$Force
+    )
+
+        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
+
+        $p = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+
+        $activeItems = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber
+        $all = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber -IncludeDone
+
+        # Clear screen before showing if requested
+        if(-not $NotClearScreen){
+            Clear-MyHost
+        }
+        # Before all
+        addJumpLine -message "Header Start"
+
+        # Header
+        "[" | write -Color Yellow
+        $p.owner | write -Color DarkCyan
+        addSpace
+        $p.number | write -Color DarkMagenta -Prefix "#"
+        "]" | write -Color Yellow
+        addSpace
+        """" | write -Color Yellow
+        $p.title | write -Color DarkGreen
+        """" | write -Color Yellow
+
+        addJumpLine -message "Header End"
+
+        # URL
+        $p.url | write -Color White
+        addJumpLine -message "End Url"
+        
+        # Status
+        addJumpLine -message "Start Status"
+        $status = $p.status -eq "closed" ? "CLOSED" : "OPEN" ; $status | write -BetweenSquareBrackets -Color $(getStateColor $status)
+        addspace
+        $visibility = $p.public -eq $true ? "PUBLIC" : "PRIVATE" ; $visibility | write -BetweenSquareBrackets -Color $(getVisibilityColor $visibility)
+        addJumpLine -message "End Status"
+        
+        # Content
+        addJumpLine -message "Start Content"
+        "Items:" | write -Color DarkGray
+        $activeItems.count | write -Color Yellow
+        "/" | write -Color Yellow
+        $all.Count | write -Color Gray
+        addSpace
+        "Fields:" | write -Color DarkGray ; $p.fields.count | write -Color Blue
+        addSpace
+        "Staged:" | write -Color DarkGray ; $p.staged.count | write -Color Red
+        addJumpLine -message "End Content"
+
+        # Show ReadMe and Description
+        "Short Description" | writeHeader1
+        $p.shortDescription | write -Color White
+        addJumpLine -message "End Short Description"
+        "ReadMe" | writeHeader1
+        $p.readme | write -Color White
+        addJumpLine -message "End ReadMe"
+        
+        addJumpLine -message "End"
+        
+        # Total Items count
+        #  $p.items.count
+
+        # Total Fields count
+        # $p.fields.count
+
+        return $prj
+} Export-ModuleMember -Function Show-Project -Alias sprj
 
 function Update-Project{
     [CmdletBinding()]

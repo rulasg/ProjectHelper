@@ -186,6 +186,19 @@ function getStateColor{
         default  { return "Red" }
     }
 }
+
+function getVisibilityColor{
+    param(
+        [string]$state
+    )
+
+    switch ($state.ToLower()) {
+        "PUBLIC"  { return "DarkRead" }
+        "PRIVATE" { return "DarkYellow" }
+        default  { return "Red" }
+    }
+}
+
 function getStateChar{
     param(
         [string]$state
