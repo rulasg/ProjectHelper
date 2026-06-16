@@ -64,7 +64,10 @@ function Clear-MyHost {
     [CmdletBinding()]
     param()
 
-    Clear-Host
+        # If debug do not clear host page
+    if (-not (Test-MyDebug -section "donotclearhost")) {
+        Clear-Host
+    }
 }
 
 function Write-MyDebug {
