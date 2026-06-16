@@ -117,6 +117,10 @@ function Save-ProjectV2toDatabase{
     $db.owner            = $owner
     $db.number           = $projectnumber
 
+    $db.totalCount_items = $ProjectV2.items.totalCount
+    $db.totalCount_fields = $ProjectV2.fields.totalCount
+
+
     # Full list update
     $db.items = $Items
 

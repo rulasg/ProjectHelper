@@ -1,6 +1,6 @@
 function Get-Project {
     [CmdletBinding()]
-    [Alias("gprj")]
+    [Alias("gprj","getp")]
     param(
         [Parameter(Position=0)][string]$Owner,
         [Parameter(Position=1)][string]$ProjectNumber,
@@ -30,11 +30,11 @@ function Get-Project {
     "Getting project for $Owner/$ProjectNumber with SkipItems=$SkipItems and Force=$Force <<< $($prj.safeId)" | Write-MyDebug -Section "Get-Project"
 
     return $prj
-} Export-ModuleMember -Function Get-Project -Alias gprj
+} Export-ModuleMember -Function Get-Project -Alias gprj,"getp"
 
 function Show-Project {
     [CmdletBinding()]
-    [Alias("sprj")]
+    [Alias("shp")]
     param(
         [Parameter(Position=0)][string]$Owner,
         [Parameter(Position=1)][string]$ProjectNumber,
@@ -47,7 +47,6 @@ function Show-Project {
         $p = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
         $activeItems = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber
-        $all = Get-ProjectItems -Owner $Owner -ProjectNumber $ProjectNumber -IncludeDone
 
         # Clear screen before showing if requested
         if(-not $NotClearScreen){
@@ -82,12 +81,9 @@ function Show-Project {
         
         # Content
         addJumpLine -message "Start Content"
-        "Items:" | write -Color DarkGray
-        $activeItems.count | write -Color Yellow
-        "/" | write -Color Yellow
-        $all.Count | write -Color Gray
+        "Items:" | write -Color DarkGray ; $activeItems.count | write -Color DarkYellow ; "/" | write -Color Yellow ; $p.totalCount_items | write -Color Gray
         addSpace
-        "Fields:" | write -Color DarkGray ; $p.fields.count | write -Color Blue
+        "Fields:" | write -Color DarkGray ; $p.totalCount_fields | write -Color DarkGreen
         addSpace
         "Staged:" | write -Color DarkGray ; $p.staged.count | write -Color Red
         addJumpLine -message "End Content"
@@ -109,7 +105,7 @@ function Show-Project {
         # $p.fields.count
 
         return $prj
-} Export-ModuleMember -Function Show-Project -Alias sprj
+} Export-ModuleMember -Function Show-Project -Alias shp
 
 function Update-Project{
     [CmdletBinding()]
