@@ -23,6 +23,11 @@ function Get-QQ_ItemId {
     [CmdletBinding()]
     param()
 
+    if ([string]::IsNullOrWhiteSpace($script:QQ_ItemId)){
+        throw "QQ_ItemId is not set. Run a command that set QQ_ItemId."
+        return
+    }
+
     return $script:QQ_ItemId
 }
 
