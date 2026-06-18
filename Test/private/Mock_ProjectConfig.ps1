@@ -6,6 +6,8 @@ $PROJECT_CONFIG_TEMPLATE = @'
 '@
 function Update-Mock_Project_ReadMe_With_String_And_Config($p, $module, $extraString = ""){
 
+    $owner = $p.Owner
+    $projectNumber = $p.number
     MockCall_GetProject $p -SkipItems -Cache
     
     $actualReadme = $extraString
