@@ -35,7 +35,7 @@ function Use-Order {
     end {
 
         if($ClearScreen){
-            Clear-Host
+            Clear-MyHost
         }
 
         # Show list of items
@@ -78,7 +78,7 @@ function Use-Order {
 
                 #return item
         if($PassThru) {
-            $i = Get-ProjectItem -ItemId $itemId
+            $i = Get-BaseProjectItem -ItemId $itemId
             [PsCustomObject]$i
         }
     }
