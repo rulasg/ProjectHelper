@@ -103,7 +103,7 @@ function Copy-ProjectIssue {
         # Get Project
         ($ProjectOwner,$ProjectNumber) = Resolve-ProjectParameters -Owner $ProjectOwner -ProjectNumber $ProjectNumber
 
-        $sourceItem = Get-ProjectItem -Owner $ProjectOwner -ProjectNumber $ProjectNumber -ItemId $ItemId
+        $sourceItem = Get-BaseProjectItem -Owner $ProjectOwner -ProjectNumber $ProjectNumber -ItemId $ItemId
         $title = $sourceItem.Title
         $body = $sourceItem.Body
 

@@ -1,8 +1,8 @@
 Set-MyinvokeCommandAlias -Alias ShowInEditor -Command '"{content}" | code -w -'
 
-function Show-ProjectItem{
+function Show-BaseProjectItem{
     [CmdletBinding()]
-    [Alias("shpi")]
+    [Alias("Show-ProjectItem")]
     param(
         [Parameter()][string]$Owner,
         [Parameter()][int]$ProjectNumber,
@@ -39,6 +39,8 @@ function Show-ProjectItem{
             return $null
         }
 
+        # Default Fields to show if not provided
+        # We do it here to get item values into it
         if(-not $FieldsToShow){
             $statusColor = getStatusColor($item.Status)
             $lineFields = @(
@@ -53,7 +55,7 @@ function Show-ProjectItem{
 
         # Clear screen before showing if requested
         if(-not $NotClearScreen){
-            Clear-Host
+            Clear-MyHost
         }
 
         # Before all
@@ -138,11 +140,12 @@ function Show-ProjectItem{
     }
 
     end{
+
         if($OpenInEditor){
             Stop-WriteBuffer | Open-InEditor
         }
     }
-} Export-ModuleMember -Function Show-ProjectItem -Alias("shpi")
+} Export-ModuleMember -Function Show-BaseProjectItem -Alias "Show-ProjectItem"
 
 function Open-InEditor{
     [CmdletBinding()]

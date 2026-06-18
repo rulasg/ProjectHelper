@@ -8,11 +8,10 @@ Set-MyInvokeCommandAlias -Alias GetItem -Command 'Invoke-GetItem -ItemId {itemid
 .DESCRIPTION
     Fields will show th emerge between Project and Staged Item fields values
 .EXAMPLE
-    Get-ProjectItem -Owner "someOwner" -ProjectNumber 164 -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc
+    Get-BaseProjectItem -Owner "someOwner" -ProjectNumber 164 -ItemId PVTI_lADOBCrGTM4ActQazgMuXXc
 #>
-function Get-ProjectItem {
+function Get-BaseProjectItem {
     [CmdletBinding()]
-    [Alias ("gpi")]
     param(
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)][Alias("id")][string]$ItemId,
         [Parameter()][string]$Owner,
@@ -41,13 +40,14 @@ function Get-ProjectItem {
     }
 
     end {
+
         if ($dirty) {
             "Saving dirty database" | Write-Verbose
             Save-ProjectDatabaseSafe -Database $db
         }
     }
 
-} Export-ModuleMember -Function Get-ProjectItem -Alias "gpi"
+} Export-ModuleMember -Function Get-BaseProjectItem
 
 function Update-ProjectItem {
     [CmdletBinding()]
@@ -59,7 +59,7 @@ function Update-ProjectItem {
     )
 
     process{
-        $item = Get-ProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber -Force
+        $item = Get-BaseProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber -Force
 
         return $item.id
     }
@@ -130,7 +130,7 @@ function Get-ProjectItemUrl{
 
     process{
 
-        $item = Get-ProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+        $item = Get-BaseProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
         if(-not $item){
             "Item [$ItemId] not found" | Write-MyError
@@ -372,7 +372,7 @@ function Open-ProjectItem {
 
         "Opening item [$ItemId] in project [$Owner/$ProjectNumber]" | Write-Verbose
 
-        $item = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $ItemId
+        $item = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $ItemId
         if (-not $item) {
             throw "Item not found for Owner [$Owner], ProjectNumber [$ProjectNumber] and ItemId [$ItemId]"
         }
@@ -605,7 +605,7 @@ function Remove-ProjectItem {
         }
 
         # Find Item to remove
-        $item = Get-ProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber 
+        $item = Get-BaseProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber 
 
         if( ! $item){
             "Item [$ItemId] not found, cannot delete issue" | Write-MyWarning
