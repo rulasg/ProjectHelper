@@ -9,7 +9,7 @@ function Edit-ProjectItem {
     param(
         [Parameter(ValueFromPipelineByPropertyName)][Alias("ProjectOwner")][string]$Owner,
         [Parameter(ValueFromPipelineByPropertyName)][string]$ProjectNumber,
-        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)][Alias("ItemId")][string]$Id,
+        [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)][Alias("ItemId")][string]$Id,
         [Parameter(ValueFromPipelineByPropertyName,Position = 1)][Alias("F")][string]$FieldName,
         [Parameter(ValueFromPipelineByPropertyName,Position = 2)][Alias("V")][string]$Value,
         
@@ -46,6 +46,9 @@ function Edit-ProjectItem {
         # Resolve project parameters 
         ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
+        # Resolve ItemId
+        $Id = [string]::IsNullOrWhiteSpace($Id) ? $(Invoke-QQ_Get_G) : $Id
+
         # Create params
         $params = @{ Owner = $Owner ; ProjectNumber = $ProjectNumber }
 
@@ -66,10 +69,6 @@ function Edit-ProjectItem {
             }
         }
 
-        if( $BodyLongText ) {
-            $Body = Get-LongText -Text $Body
-        }
-
         if( $AddCommentLongText ) {
             $AddComment = Get-LongText -Text $AddComment
         }
@@ -83,23 +82,21 @@ function Edit-ProjectItem {
 
         # Close
         if ($Close) {
-            $Status = "Done"
+            $Status = resolveStatus -Owner $Owner -ProjectNumber $ProjectNumber -ConfigKey "CloseStatus" -DefaultValue "Done"
 
             # Do not edit but leave this parameters flow the edit process
         }
 
         # Backlog
         if ($Backlog) {
-            $Status = "Todo"
+            $Status = resolveStatus -Owner $Owner -ProjectNumber $ProjectNumber -ConfigKey "BacklogStatus" -DefaultValue "Todo"
 
             # Do not edit but leave this parameters flow the edit process
         }
 
         # Ready
         if ($Ready) {
-            Write-Warning "No Ready status is currently setup. Please use other parameters to set values or update the Ready parameter with a status value"
-
-            # $Status = "ActionRequired"
+            $Status = resolveStatus -Owner $Owner -ProjectNumber $ProjectNumber -ConfigKey "ReadyStatus"
 
             # Do not edit but leave this parameters flow the edit process
         }
@@ -124,13 +121,6 @@ function Edit-ProjectItem {
         if (-Not [string]::IsNullOrWhiteSpace($Title)) {
             $params.fieldname = "Title"
             $params.value = "$Title"
-            edit $params
-        }
-
-        # Body parameter
-        if (-Not [string]::IsNullOrWhiteSpace($Body)) {
-            $params.fieldname = "Body"
-            $params.value = "$Body"
             edit $params
         }
 
@@ -160,8 +150,25 @@ function Edit-ProjectItem {
 
         # With Item
 
+        # TODO: BodyLongText does not work properly
+        # Body parameter
+        # If BodyLongText seed with parameter of actual value
+        if( $BodyLongText ) {
+            if([string]::IsNullOrWhiteSpace($Body)){
+                $item = Get-BaseProjectItem -ItemId $Id -Owner $Owner -ProjectNumber $ProjectNumber
+                $body = Get-LongText -Text $item.Body
+            } else {
+                $body = Get-LongText -Text $Body
+            }
+        }
+        if (-Not [string]::IsNullOrWhiteSpace($Body)) {
+            $params.fieldname = "Body"
+            $params.value = "$Body"
+            edit $params
+        }
+
         if ($OpenInBrowser) {
-            $item = Get-ProjectItem -ItemId $Id -Owner $Owner -ProjectNumber $ProjectNumber
+            $item = Get-BaseProjectItem -ItemId $Id -Owner $Owner -ProjectNumber $ProjectNumber
             if ($null -ne $item) {
                 Open-Url -Url $item.url
             } else {
@@ -171,7 +178,7 @@ function Edit-ProjectItem {
 
         # NormalizeTitle
         if ($NormalizeTitle) {
-            $item = Get-ProjectItem -ItemId $Id -Owner $Owner -ProjectNumber $ProjectNumber
+            $item = Get-BaseProjectItem -ItemId $Id -Owner $Owner -ProjectNumber $ProjectNumber
             $params.fieldname = "Title"
             $params.value = Get-NormalizedTitle -Item $item
             edit $params
@@ -319,4 +326,23 @@ function Get-NormalizedTitle {
 
     "Normalized title: $ret" | Write-MyDebug -section "Edit-ProjectItem NormalizedTitle"
     return $ret
+}
+
+function resolveStatus{
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory,Position=0)][string]$Owner,
+        [Parameter(Mandatory,Position=1)][string]$ProjectNumber,
+        [Parameter(Mandatory,Position=2)][string]$ConfigKey,
+        [Parameter(Position=3)][string]$DefaultValue
+        
+    )
+    $readyfield = Get-ProjectConfigValue -Owner $Owner -ProjectNumber $ProjectNumber -FieldName "$($configKey)" -DefaultValue "$($DefaultValue)"
+
+    if(-not $readyfield){
+        Write-Warning "No $configKey in project configuration. Please use Status parameters to set values or update $configKey in ProjectConfig"
+        return ""
+    }
+      
+    return $readyfield
 }
