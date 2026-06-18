@@ -69,7 +69,7 @@ function Test_ShowProjectItem_SUCESS{
     MockCall_GetItem $i.Id
 
     Start-MyTranscript
-    $result = $i.id | Show-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -AllComments
+    $result = $i.id | Show-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -AllComments -NotClearScreen
     $tt = Stop-MyTranscript
 
     Assert-IsNull -Object $result
