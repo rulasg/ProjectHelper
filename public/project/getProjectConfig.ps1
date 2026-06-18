@@ -1,6 +1,31 @@
 
 $SUMMARY_NAME = "ProjectHelper_Configuration"
 
+function Get-ProjectConfigValue{
+    [CmdletBinding()]
+    param(
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter(Mandatory,Position=0)][string]$FieldName,
+        [Parameter()][string]$DefaultValue,
+        [switch]$Force
+    )
+
+    ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
+
+    "[Get-ProjectConfigValue] Getting project configuraiton value [$FieldName] for [$Owner/$ProjectNumber] and Force=$Force >>>" | Write-MyDebug -Section "ProjectConfig"
+
+    $config = Get-ProjectConfig -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+
+    $actualValue = $config.$FieldName
+
+    $ret = $actualValue ?? $([string]::IsNullOrEmpty($DefaultValue) ? $null : $defaultValue)
+
+    "[Get-ProjectConfigValue] Getting project configuraiton value [$FieldName] for [$Owner/$ProjectNumber] and Force=$Force <<<" | Write-MyDebug -Section "ProjectConfig" -Object $ret
+
+    return $ret
+}
+
 function Get-ProjectConfig {
     [CmdletBinding()]
     param(
@@ -11,16 +36,16 @@ function Get-ProjectConfig {
 
     ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
-    "Getting project configuraiton for $Owner/$ProjectNumber and Force=$Force >>>" | Write-MyDebug -Section "Get-ProjectConfig"
-
+    "[Get-ProjectConfig] Getting project configuraiton for [$Owner/$ProjectNumber] and Force=$Force >>>" | Write-MyDebug -Section "ProjectConfig"
+    
     $p = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems
-
+    
     $readme = $p.readme
-
+    
     # Extract config json from readme
     $config = Get-ProjectConfigFromReadme -Readme $readme
-
-    "Project configuration found." | Write-MyDebug -Section "Get-ProjectConfig" -Object $config
+    
+    "[Get-ProjectConfig] Getting project configuraiton for [$Owner/$ProjectNumber] and Force=$Force <<<" | Write-MyDebug -Section "ProjectConfig" -Object $config
    
     return $config
 } Export-ModuleMember -Function Get-ProjectConfig
@@ -36,25 +61,59 @@ function Set-ProjectConfig {
 
     ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
-    "Setting project configuraiton for $Owner/$ProjectNumber >>>" | Write-MyDebug -Section "Set-ProjectConfig"
-
+    "[Set-ProjectConfig] Setting project configuraiton for [$Owner/$ProjectNumber] >>>" | Write-MyDebug -Section "ProjectConfig"
+    
     $p = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems
     $readme = $p.readme
-
+    
     # Update the readme with the new config json
     $newReadMe = Merge-ConfigToString -Config $config -ReadMe $readme
-
+    
     if([string]::IsNullOrWhiteSpace($newReadMe)){
-        "ERROR: Failed to merge config to readme. New readme is empty or whitespace. Aborting update." | Write-MyDebug -Section "Set-ProjectConfig"
+        "[Set-ProjectConfig] ERROR: Failed to merge config to readme. New readme is empty or whitespace. Aborting update." | Write-MyDebug -Section "ProjectConfig"
         return $false
     }
-
+    
     # Edit project with new readme
     $ret = Edit-Project -Owner $Owner -ProjectNumber $ProjectNumber -Readme $newReadMe
+    
+    "[Set-ProjectConfig] Setting project configuraiton for [$Owner/$ProjectNumber] <<<" | Write-MyDebug -Section "ProjectConfig" -object $ret
 
     return $ret
 
 } Export-ModuleMember -Function Set-ProjectConfig
+
+function Clear-ProjectConfig {
+    [CmdletBinding()]
+    param(
+        [string]$Owner,
+        [string]$ProjectNumber,
+        [switch]$Force
+    )
+
+    ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
+
+    "[Clear-ProjectConfig] Clearing project configuraiton for $Owner/$ProjectNumber >>>" | Write-MyDebug -Section "ProjectConfig"
+    
+    $p = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force -SkipItems
+    $readme = $p.readme
+    
+    # Clear the config from the readme
+    $newReadMe = clearConfigFromReadme -ReadMe $readme
+    
+    if([string]::IsNullOrWhiteSpace($newReadMe)){
+        "[Clear-ProjectConfig] ERROR: Failed to clear config from readme. New readme is empty or whitespace. Aborting update." | Write-MyDebug -Section "ProjectConfig"
+        return $false
+    }
+    
+    # Edit project with new readme
+    $ret = Edit-Project -Owner $Owner -ProjectNumber $ProjectNumber -Readme $newReadMe
+    
+    "[Clear-ProjectConfig] Clearing project configuraiton for $Owner/$ProjectNumber <<<" | Write-MyDebug -Section "ProjectConfig" -object $ret
+
+    return $ret
+
+} Export-ModuleMember -Function Clear-ProjectConfig
 
 function Get-ProjectConfigFromReadme($readme){
 
@@ -77,7 +136,7 @@ function Get-ProjectConfigFromReadme($readme){
     foreach ($node in $detailsNodes) {
         $summaryNode = $node.SelectSingleNode('./summary')
         if ($null -eq $summaryNode) {
-            "ERROR: Summary section not found. Skipping this node.`n Readme content: $readme" | Write-MyDebug -Section "Get-ProjectConfig"
+            "[Get-ProjectConfig] ERROR: Summary section not found. Skipping this node.`n Readme content: $readme" | Write-MyDebug -Section "ProjectConfig"
             continue
         }
 
@@ -128,9 +187,7 @@ function Merge-ConfigToString {
     $newDetailsNode = "<details><summary>$SUMMARY_NAME</summary><p>`n$jsonConfig`n</p></details>"
 
     # remove detail section is exists to avoid duplication in the readme
-    $readme = [regex]::Replace($ReadMe, "<details>\s*<summary>\s*$SUMMARY_NAME\s*</summary>.*?</details>", "", [System.Text.RegularExpressions.RegexOptions]::Singleline)
-
-    $readme = $readme.Trim()
+    $readme = clearConfigFromReadme -ReadMe $ReadMe
 
     if([string]::IsNullOrWhiteSpace($readme)){
         $updatedReadme = $newDetailsNode
@@ -141,3 +198,15 @@ function Merge-ConfigToString {
     return $updatedReadme
     
 } Export-ModuleMember -Function Merge-ConfigToString
+
+function clearConfigFromReadme {
+    [CmdletBinding()]
+    param(
+        [string]$ReadMe
+    )
+
+    # Remove the ProjectHelper_Configuration section from the readme
+    $updatedReadme = [regex]::Replace($ReadMe, "<details>\s*<summary>\s*$SUMMARY_NAME\s*</summary>.*?</details>", "", [System.Text.RegularExpressions.RegexOptions]::Singleline)
+
+    return $updatedReadme.Trim()
+} Export-ModuleMember -Function Clear-ConfigFromReadme
