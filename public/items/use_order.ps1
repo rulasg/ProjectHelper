@@ -2,6 +2,8 @@ function Use-Order {
     [cmdletbinding()]
     [Alias("uo")]
     param(
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
         [Parameter(ValueFromPipeline)][array]$List,
         [Parameter(Position = 0)][Alias("o")][int]$Ordinal = -1,
         [Parameter()][Alias("e")][switch]$OpenInEditor,
@@ -9,8 +11,7 @@ function Use-Order {
         [Parameter()][Alias("p")][switch]$PassThru,
         [Parameter()][Alias("c")][switch]$ClearScreen,
         [Parameter()][switch]$NotClearScreenOnItemShow,
-        [Parameter()][Alias("d")][switch]$DontShow,
-        [Parameter()][scriptblock]$ShowProjectItemScriptBlock
+        [Parameter()][Alias("d")][switch]$DontShow
     )
 
     begin {
@@ -58,25 +59,25 @@ function Use-Order {
         }
 
         # To work on the item we need Owner and ProjectNumber from the environment. If not set, we cannot continue.
-        if( -Not (Test-ProjectParameters)){
+        if( -Not (Test-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber) ){
             throw "ProjectEnvironment is required. Run Set-ProjectHelperEnvironment"
         }
 
         if( -not $DontShow){
-            # Get function to show item
-            $ShowProjectItemScriptBlock = $ShowProjectItemScriptBlock ?? { param($parameters) Show-ProjectItem @parameters }
             
             # Show item in console or editor
             $params = @{
+                Owner = $Owner
+                ProjectNumber = $ProjectNumber
                 Item = $itemId
                 OpenInEditor = $OpenInEditor
                 OpenInBrowser = $OpenInBrowser
                 NotClearScreen = $NotClearScreenOnItemShow
             }
-            $ShowProjectItemScriptBlock.Invoke($params)
+            Stub_ShowProjectItem @params
         }
 
-                #return item
+        #return item
         if($PassThru) {
             $i = Get-BaseProjectItem -ItemId $itemId
             [PsCustomObject]$i
