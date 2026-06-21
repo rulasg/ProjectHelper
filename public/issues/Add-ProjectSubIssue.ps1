@@ -2,6 +2,7 @@ Set-MyInvokeCommandAlias -Alias AddSubIssue -Command 'Invoke-AddSubIssue -IssueI
 
 function Add-ProjectSubIssueDirect {
     [cmdletbinding()]
+    [Alias("apis")]
     param(
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
@@ -57,7 +58,7 @@ function Add-ProjectSubIssueDirect {
 
     return $true
 
-} Export-ModuleMember -Function Add-ProjectSubIssueDirect
+} Export-ModuleMember -Function Add-ProjectSubIssueDirect -Alias "apis"
 
 
 function Add-ProjectSubissueCreate {
