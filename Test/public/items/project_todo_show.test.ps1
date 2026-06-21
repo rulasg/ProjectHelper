@@ -119,6 +119,6 @@ function Test_ShowProjectTodo_Ordinal{
     $result = Show-BaseProjectTodo -Owner $owner -ProjectNumber $projectNumber -Ordinal $ordinal
     
     # Assert
-    Assert-AreEqual -Expected "ItemId: $ItemId" -Presented $result
+    Assert-AreEqual -Expected "Stub_ShowProjectItem ItemId: $ItemId" -Presented $result
 
 }
