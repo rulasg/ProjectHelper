@@ -25,7 +25,7 @@ function Test_AddProjectSubIssue_SUCCESS{
     # Assert
     Assert-IsTrue -Condition $result
 
-    $item = Get-ProjectItem -ItemId $parent.Id -Owner $owner -ProjectNumber $projectNumber
+    $item = Get-BaseProjectItem -ItemId $parent.Id -Owner $owner -ProjectNumber $projectNumber
 
     Assert-AreEqual -Expected 1 -Presented $item.subIssues.Count
     Assert-Contains -Expected $i0.contentId -Presented $item.subIssues[0].id
@@ -35,7 +35,7 @@ function Test_AddProjectSubIssue_SUCCESS{
 
     # Assert
     Assert-IsTrue -Condition $result
-    $item = Get-ProjectItem -ItemId $parent.Id -Owner $owner -ProjectNumber $projectNumber
+    $item = Get-BaseProjectItem -ItemId $parent.Id -Owner $owner -ProjectNumber $projectNumber
     Assert-AreEqual -Expected 2 -Presented $item.subIssues.Count
     Assert-Contains -Expected $i0.contentId -Presented $item.subIssues[0].id
     Assert-Contains -Expected $i1.contentId -Presented $item.subIssues[1].id
@@ -54,7 +54,7 @@ function Test_GetProjectSubIssue_SUCCESS {
     MockCall_GetProject $p
     MockCallJson -Command "Invoke-GetItem -ItemId $($i.id)" -File "invoke-getitem-$($i.id).json"
 
-    $result  = Get-ProjectItem -ItemId $i.id -Owner $owner -ProjectNumber $projectNumber -Force
+    $result  = Get-BaseProjectItem -ItemId $i.id -Owner $owner -ProjectNumber $projectNumber -Force
 
     Assert-Count -Expected 3 -Presented $result.subIssues
     $i.subIssues | ForEach-Object {

@@ -102,7 +102,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue_NotCached {
     $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-Count -Expected 0 -Presented $staged
 
-    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    $item1 = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
     Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.$fieldComment1
     Assert-AreEqual -Expected $fieldTitleValue1 -Presented $item1.$fieldTitle1
     Assert-AreEqual -Expected $fieldBodyValue1 -Presented $item1.$fieldBody
@@ -199,7 +199,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_PullRequest_NotCached
     $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-Count -Expected 0 -Presented $staged
 
-    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    $item1 = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
     Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.$fieldComment1
     Assert-AreEqual -Expected $fieldTitleValue1 -Presented $item1.$fieldTitle1
     Assert-AreEqual -Expected $fieldBodyValue1 -Presented $item1.$fieldBody
@@ -295,7 +295,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_DraftIssue_NotCached 
     $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-Count -Expected 0 -Presented $staged
 
-    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    $item1 = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
     Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.$fieldComment1
     Assert-AreEqual -Expected $fieldTitleValue1 -Presented $item1.$fieldTitle1
     Assert-AreEqual -Expected $fieldBodyValue1 -Presented $item1.$fieldBody
@@ -395,7 +395,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_Issue {
     $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-Count -Expected 0 -Presented $staged.Keys.Count
 
-    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    $item1 = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
     Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.$fieldComment1
     Assert-AreEqual -Expected $fieldTitleValue1 -Presented $item1.$fieldTitle1
     Assert-AreEqual -Expected $fieldBodyValue1 -Presented $item1.$fieldBody
@@ -490,7 +490,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_PullRequest {
     Assert-Count -Expected 0 -Presented $staged.Keys.Count
 
     # Validations
-    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    $item1 = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
     Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.$fieldComment1
     Assert-AreEqual -Expected $fieldTitleValue1 -Presented $item1.$fieldTitle1
     Assert-AreEqual -Expected $fieldBodyValue1 -Presented $item1.$fieldBody
@@ -585,7 +585,7 @@ function Test_SyncProjectItemsStaged_Async_SUCCESS_Content_DraftIssue {
     Assert-Count -Expected 0 -Presented $staged.Keys.Count
 
     # Validations
-    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    $item1 = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
     Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.$fieldComment1
     Assert-AreEqual -Expected $fieldTitleValue1 -Presented $item1.$fieldTitle1
     Assert-AreEqual -Expected $fieldBodyValue1 -Presented $item1.$fieldBody

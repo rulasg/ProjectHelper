@@ -23,14 +23,14 @@ function Test_GetProjectItem_SUCCESS{
     MockCallJson -Command "Invoke-GetItem -itemid $itemId" -FileName "invoke-getitem-$itemId-updated.json"
 
     # Act get value from project
-    $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
+    $result = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
 
     Assert-AreEqual -Expected $itemId -Presented $result.id
     Assert-AreEqual -Expected $projectFieldCommentValue -Presented $result.$fieldComment
     Assert-AreEqual -Expected $projectFieldTitleValue -Presented $result.$fieldTitle
 
     # Act with force - get value from direct call
-    $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId -Force
+    $result = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId -Force
 
     Assert-AreEqual -Expected $itemId -Presented $result.id
     Assert-AreEqual -Expected $itemFieldCommentValue -Presented $result.$fieldComment
@@ -43,7 +43,7 @@ function Test_GetProjectItem_SUCCESS{
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber $itemId $fieldTitle $newFieldTitleValue
 
     # Act getting from cached project with staged values
-    $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
+    $result = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
 
     Assert-AreEqual -Expected $itemId -Presented $result.id
     Assert-AreEqual -Expected $newFieldCommentValue -Presented $result.$fieldComment
@@ -59,7 +59,7 @@ function Test_GetProjectItem_Comments{
     MockCall_GetProject $p -Cache
 
     #Act
-    $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
+    $result = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
 
     $c = $i.comments
     Assert-Count -Expected $c.totalCount -Presented $result.comments
@@ -84,7 +84,7 @@ function Test_GetProjectItem_Staged_Title{
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId -FieldName "Title" -Value $newTitle
 
     # Act get item
-    $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
+    $result = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
 
     Assert-AreEqual -Expected $newTitle -Presented $result.Title
 }
@@ -102,7 +102,7 @@ function Test_GetProjectItem_Staged_Body{
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId -FieldName "Body" -Value $newBody
 
     # Act get item
-    $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
+    $result = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
 
     Assert-AreEqual -Expected $newBody -Presented $result.Body
 }
@@ -256,7 +256,7 @@ function Test_ResetProjectItem_Value_SUCCESS{
     Set-ProjectHelperEnvironment -Owner $owner -ProjectNumber $projectNumber
 
     # Confirm actual values
-    $actualItem = Get-ProjectItem $itemId
+    $actualItem = Get-BaseProjectItem $itemId
     $f1Actual = $actualItem.$f1
     $f2Actual = $actualItem.$f2
 
@@ -265,21 +265,21 @@ function Test_ResetProjectItem_Value_SUCCESS{
     Edit-ProjectItem -ItemId $itemId -fieldname $f2 -Value $f2Value
 
     # confirm that the vaules have changed as changes are staged
-    $changed = Get-ProjectItem $itemId
+    $changed = Get-BaseProjectItem $itemId
     Assert-AreEqual -Expected $f1Value -Presented $changed.$f1
     Assert-AreEqual -Expected $f2Value -Presented $changed.$f2
 
     # Act - reset F1
     Reset-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId -FieldName $f1
 
-    $reset1 = Get-ProjectItem $itemId
+    $reset1 = Get-BaseProjectItem $itemId
     Assert-AreEqual -Expected $f1Actual -Presented $reset1.$f1
     Assert-AreEqual -Expected $f2Value -Presented $reset1.$f2
 
     # Act Reset F2
 
     Reset-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId -FieldName $f2
-    $reset2 = Get-ProjectItem $itemId
+    $reset2 = Get-BaseProjectItem $itemId
     Assert-AreEqual -Expected $f1Actual -Presented $reset2.$f1
     Assert-AreEqual -Expected $f2Actual -Presented $reset2.$f2
 }
@@ -296,7 +296,7 @@ function Test_ResetProjectItem_SUCCESS{
     Set-ProjectHelperEnvironment -Owner $owner -ProjectNumber $projectNumber
 
     # Confirm actual values
-    $actualItem = Get-ProjectItem $itemId
+    $actualItem = Get-BaseProjectItem $itemId
     $f1Actual = $actualItem.$f1
     $f2Actual = $actualItem.$f2
 
@@ -305,14 +305,14 @@ function Test_ResetProjectItem_SUCCESS{
     Edit-ProjectItem -ItemId $itemId -fieldname $f2 -Value $f2Value
 
     # confirm that the vaules have changed as changes are staged
-    $changed = Get-ProjectItem $itemId
+    $changed = Get-BaseProjectItem $itemId
     Assert-AreEqual -Expected $f1Value -Presented $changed.$f1
     Assert-AreEqual -Expected $f2Value -Presented $changed.$f2
 
     # Act - reset F1
     Reset-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId
 
-    $reset = Get-ProjectItem $itemId
+    $reset = Get-BaseProjectItem $itemId
     Assert-AreEqual -Expected $f1Actual -Presented $reset.$f1
     Assert-AreEqual -Expected $f2Actual -Presented $reset.$f2
 }
@@ -408,7 +408,7 @@ function Test_ShowProjectItem_SUCCESS{
 
     # title refrence with differnt case and spaces
 
-    $item = Get-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $id
+    $item = Get-BaseProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $id
 
     # Act 0
     $result0 = $item | Format-ProjectItem

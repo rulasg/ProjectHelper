@@ -9,7 +9,7 @@ function Test_RemoveProjectIssue_SUCCESS {
     MockCallJson -Command "Invoke-GetIssueOrPullRequest -Url $($i.url)" -fileName $i.getIssueOrPullRequestMockFile
     MockCallJson -Command "Invoke-AddItemToProject -ProjectId $($p.id) -ContentId $($i.id)" -fileName $i.addIssueToOProjectMockFile
     $itemId = Add-ProjectItem -owner $owner -projectNumber $projectNumber -Url $i.url
-    $item = Get-ProjectItem -Id $itemId -owner $owner -projectNumber $projectNumber
+    $item = Get-BaseProjectItem -Id $itemId -owner $owner -projectNumber $projectNumber
     Assert-AreEqual -expected $i.id -Presented $item.contentId
 
     MockCallJson -Command "Invoke-RemoveItemFromProject -ProjectId $($p.id) -ItemId $($i.itemId)" -fileName $i.removeIssueFromProjectMockFile

@@ -1,6 +1,6 @@
 
 # Testing Environment cache
-# as we do not have access to it we will use Get-ProjectItem function
+# as we do not have access to it we will use Get-BaseProjectItem function
 
 function Test_EnvironmentCache{
 
@@ -21,7 +21,7 @@ function Test_EnvironmentCache{
     $fieldTitleValue = $i.title
     $fieldCommentValue = $i.fieldtext
 
-    $result = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
+    $result = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId
 
     Assert-AreEqual -Expected $itemId -Presented $result.id
 

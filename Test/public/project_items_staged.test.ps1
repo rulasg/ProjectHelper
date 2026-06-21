@@ -74,7 +74,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_Number{
     $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-Count -Expected 0 -Presented $staged
 
-    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    $item1 = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
     Assert-AreEqual -Expected $fieldValue -Presented $item1.$fieldName
 }
 
@@ -137,7 +137,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_Date{
     Assert-IsTrue -Condition $result
     $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-Count -Expected 0 -Presented $staged
-    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    $item1 = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
     Assert-AreEqual -Expected $fieldValueToUpdate -Presented $item1.$fieldName
 }
 
@@ -217,7 +217,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_SingleSelect{
     $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-Count -Expected 0 -Presented $staged
 
-    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    $item1 = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
     Assert-AreEqual -Expected $fieldNewValue -Presented $item1.$fieldName
 }
 
@@ -306,7 +306,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_Content_Issue_NotCached {
     $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-Count -Expected 0 -Presented $staged
 
-    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    $item1 = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
     Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.$fieldComment1
     Assert-AreEqual -Expected $fieldTitleValue1 -Presented $item1.$fieldTitle1
     Assert-AreEqual -Expected $fieldBodyValue1 -Presented $item1.$fieldBody
@@ -397,7 +397,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_Content_PullRequest_NotCached {
     $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-Count -Expected 0 -Presented $staged
 
-    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    $item1 = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
     Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.$fieldComment1
     Assert-AreEqual -Expected $fieldTitleValue1 -Presented $item1.$fieldTitle1
     Assert-AreEqual -Expected $fieldBodyValue1 -Presented $item1.$fieldBody
@@ -487,7 +487,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_Content_DraftIssue_NotCached {
     $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-Count -Expected 0 -Presented $staged
 
-    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    $item1 = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
     Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.$fieldComment1
     Assert-AreEqual -Expected $fieldTitleValue1 -Presented $item1.$fieldTitle1
     Assert-AreEqual -Expected $fieldBodyValue1 -Presented $item1.$fieldBody
@@ -578,7 +578,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_Content_Issue {
     $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-Count -Expected 0 -Presented $staged
 
-    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    $item1 = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
     Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.$fieldComment1
     Assert-AreEqual -Expected $fieldTitleValue1 -Presented $item1.$fieldTitle1
     Assert-AreEqual -Expected $fieldBodyValue1 -Presented $item1.$fieldBody
@@ -666,7 +666,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_Content_PullRequest {
     $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-Count -Expected 0 -Presented $staged
 
-    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    $item1 = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
     Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.$fieldComment1
     Assert-AreEqual -Expected $fieldTitleValue1   -Presented $item1.$fieldTitle1
     Assert-AreEqual -Expected $fieldBodyValue1    -Presented $item1.$fieldBody
@@ -756,7 +756,7 @@ function Test_SyncProjectItemsStaged_SUCCESS_Content_DraftIssue {
     $staged = Get-ProjectItemStaged -Owner $Owner -ProjectNumber $ProjectNumber
     Assert-Count -Expected 0 -Presented $staged
 
-    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    $item1 = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
     Assert-AreEqual -Expected $fieldCommentValue1 -Presented $item1.$fieldComment1
     Assert-AreEqual -Expected $fieldTitleValue1   -Presented $item1.$fieldTitle1
     Assert-AreEqual -Expected $fieldBodyValue1    -Presented $item1.$fieldBody
@@ -972,7 +972,7 @@ function Test_Sync_ProjectDatabaseAsync_ClearValues{
     Assert-Count -Expected 0 -Presented $staged
 
     # Verify the values in the database
-    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    $item1 = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
     Assert-StringIsNullOrEmpty -Presented $item1.$fieldComment1
     Assert-StringIsNullOrEmpty -Presented $item1.$fieldPriority1
 }
@@ -1036,7 +1036,7 @@ function Test_Sync_ProjectDatabase_ClearValues{
     Assert-Count -Expected 0 -Presented $staged
 
     # Verify the values in the database
-    $item1 = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
+    $item1 = Get-BaseProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $itemId1
     Assert-StringIsNullOrEmpty -Presented $item1.$fieldComment1
     Assert-StringIsNullOrEmpty -Presented $item1.$fieldPriority1
 }

@@ -28,7 +28,7 @@ function Show-BaseProjectItem{
 
     process {
 
-        $item = Get-ProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber
+        $item = Get-BaseProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber
 
         if($OpenInBrowser){
             Open-Url -Url $item.url

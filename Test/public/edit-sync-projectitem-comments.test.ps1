@@ -25,7 +25,7 @@ function Test_Edit_Sync_ProjectItem_AddComments_Issue {
     Assert-AreEqual -Expected $comment -Presented $staged.$($i.id).addcomment.Value
 
     # Confirm that staged values are merged on GetItem
-    $item = Get-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $i.id
+    $item = Get-BaseProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $i.id
     Assert-AreEqual -Expected $comment -Presented $item.comments[-1].body
     Assert-AreEqual -Expected $comment -Presented $item.commentLast.body
 
@@ -36,19 +36,19 @@ function Test_Edit_Sync_ProjectItem_AddComments_Issue {
     Assert-Count -Expected 0 -Presented $staged.Count
 
     # Assert comment is commited to database
-    $item = Get-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $i.id
+    $item = Get-BaseProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $i.id
     Assert-AreEqual -Expected $comment -Presented $item.comments[-1].body
     Assert-AreEqual -Expected $comment -Presented $item.commentLast.body
 
     # Act more comments on a item with already has comments
     Edit-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $i.id -FieldName "AddComment" -Value $comment2
 
-    $item = Get-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $i.id
+    $item = Get-BaseProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $i.id
 
     Sync-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
     $staged = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
     Assert-Count -Expected 0 -Presented $staged.Count
-    $item = Get-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $i.id
+    $item = Get-BaseProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $i.id
     Assert-AreEqual -Expected $comment2 -Presented $item.comments[-1].body
     Assert-AreEqual -Expected $comment2 -Presented $item.commentLast.body
 }

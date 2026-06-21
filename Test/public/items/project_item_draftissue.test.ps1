@@ -12,7 +12,7 @@ function Test_NewProjectDraftIssue {
     $draftIssueId = New-ProjectDraftIssueDirect -Owner $owner -ProjectNumber $projectNumber -Title $title -Body $body
 
     # Assert
-    $item = Get-ProjectItem -ItemId $draftIssueId -Owner $owner -ProjectNumber $projectNumber
+    $item = Get-BaseProjectItem -ItemId $draftIssueId -Owner $owner -ProjectNumber $projectNumber
     Assert-AreEqual -Expected $draftIssueId -Presented $item.id
     Assert-AreEqual -Expected $title -Presented $item.Title
     Assert-AreEqual -Expected $body -Presented $item.Body

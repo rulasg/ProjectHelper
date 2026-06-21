@@ -15,11 +15,11 @@ function Test_Get_Project_ItemId_Equal_Case_Sensitive {
     $result = Get-Project
     Assert-Count -Expected $p.items.totalCount -Presented $result.items.keys
 
-    $result1 = Get-ProjectItem -ItemId $item1
+    $result1 = Get-BaseProjectItem -ItemId $item1
     Assert-IsNotNull -Object $result1
     Assert-AreEqual -Expected $result1.id -Presented $result.items.$item1.id
 
-    $result2 = Get-ProjectItem -ItemId $item2
+    $result2 = Get-BaseProjectItem -ItemId $item2
     Assert-IsNotNull -Object $result2
     Assert-AreEqual -Expected $result2.id -Presented $result.items.$item2.id
 

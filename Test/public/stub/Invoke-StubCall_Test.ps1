@@ -128,7 +128,7 @@ function Get-TestString_ItemId{
 }
 
 function Get-TestString{
-    param([string] $StubName,)
+    param([string] $StubName)
 
     return "$StubName Get-TestString called"
 }
