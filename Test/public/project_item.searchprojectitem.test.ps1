@@ -123,3 +123,22 @@ function Test_SearchProjectItem_AND_Filter_SUCCESS {
     $notFound = Search-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Filter "UniqueSearchAlpha","MissingZeta"
     Assert-Count -Expected 0 -Presented $notFound
 }
+
+function Test_StubShowProjectInbox_SUCCESS {
+
+    # Arrange
+    Reset-InvokeCommandMock
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    MockCall_GetProject_700
+    $expected = @($p.items.values | Where-Object { [string]::IsNullOrWhiteSpace($_.status) })
+
+    # Act
+    $result = Stub_ShowProjectInbox -Owner $owner -ProjectNumber $projectNumber -PassThru
+
+    # Assert
+    Assert-Count -Expected $expected.Count -Presented $result
+    Assert-IsTrue -Condition (@($result | Where-Object { -not [string]::IsNullOrWhiteSpace($_.Status) }).Count -eq 0)
+    foreach($id in $expected.id){
+        Assert-Contains -Expected $id -Presented $result.id
+    }
+}

@@ -245,6 +245,27 @@ function Search-ProjectItem {
 
 } Export-ModuleMember -Function Search-ProjectItem -Alias "spi"
 
+function Stub_ShowProjectInbox{
+    [CmdletBinding()]
+    param(
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter()][switch]$PassThru
+    )
+
+    ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
+
+    $items = Search-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -IncludeDone -PassThru
+    $items = @($items | Where-Object { [string]::IsNullOrWhiteSpace($_.Status) })
+
+    if($PassThru){
+        return $items
+    }
+
+    return $items | Use-Order
+
+} Export-ModuleMember -Function Stub_ShowProjectInbox
+
 function Format-ProjectItem{
     [CmdletBinding()]
     [Alias("fpi")]
