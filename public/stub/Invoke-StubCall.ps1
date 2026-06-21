@@ -8,6 +8,8 @@ function Invoke-StubCall{
     switch ($stubName) {
         "Stub_GetProjectItem" { $ret = Get-BaseProjectItem @Parameters }
         "Stub_ShowProjectItem" { $ret = Show-BaseProjectItem @Parameters }
+        "Stub_ShowProjectTodo"{ $ret = Show-BaseProjectTodo @Parameters }
+
         default { throw "Unknown stub name: $stubName" }
     }
 
@@ -26,12 +28,17 @@ function Invoke-StubCall_Common{
     
     switch ($stubName) {
         "Stub_GetProjectItem" { $ret = Get-BaseProjectItem @Parameters }
+        
         "Stub_ShowProjectItem" {
             # Using Show-SalesProjectItem until I code the proper Common stub for Show-ProjectItem
+            # Create a Show-CommonProjectItem that shows common fields based on ProjectConfig (Comment,DueDate)
             $owner,$ProjectNumber = Resolve-ProjectParameters -Owner $Parameters.Owner -ProjectNumber $Parameters.ProjectNumber -doNotThrow
             $Parameters.Owner = $owner ; $Parameters.ProjectNumber = $ProjectNumber
             $ret = SalesHelper\Show-SalesProjectItem @Parameters
         }
+
+        "Stub_ShowProjectTodo"{ $ret = Show-BaseProjectTodo @Parameters }
+
         default { throw "Unknown stub name: $stubName" }
     }
     
