@@ -97,12 +97,12 @@ function Sync-ProjectAsync {
         }
 
         # Convert value back to display value for saving in the database
-        $value = ConvertFrom-FieldValue -Field $call.fieldName -Value $value
+        $dbValue = ConvertFrom-FieldValue -Field $call.fieldName -Value $call.Value
 
-        "Saving [$($call.projectId)/$($call.itemId)/$($call.FieldId) ($($call.FieldName)) = ""$Value"" ] ..." | Write-MyHost
+        "Saving [$($call.projectId)/$($call.itemId)/$($call.FieldId) ($($call.FieldName)) = ""$dbValue"" ] ..." | Write-MyHost
 
         # Cache the value in the database and remove from staged
-        Set-ItemValue -Database $db -ItemId $call.itemId -FieldName $call.fieldName -Value $Value
+        Set-ItemValue -Database $db -ItemId $call.itemId -FieldName $call.fieldName -Value $dbValue
         Remove-ItemValueStaged -Database $db -ItemId $call.itemId -FieldId $call.FieldId
     }
 
