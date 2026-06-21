@@ -29,7 +29,7 @@ function Register-QQ_Commands{
     # New-QQ_Function -Module $modulename -Name "Invoke-QQ_Ready_QR"           -Alias "qr"  -Description "Set item as ready "                          -ScriptBlock { $i = g ; W "e -Ready $i" ; $i | e -Ready }
     # New-QQ_Function -Module $modulename -Name "Invoke-QQ_FollowUp_QF"        -Alias "qf"  -Description "Set item for follow-up "                      -ScriptBlock { $i = g ; W "e -FollowUp $i" ; $i | e -FollowUp }
     
-    # New-QQ_Function -Module $modulename -Name "Invoke-QQ_NextTodo_X"        -Alias "x"  -Description "Show next item"                               -ScriptBlock {param([parameter(Position=0)]$arg1) W "Show-SalesTodoNext" ; Show-SalesTodoNext $arg1}
+    New-QQ_Function -Module $modulename -Name "Invoke-QQ_NextTodo_X"        -Alias "x"  -Description "Show next item"                               -ScriptBlock {param([parameter(Position=0)]$arg1) W "Show-SalesTodoNext" ; Stub_ShowProjectTodo $arg1}
     # New-QQ_Function -Module $modulename -Name "Invoke-QQ_NextCleint_XC"      -Alias "xc"  -Description "Show next item for client"                  -ScriptBlock { W "Show-SalesTodoNext -Topic Client" ; Show-SalesTodoNext -Topic Client }
     # New-QQ_Function -Module $modulename -Name "Invoke-QQ_NextNotifi_XS"      -Alias "xs"  -Description "Show next notification item"                -ScriptBlock { W "Show-SalesNotificationsNext" ; Show-SalesNotificationsNext }
     # New-QQ_Function -Module $modulename -Name "Invoke-QQ_NextInbox_XX"       -Alias "xx"  -Description "Show next inbox item"                       -ScriptBlock { W "Show-SalesInboxNext " ; Show-SalesInboxNext }
