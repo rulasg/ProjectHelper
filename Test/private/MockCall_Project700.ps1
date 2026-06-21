@@ -230,6 +230,14 @@ function Get-Mock_Project_700 {
     $project.searchInAnyField."rulasg-dev-1".totalCount = $i.Count
     $project.searchInAnyField."rulasg-dev-1".Titles = $i.title
 
+    # Get-ProjectItemTodo
+    $project.getprojectItemTodo = @{
+        ordinal = 2
+        itemId = "PVTI_lADOAlIw4c4BCe3Vzgec8pg"
+        allCount = 7
+        statusTodo = "In Progress"
+    }
+
     return $project
 }
 

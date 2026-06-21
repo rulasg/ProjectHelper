@@ -41,7 +41,6 @@ function Test_SetProjectConfig_Empty{
 function Test_SetProjectConfig_readme_WithContentString{
 
     $p = Get-Mock_Project_700 ; $owner = $p.Owner; $projectNumber = $p.number ; $projectId = $p.id
-    MockCall_GetProject $p -SkipItems -Cache
 
     # update readme
     $actualReadmeString = "This is some readme content that should be preserved"
@@ -67,7 +66,6 @@ function Test_SetProjectConfig_readme_WithContentString{
 function Test_SetProjectConfig_readme_WithContentConfig{
 
     $p = Get-Mock_Project_700 ; $owner = $p.Owner; $projectNumber = $p.number ; $projectId = $p.id
-    MockCall_GetProject $p -SkipItems -Cache
 
     Update-Mock_Project_ReadMe_With_String_And_Config $p "OldModule"
 
@@ -91,7 +89,6 @@ function Test_SetProjectConfig_readme_WithContentConfig{
 function Test_SetProjectConfig_readme_WithContentConfigAndString{
 
     $p = Get-Mock_Project_700 ; $owner = $p.Owner; $projectNumber = $p.number ; $projectId = $p.id
-    MockCall_GetProject $p -SkipItems -Cache
 
     # Arrange project readme
     $actualReadmeString = "This is some readme content that should be preserved"

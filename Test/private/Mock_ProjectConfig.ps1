@@ -6,12 +6,16 @@ $PROJECT_CONFIG_TEMPLATE = @'
 '@
 function Update-Mock_Project_ReadMe_With_String_And_Config($p, $module, $extraString = ""){
 
+    if($module -eq "Test"){
+        $module = Get-ModuleRootPath | join-path -ChildPath "Test"
+    }
+    
     $owner = $p.Owner
     $projectNumber = $p.number
-    MockCall_GetProject $p -SkipItems -Cache
+    MockCall_GetProject $p -Cache
     
     $actualReadme = $extraString
-
+    
     # Add config section if module is provided
     if(-not [string]::IsNullOrWhiteSpace($module)){
         $actualReadme += -not [string]::IsNullOrWhiteSpace($extraString) ? "`n`n" : ""
@@ -22,6 +26,6 @@ function Update-Mock_Project_ReadMe_With_String_And_Config($p, $module, $extraSt
     Update-Mock_DatabaseFileWithField "db-$Owner-$ProjectNumber-project.json" "readme" $actualReadme
 
     # Assert configuration
-    $db = Get-Project -owner $owner -projectNumber $projectNumber -SkipItems
+    $db = Get-Project -owner $owner -projectNumber $projectNumber
     Assert-AreEqual -Expected $actualReadme -Present $db.readme
 }
