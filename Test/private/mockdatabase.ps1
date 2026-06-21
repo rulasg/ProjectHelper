@@ -38,6 +38,11 @@ function Update-Mock_DatabaseFileWithReplace([string]$FileName, [string]$SearchS
 function Update-Mock_DatabaseFileWithField([string]$FileName, [string]$Property, [string]$ReplaceString){
 
     $dbpath = Get-Mock_DatabaseRootPath | Join-Path -ChildPath $FileName
+
+    if(-not (Test-Path $dbpath)){
+        throw "File not found: $dbpath"
+    }
+
     $db = Get-Content $dbpath -Raw | convertfrom-json -Depth 10
     $db.$Property = $ReplaceString
     $content = $db | ConvertTo-Json -Depth 10
