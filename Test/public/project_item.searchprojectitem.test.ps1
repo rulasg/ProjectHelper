@@ -128,9 +128,11 @@ function Test_StubShowProjectInbox_SUCCESS {
 
     # Arrange
     Reset-InvokeCommandMock
-    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $p = Get-Mock_Project_700
+    $owner = $p.owner
+    $projectNumber = $p.number
     MockCall_GetProject_700
-    $expected = @($p.items.values | Where-Object { [string]::IsNullOrWhiteSpace($_.status) })
+    $expected = @($p.items.values | Where-Object { [string]::IsNullOrWhiteSpace($_.Status) })
 
     # Act
     $result = Stub_ShowProjectInbox -Owner $owner -ProjectNumber $projectNumber -PassThru
