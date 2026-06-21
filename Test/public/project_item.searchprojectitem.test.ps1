@@ -138,8 +138,9 @@ function Test_StubShowProjectInbox_SUCCESS {
     $result = Stub_ShowProjectInbox -Owner $owner -ProjectNumber $projectNumber -PassThru
 
     # Assert
+    $itemsWithStatus = @($result | Where-Object { -not [string]::IsNullOrWhiteSpace($_.Status) })
     Assert-Count -Expected $expected.Count -Presented $result
-    Assert-IsTrue -Condition (@($result | Where-Object { -not [string]::IsNullOrWhiteSpace($_.Status) }).Count -eq 0)
+    Assert-Count -Expected 0 -Presented $itemsWithStatus
     foreach($id in $expected.id){
         Assert-Contains -Expected $id -Presented $result.id
     }
