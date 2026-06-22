@@ -28,6 +28,8 @@ function Register-QQ_Commands{
     
     # New-QQ_Function -Module $modulename -Name "Invoke-QQ_Ready_QR"           -Alias "qr"  -Description "Set item as ready "                          -ScriptBlock { $i = g ; W "e -Ready $i" ; $i | e -Ready }
     # New-QQ_Function -Module $modulename -Name "Invoke-QQ_FollowUp_QF"        -Alias "qf"  -Description "Set item for follow-up "                      -ScriptBlock { $i = g ; W "e -FollowUp $i" ; $i | e -FollowUp }
+    # New-QQ_Function -Module $modulename -Name "Invoke-QQ_Backlog_QB"        -Alias "qb"  -Description "Set item for backlog "                       -ScriptBlock { $i = g ; W "e -Backlog $i" ; $i | e -Backlog }
+
     
     New-QQ_Function -Module $modulename -Name "Invoke-QQ_NextTodo_X"        -Alias "x"  -Description "Show next item"                               -ScriptBlock {param([parameter(Position=0)]$arg1) W "Show-SalesTodoNext" ; Stub_ShowProjectTodo $arg1}
     # New-QQ_Function -Module $modulename -Name "Invoke-QQ_NextCleint_XC"      -Alias "xc"  -Description "Show next item for client"                  -ScriptBlock { W "Show-SalesTodoNext -Topic Client" ; Show-SalesTodoNext -Topic Client }
