@@ -36,6 +36,9 @@ function Test_UserOrder_Success_GetItem{
 
     $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
 
+    # Mock Stub module for "Test"
+    Update-Mock_Project_ReadMe_With_String_And_Config $p "Test"
+
     # We need to have the environment set to get item details in PassThru
     Set-ProjectHelperEnvironment -Owner $owner -ProjectNumber $projectNumber
     $list = Search-ProjectItem -IncludeDone

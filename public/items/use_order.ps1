@@ -10,8 +10,7 @@ function Use-Order {
         [Parameter()][Alias("w")][switch]$OpenInBrowser,
         [Parameter()][Alias("p")][switch]$PassThru,
         [Parameter()][Alias("c")][switch]$ClearScreen,
-        [Parameter()][switch]$NotClearScreenOnItemShow,
-        [Parameter()][Alias("d")][switch]$DontShow
+        [Parameter()][switch]$NotClearScreenOnItemShow
     )
 
     begin {
@@ -63,8 +62,11 @@ function Use-Order {
             throw "ProjectEnvironment is required. Run Set-ProjectHelperEnvironment"
         }
 
-        if( -not $DontShow){
-            
+        #Return or show
+        if($PassThru) {
+            $i = Get-BaseProjectItem -ItemId $itemId
+            return [PsCustomObject]$i
+        } else {
             # Show item in console or editor
             $params = @{
                 Owner = $Owner
@@ -75,12 +77,6 @@ function Use-Order {
                 NotClearScreen = $NotClearScreenOnItemShow
             }
             Stub_ShowProjectItem @params
-        }
-
-        #return item
-        if($PassThru) {
-            $i = Get-BaseProjectItem -ItemId $itemId
-            [PsCustomObject]$i
         }
     }
 } Export-ModuleMember -Function Use-Order -Alias "uo"
