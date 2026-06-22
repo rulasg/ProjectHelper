@@ -97,7 +97,8 @@ function Sync-ProjectAsync {
         }
 
         # Convert value back to display value for saving in the database
-        $dbValue = ConvertFrom-FieldValue -Field $call.fieldName -Value $call.Value
+        $field= Get-Field -Database $db -FieldName $call.fieldName
+        $dbValue = ConvertFrom-FieldValue -Field $field -Value $call.Value
 
         "Saving [$($call.projectId)/$($call.itemId)/$($call.FieldId) ($($call.FieldName)) = ""$dbValue"" ] ..." | Write-MyHost
 
