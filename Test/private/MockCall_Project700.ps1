@@ -145,6 +145,12 @@ function Get-Mock_Project_700 {
         }
     }
 
+    # Issue with Parent
+    $project.subIssueWithParent = @{
+        id = "PVTI_lADOAlIw4c4BCe3Vzgec8p8"
+        url = "https://github.com/octodemo/rulasg-dev-1/issues/4"
+    }
+
     # SubIssue to show
     $project.subIssueToShow = @{
         id = "PVTI_lADOAlIw4c4BCe3Vzgec8p8"

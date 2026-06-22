@@ -2,7 +2,6 @@ function Test_AddProjectSubIssue_SUCCESS{
 
     $p = Get-Mock_Project_700 ; $owner = $p.Owner ; $projectNumber = $p.Number
 
-
     $parent  = $p.Issue
     $i0 = $p.subIssuesToAdd[0]
     $i1 = $p.subIssuesToAdd[1]
@@ -11,7 +10,6 @@ function Test_AddProjectSubIssue_SUCCESS{
 
     MockCallJson -Command "Invoke-AddSubIssue -IssueId $($parent.contentId) -SubIssueUrl $($i0.url) -ReplaceParent False" -File "$($i0.addSubIssueMockfile)"
     MockCallJson -Command "Invoke-AddSubIssue -IssueId $($parent.contentId) -SubIssueUrl $($i1.url) -ReplaceParent False" -File "$($i1.addSubIssueMockfile)"
-
 
     # Act add SubIssue 1
     $params = @{
@@ -43,7 +41,19 @@ function Test_AddProjectSubIssue_SUCCESS{
 
 function Test_AddProjectSubIssue_FAIL_ALREADY_HAS_PARENT {
 
-    Assert-NotImplemented
+    $p = Get-Mock_Project_700 ; $owner = $p.Owner ; $projectNumber = $p.Number
+    MockCall_GetProject $p -cache
+
+    $parent  = $p.Issue
+    $subIssueWithParent = $p.subIssueWithParent
+
+    MockCallToNull -Command "Invoke-AddSubIssue -IssueId $($parent.contentId) -SubIssueUrl $($subIssueWithParent.url) -ReplaceParent False"
+
+     # Act
+     $result = Add-ProjectSubIssueDirect -Owner $owner -ProjectNumber $projectNumber -url $subIssueWithParent.url -ItemId $parent.Id
+
+    # Assert
+    Assert-isnull -Object $result
 }
 
 function Test_GetProjectSubIssue_SUCCESS {
