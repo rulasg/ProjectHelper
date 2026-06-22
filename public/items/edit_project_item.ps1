@@ -1,7 +1,7 @@
 
-Register-ArgumentCompleter -CommandName Edit-ProjectItem -ParameterName Status -ScriptBlock $(Get-ArgumentCompleterScriptBlock "Script_GetValidNames_ParameterName")
-Register-ArgumentCompleter -CommandName Edit-ProjectItem -ParameterName FieldName -ScriptBlock $(Get-ArgumentCompleterScriptBlock "Script_GetValidFieldsNames")
-Register-ArgumentCompleter -CommandName Edit-ProjectItem -ParameterName Value -ScriptBlock $(Get-ArgumentCompleterScriptBlock "Script_GetValidNames_FieldName")
+Register-ArgumentCompleter -CommandName Edit-ProjectItem -ParameterName Status -ScriptBlock { param($commandName, $parameterName,$wordToComplete) Get-ProjectArgumentCompleter_ParameterNameFieldValues @PsBoundParameters }
+Register-ArgumentCompleter -CommandName Edit-ProjectItem -ParameterName FieldName -ScriptBlock { param($commandName, $parameterName, $wordToComplete) Get-ProjectArgumentCompleter_FieldNames @PsBoundParameters }
+Register-ArgumentCompleter -CommandName Edit-ProjectItem -ParameterName Value -ScriptBlock { param($commandName, $parameterName, $wordToComplete, $commandAst) Get-ProjectArgumentCompleter_ParseCommandToExtractFieldName_FieldValues @PsBoundParameters }
 
 function Edit-ProjectItem {
     [CmdletBinding()]
