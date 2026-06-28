@@ -1,21 +1,21 @@
 # Default values for th econfiguration of any project for Stub integration
 
 enum ConfigKey {
-    stubcommand
     module
-    DueDateFieldName
-    CommentFieldName
-    ReadyStatus
-    ClosedStatus
-    BacklogStatus
+    stubcommand
+    FieldName_DueDate
+    FieldName_Comment
+    Status_Ready
+    Status_Closed
+    Status_Backlog
 }
 
-$DEFAULT_CONFIG_VALUES = @{
-    stubcommand      = "Invoke-StubCall"
-    module           = "ProjectHelper"
-    DueDateFieldName = "DueDate"
-    CommentFieldName = "Comment"
-    ReadyStatus      = "In Progress"
-    ClosedStatus     = "Done"
-    BacklogStatus    = "Todo"
+$script:DEFAULT_CONFIG_VALUES = @{
+    module            = "ProjectHelper"
+    stubcommand       = "Invoke-StubCall"
+    FieldName_DueDate = "DueDate"
+    FieldName_Comment = "Comment"
+    Status_Ready      = "In Progress"
+    Status_Closed     = "Done"
+    Status_Backlog    = "Todo"
 }

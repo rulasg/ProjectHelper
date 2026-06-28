@@ -6,32 +6,42 @@ function Get-ProjectConfigValue{
     param(
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
-        [Parameter(Mandatory,Position=0)][string]$FieldName,
+        [Parameter(Mandatory,Position=0)][string]$ConfigName,
         [Parameter()][string]$DefaultValue,
         [switch]$Force
     )
 
     ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
-    "[Get-ProjectConfigValue] Getting project configuraiton value [$FieldName] for [$Owner/$ProjectNumber] and Force=$Force >>>" | Write-MyDebug -Section "ProjectConfig"
+    "[Get-ProjectConfigValue] Getting project configuraiton value [$ConfigName] for [$Owner/$ProjectNumber] and Force=$Force >>>" | Write-MyDebug -Section "ProjectConfig"
 
     $config = Get-ProjectConfig -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
 
-    $actualValue = $config.$FieldName
+    $actualValue = $config.$ConfigName
 
     $ret = $actualValue ?? $([string]::IsNullOrEmpty($DefaultValue) ? $null : $defaultValue)
 
-    "[Get-ProjectConfigValue] Getting project configuraiton value [$FieldName] for [$Owner/$ProjectNumber] and Force=$Force <<<" | Write-MyDebug -Section "ProjectConfig" -Object $ret
+    "[Get-ProjectConfigValue] Getting project configuraiton value [$ConfigName] for [$Owner/$ProjectNumber] and Force=$Force <<<" | Write-MyDebug -Section "ProjectConfig" -Object $ret
 
     return $ret
 }
 
+function Get-ProjectConfigDefaults {
+    [CmdletBinding()]
+    [OutputType([hashtable])]
+    param()
+
+    $ret = $DEFAULT_CONFIG_VALUES
+
+    return $ret
+} Export-ModuleMember -Function Get-ProjectConfigDefaults
+
 function Get-ProjectConfig {
     [CmdletBinding()]
     param(
-        [string]$Owner,
-        [string]$ProjectNumber,
-        [switch]$Force
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter()][switch]$Force
     )
 
     ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
@@ -53,10 +63,10 @@ function Get-ProjectConfig {
 function Set-ProjectConfig {
     [CmdletBinding()]
     param(
-        [string]$Owner,
-        [string]$ProjectNumber,
-        [hashtable]$Config,
-        [switch]$Force
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter(Position = 0)][hashtable]$Config,
+        [Parameter()][switch]$Force
     )
 
     ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
@@ -86,9 +96,9 @@ function Set-ProjectConfig {
 function Clear-ProjectConfig {
     [CmdletBinding()]
     param(
-        [string]$Owner,
-        [string]$ProjectNumber,
-        [switch]$Force
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter()][switch]$Force
     )
 
     ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber

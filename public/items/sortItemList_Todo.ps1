@@ -3,7 +3,7 @@ function sortItemList_Todo{
     [outputType([array])]
     param(
         [Parameter(Position=0,ValueFromPipeline)][array]$list,
-        [Parameter(Mandatory)][string]$DueDateFieldName
+        [Parameter(Mandatory)][string]$FieldName_DueDate
     )
 
     begin {
@@ -20,11 +20,10 @@ function sortItemList_Todo{
 
         $properties = @(
             @{ Expression = "due"                            ; Descending = $true  } # Sort first due issues
-            @{ Expression = {$null -eq $_.$DueDateFieldName} ; Descending = $true  } # Group by having DueDate value first
-            @{ Expression = $DueDateFieldName                ; Descending = $false } # Sort by DueDate field value
+            @{ Expression = {$null -eq $_.$FieldName_DueDate} ; Descending = $true  } # Group by having DueDate value first
+            @{ Expression = $FieldName_DueDate                ; Descending = $false } # Sort by DueDate field value
             @{ Expression = 'Status'                         ; Descending = $false } # Sort by status
             @{ Expression = { $_.updatedAt.ToString("yyyy-MM-dd") } ; Descending = $false } # Sort by updatedAt (newest first)
-            #title
             @{ Expression = 'Title'                          ; Descending = $false } # Sort by title
         )
 

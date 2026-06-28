@@ -87,9 +87,9 @@ function Get-ProjectItemTodo{
 
     # Get config values
     if([string]::IsNullOrEmpty($Status)){
-        $Status = Get-ProjectConfigValue -FieldName [ConfigKey]::ReadyStatus -Owner $owner -ProjectNumber $ProjectNumber -DefaultValue $DEFAULT_CONFIG_VALUES.$([ConfigKey]::ReadyStatus.ToString())
+        $Status = Get-ProjectConfigValue [ConfigKey]::Status_Ready -Owner $owner -ProjectNumber $ProjectNumber -DefaultValue $DEFAULT_CONFIG_VALUES.$([ConfigKey]::Status_Ready.ToString())
     }
-    $dueDateFieldName = Get-ProjectConfigValue -FieldName [ConfigKey]::DueDateFieldName -Owner $owner -ProjectNumber $ProjectNumber -DefaultValue $DEFAULT_CONFIG_VALUES.$([ConfigKey]::DueDateFieldName.ToString())
+    $dueDateFieldName = Get-ProjectConfigValue [ConfigKey]::FieldName_DueDate -Owner $owner -ProjectNumber $ProjectNumber -DefaultValue $DEFAULT_CONFIG_VALUES.$([ConfigKey]::FieldName_DueDate.ToString())
 
     $list = @()
     
@@ -104,7 +104,7 @@ function Get-ProjectItemTodo{
 
     # Sort
     # To sort properly $list has to contains the required fields for sorting
-    $sorted = sortItemList_Todo -list $list -DueDateFieldName $dueDateFieldName
+    $sorted = sortItemList_Todo -list $list -FieldName_DueDate $dueDateFieldName
 
     return $sorted
 

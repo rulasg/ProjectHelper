@@ -89,14 +89,14 @@ function Edit-ProjectItem {
 
         # Backlog
         if ($Backlog) {
-            $Status = resolveStatus -Owner $Owner -ProjectNumber $ProjectNumber -ConfigKey "BacklogStatus" -DefaultValue "Todo"
+            $Status = resolveStatus -Owner $Owner -ProjectNumber $ProjectNumber -ConfigKey "Status_Backlog" -DefaultValue "Todo"
 
             # Do not edit but leave this parameters flow the edit process
         }
 
         # Ready
         if ($Ready) {
-            $Status = resolveStatus -Owner $Owner -ProjectNumber $ProjectNumber -ConfigKey "ReadyStatus"
+            $Status = resolveStatus -Owner $Owner -ProjectNumber $ProjectNumber -ConfigKey "Status_Ready"
 
             # Do not edit but leave this parameters flow the edit process
         }
@@ -337,7 +337,7 @@ function resolveStatus{
         [Parameter(Position=3)][string]$DefaultValue
         
     )
-    $readyfield = Get-ProjectConfigValue -Owner $Owner -ProjectNumber $ProjectNumber -FieldName "$($configKey)" -DefaultValue "$($DefaultValue)"
+    $readyfield = Get-ProjectConfigValue -Owner $Owner -ProjectNumber $ProjectNumber -ConfigName "$($configKey)" -DefaultValue "$($DefaultValue)"
 
     if(-not $readyfield){
         Write-Warning "No $configKey in project configuration. Please use Status parameters to set values or update $configKey in ProjectConfig"
