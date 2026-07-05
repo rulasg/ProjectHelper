@@ -28,9 +28,21 @@ function Invoke-MyCommand{
         [Parameter(Position=1)][hashtable]$Parameters
     )
 
-    Write-MyDebug "invoke" $Command $Parameters
+    Write-MyDebug "invoke" "Sync - $Command" $Parameters
 
     return InvokeHelper\Invoke-MyCommand -Command $Command -Parameters $Parameters
+}
+
+function Start-MyJob{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory,ValueFromPipeline,Position=0)][string]$Command,
+        [Parameter(Position=1)][hashtable]$Parameters
+    )
+
+    Write-MyDebug "invoke" "Async - $Command" $Parameters
+
+    return InvokeHelper\Start-MyJob -Command $Command -Parameters $Parameters
 }
 
 
