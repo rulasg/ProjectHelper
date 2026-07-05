@@ -30,8 +30,18 @@ function Convert-NodeItemToHash {
         # Comments
         if ($NodeItem.content.comments.totalCount -gt 0) {
             $item.commentsTotalCount = $NodeItem.content.comments.totalCount
-            $item.comments = $NodeItem.content.comments.nodes | Convert-Comment
+            $item.comments = @($NodeItem.content.comments.nodes | Convert-Comment)
             $item.commentLast = $item.comments ? $item.comments[-1] : $null
+        } else {
+            $item.commentsTotalCount = 0
+            $item.comments = @()
+            $item.commentLast = $null
+        }
+
+        # TODO: 🐞 : https://github.com/rulasg/ProjectHelper/issues/233
+        # [ProjectHelper] BUG: Error when project Sync when we have changed Comments ](https://github.com/rulasg/ProjectHelper/issues/233)
+        if($item.comments -isnot [array]){
+            Wait-Debugger
         }
 
         # Parent
@@ -41,7 +51,7 @@ function Convert-NodeItemToHash {
 
         # SubIssues
         if($NodeItem.content.subIssues.totalCount -gt 0){
-            $item.subIssues = $NodeItem.content.subIssues.nodes
+            $item.subIssues = @($NodeItem.content.subIssues.nodes)
         }
 
         # Title is stored in two places. in the content and as a field.
