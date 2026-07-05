@@ -251,7 +251,7 @@ function Search-ProjectItem {
     }
 
     if($PassThru){
-        $ret = $found
+        $ret = [PsCustomObject]$found
     } else {
         $ret = $found | Format-ProjectItem -Attributes $Attributes
     }
