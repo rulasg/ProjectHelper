@@ -68,8 +68,8 @@ function Set-LastComment{
     if($Item.comments -is [hashtable]){
         $Item.comments = @($Item.comments) + $commentobj
     } else {
-        # TODO: RESEARCH: Why we get error: Method invocation failed because [System.Management.Automation.PSObject] does not contain a method named 'op_Addition'.
-        # https://github.com/rulasg/ProjectHelper/issues/233
+        # TODO: 🐞 : https://github.com/rulasg/ProjectHelper/issues/233
+        # Why we get error: Method invocation failed because [System.Management.Automation.PSObject] does not contain a method named 'op_Addition'.
         try {
             # just added @ so maybe we have fixed the issue
             $Item.comments += @($commentobj)
