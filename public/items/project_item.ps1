@@ -280,7 +280,7 @@ function Search-ProjectItem {
     }
 
     if($PassThru){
-        $ret = [PsCustomObject]$found
+        $ret = $found | ForEach-Object { [PsCustomObject]$_ }
     } else {
         $ret = $found | Format-ProjectItem -Attributes $Attributes
     }

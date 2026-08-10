@@ -46,9 +46,6 @@ function Edit-ProjectItem {
         # Resolve project parameters 
         ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
-        # Resolve ItemId
-        $Id = [string]::IsNullOrWhiteSpace($Id) ? $(Invoke-QQ_Get_G) : $Id
-
         # Create params
         $params = @{ Owner = $Owner ; ProjectNumber = $ProjectNumber }
 
