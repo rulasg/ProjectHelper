@@ -116,6 +116,35 @@ function Get-ProjectItemByUrl{
     }
 } Export-ModuleMember -Function Get-ProjectItemByUrl -Alias "gpibu"
 
+function Test-ProjectItemByUrl {
+    [CmdletBinding()]
+    [Alias ("tpiu")]
+    param(
+        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)][string]$Url,
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber
+    )
+
+    begin {
+        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
+
+        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+    }
+
+    process {
+
+        if(!$db){ return }
+
+        $item = Get-ItemByUrl -Database $db -Url $Url
+
+        $ret = -not ($null -eq $item)
+        
+        "[$ret] = Test Item by URL [$Url] in project [$Owner/$ProjectNumber]" | Write-MyDebug -Section "Test-ProjectItemByUrl"
+        
+        return $ret
+    }
+} Export-ModuleMember -Function Test-ProjectItemByUrl -Alias "tpiu"
+
 function Get-ProjectItemUrl{
     [CmdletBinding()]
     [Alias ("gpiu")]
@@ -633,7 +662,7 @@ function Remove-ProjectItem {
         "Deleting issue associated to item [$ItemId]" | Write-MyDebug
         if ($item.urlContent) {
             try {
-                $result = Remove-IssueDirect -Url $item.urlContent
+                $result = Remove-ProjectIssueDirect -Url $item.urlContent
             } catch {
                 "Issue associated to item [$ItemId] could not be deleted: $_" | Write-MyWarning
                 return $false
@@ -642,7 +671,7 @@ function Remove-ProjectItem {
             "No issue associated to item [$ItemId]" | Write-MyWarning
         }
 
-        if($result){
+        if($result -eq $item.urlContent){
             "Issue associated to item [$ItemId] deleted successfully" | Write-Verbose
             return $true
         } else {
