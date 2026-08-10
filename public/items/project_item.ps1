@@ -340,9 +340,19 @@ function Get-ProjectItems {
             $ret[$item.id] = $item
         }
     } else {
-        $ret = @($items | ForEach-Object {
-            [PSCustomObject]$_
-        })
+        $ret = @($items | ForEach-Object { 
+                $i = $_
+                try {
+                    [PSCustomObject]$i
+                }
+                catch {
+                    # TODO: 🐞 : if item contains a key with name empty string cast to [PsCustomObject] will throw
+                    # Search on database json cache for ` "": null, ` in the json file
+                    Wait-Debugger
+                }
+            }
+        )
+        # $ret = @([PSCustomObject]$items)
     }
 
     return $ret
