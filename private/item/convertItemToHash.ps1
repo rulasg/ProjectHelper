@@ -108,6 +108,17 @@ function Convert-NodeItemToHash {
             $item.$($nodefield.field.name) = $value
         }
 
+        # TODO: 🐞
+        # https://github.com/github/memex/issues/24614
+        # https://github.com/rulasg/ProjectHelper/issues/238
+        if($item.Title -ne $NodeItem.content.title){
+            # Wait-Debugger
+            "Title mismatch: ""$($item.Title)"" <> ""$($NodeItem.content.title)""" | Write-MyError
+
+            $item.Title = $NodeItem.content.title
+            "Fixing title to content Title value : ""$($NodeItem.content.title)""" | Write-Warning
+        }
+
         return $item
     }
 }
