@@ -13,8 +13,7 @@
 #
 
 # MODULE_NAME
-$MODULE_NAME_PATH = ($PSScriptRoot | Split-Path -Parent | Get-ChildItem -Filter *.psd1 | Select-Object -First 1) | Split-Path -Parent
-$MODULE_NAME = $MODULE_NAME_PATH | Split-Path -LeafBase
+$MODULE_NAME = $PSScriptRoot | Split-Path -Parent | Get-ChildItem  -Filter *.psd1 | Select-Object -First 1 | Split-Path -LeafBase
 
 if(-Not $MODULE_NAME){ throw "Module name not found. Please check the module structure." }
 

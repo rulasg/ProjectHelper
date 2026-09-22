@@ -625,7 +625,7 @@ function Remove-ProjectItem {
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName,ValueFromPipeline, Position = 0)][Alias("Id")][string]$ItemId,
-        [Parameter()][switch]$DeleteIssue,
+        [Parameter()][switch]$DeleteContent,
         [Parameter()][switch]$Force
 
     )
@@ -637,17 +637,17 @@ function Remove-ProjectItem {
     process {
 
         # Get item to delete issue later
-        if( ! $DeleteIssue){
-            # Remove item from project
+        if( ! $DeleteContent){
+            # Only delete item from project
             $itemUrl = Remove-ProjectItemDirect -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $ItemId -Force:$Force
             return $itemUrl
-        }
+        } 
 
         # Find Item to remove
         $item = Get-BaseProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber 
 
         if( ! $item){
-            "Item [$ItemId] not found, cannot delete issue" | Write-MyWarning
+            "Item [$ItemId] not found, cannot delete item" | Write-MyWarning
             return $false
         }
 
@@ -659,18 +659,21 @@ function Remove-ProjectItem {
             return $itemUrl
         }
 
-        "Deleting issue associated to item [$ItemId]" | Write-MyDebug
-        if ($item.urlContent) {
-            try {
-                $result = Remove-ProjectIssueDirect -Url $item.urlContent
-            } catch {
-                "Issue associated to item [$ItemId] could not be deleted: $_" | Write-MyWarning
-                return $false
-            }
-        } else {
-            "No issue associated to item [$ItemId]" | Write-MyWarning
+        switch ($item.type) {
+            "DraftIssue" { "Can not remove DraftIssue without removing content" | Write-MyWarning ; return $false }
+            "PullRequest" { "Can not remove PullRequest Content" | Write-MyWarning ; return $false }
+            "Issue" { 
+                try {
+                   $result = Remove-ProjectIssueDirect -Url $item.urlContent
+                } catch {
+                    "Issue associated to item [$ItemId] could not be deleted: $_" | Write-MyWarning
+                    return $false
+                }
+             }
+            Default { "Unknown item type [$($item.type)] for item [$ItemId], skipping issue deletion" | Write-MyWarning ; return $false }
         }
 
+        # Check success remove
         if($result -eq $item.urlContent){
             "Issue associated to item [$ItemId] deleted successfully" | Write-Verbose
             return $true

@@ -222,5 +222,21 @@
   {
     "FileName": "invoke-GetUser-rulasg.json",
     "Command": "Invoke-GetUser -Handle mona"
+  },
+  {
+    "FileName": "invoke-addcomment-I_kwDOPrRnkc7KkwSq.json",
+    "Command": "Import-Module /Users/rulasg/code/ProjectHelper/wt/fix-removeprojectitemdirect ; Invoke-AddComment -SubjectId I_kwDOPrRnkc7KkwSq -Comment \"new comment added\""
+  },
+  {
+    "FileName": "invoke-addcomment-PR_kwDOPrRnkc6nndcE.json",
+    "Command": "Import-Module /Users/rulasg/code/ProjectHelper/wt/fix-removeprojectitemdirect ; Invoke-AddComment -SubjectId PR_kwDOPrRnkc6nndcE -Comment \"new comment added\""
+  },
+  {
+    "FileName": "invoke-clearProjectV2ItemFieldValue-PVT_kwDOAlIw4c4BCe3V-PVTI_lADOAlIw4c4BCe3Vzgeio4o-PVTF_lADOAlIw4c4BCe3Vzg0rhko.json",
+    "Command": "Import-Module /Users/rulasg/code/ProjectHelper/wt/fix-removeprojectitemdirect ; Invoke-GitHubClearItemValues -ProjectId PVT_kwDOAlIw4c4BCe3V -ItemId PVTI_lADOAlIw4c4BCe3Vzgeio4o -FieldId PVTF_lADOAlIw4c4BCe3Vzg0rhko"
+  },
+  {
+    "FileName": "invoke-clearProjectV2ItemFieldValue-PVT_kwDOAlIw4c4BCe3V-PVTI_lADOAlIw4c4BCe3Vzgeio4o-PVTSSF_lADOAlIw4c4BCe3Vzg0rhno.json",
+    "Command": "Import-Module /Users/rulasg/code/ProjectHelper/wt/fix-removeprojectitemdirect ; Invoke-GitHubClearItemValues -ProjectId PVT_kwDOAlIw4c4BCe3V -ItemId PVTI_lADOAlIw4c4BCe3Vzgeio4o -FieldId PVTSSF_lADOAlIw4c4BCe3Vzg0rhno"
   }
 ]

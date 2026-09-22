@@ -6,8 +6,9 @@
 # Use env variables ModuleHelper_VERBOSE and ModuleHelper_DEBUG to control verbosity and debug output.
 # Example: $env:ModuleHelper_DEBUG="all" or $env:ModuleHelper_DEBUG="Sync-Project"
 
-$ModuleRootPath = Get-ModuleRootPath -ModuleRootPath $ModuleRootPath
-$MODULE_NAME = (Get-ChildItem -Path $ModuleRootPath -Filter *.psd1 | Select-Object -First 1).BaseName
+$MODULE_NAME = $PSScriptRoot | Split-Path -Parent |  Get-ChildItem  -Filter *.psd1 | Select-Object -First 1 | Split-Path -LeafBase
+
+if(-Not $MODULE_NAME){ throw "Module name not found. Please check the module structure." }
 
 $ERROR_COLOR = "Red"
 $WARNING_COLOR = "Yellow"

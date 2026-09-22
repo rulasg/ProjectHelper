@@ -20,16 +20,38 @@ function Test_RemoveProjectIssue_SUCCESS {
     # Assert
     Assert-AreEqual -Expected $i.url -Presented $result
     Assert-IsFalse -Condition $(Test-ProjectItem -Url $i.url -Owner $owner -ProjectNumber $projectNumber)
+    $item = Test-ProjectItem -Id $itemId -owner $owner -projectNumber $projectNumber
+    Assert-isNull -Condition $item
 
+}
+
+function Test_RemoveProjectIssue_SUCCESS_DeleteIssue {
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $i = $p.issueToCreateAddAndRemove
+
+    MockCall_GetProject $p
+
+    # Add item to project to remover it later
+    MockCallJson -Command "Invoke-GetIssueOrPullRequest -Url $($i.url)" -fileName $i.getIssueOrPullRequestMockFile
+    MockCallJson -Command "Invoke-AddItemToProject -ProjectId $($p.id) -ContentId $($i.id)" -fileName $i.addIssueToOProjectMockFile
+    $itemId = Add-ProjectItem -owner $owner -projectNumber $projectNumber -Url $i.url
+    $item = Get-BaseProjectItem -Id $itemId -owner $owner -projectNumber $projectNumber
+    Assert-AreEqual -expected $i.id -Presented $item.contentId
+
+    MockCallJson -Command "Invoke-RemoveItemFromProject -ProjectId $($p.id) -ItemId $($i.itemId)" -fileName $i.removeIssueFromProjectMockFile
+    
     # Remove issue associated
     $itemId = Add-ProjectItem -owner $owner -projectNumber $projectNumber -Url $i.url
     Assert-IsTrue -Condition $(Test-ProjectItem -Url $i.url -Owner $owner -ProjectNumber $projectNumber)
     MockCallJson -Command "Invoke-RemoveIssue -IssueId $($i.id)" -FileName "invoke-removeissue-any.json"
-
+    
     # Act
-    $result = Remove-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId -DeleteIssue
-
+    $result = Remove-ProjectItem -Owner $owner -ProjectNumber $projectNumber -ItemId $itemId -DeleteContent
+    
     # Assert
     Assert-IsTrue -Condition $result
+    Assert-AreEqual -Expected $i.url -Presented $result
+    Assert-IsFalse -Condition $(Test-ProjectItem -Url $i.url -Owner $owner -ProjectNumber $projectNumber)
 
 }
