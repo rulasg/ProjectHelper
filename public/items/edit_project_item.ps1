@@ -24,6 +24,9 @@ function Edit-ProjectItem {
         [Parameter()][Alias("T")][string]$Title,
         [Parameter()][Alias("B")][string]$Body,
         [Parameter()][Alias("BL")][switch]$BodyLongText,
+
+        # Comment
+        [Parameter()][Alias("C")][string]$Comment,
         
         # AddComment
         [Parameter()][Alias("AC")][string]$AddComment,
@@ -119,6 +122,17 @@ function Edit-ProjectItem {
             $params.fieldname = "Title"
             $params.value = "$Title"
             edit $params
+        }
+
+        # Comment parameter
+        if (-Not [string]::IsNullOrWhiteSpace($Comment)) {
+            if( Test-ProjectField -Owner $Owner -ProjectNumber $ProjectNumber -FieldName "Comment" ){
+                $params.fieldname = "Comment"
+                $params.value = "$Comment"
+                edit $params
+            } else {
+                Write-Warning "Field 'Comment' does not exist in project. Skipping comment update."
+            }
         }
 
         # AddComment parameter
