@@ -19,21 +19,22 @@ function Find-NotInProject {
         $ItemWithUrl | ForEach-Object {
             $url = $_.url
 
-            $i = [string]::IsNullOrWhiteSpace($url) ? $null : $(Get-ProjectItemByUrl -Owner $Owner -ProjectNumber $ProjectNumber -Url $url -ErrorAction SilentlyContinue)
+            # $i = [string]::IsNullOrWhiteSpace($url) ? $null : $(Get-ProjectItemByUrl -Owner $Owner -ProjectNumber $ProjectNumber -Url $url -ErrorAction SilentlyContinue)
+            $isMember = Test-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -Url $url -ErrorAction SilentlyContinue
 
+            # Add $fieldname to the input Item based on type 
             if($All){
                 if($_ -is [hashtable]){
-                    $_[$fildname] = $null -ne $i
+                    $_[$fildname] = $isMember
                 } else {
-                    Add-Member -InputObject $_ -MemberType NoteProperty -Name $fildname -Value ($null -ne $i)
+                    Add-Member -InputObject $_ -MemberType NoteProperty -Name $fildname -Value $isMember
                 }
                 # return the item
                 return $_
-            } else {
-
             }
 
-            if(-not $i){
+            # If not $All, return only items that are not in the project
+            if(-not $isMember){
                 return $_
             }
         }

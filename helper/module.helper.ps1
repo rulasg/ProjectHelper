@@ -32,7 +32,8 @@ function Find-ModuleRootPath{
 }
 
 $MODULE_ROOT_PATH = $PSScriptRoot | Find-ModuleRootPath
-$MODULE_NAME = (Get-ChildItem -Path $MODULE_ROOT_PATH -Filter *.psd1 | Select-Object -First 1).BaseName
+$MODULE_NAME = $MODULE_ROOT_PATH | Get-ChildItem  -Filter *.psd1 | Select-Object -First 1 | Split-Path -LeafBase
+
 
 # Helper for module variables
 
@@ -91,7 +92,7 @@ function Get-Ps1FullPath{
     )
 
    # If folderName is not empty
-    if($FolderName -ne $null){
+    if($null -ne $FolderName){
         $folder = Get-ModuleFolder -FolderName $FolderName -ModuleRootPath $ModuleRootPath
         $path = $folder | Join-Path -ChildPath $Name
     } else {
@@ -133,8 +134,7 @@ function Get-ModuleName{
 
     $ModuleRootPath = Get-ModuleRootPath -ModuleRootPath $ModuleRootPath
 
-    $MODULE_NAME = (Get-ChildItem -Path $MODULE_ROOT_PATH -Filter *.psd1 | Select-Object -First 1).BaseName
-
+    $MODULE_NAME = $ModuleRootPath | Get-ChildItem  -Filter *.psd1 | Select-Object -First 1 | Split-Path -LeafBase
 
     return $MODULE_NAME
 }

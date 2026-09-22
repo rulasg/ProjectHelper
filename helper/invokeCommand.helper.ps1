@@ -5,8 +5,7 @@
 # Need to define a variable called $MODULE_INVOKATION_TAG
 #
 
-$moduleRootPath = $PSScriptRoot | Split-Path -Parent
-$MODULE_NAME = (Get-ChildItem -Path $moduleRootPath -Filter *.psd1 | Select-Object -First 1).BaseName
+$MODULE_NAME = $PSScriptRoot | Split-Path -Parent |  Get-ChildItem  -Filter *.psd1 | Select-Object -First 1 | Split-Path -LeafBase
 $MODULE_INVOKATION_TAG = "$($MODULE_NAME)Module"
 
 function Set-MyInvokeCommandAlias{
