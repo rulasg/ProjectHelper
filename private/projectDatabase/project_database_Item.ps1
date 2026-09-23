@@ -307,7 +307,15 @@ function Save-ItemFieldValue{
     $fieldId = $field.id
 
     if( !(Test-FieldValue $field $Value) ){
-        throw "Failed testing value [$Value] for field $FieldName [$($field.dataType)]"
+        throw "Not a valid value [$Value] for field $FieldName [$($field.dataType)]"
+    }
+
+    # Check if the Value is the same as the not staged value of the field.
+    $actualValue = $Database.items.$ItemId.$FieldName
+    if($Value -eq $actualValue){
+        "The value is the same as the current value, We need to remove staged value for field [$FieldName] of item [$ItemId]" | Write-MyDebug
+        Remove-ItemValueStaged -Database $Database -ItemId $ItemId -FieldId $fieldId
+        return
     }
 
     # #Transform value if needed. Sample SingleSelect will change form String to option

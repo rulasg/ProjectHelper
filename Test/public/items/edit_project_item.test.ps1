@@ -55,6 +55,39 @@ function Test_EditProjectItems_Fields{
     Assert-AreEqual -Expected $fieldNumberValue -Presented $result.$itemId.$fieldNumberId.Value
 }
 
+function Test_EditProjectItem_Staged_WithValueEqualActual{
+
+    $p = Get-Mock_Project_700 ; $owner = $p.owner ; $projectNumber = $p.number
+    $item = $p.issue ; $itemId = $item.id
+    $f1 = $p.fieldtext.name ; $f1Id = $p.fieldtext.id ; $f1Value = "Any value" ;
+    $f2 = $p.fieldnumber.name ; $f2Id = $p.fieldnumber.id ; $f2Value = 99 ;
+    MockCall_GetProject $p
+    MockCall_GetItem $itemId
+
+    # Confirm actual values
+    $actualItem = Get-BaseProjectItem $itemId -Owner $owner -ProjectNumber $projectNumber
+    $f1Actual = $actualItem.$f1
+    $f2Actual = $actualItem.$f2
+
+    # Edit values
+    Edit-ProjectItem -ItemId $itemId -fieldname $f1 -Value $f1Value -Owner $owner -ProjectNumber $projectNumber
+    Edit-ProjectItem -ItemId $itemId -fieldname $f2 -Value $f2Value -Owner $owner -ProjectNumber $projectNumber
+
+    #Confirm changes are staged
+    $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
+    Assert-Count -Expected 2 -Presented $result.$itemId.Keys
+    Assert-AreEqual -Expected $f1Value -Presented $result.$itemId.$f1Id.Value
+    Assert-AreEqual -Expected $f2Value -Presented $result.$itemId.$f2Id.Value
+
+    # Act - edit to same values as original
+    Edit-ProjectItem -ItemId $itemId -fieldname $f1 -Value $f1Actual -Owner $owner -ProjectNumber $projectNumber
+    Edit-ProjectItem -ItemId $itemId -fieldname $f2 -Value $f2Actual -Owner $owner -ProjectNumber $projectNumber
+
+    # Assert - the staged changes for these fields should be removed
+    $result = Get-ProjectItemStaged -Owner $owner -ProjectNumber $projectNumber
+    Assert-Count -Expected 0 -Presented $result.Keys
+}
+
 function Test_EditProjectItems_Title_Body_AddComment{
 
     # Arrange
