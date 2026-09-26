@@ -50,36 +50,44 @@ function New-ProjectIssue {
         #ProjectOwner
         [Parameter()][string]$ProjectOwner,
         [Parameter()][string]$ProjectNumber,
-        [Parameter(Mandatory,ValueFromPipelineByPropertyName, Position = 1)][Alias("Owner")][string]$RepoOwner,
-        [Parameter(Mandatory,ValueFromPipelineByPropertyName, Position = 2)][string]$RepoName,
-        [Parameter(Mandatory, Position = 3)][string]$Title,
+        [Parameter(Mandatory, Position = 1)][Alias("Owner")][string]$RepoOwner,
+        [Parameter(Mandatory, Position = 2)][string]$RepoName,
+        [Parameter(Mandatory,ValueFromPipeline, Position = 3)][string]$Title,
         [Parameter(Position = 4)][string]$Body,
         [Parameter()][switch]$OpenOnCreation
     )
 
-    try{
+    process {
 
-        # Create Issue
-        $url = New-ProjectIssueDirect -RepoOwner $RepoOwner -RepoName $RepoName -Title $Title -Body $Body
+        try{
+            # Resolve Project
+            ($ProjectOwner,$ProjectNumber) = Resolve-ProjectParameters -Owner $ProjectOwner -ProjectNumber $ProjectNumber
 
-        if(! $url ){
-            "Issue could not be created" | Write-MyError
-            return $null
+            # Check that the project owner and project number are resolved correctly
+            if(-Not $ProjectOwner -or -Not $ProjectNumber){
+                throw "Project owner or project number could not be resolved"
+            }
+
+            # Create Issue
+            $url = New-ProjectIssueDirect -RepoOwner $RepoOwner -RepoName $RepoName -Title $Title -Body $Body
+            
+            if(! $url ){
+                "Issue could not be created" | Write-MyError
+                return $null
+            }
+            
+            # Add issue to project
+            $itemId = Add-ProjectItem -Owner $ProjectOwner -ProjectNumber $ProjectNumber -Url $url
+            
+            if( $OpenOnCreation ) {
+                Open-Url $url
+            }
+            
+            return $itemId
         }
-
-        # Add issue to project
-        ($ProjectOwner,$ProjectNumber) = Resolve-ProjectParameters -Owner $ProjectOwner -ProjectNumber $ProjectNumber
-
-        $itemId = Add-ProjectItem -Owner $ProjectOwner -ProjectNumber $ProjectNumber -Url $url
-
-        if( $OpenOnCreation ) {
-            Open-Url $url
+        catch{
+            throw "Error creating issue and adding to project: $_"
         }
-
-        return $itemId
-    }
-    catch{
-        throw "Error creating issue and adding to project: $_"
     }
 
 } Export-ModuleMember -Function New-ProjectIssue -Alias npi
