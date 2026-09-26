@@ -97,7 +97,7 @@ function Invoke-StubCall{
 
     switch ($stubName) {
         "Stub_Test"            { $ret = Get-TestString_Parameters @Parameters }
-        "Stub_GetProjectItem"  { $ret = Get-TestString_ItemId "Stub_GetProjectItem"@Parameters }
+        "Stub_GetProjectItem"  { $ret = Get-TestString_ItemId "Stub_GetProjectItem" @Parameters }
         "Stub_ShowProjectItem" { $ret = Get-TestString_ItemId "Stub_ShowProjectItem" @Parameters }
         "Stub_ShowProjectTodo" { $ret = Get-TestString "Stub_ShowProjectTodo" @Parameters }
         default { throw "Unknown stub name: $stubName" }
