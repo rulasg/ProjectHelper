@@ -82,4 +82,20 @@ function New-QQ_Function {
         }
 } Export-ModuleMember -Function New-QQ_Function
 
+function Resolve-ProjectItemId{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position=1)][string]$ItemId
+    )
+
+    # Resolve the ItemId
+    $id = [string]::IsNullOrWhiteSpace($ItemId) ? $(Invoke-QQ_Get_G) : $ItemId
+
+    if([string]::IsNullOrWhiteSpace($id)){
+        throw "ItemId cannot be resolved."
+    }
+
+    return $id
+}
+
 Register-QQ_Commands
