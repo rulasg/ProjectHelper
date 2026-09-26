@@ -7,8 +7,9 @@ function Register-QQ_Commands{
     New-QQ_Function -Module $modulename -Name "Invoke-QQ_Get_O"              -Alias "p"  -Description "Get the previouse item id"                   -ScriptBlock { $i = Get-QQ_Previouse_ItemId ; return $i}
     New-QQ_Function -Module $modulename -Name "Invoke-QQ_Help"               -Alias "hh" -Description "Show help commands"                          -ScriptBlock { W '$script:Help_Commands' ; $script:Help_Commands }
     New-QQ_Function -Module $modulename -Name "Invoke-QQ_Get_B"              -Alias "b"  -Description "Get the previouse item id"                   -ScriptBlock { $i = Get-QQ_Previouse_ItemId ;  W "Show-ProjectItem $i" ; $i | Stub_ShowProjectItem }
-    New-QQ_Function -Module $modulename -Name "Invoke-QQ_Get_GG"             -Alias "gg" -Description "Get the project item for the current item id" -ScriptBlock { $i = g ; W "Stub_GetProjectItem $i" ; $i | Stub_GetProjectItem }
-    New-QQ_Function -Module $modulename -Name "Invoke-QQ_Get_Title_T"        -Alias "t"  -Description "Get the title of the current item"            -ScriptBlock { $i = g ; W "Get Title $i" ; $i | gpi | Select-Object id,title }
+    New-QQ_Function -Module $modulename -Name "Invoke-QQ_Get_GG"             -Alias "gg"  -Description "Copy to Clipboard the current item id"      -ScriptBlock { $i = Get-QQ_ItemId ; w "Set-Clipboard $i" ; Set-Clipboard $i }
+    New-QQ_Function -Module $modulename -Name "Invoke-QQ_Get_GGG"            -Alias "ggg" -Description "Get the project item for the current item id" -ScriptBlock { $i = g ; W "Stub_GetProjectItem $i" ; $i | Stub_GetProjectItem }
+    New-QQ_Function -Module $modulename -Name "Invoke-QQ_Get_Title_T"        -Alias "t"  -Description "Get the title of the current item"            -ScriptBlock { $i = g ; W "Get Title $i" ; $item = $i | gpi ; $item.Title }
     New-QQ_Function -Module $modulename -Name "Invoke-QQ_Open_O"             -Alias "o"  -Description "Open the current item in a new window"        -ScriptBlock { $i = g ; W "Open-ProjectItem $i" ; $i | Open-ProjectItem }
     New-QQ_Function -Module $modulename -Name "Invoke-QQ_Remove_RE"          -Alias "re" -Description "Remove the current item from projet"          -ScriptBlock { $i = g ; W "Remove-ProjectItem $i" ; $i | Remove-ProjectItem }
     New-QQ_Function -Module $modulename -Name "Invoke-QQ_GetUrl_UU"          -Alias "uu"  -Description "Get the URL of the current item"              -ScriptBlock { $i = g ; W "Get-ProjectItemUrl $i -SetCliboard" ; $i | Get-ProjectItemUrl -SetClipboard}
@@ -31,7 +32,7 @@ function Register-QQ_Commands{
     # New-QQ_Function -Module $modulename -Name "Invoke-QQ_Backlog_QB"        -Alias "qb"  -Description "Set item for backlog "                       -ScriptBlock { $i = g ; W "e -Backlog $i" ; $i | e -Backlog }
 
     
-    New-QQ_Function -Module $modulename -Name "Invoke-QQ_NextTodo_X"        -Alias "x"  -Description "Show next item"                               -ScriptBlock {param([parameter(Position=0)]$arg1) W "Show-SalesTodoNext" ; Stub_ShowProjectTodo $arg1}
+    New-QQ_Function -Module $modulename -Name "Invoke-QQ_NextTodo_X"        -Alias "x"  -Description "Show next item"                               -ScriptBlock {param([parameter(Position=0)]$arg1) W "Stub_ShowProjectTodo" ; Stub_ShowProjectTodo $arg1}
     # New-QQ_Function -Module $modulename -Name "Invoke-QQ_NextCleint_XC"      -Alias "xc"  -Description "Show next item for client"                  -ScriptBlock { W "Show-SalesTodoNext -Topic Client" ; Show-SalesTodoNext -Topic Client }
     # New-QQ_Function -Module $modulename -Name "Invoke-QQ_NextNotifi_XS"      -Alias "xs"  -Description "Show next notification item"                -ScriptBlock { W "Show-SalesNotificationsNext" ; Show-SalesNotificationsNext }
     # New-QQ_Function -Module $modulename -Name "Invoke-QQ_NextInbox_XX"       -Alias "xx"  -Description "Show next inbox item"                       -ScriptBlock { W "Show-SalesInboxNext " ; Show-SalesInboxNext }
