@@ -176,6 +176,39 @@ function Get-ProjectItemUrl{
     }
 } Export-ModuleMember -Function Get-ProjectItemUrl -Alias "gpiu"
 
+function Get-ProjectItemMarkdownLink{
+    [CmdletBinding()]
+    [Alias ("gpiml")]
+    param(
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)][Alias("id")][string]$ItemId,
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
+        [Parameter()][switch]$Force,
+        [Parameter()][switch]$SetClipboard
+
+    )
+
+    process{
+
+        $item = Get-BaseProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber -Force:$Force
+
+        if(-not $item){
+            "Item [$ItemId] not found" | Write-MyError
+            return $null
+        }
+        $title = $item.Title
+        $url = $item.url
+        $ret = "[$title]($url)"
+
+        if($SetClipboard){
+            $ret | Set-Clipboard
+        }
+
+        return $ret
+
+    }
+} Export-ModuleMember -Function Get-ProjectItemMarkdownLink -Alias "gpiml"
+
 function Test-ProjectItem {
     [CmdletBinding()]
     [Alias ("tpi")]
