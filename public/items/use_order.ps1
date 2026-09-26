@@ -5,12 +5,16 @@ function Use-Order {
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
         [Parameter(ValueFromPipeline)][array]$List,
+        [Parameter()][string]$Title,
+        [Parameter()][hashtable]$FilterFields,
         [Parameter(Position = 0)][Alias("o")][int]$Ordinal = -1,
         [Parameter()][Alias("e")][switch]$OpenInEditor,
         [Parameter()][Alias("w")][switch]$OpenInBrowser,
         [Parameter()][Alias("p")][switch]$PassThru,
         [Parameter()][Alias("c")][switch]$ClearScreen,
-        [Parameter()][switch]$NotClearScreenOnItemShow
+        [Parameter()][switch]$NotClearScreenOnItemShow,
+        [Parameter()][Int]$MaxNumber
+
     )
 
     begin {
@@ -40,7 +44,26 @@ function Use-Order {
 
         # Show list of items
         if ($Ordinal -lt 0) {
-            #return item
+            #return items
+
+            # Filter by Title
+            if(-not [string]::IsNullOrEmpty($Title)) {
+                $finalList = $finalList | Where-Object { $_.Title -like "*$Title*" }
+            }
+
+            # Filter by fields if provided
+            if($FilterFields) {
+                foreach($key in $FilterFields.Keys) {
+                    $value = $FilterFields[$key]
+                    $finalList = $finalList | Where-Object { $_.$key -like "*$value*" }
+                }
+            }
+
+            # Filter by MaxNumber if specified
+            if($MaxNumber -gt 0) {
+                $finalList = $finalList | Select-Object -First $MaxNumber
+            }
+
             if($PassThru) {
                 return [PsCustomObject]$finalList
             } else {
