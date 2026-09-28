@@ -11,5 +11,7 @@ function Test-ProjectField{
 
     $fields = Get-ProjectFields -Owner $Owner -ProjectNumber $ProjectNumber
 
-    throw "NoImplemented"
+    $ret = $fields.name -contains $FieldName
+
+    return $ret
 } Export-ModuleMember -Function Test-ProjectField
