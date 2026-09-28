@@ -795,7 +795,11 @@ function Test-WhereLikeField {
         $foundCount = 0
 
         foreach ($v in $Values) {
-            if( $itemValue.ToLower().Contains($v.ToLower()) ){
+            # Continue if $itemValue is null
+            if ($null -eq $itemValue) { continue }
+
+            # Compare $itemValue with $Value no case sensitivity
+            if( $itemValue.ToString().ToLower().Contains($v.ToLower()) ){
                 $foundCount ++
             }
         }
