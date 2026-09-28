@@ -42,12 +42,20 @@ function Edit-ProjectItem {
         [Parameter()][switch]$Backlog,
         [Parameter()][switch]$Ready,
         
+        # Title Tag Operations
         [Parameter()][switch]$NormalizeTitle,
         [Parameter()][Alias("Att")][string]$AddTitleTag,
         [Parameter()][Alias("Rtt")][string]$RemoveTitleTag,
-        [Parameter()][Alias('ett')][switch]$EndTitleTag,
-        [Parameter()][Alias('ntt')][switch]$NormalizeTitleTag,
-        [Parameter(Position=1)][Alias('ptt')][int]$PositionTitleTag = -1
+        [Parameter()][Alias('Ett')][switch]$EndTitleTag,
+        [Parameter()][Alias('Ntt')][switch]$NormalizeTitleTag,
+        [Parameter(Position=1)][Alias('Ptt')][int]$PositionTitleTag = -1,
+
+        # Comment Tag Operations
+        [Parameter()][Alias("Act")][string]$AddCommentTag,
+        [Parameter()][Alias("Rct")][string]$RemoveCommentTag,
+        [Parameter()][Alias("Ect")][switch]$EndCommentTag,
+        [Parameter()][Alias("Nct")][switch]$NormalizeCommentTag,
+        [Parameter(Position=1)][Alias('pct')][int]$PositionCommentTag = -1
 
     )
 
@@ -201,6 +209,7 @@ function Edit-ProjectItem {
             edit $params
         }
 
+        # Add Title Tag
         if(-not [string]::IsNullOrWhiteSpace($AddTitleTag)) {
             $item = Get-BaseProjectItem -ItemId $params.ItemId -Owner $Owner -ProjectNumber $ProjectNumber
             $params.fieldname = "Title"
@@ -208,6 +217,7 @@ function Edit-ProjectItem {
             edit $params
         }
         
+        # Remove Title Tag
         if(-not [string]::IsNullOrWhiteSpace($RemoveTitleTag)) {
             $item = Get-BaseProjectItem -ItemId $params.ItemId -Owner $Owner -ProjectNumber $ProjectNumber
             $params.fieldname = "Title"
@@ -215,11 +225,48 @@ function Edit-ProjectItem {
             edit $params
         }
 
+        # Format Title Tag
         if ($NormalizeTitleTag) {
             $item = Get-BaseProjectItem -ItemId $params.ItemId -Owner $Owner -ProjectNumber $ProjectNumber
             $params.fieldname = "Title"
             $params.value = $item.Title | Format-TagString
             edit $params
+        }
+
+        # Add Comment Tag
+        if (-Not [string]::IsNullOrWhiteSpace($AddCommentTag)) {
+            if( Test-ProjectField -Owner $Owner -ProjectNumber $ProjectNumber -FieldName "Comment" ){
+                $item = Get-BaseProjectItem -ItemId $params.ItemId -Owner $Owner -ProjectNumber $ProjectNumber
+                $params.fieldname = "Comment"
+                $params.value = $item.Comment | Add-TagToString -Tag $AddCommentTag -End:$EndCommentTag -Position:$PositionCommentTag
+                edit $params
+            } else {
+                Write-Warning "Field 'Comment' does not exist in project. Skipping comment update."
+            }
+        }
+        
+        # Remove Comment Tag
+        if (-Not [string]::IsNullOrWhiteSpace($RemoveCommentTag)) {
+            if( Test-ProjectField -Owner $Owner -ProjectNumber $ProjectNumber -FieldName "Comment" ){
+                $item = Get-BaseProjectItem -ItemId $params.ItemId -Owner $Owner -ProjectNumber $ProjectNumber
+                $params.fieldname = "Comment"
+                $params.value = $item.Comment | Remove-TagFromString -Tag $RemoveCommentTag
+                edit $params
+            } else {
+                Write-Warning "Field 'Comment' does not exist in project. Skipping comment update."
+            }
+        }
+
+        # Format Comment Tag
+        if ($NormalizeCommentTag) {
+            if( Test-ProjectField -Owner $Owner -ProjectNumber $ProjectNumber -FieldName "Comment" ){
+                $item = Get-BaseProjectItem -ItemId $params.ItemId -Owner $Owner -ProjectNumber $ProjectNumber
+                $params.fieldname = "Comment"
+                $params.value = $item.Comment | Format-TagString
+                edit $params
+            } else {
+                Write-Warning "Field 'Comment' does not exist in project. Skipping comment update."
+            }
         }
     }
 
