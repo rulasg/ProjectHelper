@@ -795,7 +795,7 @@ function Test-WhereLikeField {
         $foundCount = 0
 
         foreach ($v in $Values) {
-            if( $itemValue -like "*$v*"){
+            if( $itemValue.ToLower().Contains($v.ToLower()) ){
                 $foundCount ++
             }
         }
