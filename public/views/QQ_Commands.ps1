@@ -1,5 +1,18 @@
 # Quick commands
 
+function Get-QQ_Help([string]$arg){ 
+
+    $list = $script:Help_Commands
+
+    if(-not [string]::IsNullOrEmpty($arg)){
+        $list = $list | Where-Object { $_.Description -like "*$arg*" }
+    }
+
+    $ret = $list | Sort-Object -Property QQ_Cmd
+
+    return $ret
+}
+
 function Set-QQ_ItemId {
     [CmdletBinding()]
     param(

@@ -5,7 +5,7 @@ function Register-QQ_Commands{
 
     New-QQ_Function -Module $modulename -Name "Invoke-QQ_Get_G"              -Alias "g"  -Description "Get the current item id"                     -ScriptBlock { $i = Get-QQ_ItemId ; return $i}
     New-QQ_Function -Module $modulename -Name "Invoke-QQ_Get_O"              -Alias "p"  -Description "Get the previouse item id"                   -ScriptBlock { $i = Get-QQ_Previouse_ItemId ; return $i}
-    New-QQ_Function -Module $modulename -Name "Invoke-QQ_Help"               -Alias "hh" -Description "Show help commands"                          -ScriptBlock { W '$script:Help_Commands' ; $script:Help_Commands }
+    New-QQ_Function -Module $modulename -Name "Invoke-QQ_Help"               -Alias "hh" -Description "Show help commands"                          -ScriptBlock {param([parameter(Position=0)]$arg1) Get-QQ_Help -arg $arg1 }
     New-QQ_Function -Module $modulename -Name "Invoke-QQ_Get_B"              -Alias "b"  -Description "Get the previouse item id"                   -ScriptBlock { $i = Get-QQ_Previouse_ItemId ;  W "Show-ProjectItem $i" ; $i | Stub_ShowProjectItem }
     New-QQ_Function -Module $modulename -Name "Invoke-QQ_Get_GG"             -Alias "gg"  -Description "Copy to Clipboard the current item id"      -ScriptBlock { $i = Get-QQ_ItemId ; w "Set-Clipboard $i" ; Set-Clipboard $i }
     New-QQ_Function -Module $modulename -Name "Invoke-QQ_Get_GGG"            -Alias "ggg" -Description "Get the project item for the current item id" -ScriptBlock { $i = g ; W "Stub_GetProjectItem $i" ; $i | Stub_GetProjectItem }
