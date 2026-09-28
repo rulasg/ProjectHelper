@@ -48,4 +48,6 @@ function Register-QQ_Commands{
     
     # #open parent
     New-QQ_Function -Module $modulename -Name "Invoke-QQ_Open_Parent_PP"      -Alias "pp"  -Description "Open the parent item in a new window" -ScriptBlock { $i = g ; W "g | gpi | Select-Object -ExpandProperty parent | Select-Object -ExpandProperty url | Open-MyUrl" ; $i | gpi | Select-Object -ExpandProperty  parent | Select-Object -ExpandProperty url | Open-MyUrl }
+
+    New-QQ_Function -Module $modulename -Name "Invoke-QQ_Get_Blocking_BX"     -Alias "bx"  -Description "List items that are pending on this one" -ScriptBlock {$i = g ; W "Search-ProjectItem $i -FieldName Comment -Attributes RepositoryName,Comment" ; Search-ProjectItem $i -FieldName Comment -Attributes RepositoryName,Comment}
 }
