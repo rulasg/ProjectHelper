@@ -35,14 +35,20 @@ function Edit-ProjectItem {
         # Status
         # [Parameter()][ValidateSet([ValidStatus])][Alias("St")][string]$Status,
         [Parameter()][Alias("St")][string]$Status,
-
+        
         # Punded parameters
         [Parameter()][Alias("D")][switch]$DefaultValues,
         [Parameter()][switch]$Close,
         [Parameter()][switch]$Backlog,
         [Parameter()][switch]$Ready,
+        
+        [Parameter()][switch]$NormalizeTitle,
+        [Parameter()][Alias("Att")][string]$AddTitleTag,
+        [Parameter()][Alias("Rtt")][string]$RemoveTitleTag,
+        [Parameter()][Alias('ett')][switch]$EndTitleTag,
+        [Parameter()][Alias('ntt')][switch]$NormalizeTitleTag,
+        [Parameter(Position=1)][Alias('ptt')][int]$PositionTitleTag = -1
 
-        [Parameter()][switch]$NormalizeTitle
     )
 
     begin{
@@ -166,7 +172,7 @@ function Edit-ProjectItem {
         # If BodyLongText seed with parameter of actual value
         if( $BodyLongText ) {
             if([string]::IsNullOrWhiteSpace($Body)){
-                $item = Get-BaseProjectItem -ItemId $Id -Owner $Owner -ProjectNumber $ProjectNumber
+                $item = Get-BaseProjectItem -ItemId $params.ItemId -Owner $Owner -ProjectNumber $ProjectNumber
                 $body = Get-LongText -Text $item.Body
             } else {
                 $body = Get-LongText -Text $Body
@@ -179,7 +185,7 @@ function Edit-ProjectItem {
         }
 
         if ($OpenInBrowser) {
-            $item = Get-BaseProjectItem -ItemId $Id -Owner $Owner -ProjectNumber $ProjectNumber
+            $item = Get-BaseProjectItem -ItemId $params.ItemId -Owner $Owner -ProjectNumber $ProjectNumber
             if ($null -ne $item) {
                 Open-Url -Url $item.url
             } else {
@@ -189,9 +195,30 @@ function Edit-ProjectItem {
 
         # NormalizeTitle
         if ($NormalizeTitle) {
-            $item = Get-BaseProjectItem -ItemId $Id -Owner $Owner -ProjectNumber $ProjectNumber
+            $item = Get-BaseProjectItem -ItemId $params.ItemId -Owner $Owner -ProjectNumber $ProjectNumber
             $params.fieldname = "Title"
             $params.value = Get-NormalizedTitle -Item $item
+            edit $params
+        }
+
+        if(-not [string]::IsNullOrWhiteSpace($AddTitleTag)) {
+            $item = Get-BaseProjectItem -ItemId $params.ItemId -Owner $Owner -ProjectNumber $ProjectNumber
+            $params.fieldname = "Title"
+            $params.value = $item.Title | Add-TagToString -Tag $AddTitleTag -End:$EndTitleTag -Position:$PositionTitleTag
+            edit $params
+        }
+        
+        if(-not [string]::IsNullOrWhiteSpace($RemoveTitleTag)) {
+            $item = Get-BaseProjectItem -ItemId $params.ItemId -Owner $Owner -ProjectNumber $ProjectNumber
+            $params.fieldname = "Title"
+            $params.value = $item.Title | Remove-TagFromString -Tag $RemoveTitleTag
+            edit $params
+        }
+
+        if ($NormalizeTitleTag) {
+            $item = Get-BaseProjectItem -ItemId $params.ItemId -Owner $Owner -ProjectNumber $ProjectNumber
+            $params.fieldname = "Title"
+            $params.value = $item.Title | Format-TagString
             edit $params
         }
     }

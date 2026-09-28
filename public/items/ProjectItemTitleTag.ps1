@@ -1,71 +1,3 @@
-function Add-ProjectItemTitleTag{
-    [CmdletBinding()]
-    [alias("apitt","att")]
-    param(
-        [Parameter(ValueFromPipelineByPropertyName)][Alias("ProjectOwner")][string]$Owner,
-        [Parameter(ValueFromPipelineByPropertyName)][string]$ProjectNumber,
-        [Parameter(Mandatory,Position = 0)][Alias("T")][string]$TagName,
-        [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 1)][Alias("ItemId")][string]$Id,
-        [Parameter()][switch]$End
-    )
-
-    process {
-        
-        # Resolve the Project
-        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
-
-        # Resolve the ItemId
-        $Id = Resolve-ProjectItemId -ItemId $Id
-
-        # Get Item
-        $item = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $Id
-
-        $title = $item.Title
-
-        "Add Title Tag [$TagName] to Item [$Id]" | Write-MyDebug -Section "TitleTag"
-        
-        $newTitlte = $title  | Add-TagToString $TagName -End:$End
-
-        "Old Title: '$title' --> New Title: '$newTitlte'" | Write-MyDebug -Section "TitleTag"
-
-        Edit-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $Id -Title $newTitlte
-    }
-
-} Export-ModuleMember -Function Add-ProjectItemTitleTag -alias "apitt","att"
-
-function Remove-ProjectItemTitleTag{
-    [CmdletBinding()]
-    [alias("rpitt","rtt")]
-    param(
-        [Parameter(ValueFromPipelineByPropertyName)][Alias("ProjectOwner")][string]$Owner,
-        [Parameter(ValueFromPipelineByPropertyName)][string]$ProjectNumber,
-        [Parameter(Mandatory,Position = 0)][Alias("T")][string]$TagName,
-        [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 1)][Alias("ItemId")][string]$Id
-    )
-
-    process {
-
-        # Resolve the Project
-        ($Owner, $ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
-
-        # Resolve the ItemId
-        $Id = Resolve-ProjectItemId -ItemId $Id
-
-        # Get Item
-        $item = Get-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $Id
-
-        $title = $item.Title
-
-        "Remove Title Tag [$TagName] from Item [$Id]" | Write-MyDebug -Section "TitleTag"
-        
-        $newTitlte = $title  | Remove-TagFromString $TagName
-
-        "Old Title: '$title' --> New Title: '$newTitlte'" | Write-MyDebug -Section "TitleTag"
-
-        Edit-ProjectItem -Owner $Owner -ProjectNumber $ProjectNumber -ItemId $Id -Title $newTitlte
-    }
-
-} Export-ModuleMember -Function Remove-ProjectItemTitleTag -alias "rpitt","rtt"
 
 # Retrieve all the Tags used on titles excluding the ones that specify the repo name
 function Get-ProjectItemTitleTag{
@@ -86,14 +18,16 @@ function Get-ProjectItemTitleTag{
         if (-not $item.RepositoryName) {
             continue
         } else {
-            $repo = $item.RepositoryName.ToLower()
+            $repoName = $item.RepositoryName.ToLower()
         }
 
         $title = $item.Title
         
         $tags = $title | Get-TagFromString
-        $tags = $tags | Where-Object { $_.ToLower() -notlike "*$repo*" }
-        $tagList += $tags
+        if($tags.Count -ne 0){
+            $tags = $tags | Where-Object { $_.ToLower() -ne $repoName }
+            $tagList += $tags
+        }
     }
 
     $tagList = $tagList | Sort-Object -Unique
