@@ -72,6 +72,15 @@ function Convert-NodeItemToHash {
         foreach ($nodefield in $NodeItem.fieldValues.nodes) {
             "      Processing $($nodefield.field.name)" | Write-Verbose
 
+            $name = $nodefield.field.name
+
+            if ([string]::IsNullOrWhiteSpace($name)) {
+                # We will hit this for fields types we are not considering in the graphQL query
+                # https://github.com/rulasg/ProjectHelper/issues/241
+                "Skipping field as Name is empty" | Write-MyDebug -Section "bugpath"
+                continue
+            }
+
             switch ($nodefield.__typename) {
                 "ProjectV2ItemFieldTextValue" {
                     $value = $nodefield.text
@@ -101,8 +110,15 @@ function Convert-NodeItemToHash {
                 "ProjectV2ItemFieldPullRequestValue" {
                     $value = GetPullRequests -FieldNode $nodefield
                 }
+                "ProjectV2ItemFieldMultiSelectValue" {
+                    $value = "ERROR_VALUE"
+                    "Multi-select fields are not supported yet" | Write-MyWarning
+                }
                 Default {
-                    $value = $nodefield.text
+                    # $value = $nodefield.text
+
+                    "Field type $($nodefield.__typename) is not supported" | Write-MyWarning
+                    $value = "ERROR_VALUE"
                 }
             }
             $item.$($nodefield.field.name) = $value
