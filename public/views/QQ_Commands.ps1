@@ -64,6 +64,10 @@ function w ($message){
     Write-MyHost $message
 }
 
+function we($message){
+    Write-MyError $message
+}
+
 $script:Help_Commands = @()
 
 function New-QQ_Function {
