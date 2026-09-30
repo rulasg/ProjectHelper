@@ -12,6 +12,8 @@ function Edit-ProjectItem {
         [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)][Alias("ItemId")][string]$Id,
         [Parameter(ValueFromPipelineByPropertyName,Position = 1)][Alias("F")][string]$FieldName,
         [Parameter(ValueFromPipelineByPropertyName,Position = 2)][Alias("V")][string]$Value,
+
+        [Parameter()][switch]$PassThruId,
         
         [Parameter()][Alias("MM")][switch]$Commit,
         [Parameter()][switch]$Force,
@@ -267,6 +269,11 @@ function Edit-ProjectItem {
             } else {
                 Write-Warning "Field 'Comment' does not exist in project. Skipping comment update."
             }
+        }
+
+        # Return the Id of the edited item
+        if($PassThruId) {
+            return $Id
         }
     }
 
