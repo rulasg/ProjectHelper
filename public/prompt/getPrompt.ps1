@@ -219,11 +219,11 @@ function Write-HostPrompt {
     process {
         $finalText = $PreText + $Text
 
-        "P: $PreText" | Write-Verbose
-        "T: $Text" | Write-Verbose
-        "F: $ForegroundColor" | Write-Verbose
-        "B: $BackgroundColor" | Write-Verbose
-        "F: $finalText" | Write-Verbose
+        "P: $PreText" | Write-MyDebug -Section 'prompt'
+        "T: $Text" | Write-MyDebug -Section 'prompt'
+        "F: $ForegroundColor" | Write-MyDebug -Section 'prompt'
+        "B: $BackgroundColor" | Write-MyDebug -Section 'prompt'
+        "F: $finalText" | Write-MyDebug -Section 'prompt'
 
         $params = @{
             Message           = $finalText
