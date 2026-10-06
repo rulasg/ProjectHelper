@@ -112,9 +112,10 @@ function Add-ProjectSubissueCreate {
         Body = $Body
     }
 
+    # Create Issue
     $url = New-ProjectIssueDirect @params
-    Write-Host $url
 
+    # Link issue to issue as subissue
     $params = @{
         Owner = $ProjectOwner
         ProjectNumber = $ProjectNumber
@@ -122,20 +123,25 @@ function Add-ProjectSubissueCreate {
         ItemId = $ItemId
     }
     $result = Add-ProjectSubIssueDirect @params
-    if($result)
-        { Write-MyHost "SubIssue added successfully" }
-        else {Write-MyError "Failed to add SubIssue" ; return}
+    if(-not $result){
+        Write-MyError "Failed to add SubIssue"
+        return
+    }
 
     # Add to project
     if($AddToProject){
         $subissueId = Add-ProjectItem -Url $url -Owner $ProjectOwner -ProjectNumber $ProjectNumber
-        Write-Host $subissueId
+        $ret = $subissueId
+    } else {
+        $ret = $url
     }
 
     # Open
     if($OpenOnCreation){
         Open-Url -Url $url
     }
+
+    return $ret
 
 } Export-ModuleMember -Function Add-ProjectSubissueCreate
 
