@@ -53,7 +53,7 @@ function Edit-ProjectItem {
         [Parameter(Position=1)][Alias('Ptt')][int]$PositionTitleTag = -1,
 
         # Comment Tag Operations
-        [Parameter()][Alias("Act")][string]$AddCommentTag,
+        [Parameter()][Alias("Act")][string[]]$AddCommentTag,
         [Parameter()][Alias("Rct")][string]$RemoveCommentTag,
         [Parameter()][Alias("Ect")][switch]$EndCommentTag,
         [Parameter()][Alias("Nct")][switch]$NormalizeCommentTag,
@@ -240,7 +240,11 @@ function Edit-ProjectItem {
             if( Test-ProjectField -Owner $Owner -ProjectNumber $ProjectNumber -FieldName "Comment" ){
                 $item = Get-BaseProjectItem -ItemId $params.ItemId -Owner $Owner -ProjectNumber $ProjectNumber
                 $params.fieldname = "Comment"
-                $params.value = $item.Comment | Add-TagToString -Tag $AddCommentTag -End:$EndCommentTag -Position:$PositionCommentTag
+                $c = $item.Comment
+                foreach ($tag in $AddCommentTag) {
+                    $c = $c | Add-TagToString -Tag $tag -End:$EndCommentTag -Position:$PositionCommentTag
+                }
+                $params.value = $c
                 edit $params
             } else {
                 Write-Warning "Field 'Comment' does not exist in project. Skipping comment update."
