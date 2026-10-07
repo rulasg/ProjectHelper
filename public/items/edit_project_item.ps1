@@ -94,7 +94,7 @@ function Edit-ProjectItem {
 
             # Update Defaults from local Configuration
             $projectconfig = Get-Configuration
-            $c = $projectconfig.'ItemDefault' ?? @{}
+            $c = $projectconfig.$CONFIG_NAME_DEFAULT_VALUES ?? @{}
             foreach ($key in $c.Keys) {
                 $v = Get-Variable -Name $key -Scope 0 -ErrorAction SilentlyContinue
                 if ([string]::IsNullOrEmpty($v.Value)) {
