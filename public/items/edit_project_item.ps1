@@ -91,7 +91,17 @@ function Edit-ProjectItem {
 
         # Default
         if($DefaultValues){
-            "DefaultValues EMPTY" | Write-MyDebug -section "Edit-ProjectItem"
+
+            # Update Defaults from local Configuration
+            $projectconfig = Get-Configuration
+            $c = $projectconfig.'ItemDefault' ?? @{}
+            foreach ($key in $c.Keys) {
+                $v = Get-Variable -Name $key -Scope 0 -ErrorAction SilentlyContinue
+                if ([string]::IsNullOrEmpty($v.Value)) {
+                    "Setting from config [$key] = $($c[$key])" | Write-MyDebug -Section "DefaultValues"
+                    Set-Variable -Name $key -Value $c[$key] -Scope 0
+                }
+            }
 
             # Do not edit but leave this parameters flow the edit process
         }
