@@ -8,7 +8,8 @@ function Get-ProjectArgumentCompleter_FieldNames{
 
     $list = Get-ValidFieldsNames
 
-     $list | Where-Object { $_ -like "$wordToComplete*" } | Select-Object -Unique | ForEach-Object { [System.Management.Automation.CompletionResult]::new( $_, $_, 'ParameterValue', $_) }
+     $list | ConvertTo-CompleteResults -wordToComplete $wordToComplete
+
 } Export-ModuleMember -Function Get-ProjectArgumentCompleter_FieldNames
 
 # Parse the full command text to extract the FieldName parameter value, then return the valid names for that fieldname
@@ -25,7 +26,8 @@ function Get-ProjectArgumentCompleter_ParseCommandToExtractFieldName_FieldValues
 
     $list = Get-ValidNames $fieldname
 
-    $list | Where-Object { $_ -like "$wordToComplete*" } | Select-Object -Unique | ForEach-Object { [System.Management.Automation.CompletionResult]::new( $_, $_, 'ParameterValue', $_) }
+    $list | ConvertTo-CompleteResults -wordToComplete $wordToComplete
+
 } Export-ModuleMember -Function Get-ProjectArgumentCompleter_ParseCommandToExtractFieldName_FieldValues
 
 # ParameterName will contain the FieldName. Return the Field Value names for this FieldName
@@ -36,7 +38,8 @@ function Get-ProjectArgumentCompleter_ParameterNameFieldValues{
 
     $list = Get-ValidNames $parameterName
 
-    $list | Where-Object { $_ -like "$wordToComplete*" } | Select-Object -Unique | ForEach-Object { [System.Management.Automation.CompletionResult]::new( $_, $_, 'ParameterValue', $_) }
+    $list | ConvertTo-CompleteResults -wordToComplete $wordToComplete
+
 } Export-ModuleMember -Function Get-ProjectArgumentCompleter_ParameterNameFieldValues
 
 # helper
