@@ -233,6 +233,42 @@ function Test-ProjectItem {
 
 } Export-ModuleMember -Function Test-ProjectItem -Alias "tpi"
 
+Register-ArgumentCompleter -CommandName Select-ProjectItem -ParameterName FieldName -ScriptBlock { param($commandName, $parameterName, $wordToComplete) Get-ProjectArgumentCompleter_FieldNames @PsBoundParameters }
+Register-ArgumentCompleter -CommandName Select-ProjectItem -ParameterName Value -ScriptBlock { param($commandName, $parameterName, $wordToComplete, $commandAst) Get-ProjectArgumentCompleter_ParseCommandToExtractFieldName_FieldValues @PsBoundParameters }
+function Select-ProjectItem{
+    [CmdletBinding()]
+    [Alias ("wpi")]
+    param(
+        [Parameter(Mandatory, ValueFromPipeline)][object[]]$Items,
+        [Parameter(Position=0)][string]$FieldName,
+        [Parameter(Position=1)][string]$Value,
+        [Parameter()][switch]$Exact
+    )
+
+    begin {
+        $list = @()
+    }
+
+    process{
+        $list += $Items
+    }
+
+    end {
+
+        if($Exact){
+            $ret = $list | Where-Object { $_.$FieldName -eq $Value }
+        } else {
+            $ret = $list | Where-Object { $_.$FieldName -like "*$Value*" }
+        }
+
+        "Selecting $($ret.Count)/$($list.Count) items with FieldName [$FieldName] and Value [$Value]" | Write-MyDebug -Section 'Select-ProjectItem'
+        
+        return $ret
+    }
+} Export-ModuleMember -Function Select-ProjectItem -Alias "wpi"
+
+Register-ArgumentCompleter -CommandName Search-ProjectItem -ParameterName FieldName -ScriptBlock { param($commandName, $parameterName, $wordToComplete) Get-ProjectArgumentCompleter_FieldNames @PsBoundParameters }
+Register-ArgumentCompleter -CommandName Search-ProjectItem -ParameterName Filter -ScriptBlock { param($commandName, $parameterName, $wordToComplete, $commandAst) Get-ProjectArgumentCompleter_ParseCommandToExtractFieldName_FieldValues @PsBoundParameters }
 function Search-ProjectItem {
     [CmdletBinding()]
     [Alias ("spi")]
