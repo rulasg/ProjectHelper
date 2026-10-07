@@ -10,8 +10,8 @@ function Edit-ProjectItem {
         [Parameter(ValueFromPipelineByPropertyName)][Alias("ProjectOwner")][string]$Owner,
         [Parameter(ValueFromPipelineByPropertyName)][string]$ProjectNumber,
         [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)][Alias("ItemId")][string]$Id,
-        [Parameter(ValueFromPipelineByPropertyName,Position = 1)][Alias("F")][string]$FieldName,
-        [Parameter(ValueFromPipelineByPropertyName,Position = 2)][Alias("V")][string]$Value,
+        [Parameter(ValueFromPipelineByPropertyName)][Alias("F")][string]$FieldName,
+        [Parameter(ValueFromPipelineByPropertyName)][Alias("V")][string]$Value,
 
         [Parameter()][switch]$PassThruId,
         
@@ -50,14 +50,14 @@ function Edit-ProjectItem {
         [Parameter()][Alias("Rtt")][string]$RemoveTitleTag,
         [Parameter()][Alias('Ett')][switch]$EndTitleTag,
         [Parameter()][Alias('Ntt')][switch]$NormalizeTitleTag,
-        [Parameter(Position=1)][Alias('Ptt')][int]$PositionTitleTag = -1,
+        [Parameter()][Alias('Ptt')][int]$PositionTitleTag = -1,
 
         # Comment Tag Operations
         [Parameter()][Alias("Act")][string[]]$AddCommentTag,
         [Parameter()][Alias("Rct")][string]$RemoveCommentTag,
         [Parameter()][Alias("Ect")][switch]$EndCommentTag,
         [Parameter()][Alias("Nct")][switch]$NormalizeCommentTag,
-        [Parameter(Position=1)][Alias('pct')][int]$PositionCommentTag = -1
+        [Parameter()][Alias('pct')][int]$PositionCommentTag = -1
 
     )
 
