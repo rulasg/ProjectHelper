@@ -46,7 +46,7 @@ function Edit-ProjectItem {
         
         # Title Tag Operations
         [Parameter()][switch]$NormalizeTitle,
-        [Parameter()][Alias("Att")][string]$AddTitleTag,
+        [Parameter()][Alias("Att")][string[]]$AddTitleTag,
         [Parameter()][Alias("Rtt")][string]$RemoveTitleTag,
         [Parameter()][Alias('Ett')][switch]$EndTitleTag,
         [Parameter()][Alias('Ntt')][switch]$NormalizeTitleTag,
@@ -212,10 +212,15 @@ function Edit-ProjectItem {
         }
 
         # Add Title Tag
-        if(-not [string]::IsNullOrWhiteSpace($AddTitleTag)) {
+        if (($null -ne $AddTitleTag) -and ($AddTitleTag.Count -gt 0)) {
+
             $item = Get-BaseProjectItem -ItemId $params.ItemId -Owner $Owner -ProjectNumber $ProjectNumber
             $params.fieldname = "Title"
-            $params.value = $item.Title | Add-TagToString -Tag $AddTitleTag -End:$EndTitleTag -Position:$PositionTitleTag
+            $c = $item.Title
+            foreach ($tag in $AddTitleTag) {
+                $c = $c | Add-TagToString -Tag $tag -Position:$PositionCommentTag -End:$EndTitleTag
+            }
+            $params.value = $c
             edit $params
         }
         
@@ -236,13 +241,13 @@ function Edit-ProjectItem {
         }
 
         # Add Comment Tag
-        if (-Not [string]::IsNullOrWhiteSpace($AddCommentTag)) {
+        if (($null -ne $AddCommentTag) -and ($AddCommentTag.Count -gt 0)) {
             if( Test-ProjectField -Owner $Owner -ProjectNumber $ProjectNumber -FieldName "Comment" ){
                 $item = Get-BaseProjectItem -ItemId $params.ItemId -Owner $Owner -ProjectNumber $ProjectNumber
                 $params.fieldname = "Comment"
                 $c = $item.Comment
                 foreach ($tag in $AddCommentTag) {
-                    $c = $c | Add-TagToString -Tag $tag -End:$EndCommentTag -Position:$PositionCommentTag
+                    $c = $c | Add-TagToString -Tag $tag -Position:$PositionCommentTag -End:$EndCommentTag
                 }
                 $params.value = $c
                 edit $params
