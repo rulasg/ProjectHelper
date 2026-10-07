@@ -41,11 +41,11 @@ function Register-QQ_Commands{
     # New-QQ_Function -Module $modulename -Name "Invoke-QQ_NextInbox_XX"           -Alias "xx"  -Description "Show next inbox item"                         -ScriptBlock { W "Show-SalesInboxNext " ; Show-SalesInboxNext }
     
     New-QQ_Function -Module $modulename -Name "Invoke-QQ_ShowCommit_SC"            -Alias "sc"  -Description "Show the staged items"                        -ScriptBlock {try{$i = g}catch{WE $_;return}; W "Show-ProjectItemStaged" ; $i | Show-ProjectItemStaged }
-    New-QQ_Function -Module $modulename -Name "Invoke-QQ_ResetCommit_RC"           -Alias "rc"  -Description "Reset the staged items"                       -ScriptBlock {try{$i = g}catch{WE $_;return}; W "Reset-ProjectItemStaged" ; $i | Reset-ProjectItemStaged }
+    New-QQ_Function -Module $modulename -Name "Invoke-QQ_ResetCommit_RC"           -Alias "rc"  -Description "Reset the changes of the current item"        -ScriptBlock {try{$i = g}catch{WE $_;return}; W "Reset-ProjectItemStaged" ; $i | Reset-ProjectItemStaged }
     
     New-QQ_Function -Module $modulename -Name "Invoke-QQ_ShowStaged_SS"            -Alias "ss"  -Description "Show staged items"                            -ScriptBlock { W "Show-ProjectItemStaged" ; Show-ProjectItemStaged }
     New-QQ_Function -Module $modulename -Name "Invoke-QQ_ShowStaged_Detail_SSS"    -Alias "sss" -Description "Show staged items details"                    -ScriptBlock { W "Show-ProjectItemStaged | Show-ProjectItemStaged " ; Show-ProjectItemStaged | Show-ProjectItemStaged }
-    New-QQ_Function -Module $modulename -Name "Invoke-QQ_ResetStaged_RS"           -Alias "rs"  -Description "Reset staged items"                           -ScriptBlock { W "Reset-ProjectItemStaged" ; Reset-ProjectItemStaged }
+    New-QQ_Function -Module $modulename -Name "Invoke-QQ_ResetStaged_RS"           -Alias "rs"  -Description "Reset All staged items"                           -ScriptBlock { W "Reset-ProjectItemStaged" ; Reset-ProjectItemStaged }
     
     # New-QQ_Function -Module $modulename -Name "Invoke-QQ_Reset_Notification_RRN" -Alias "rrn" -Description "Resolve notifications for the current item"   -ScriptBlock {try{$i = g}catch{WE $_;return}; W "g | get-projectItemUrl | Get-NotificationByUrl | Read-Notification" ; $i | Get-ProjectItemUrl | Get-NotificationByUrl | Read-Notification }
     
