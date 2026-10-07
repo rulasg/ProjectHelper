@@ -6,23 +6,23 @@ function  Stub_ShowProjectTodo{
     [alias ("spit","Show-ProjectTodo")]
     param(
         # owner and project number 
-        [Parameter()][Alias("O")][string]$Owner,
-        [Parameter()][Alias("P")][string]$ProjectNumber,
+        [Parameter()][string]$Owner,
+        [Parameter()][string]$ProjectNumber,
         
-        [Parameter()][Alias("t")][string]$Title,
+        [Parameter(Position=0)][Alias("T")][string]$Title,
         
-        [Parameter()][Alias("pt")][switch]$Passthru,
-        [Parameter()][Alias("f")][switch]$Force,
-        [Parameter()][Alias("c")][switch]$ClearScreen,
+        [Parameter()][Alias("Pt")][switch]$Passthru,
+        [Parameter()][Alias("F")][switch]$Force,
+        [Parameter()][Alias("C")][switch]$ClearScreen,
         
-        [Parameter()][Alias("n")][Int]$MaxNumber = 30,
-        [Parameter()][Alias("a")][switch]$All,
+        [Parameter()][Alias("N")][Int]$MaxNumber = 30,
+        [Parameter()][Alias("A")][switch]$All,
         
         # Ordinal
-        [Parameter(Position=0)][int]$Ordinal = -1,
+        [Parameter()][Alias("O")][int]$Ordinal = -1,
 
         # Status
-        [parameter()][Alias("s")][string[]]$Status,
+        [parameter()][Alias("S")][string[]]$Status,
 
         # Attributes
         [parameter()][Alias("Att")][string[]]$Attributes
