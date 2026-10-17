@@ -1,0 +1,1 @@
+Register-FeatureFlag -key "dev_DEFAULT_STUB_MODULE" -Description "Enable development; get default stub module from configuration"

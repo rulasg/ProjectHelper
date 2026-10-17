@@ -4,15 +4,28 @@
 $DEFAULT_STUB_MODULE = "ProjectHelper"
 $DEFAULT_STUB_API_COMMAND = "Invoke-StubCall"
 
+# Move Flag registration to private/registerFeatureFlags.ps1 to ensure it will be registered after Register-FeatureFlag is available
+# Register-FeatureFlag -key "dev_DEFAULT_STUB_MODULE" -Description "Enable development default stub module"
+
 function Resolve-StubCommand($owner, $ProjectName, $StubName ){
 
     "[Resolve-StubCommand] Getting stub command for project $Owner/$ProjectNumber and StubName=$StubName >>>" | Write-MyDebug -Section "stubcall"
     
+    if(Test-FeatureFlag "dev_DEFAULT_STUB_MODULE"){
+        # Default stub module is $DEFAULT_STUB_MODULE that is hardcoded to ProjectHelper, Self module
+        # When developing ProjectHelper is not available on the default PsPath or maybe we want to specify a different default stub module
+        # This allows to point the default stub module to any path where the ProjectHelper mey be stored or any other module
+        # Use Default_Stub_Module configuration to specify the path
+        $c = Get-Configuration
+        # $DEFAULT_STUB_MODULE = "~/code/ProjectHelper"
+        $DEFAULT_STUB_MODULE = $c.Default_Stub_Module
+    }
+
     # Get project config
     $config = Get-ProjectConfig -Owner $owner -ProjectNumber $projectNumber
     $command = $config.stubcommand ?? $DEFAULT_STUB_API_COMMAND
     $module = $config.module ?? $DEFAULT_STUB_MODULE
-    
+
     # Test StubCommand
     # Check if module has function to call StubName
     $isExist = Test-StubCommand $module $command
