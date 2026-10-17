@@ -35,7 +35,7 @@ function Register-QQ_Commands{
     # New-QQ_Function -Module $modulename -Name "Invoke-QQ_Backlog_QB"             -Alias "qb"  -Description "Set item for backlog "                        -ScriptBlock {try{$i = g}catch{WE $_;return}; W "e -Backlog $i" ; $i | e -Backlog }
 
     
-    New-QQ_Function -Module $modulename -Name "Invoke-QQ_NextTodo_X"               -Alias "x"   -Description "Show next item"                               -ScriptBlock {param([parameter(Position=0)]$arg1 = 0) W "Stub_ShowProjectTodo" ; Stub_ShowProjectTodo -Ordinal $arg1}
+    New-QQ_Function -Module $modulename -Name "Invoke-QQ_NextTodo_X"               -Alias "x"   -Description "Show next item"                               -ScriptBlock {param([parameter(Position=0)]$arg1 = 0) W 'Stub_ShowProjectTodo -Ordinal $arg1 -Passthru | Stub_ShowProjectItem  -Minimal' ; Stub_ShowProjectTodo -Ordinal $arg1 -Passthru | Stub_ShowProjectItem  -Minimal}
     # New-QQ_Function -Module $modulename -Name "Invoke-QQ_NextCleint_XC"          -Alias "xc"  -Description "Show next item for client"                    -ScriptBlock { W "Show-SalesTodoNext -Topic Client" ; Show-SalesTodoNext -Topic Client }
     # New-QQ_Function -Module $modulename -Name "Invoke-QQ_NextNotifi_XS"          -Alias "xs"  -Description "Show next notification item"                  -ScriptBlock { W "Show-SalesNotificationsNext" ; Show-SalesNotificationsNext }
     # New-QQ_Function -Module $modulename -Name "Invoke-QQ_NextInbox_XX"           -Alias "xx"  -Description "Show next inbox item"                         -ScriptBlock { W "Show-SalesInboxNext " ; Show-SalesInboxNext }
