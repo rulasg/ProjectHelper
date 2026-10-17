@@ -114,17 +114,17 @@ function Initialize-ProjectHelperPromptSettings {
         ProjecthelperPrompt   = '$( $null -ne $(Get-Command -name "Write-ProjecthelperPrompt" -ErrorAction SilentlyContinue)? $(Write-ProjecthelperPrompt -WithNewLine:${withnewline}) : $null)'
         DEFAULT_PROMPT        = '$($ExecutionContext.SessionState.Path.CurrentLocation.Path)'
         DEFAULT_PROMPT_SUFFIX = '$(">" * ($nestedPromptLevel + 1))'
-        BeforeStatus          = [PSCustomObject] @{ PreText = '['    ; ForegroundColor = 'Yellow'      ; BackgroundColor = 'Black' }
-        DelimStatus1          = [PSCustomObject] @{ PreText = ''     ; ForegroundColor = 'Yellow'      ; BackgroundColor = 'Black' }
-        DelimStatus2          = [PSCustomObject] @{ PreText = ' '    ; ForegroundColor = 'Yellow'      ; BackgroundColor = 'Black' }
-        AfterStatus           = [PSCustomObject] @{ PreText = ']'    ; ForegroundColor = 'Yellow'      ; BackgroundColor = 'Black' }
-        OwnerStatus           = [PSCustomObject] @{ PreText = ''     ; ForegroundColor = 'DarkCyan'    ; BackgroundColor = 'Black' }
-        NumberStatus          = [PSCustomObject] @{ PreText = '#'    ; ForegroundColor = 'DarkMagenta' ; BackgroundColor = 'Black' }
-        TitleStatus           = [PSCustomObject] @{ PreText = ''     ; ForegroundColor = 'DarkGreen'   ; BackgroundColor = 'Black' }
-        SpaceStatus           = [PSCustomObject] @{ PreText = ' '    ; ForegroundColor = 'Black'       ; BackgroundColor = 'Black' }
-        OKStatus              = [PSCustomObject] @{ PreText = '≡'    ; ForegroundColor = 'Green'       ; BackgroundColor = 'Black' }
+        BeforeStatus          = [PSCustomObject] @{ PreText = '['    ; ForegroundColor = 'Yellow'       }
+        DelimStatus1          = [PSCustomObject] @{ PreText = ''     ; ForegroundColor = 'Yellow'       }
+        DelimStatus2          = [PSCustomObject] @{ PreText = ' '    ; ForegroundColor = 'Yellow'       }
+        AfterStatus           = [PSCustomObject] @{ PreText = ']'    ; ForegroundColor = 'Yellow'       }
+        OwnerStatus           = [PSCustomObject] @{ PreText = ''     ; ForegroundColor = 'DarkCyan'     }
+        NumberStatus          = [PSCustomObject] @{ PreText = '#'    ; ForegroundColor = 'DarkMagenta'  }
+        TitleStatus           = [PSCustomObject] @{ PreText = ''     ; ForegroundColor = 'DarkGreen'    }
+        SpaceStatus           = [PSCustomObject] @{ PreText = ' '    ; ForegroundColor = 'Black'        }
+        OKStatus              = [PSCustomObject] @{ PreText = '≡'    ; ForegroundColor = 'Green'        }
         KOStatus              = [PSCustomObject] @{ PreText = '!'    ; ForegroundColor = 'white'       ; BackgroundColor = 'Red'   }
-        NewlineStatus         = [PSCustomObject] @{ PreText = '`n'   ; ForegroundColor = 'Black'       ; BackgroundColor = 'Black' }
+        NewlineStatus         = [PSCustomObject] @{ PreText = '`n'   ; ForegroundColor = 'Black'        }
     }
 
     SetProjectHelperPromptSettings -value $s
@@ -211,7 +211,7 @@ function Write-HostPrompt {
         [Parameter(Position = 0)][string]$Text,
         [Parameter(ValueFromPipelineByPropertyName)][string]$PreText,
         [Parameter(ValueFromPipelineByPropertyName)][string]$ForegroundColor = 'White',
-        [Parameter(ValueFromPipelineByPropertyName)][string]$BackgroundColor = 'Black',
+        [Parameter(ValueFromPipelineByPropertyName)][string]$BackgroundColor,
         [switch]$WithNewLine
 
 
@@ -219,18 +219,17 @@ function Write-HostPrompt {
     process {
         $finalText = $PreText + $Text
 
-        "P: $PreText" | Write-MyDebug -Section 'prompt'
-        "T: $Text" | Write-MyDebug -Section 'prompt'
-        "F: $ForegroundColor" | Write-MyDebug -Section 'prompt'
-        "B: $BackgroundColor" | Write-MyDebug -Section 'prompt'
-        "F: $finalText" | Write-MyDebug -Section 'prompt'
+        "P[$PreText] T[$Text] F[$ForegroundColor] B[$BackgroundColor] F[$finalText]" | Write-MyDebug -Section 'prompt' -InNewLine
 
         $params = @{
             Message           = $finalText
-            ForegroundColor   = $ForegroundColor
-            BackgroundColor   = $BackgroundColor
+            #ForegroundColor   = $ForegroundColor
+            # BackgroundColor   = $BackgroundColor
             NoNewline         = $(-Not $WithNewLine)
         }
+
+        if(-Not [string]::IsNullOrWhiteSpace($BackgroundColor)) { $params.BackgroundColor = $BackgroundColor}
+        if(-Not [string]::IsNullOrWhiteSpace($ForegroundColor)) { $params.ForegroundColor = $ForegroundColor}
 
         # Default color to White if not specified
         Microsoft.PowerShell.Utility\Write-Host @params
