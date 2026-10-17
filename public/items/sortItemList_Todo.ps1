@@ -19,12 +19,12 @@ function sortItemList_Todo{
     end {
 
         $properties = @(
-            @{ Expression = "due"                            ; Descending = $true  } # Sort first due issues
+            @{ Expression = 'DueDate'                         ; Descending = $true  } # Sort first due issues
             @{ Expression = {$null -eq $_.$FieldName_DueDate} ; Descending = $true  } # Group by having DueDate value first
             @{ Expression = $FieldName_DueDate                ; Descending = $false } # Sort by DueDate field value
-            @{ Expression = 'Status'                         ; Descending = $false } # Sort by status
+            @{ Expression = 'Status'                          ; Descending = $false } # Sort by status
             @{ Expression = { $_.updatedAt.ToString("yyyy-MM-dd") } ; Descending = $false } # Sort by updatedAt (newest first)
-            @{ Expression = 'Title'                          ; Descending = $false } # Sort by title
+            @{ Expression = 'Title'                           ; Descending = $false } # Sort by title
         )
 
         "[sortItemList_Todo] Sorting by:" | Write-MyDebug -Section "sortItemList" -Object $properties -objectDepth 1
