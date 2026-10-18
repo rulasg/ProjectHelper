@@ -2,22 +2,32 @@ Set-MyInvokeCommandAlias -Alias AddSubIssue -Command 'Invoke-AddSubIssue -IssueI
 
 function Add-ProjectSubIssueDirect {
     [cmdletbinding()]
-    [Alias("apis")]
+    [Alias("apsid")]
     param(
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
-        # [Parameter(Mandatory)][string]$IssueId,
-        [Parameter(Mandatory, Position = 0)][string]$ItemId,
-        [Parameter(Mandatory, ValueFromPipeline, Position = 1)][Alias("url")][string]$SubIssueUrl,
+        [Parameter(Position = 1)][string]$ParentItemId,
+        [Parameter(Mandatory, Position = 0)][string]$SubIssueIdOrUrl,
         [Parameter()][switch]$ReplaceParent
     )
 
     ($Owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
 
+    # Resolve to URL from id or Url parameter
+    $subIssueItem = Resolve-ItemParameter -Owner $Owner -ProjectNumber $ProjectNumber -IdOrUrl $SubIssueIdOrUrl
+    if(-not $subIssueItem){
+        "SubIssue Identifier [$SubIssueIdOrUrl] could not be resolved. Using parameter value." | Write-MyDebug -section 'Add-ProjectSubIssueDirect'
+        $subIssueItemUrl = $SubIssueIdOrUrl
+    } else {
+        $subIssueItemUrl = $subIssueItem.url
+    }
+
+    $ParentItemId = [string]::IsNullOrWhiteSpace($ParentItemId) ? $(Invoke-QQ_Get_G) : $ParentItemId
+
     # Get Parent Issue
-    $parent = Get-BaseProjectItem -ItemId $ItemId -Owner $Owner -ProjectNumber $ProjectNumber
+    $parent = Get-BaseProjectItem -ItemId $ParentItemId -Owner $Owner -ProjectNumber $ProjectNumber
     if( ! $parent ){
-        "Parent ItemId [$ItemId] not found on project $Owner/$ProjectNumber" | Write-MyError
+        "Parent ItemId [$ParentItemId] not found on project $Owner/$ProjectNumber" | Write-MyError
         return $null
     }
 
@@ -25,7 +35,7 @@ function Add-ProjectSubIssueDirect {
 
     $parameters = @{
         contentid = $parent.contentId
-        subissueurl = $SubIssueUrl
+        subissueurl = $subIssueItemUrl
         replaceparent = $ReplaceParent.IsPresent
         # replaceparent = $false
     }
@@ -35,7 +45,7 @@ function Add-ProjectSubIssueDirect {
         $response = Invoke-MyCommand -Command AddSubIssue -Parameters $parameters
     } catch {
         $errorMessage = $_.Exception.Message
-        "Failed to add SubIssue [$SubIssueUrl] to ItemId [$ItemId] - $errorMessage" | Write-MyError
+        "Failed to add SubIssue [$subIssueItemUrl] to ItemId [$ParentItemId] - $errorMessage" | Write-MyError
         return $null
     }
 
@@ -44,7 +54,7 @@ function Add-ProjectSubIssueDirect {
     $responseSubIssueId = $response.data.addSubIssue.subIssue.id
 
     if( $null -eq $responseParentId -or $null -eq $responseSubIssueId ){
-        "Failed to add SubIssue [$SubIssueUrl] to ItemId [$ItemId]" | Write-MyError
+        "Failed to add SubIssue [$subIssueItemUrl] to ItemId [$ParentItemId]" | Write-MyError
         return $null
     }
 
@@ -58,14 +68,14 @@ function Add-ProjectSubIssueDirect {
 
     return $true
 
-} Export-ModuleMember -Function Add-ProjectSubIssueDirect -Alias "apis"
+} Export-ModuleMember -Function Add-ProjectSubIssueDirect -Alias "apsid"
 
 
 function Add-ProjectSubissueCreate {
     [CmdletBinding()]
-    [Alias("New-Issue")]
+    [Alias("apisc")]
     param (
-        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)][Alias("Id")][string]$ItemId,
+        [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)][Alias("Id")][string]$ItemId,
 
         [Parameter(Position = 1)][string]$RepoOwner,
         [Parameter(Position = 2)][string]$RepoName,
@@ -82,8 +92,10 @@ function Add-ProjectSubissueCreate {
     # Get Parent item
     ($ProjectOwner,$ProjectNumber) = Resolve-ProjectParameters -Owner $ProjectOwner -ProjectNumber $ProjectNumber
 
+    $ItemId = [string]::IsNullOrWhiteSpace($ItemId) ? $(Invoke-QQ_Get_G) : $ItemId
+
     $item = Get-BaseProjectItem -ItemId $ItemId -Owner $ProjectOwner -ProjectNumber $ProjectNumber
-    if($null -eq $Item){
+    if($null -eq $item){
         Write-MyError "Parent ItemId [$ItemId] not found on project $ProjectOwner/$ProjectNumber"
         return
     }
@@ -143,7 +155,7 @@ function Add-ProjectSubissueCreate {
 
     return $ret
 
-} Export-ModuleMember -Function Add-ProjectSubissueCreate
+} Export-ModuleMember -Function Add-ProjectSubissueCreate -Alias 'apisc'
 
 
 function addSubIssue {
