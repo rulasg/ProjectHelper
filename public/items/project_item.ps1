@@ -465,7 +465,8 @@ function Open-ProjectItem {
         [Parameter()][int]$ProjectNumber,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)]
         [string]$Id,
-        [Parameter()][switch]$InProject
+        [Parameter()][switch]$InProject,
+        [Parameter()][ValidateSet("Browser","App")][string]$OpenIn
     )
 
     begin {
@@ -496,6 +497,18 @@ function Open-ProjectItem {
             # We should never reach this point as all items has a urlpanel set in Convert-NodeItemToHash
             "No URL found for Item [$ItemId] type [ $($item.type) ]" | Write-Error
             return
+        }
+
+        # Check if OpenIn is specified, otherwise get from configuration
+        if ( [string]::IsNullOrWhiteSpace($OpenIn)) {
+            $OpenIn = Get-ConfigurationValue -ValueName "OpenItemIn" -DefaultValue "Browser"
+        }
+
+        # Select schema based on target open
+        switch ($OpenIn) {
+            "Browser" { $url = Convert-UrlSchema -NewSchema "https" -Url $url }
+            "App" { $url = Convert-UrlSchema -NewSchema "ghapp" -Url $url }
+            default { "Unsupported OpenIn value [$OpenIn]" | Write-Error }
         }
 
         Open-Url -Url $url
