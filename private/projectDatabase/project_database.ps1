@@ -117,10 +117,6 @@ function Save-ProjectV2toDatabase{
     $db.owner            = $owner
     $db.number           = $projectnumber
 
-    $db.totalCount_items = $ProjectV2.items.totalCount
-    $db.totalCount_fields = $ProjectV2.fields.totalCount
-
-
     # Full list update
     $db.items = $Items
 
@@ -134,6 +130,9 @@ function Save-ProjectV2toDatabase{
 
     # Update fields
     $db.fields = $fields
+
+    $db.totalCount_items = $db.items.Count
+    $db.totalCount_fields = $db.fields.Count
 
     # This is the only Save.ProjectDatabase that should not be called with -Safe
     Save-ProjectDatabase -Database $db
