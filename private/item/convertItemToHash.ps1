@@ -114,8 +114,14 @@ function Convert-NodeItemToHash {
                     $value = GetPullRequests -FieldNode $nodefield
                 }
                 "ProjectV2ItemFieldMultiSelectValue" {
-                    $value = "ERROR_VALUE"
-                    "Multi-select fields are not supported yet" | Write-MyWarning
+                    # TODO: ProjectV2ItemFieldMultiSelectValue Not Supported
+                    $value = "NOT_SUPPORTED"
+                    "Multi-select fields are not supported yet" | Write-MyDebug -Section "Convert-NodeItemToHash"
+                }
+                "ProjectV2ItemFieldReviewerValue" {
+                    # TODO: ProjectV2ItemFieldReviewerValue Not Supported
+                    "Reviewer fields are not supported yet" | Write-MyDebug -Section "Convert-NodeItemToHash"
+                    $value = "NOT_SUPPORTED"
                 }
                 Default {
                     # $value = $nodefield.text
