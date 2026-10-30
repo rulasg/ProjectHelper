@@ -50,7 +50,7 @@ function Test_AddProjectSubIssue_FAIL_ALREADY_HAS_PARENT {
     MockCallToNull -Command "Invoke-AddSubIssue -IssueId $($parent.contentId) -SubIssueUrl $($subIssueWithParent.url) -ReplaceParent False"
 
      # Act
-     $result = Add-ProjectSubIssueDirect -Owner $owner -ProjectNumber $projectNumber -url $subIssueWithParent.url -ItemId $parent.Id
+     $result = Add-ProjectSubIssueDirect -Owner $owner -ProjectNumber $projectNumber -SubIssueIdOrUrl $subIssueWithParent.url -ParentItemId $parent.Id
 
     # Assert
     Assert-isnull -Object $result
