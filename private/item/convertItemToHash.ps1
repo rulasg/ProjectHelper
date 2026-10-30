@@ -88,6 +88,9 @@ function Convert-NodeItemToHash {
                 "ProjectV2ItemFieldSingleSelectValue" {
                     $value = $nodefield.name
                 }
+                "ProjectV2ItemFieldIterationValue" {
+                    $value = $nodefield.title
+                }
                 "ProjectV2ItemFieldNumberValue" {
                     # $value = $nodefield.number
                     $value = ConvertFrom-FieldValue -Field $nodefield.field -Value $nodefield.number
