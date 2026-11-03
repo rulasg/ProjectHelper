@@ -1,6 +1,6 @@
-function Find-NotInProject {
+function Find-ProjectItemNotInProject {
     [CmdletBinding()]
-    [Alias("wsp","Where-SalesProject")]
+    [Alias("fpinip",'Find-NotInProject')]
     param(
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
@@ -39,4 +39,4 @@ function Find-NotInProject {
             }
         }
     }
-} Export-ModuleMember -Function Find-NotInProject -Alias "wsp","Where-SalesProject"
+} Export-ModuleMember -Function Find-ProjectItemNotInProject -Alias 'fpinip','Find-NotInProject'
