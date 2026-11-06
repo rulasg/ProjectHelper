@@ -3,6 +3,8 @@ Register-ArgumentCompleter -CommandName Edit-ProjectItem -ParameterName Status -
 Register-ArgumentCompleter -CommandName Edit-ProjectItem -ParameterName FieldName -ScriptBlock { param($commandName, $parameterName, $wordToComplete) Get-ProjectArgumentCompleter_FieldNames @PsBoundParameters }
 Register-ArgumentCompleter -CommandName Edit-ProjectItem -ParameterName Value -ScriptBlock { param($commandName, $parameterName, $wordToComplete, $commandAst) Get-ProjectArgumentCompleter_ParseCommandToExtractFieldName_FieldValues @PsBoundParameters }
 
+Register-ArgumentCompleter -CommandName Clear-ProjectItemValue -ParameterName FieldName -ScriptBlock { param($commandName, $parameterName, $wordToComplete) Get-ProjectArgumentCompleter_FieldNames @PsBoundParameters }
+
 function Edit-ProjectItem {
     [CmdletBinding()]
     [Alias("epi","e")]
@@ -333,6 +335,30 @@ function Edit-ProjectItemValue {
     }
 
 } Export-ModuleMember -Function Edit-ProjectItemValue -Alias "epiv"
+
+function Clear-ProjectItemValue {
+    [CmdletBinding()]
+    [Alias("cpiv")]
+    param(
+        [Parameter(ValueFromPipelineByPropertyName)][string]$Owner,
+        [Parameter(ValueFromPipelineByPropertyName)][string]$ProjectNumber,
+        [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)][Alias("Id")][string]$ItemId,
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName,Position = 1)][string]$FieldName
+    )
+
+    process{
+
+        $parameters = @{
+            Owner = $Owner
+            ProjectNumber = $ProjectNumber
+            ItemId = $ItemId
+            FieldName = $FieldName
+            Value = $null
+        }
+        Edit-ProjectItem @parameters
+    }
+
+} Export-ModuleMember -Function Clear-ProjectItemValue -Alias "cpiv"
 
 <#
 .SYNOPSIS
