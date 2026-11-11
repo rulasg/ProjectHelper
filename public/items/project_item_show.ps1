@@ -393,11 +393,19 @@ function writeSubissue{
         [object]$Sub
      )
 
+    $subitem = Get-ProjectItemByUrl -Url $Sub.url
+
     $Tag | write -Color DarkGray
     addSpace
     writeState($sub.state)
     addSpace
     $sub.title | write -Color Gray
+
+    if($subitem){
+        addSpace
+        $subitem.id | write -Color DarkGray -BetweenSquareBrackets -AddExtraSpacesBetweenBracketsAndQuotes
+    }
+
     addSpace
     $sub.url | write -Color DarkGray -BetweenSquareBrackets
     addJumpLine -message "SubIssue item End $Tag"
@@ -411,6 +419,7 @@ function write{
         [Parameter()][switch]$BetweenQuotes,
         [Parameter()][switch]$BetweenBrackets,
         [Parameter()][switch]$BetweenSquareBrackets,
+        [Parameter()][switch]$AddExtraSpacesBetweenBracketsAndQuotes,
         [Parameter()][string]$PreFix,
         [Parameter()][string]$SuFix,
         [Parameter()][string]$DefaultValue
@@ -427,11 +436,19 @@ function write{
         }
 
         if($BetweenBrackets){
-            $text = "($text)"
+            if($AddExtraSpacesBetweenBracketsAndQuotes){
+                $text = "( $text )"
+            } else {
+                $text = "($text)"
+            }
         }
 
         if($BetweenSquareBrackets){
-            $text = "[$text]"
+            if($AddExtraSpacesBetweenBracketsAndQuotes){
+                $text = "[ $text ]"
+            } else {
+                $text = "[$text]"
+            }
         }
 
         if($BetweenQuotes){
