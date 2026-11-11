@@ -7,7 +7,7 @@ function Stub_ShowProjectItem{
     param(
         [Parameter()][string]$Owner,
         [Parameter()][int]$ProjectNumber,
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)][Alias("id")][string]$ItemId,
+        [Parameter(ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)][Alias("id")][string]$ItemId,
         [Parameter()][Alias("M")][switch]$Minimal,
         [Parameter()][Alias("A")][switch]$AllComments,
         [Parameter()][Alias("E")][switch]$OpenInEditor,
@@ -22,6 +22,11 @@ function Stub_ShowProjectItem{
     }
 
     process {
+
+        if([string]::IsNullOrWhiteSpace($ItemId)){
+            "ItemId is not specified" | Write-MyDebug -Section "Stub_ShowProjectItem"
+            return
+        }
 
         $parameters = [PsCustomObject] $PsBoundParameters
 
