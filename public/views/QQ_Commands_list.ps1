@@ -50,7 +50,58 @@ function Register-QQ_Commands{
     # New-QQ_Function -Module $modulename -Name "Invoke-QQ_Reset_Notification_RRN" -Alias "rrn" -Description "Resolve notifications for the current item"   -ScriptBlock {try{$i = g}catch{WE $_;return}; W "g | get-projectItemUrl | Get-NotificationByUrl | Read-Notification" ; $i | Get-ProjectItemUrl | Get-NotificationByUrl | Read-Notification }
     
     # #open parent
-    New-QQ_Function -Module $modulename -Name "Invoke-QQ_Open_Parent_PP"           -Alias "pp"  -Description "Open the parent item in a new window"         -ScriptBlock {try{$i = g}catch{WE $_;return}; W "g | gpi | Select-Object -ExpandProperty parent | Select-Object -ExpandProperty url | Open-MyUrl" ; $i | gpi | Select-Object -ExpandProperty  parent | Select-Object -ExpandProperty url | Open-MyUrl }
+    New-QQ_Function -Module $modulename -Name "Invoke-QQ_Show_Parent_PP"           -Alias "pp"  -Description "Show the parent item"                         -ScriptBlock {try{$i = g}catch{WE $_;return}; Get-ProjectItemParentId $i | shpi}
+    New-QQ_Function -Module $modulename -Name "Invoke-QQ_Show_SubIssue_"           -Alias "sis"  -Description "Show Subissue item"                           -ScriptBlock {param([parameter(Position=0)]$arg1) try{$i = g}catch{WE $_;return}; Get-ProjectItemSubIssueId $i $arg1 | shpi}
 
     New-QQ_Function -Module $modulename -Name "Invoke-QQ_Get_Blocking_BX"          -Alias "bx"  -Description "List items that are pending on this one"      -ScriptBlock {$i = g ; W "Search-ProjectItem $i -FieldName Comment -Attributes RepositoryName,Comment" ; Search-ProjectItem $i -FieldName Comment -Attributes RepositoryName,Comment}
 }
+
+function Get-ProjectItemParentId($itemId){
+
+    $item = $itemId | gpi 
+    
+    $parentIssue = $item.parent
+    if (-not $parentIssue) {
+        "Item [ $itemId] does not have a parent" | Write-MyWarning
+        return
+    }
+
+    $parentUrl = $parentIssue.url 
+    $parentitem =  $parentUrl | gpibu
+
+    if (-not $parentitem) {
+        "Parent item not found in project" | Write-MyWarning
+    }
+    
+    return $parentItem.id
+} Export-ModuleMember -Function Get-ProjectItemParentId
+
+function Get-ProjectItemSubIssueId{
+    param (
+        [string]$ItemId, 
+        [int]$order
+    )
+
+    $item = $ItemId | gpi
+
+    $subIssues = $item.subIssues
+    if (-not $subIssues) {
+        "Item [$ItemId] does not have subissues" | Write-MyWarning
+        return
+    }
+
+    if ($order -lt 1 -or $order -gt $subIssues.Count) {
+        "Subissue order [$order] is out of range for item [ $ItemId]" | Write-MyWarning
+        return
+    }
+
+    $subIssueUrl = $subIssues[$order - 1].url
+    $subIssue =  $subIssueUrl | gpibu
+
+    if (-not $subIssue) {
+        "Subissue item [$subIssueUrl] not found in project" | Write-MyWarning
+        return
+    }
+
+    return $subIssue.id
+} Export-ModuleMember -Function Get-ProjectItemSubIssueId
