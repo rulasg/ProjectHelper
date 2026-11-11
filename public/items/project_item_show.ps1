@@ -78,7 +78,7 @@ function Show-BaseProjectItem{
         
         # Parent
         if($item.parent){
-            writeSubissue "Parent." $item.parent
+            writeIssue "Parent." $item.parent
         }
 
         # Assignee
@@ -90,7 +90,7 @@ function Show-BaseProjectItem{
             addJumpLine -message "SubIssues Start"
             for($i = 0; $i -lt $item.subIssues.Count; $i++){
                 addTab
-                writeSubissue "$($i+1)." $item.subIssues[$i]
+                writeIssue "$($i+1)." $item.subIssues[$i]
             }
         }
 
@@ -387,19 +387,19 @@ function writeState{
     $s | write -Color $(getStateColor $state)
 }
 
-function writeSubissue{
+function writeIssue{
     param(
         [string]$Tag,
         [object]$Sub
      )
 
-    $subitem = Get-ProjectItemByUrl -Url $Sub.url
+    $subitem = Get-ProjectItemByUrl -Url $Sub.url -passThru
 
     $Tag | write -Color DarkGray
     addSpace
-    writeState($sub.state)
+    writeState($subitem.state)
     addSpace
-    $sub.title | write -Color Gray
+    $subitem.Title | write -Color Gray
 
     if($subitem){
         addSpace
@@ -407,7 +407,7 @@ function writeSubissue{
     }
 
     addSpace
-    $sub.url | write -Color DarkGray -BetweenSquareBrackets
+    $subitem.url | write -Color DarkGray -BetweenSquareBrackets
     addJumpLine -message "SubIssue item End $Tag"
 
 }
