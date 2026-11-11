@@ -1,0 +1,6 @@
+mutation AddBlockedBy($input: AddBlockedByInput!) {
+    addBlockedBy(input: $input) {
+        issue { id }
+        blockingIssue { id }
+    }
+}

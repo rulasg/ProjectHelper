@@ -87,3 +87,6 @@ Invoke-ProjectHelperOpenUrl -Url "https://github.com/octodemo/rulasg-dev-1/issue
 Invoke-ProjectHelperOpenUrl -Url "https://github.com/orgs/octodemo/projects/700/views/1?pane=issue&itemId=128098775"
 ProjectHelper_EditFile
 ProjectHelper_EditFileCode
+Invoke-AddBlockedBy -IssueId I_kwDOPrRnkc7KkwSq -BlockingIssueId I_kwDOPrRnkc7KJAku
+Invoke-GetItem -ItemId missing
+Invoke-AddBlockedBy -IssueId I_kwDOPrRnkc7KkwSq -BlockingIssueId I_kwDOPrRnkc7KJAvo
