@@ -1,8 +1,8 @@
 Set-MyInvokeCommandAlias -Alias AddSubIssue -Command 'Invoke-AddSubIssue -IssueId {contentid} -SubIssueUrl {subissueurl} -ReplaceParent {replaceparent}'
 
-function Add-ProjectSubIssueDirect {
+function Add-ProjectItemSubIssueDirect {
     [cmdletbinding()]
-    [Alias("apsid")]
+    [Alias("apsid","apis")]
     param(
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
@@ -16,7 +16,7 @@ function Add-ProjectSubIssueDirect {
     # Resolve to URL from id or Url parameter
     $subIssueItem = Resolve-ItemParameter -Owner $Owner -ProjectNumber $ProjectNumber -IdOrUrl $SubIssueIdOrUrl
     if(-not $subIssueItem){
-        "SubIssue Identifier [$SubIssueIdOrUrl] could not be resolved. Using parameter value." | Write-MyDebug -section 'Add-ProjectSubIssueDirect'
+        "SubIssue Identifier [$SubIssueIdOrUrl] could not be resolved. Using parameter value." | Write-MyDebug -section 'Add-ProjectItemSubIssueDirect'
         $subIssueItemUrl = $SubIssueIdOrUrl
     } else {
         $subIssueItemUrl = $subIssueItem.url
@@ -68,10 +68,10 @@ function Add-ProjectSubIssueDirect {
 
     return $true
 
-} Export-ModuleMember -Function Add-ProjectSubIssueDirect -Alias "apsid"
+} Export-ModuleMember -Function Add-ProjectItemSubIssueDirect -Alias "apsid","apis"
 
 
-function Add-ProjectSubissueCreate {
+function Add-ProjectItemSubIssueCreate {
     [CmdletBinding()]
     [Alias("apisc")]
     param (
@@ -131,10 +131,10 @@ function Add-ProjectSubissueCreate {
     $params = @{
         Owner = $ProjectOwner
         ProjectNumber = $ProjectNumber
-        SubIssueUrl = $url
-        ItemId = $ItemId
+        SubIssueIdOrUrl = $url
+        ParentItemId = $ItemId
     }
-    $result = Add-ProjectSubIssueDirect @params
+    $result = Add-ProjectItemSubIssueDirect @params
     if(-not $result){
         Write-MyError "Failed to add SubIssue"
         return
@@ -155,7 +155,7 @@ function Add-ProjectSubissueCreate {
 
     return $ret
 
-} Export-ModuleMember -Function Add-ProjectSubissueCreate -Alias 'apisc'
+} Export-ModuleMember -Function Add-ProjectItemSubIssueCreate -Alias 'apisc'
 
 
 function addSubIssue {
