@@ -18,7 +18,7 @@ function Test_AddProjectSubIssue_SUCCESS{
         ItemId = $parent.Id
     }
 
-    $result = Add-ProjectSubIssueDirect -SubIssueUrl $i0.url @params
+    $result = Add-ProjectItemSubIssueDirect -SubIssueUrl $i0.url @params
 
     # Assert
     Assert-IsTrue -Condition $result
@@ -29,7 +29,7 @@ function Test_AddProjectSubIssue_SUCCESS{
     Assert-Contains -Expected $i0.contentId -Presented $item.subIssues[0].id
 
     # Act add SubIssue 2
-     $result = Add-ProjectSubIssueDirect -SubIssueUrl $i1.url @params
+     $result = Add-ProjectItemSubIssueDirect -SubIssueUrl $i1.url @params
 
     # Assert
     Assert-IsTrue -Condition $result
@@ -50,7 +50,7 @@ function Test_AddProjectSubIssue_FAIL_ALREADY_HAS_PARENT {
     MockCallToNull -Command "Invoke-AddSubIssue -IssueId $($parent.contentId) -SubIssueUrl $($subIssueWithParent.url) -ReplaceParent False"
 
      # Act
-     $result = Add-ProjectSubIssueDirect -Owner $owner -ProjectNumber $projectNumber -SubIssueIdOrUrl $subIssueWithParent.url -ParentItemId $parent.Id
+     $result = Add-ProjectItemSubIssueDirect -Owner $owner -ProjectNumber $projectNumber -SubIssueIdOrUrl $subIssueWithParent.url -ParentItemId $parent.Id
 
     # Assert
     Assert-isnull -Object $result
