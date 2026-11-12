@@ -395,11 +395,14 @@ function writeIssue{
 
     $subitem = Get-ProjectItemByUrl -Url $Sub.url -passThru
 
+    $sub = $subitem ?? $Sub
+
     $Tag | write -Color DarkGray
     addSpace
-    writeState($subitem.state)
+    writeState($sub.state)
+    
     addSpace
-    $subitem.Title | write -Color Gray
+    $sub.Title ?? $sub.title| write -Color Gray
 
     if($subitem){
         addSpace
@@ -407,7 +410,7 @@ function writeIssue{
     }
 
     addSpace
-    $subitem.url | write -Color DarkGray -BetweenSquareBrackets
+    $sub.url | write -Color DarkGray -BetweenSquareBrackets
     addJumpLine -message "SubIssue item End $Tag"
 
 }
