@@ -7,66 +7,71 @@ function Add-ProjectItemSubIssueDirect {
         [Parameter()][string]$Owner,
         [Parameter()][string]$ProjectNumber,
         [Parameter(Position = 1)][string]$ParentItemId,
-        [Parameter(Mandatory, Position = 0)][string]$SubIssueIdOrUrl,
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName, ValueFromPipeline, Position = 0)][Alias("url")][string]$SubIssueIdOrUrl,
         [Parameter()][switch]$ReplaceParent
     )
 
-    ($Owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
-
-    # Resolve to URL from id or Url parameter
-    $subIssueItem = Resolve-ItemParameter -Owner $Owner -ProjectNumber $ProjectNumber -IdOrUrl $SubIssueIdOrUrl
-    if(-not $subIssueItem){
-        "SubIssue Identifier [$SubIssueIdOrUrl] could not be resolved. Using parameter value." | Write-MyDebug -section 'Add-ProjectItemSubIssueDirect'
-        $subIssueItemUrl = $SubIssueIdOrUrl
-    } else {
-        $subIssueItemUrl = $subIssueItem.url
+    begin{
+        ($Owner,$ProjectNumber) = Resolve-ProjectParameters -Owner $Owner -ProjectNumber $ProjectNumber
     }
 
-    $ParentItemId = [string]::IsNullOrWhiteSpace($ParentItemId) ? $(Invoke-QQ_Get_G) : $ParentItemId
+    process {
 
-    # Get Parent Issue
-    $parent = Get-BaseProjectItem -ItemId $ParentItemId -Owner $Owner -ProjectNumber $ProjectNumber
-    if( ! $parent ){
-        "Parent ItemId [$ParentItemId] not found on project $Owner/$ProjectNumber" | Write-MyError
-        return $null
+        # Resolve to URL from id or Url parameter
+        $subIssueItem = Resolve-ItemParameter -Owner $Owner -ProjectNumber $ProjectNumber -IdOrUrl $SubIssueIdOrUrl
+        if(-not $subIssueItem){
+            "SubIssue Identifier [$SubIssueIdOrUrl] could not be resolved. Using parameter value." | Write-MyDebug -section 'Add-ProjectItemSubIssueDirect'
+            $subIssueItemUrl = $SubIssueIdOrUrl
+        } else {
+            $subIssueItemUrl = $subIssueItem.url
+        }
+        
+        $ParentItemId = [string]::IsNullOrWhiteSpace($ParentItemId) ? $(Invoke-QQ_Get_G) : $ParentItemId
+        
+        # Get Parent Issue
+        $parent = Get-BaseProjectItem -ItemId $ParentItemId -Owner $Owner -ProjectNumber $ProjectNumber
+        if( ! $parent ){
+            "Parent ItemId [$ParentItemId] not found on project $Owner/$ProjectNumber" | Write-MyError
+            return $null
+        }
+        
+        # Check if Subissue already has parent
+        
+        $parameters = @{
+            contentid = $parent.contentId
+            subissueurl = $subIssueItemUrl
+            replaceparent = $ReplaceParent.IsPresent
+            # replaceparent = $false
+        }
+        
+        # Call API
+        try{
+            $response = Invoke-MyCommand -Command AddSubIssue -Parameters $parameters
+        } catch {
+            $errorMessage = $_.Exception.Message
+            "Failed to add SubIssue [$subIssueItemUrl] to ItemId [$ParentItemId] - $errorMessage" | Write-MyError
+            return $null
+        }
+        
+        # check for errors
+        $responseParentId = $response.data.addSubIssue.issue.id
+        $responseSubIssueId = $response.data.addSubIssue.subIssue.id
+        
+        if( $null -eq $responseParentId -or $null -eq $responseSubIssueId ){
+            "Failed to add SubIssue [$subIssueItemUrl] to ItemId [$ParentItemId]" | Write-MyError
+            return $null
+        }
+        
+        $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
+        
+        # Add subissue to parent
+        addSubIssue -Item $parent -SubIssue $response.data.addSubIssue.subIssue
+        
+        Set-Item $db $parent
+        Save-ProjectDatabaseSafe -Database $db
+        
+        return $true
     }
-
-    # Check if Subissue already has parent
-
-    $parameters = @{
-        contentid = $parent.contentId
-        subissueurl = $subIssueItemUrl
-        replaceparent = $ReplaceParent.IsPresent
-        # replaceparent = $false
-    }
-
-    # Call API
-    try{
-        $response = Invoke-MyCommand -Command AddSubIssue -Parameters $parameters
-    } catch {
-        $errorMessage = $_.Exception.Message
-        "Failed to add SubIssue [$subIssueItemUrl] to ItemId [$ParentItemId] - $errorMessage" | Write-MyError
-        return $null
-    }
-
-    # check for errors
-    $responseParentId = $response.data.addSubIssue.issue.id
-    $responseSubIssueId = $response.data.addSubIssue.subIssue.id
-
-    if( $null -eq $responseParentId -or $null -eq $responseSubIssueId ){
-        "Failed to add SubIssue [$subIssueItemUrl] to ItemId [$ParentItemId]" | Write-MyError
-        return $null
-    }
-
-    $db = Get-Project -Owner $Owner -ProjectNumber $ProjectNumber
-
-    # Add subissue to parent
-    addSubIssue -Item $parent -SubIssue $response.data.addSubIssue.subIssue
-
-    Set-Item $db $parent
-    Save-ProjectDatabaseSafe -Database $db
-
-    return $true
 
 } Export-ModuleMember -Function Add-ProjectItemSubIssueDirect -Alias "apsid","apis"
 
