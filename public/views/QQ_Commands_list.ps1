@@ -4,9 +4,9 @@ $moduleName = Get-ModuleName
 function Register-QQ_Commands{
 
     New-QQ_Function -Module $modulename -Name "Invoke-QQ_Get_G"                    -Alias "g"   -Description "Get the current item id"                      -ScriptBlock { $i = Get-QQ_ItemId ; return $i}
-    New-QQ_Function -Module $modulename -Name "Invoke-QQ_Get_O"                    -Alias "p"   -Description "Get the previouse item id"                    -ScriptBlock { $i = Get-QQ_Previouse_ItemId ; return $i}
     New-QQ_Function -Module $modulename -Name "Invoke-QQ_Help"                     -Alias "hh"  -Description "Show help commands"                           -ScriptBlock {param([parameter(Position=0)]$arg1) Get-QQ_Help -arg $arg1 }
-    New-QQ_Function -Module $modulename -Name "Invoke-QQ_Get_B"                    -Alias "b"   -Description "Get the previouse item id"                    -ScriptBlock { $i = Get-QQ_Previouse_ItemId ; W "Show-ProjectItem $i" ; $i | Stub_ShowProjectItem }
+    New-QQ_Function -Module $modulename -Name "Invoke-QQ_Get_B"                    -Alias "b"   -Description "Get the previouse item id"                    -ScriptBlock { $i = Pop-QQ_Previouse_ItemId ; W "Show-ProjectItem $i" ; $i | Stub_ShowProjectItem }
+    New-QQ_Function -Module $modulename -Name "Invoke-QQ_Get_F"                    -Alias "f"   -Description "Get the forward item id"                      -ScriptBlock { $i = Pop-QQ_Forward_ItemId ; W "Show-ProjectItem $i" ; $i | Stub_ShowProjectItem }
     New-QQ_Function -Module $modulename -Name "Invoke-QQ_Get_GG"                   -Alias "gg"  -Description "Copy to Clipboard the current item id"        -ScriptBlock {try{$i = g}catch{WE $_;return}; W "Set-Clipboard $i" ; Set-Clipboard $i }
     New-QQ_Function -Module $modulename -Name "Invoke-QQ_Get_GGG"                  -Alias "ggg" -Description "Get the project item for the current item id" -ScriptBlock {try{$i = g}catch{WE $_;return}; W "Stub_GetProjectItem $i" ; $i | Stub_GetProjectItem }
     New-QQ_Function -Module $modulename -Name "Invoke-QQ_Get_Title_T"              -Alias "t"   -Description "Get the title of the current item"            -ScriptBlock {try{$i = g}catch{WE $_;return}; W "Get Title $i" ; $item = $i | gpi ; $item.Title }
@@ -50,8 +50,8 @@ function Register-QQ_Commands{
     # New-QQ_Function -Module $modulename -Name "Invoke-QQ_Reset_Notification_RRN" -Alias "rrn" -Description "Resolve notifications for the current item"   -ScriptBlock {try{$i = g}catch{WE $_;return}; W "g | get-projectItemUrl | Get-NotificationByUrl | Read-Notification" ; $i | Get-ProjectItemUrl | Get-NotificationByUrl | Read-Notification }
     
     # #open parent
-    New-QQ_Function -Module $modulename -Name "Invoke-QQ_Show_Parent_PP"           -Alias "pp"  -Description "Show the parent item"                         -ScriptBlock {try{$i = g}catch{WE $_;return}; Get-ProjectItemParentId $i | shpi}
-    New-QQ_Function -Module $modulename -Name "Invoke-QQ_Show_SubIssue_"           -Alias "sis"  -Description "Show Subissue item"                           -ScriptBlock {param([parameter(Position=0)]$arg1) try{$i = g}catch{WE $_;return}; Get-ProjectItemSubIssueId $i $arg1 | shpi}
+    New-QQ_Function -Module $modulename -Name "Invoke-QQ_Show_Parent_P"            -Alias "p"  -Description "Show the parent item"                         -ScriptBlock {try{$i = g}catch{WE $_;return}; $id = Get-ProjectItemParentId $i ; shpi "$id"}
+    New-QQ_Function -Module $modulename -Name "Invoke-QQ_Show_SubIssue_"           -Alias "sis"  -Description "Show Subissue item"                           -ScriptBlock {param([parameter(Position=0)]$arg1) try{$i = g}catch{WE $_;return}; $id = Get-ProjectItemSubIssueId $i $arg1 ; shpi "$id"}
 
     New-QQ_Function -Module $modulename -Name "Invoke-QQ_Get_Blocking_BX"          -Alias "bx"  -Description "List items that are pending on this one"      -ScriptBlock {$i = g ; W "Search-ProjectItem $i -FieldName Comment -Attributes RepositoryName,Comment" ; Search-ProjectItem $i -FieldName Comment -Attributes RepositoryName,Comment}
 }

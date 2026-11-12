@@ -23,11 +23,12 @@ function Set-QQ_ItemId {
         return
     }
 
+    $stackBackward = Get_StackBackward
+
     "Setting QQ_ItemId to $ItemId" | Write-MyDebug -Section "QuickCommand"
-
-    Set-QQ_Previouse_ItemId $script:QQ_ItemId
-
-    $script:QQ_ItemId = $ItemId
+    if($stackBackward.Count -eq 0 -or $stackBackward.Peek() -ne $ItemId){
+        $stackBackward.Push($ItemId)
+    }
 
     Write-Host "💫" -ForegroundColor DarkYellow -NoNewline
 } Export-ModuleMember -Function Set-QQ_ItemId
@@ -35,29 +36,54 @@ function Set-QQ_ItemId {
 function Get-QQ_ItemId {
     [CmdletBinding()]
     param()
-
-    if ([string]::IsNullOrWhiteSpace($script:QQ_ItemId)){
+    
+    $stackBackward = Get_StackBackward
+    if ($stackBackward.Count -eq 0){
         throw "QQ_ItemId is not set. Run a command that set QQ_ItemId."
         return
     }
 
-    return $script:QQ_ItemId
+    return $stackBackward.Peek()
 }
 
-function Set-QQ_Previouse_ItemId {
-    [CmdletBinding()]
-    param(
-        [Parameter(Position=1)][string]$ItemId
-    )
 
-    $script:QQ_Previouse_ItemId = $ItemId
-}
-
-function Get-QQ_Previouse_ItemId {
+function Pop-QQ_Previouse_ItemId {
     [CmdletBinding()]
     param()
 
-    return $script:QQ_Previouse_ItemId
+    "Pop Previouse ItemID" | Write-MyDebug -Section "QuickCommand"
+
+    $stackBackward = Get_StackBackward
+    $stackForward = Get_StackForward
+    if($stackBackward.Count -eq 0){
+        throw "No previous item available."
+    }
+
+    # return $script:QQ_Previouse_ItemId
+    $v = $stackBackward.Pop()
+    $stackForward.Push($v)
+
+    if($stackBackward.Count -eq 0){
+        throw "No previous item available."
+    }
+
+    $a = $stackBackward.Peek()
+    return $a
+}
+
+function Pop-QQ_Forward_ItemId {
+    [CmdletBinding()]
+    param()
+
+    "Pop Forward ItemID" | Write-MyDebug -Section "QuickCommand"
+
+    $stackForward = Get_StackForward
+    if($stackForward.Count -eq 0){
+        throw "No forward item available."
+    }
+
+    $v = $stackForward.Pop()
+    return $v
 }
 
 function w ($message){
